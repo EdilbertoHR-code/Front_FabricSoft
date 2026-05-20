@@ -6,7 +6,7 @@ Este repositorio está diseñado para organizar y separar la documentación inic
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 El espacio de trabajo se encuentra estructurado en las siguientes carpetas principales:
 
@@ -24,7 +24,7 @@ FabriSoft/
 
 ---
 
-## 🎨 Sistema de Diseño (Design System) del Maquetado
+## Sistema de Diseño (Design System) del Maquetado
 
 Para facilitar la colaboración y unificar criterios de diseño entre los desarrolladores del equipo, a continuación se documentan formalmente los colores, tipografías y botones implementados en el maquetado actual. Se propone adoptar este esquema como la **guía de estilos oficial para el Frontend**.
 
@@ -79,7 +79,7 @@ Botón secundario para cancelaciones o flujos paralelos:
 
 ---
 
-## 🛠️ Propuesta de Integración en Frontend (Tailwind CSS Config)
+## Propuesta de Integración en Frontend (Tailwind CSS Config)
 
 Para la implementación final del **Frontend** usando **Tailwind CSS**, se propone agregar el siguiente bloque de configuración en `tailwind.config.js` para mantener la fidelidad de los tokens de diseño actuales:
 
