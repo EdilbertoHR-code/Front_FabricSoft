@@ -1,0 +1,2918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FabricSoft · Dossier de Interacciones · Pantallas Secundarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles/dossier.css" />
+  <link rel="stylesheet" href="styles/interacciones.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       DOSSIER TOP BAR
+       ══════════════════════════════════════════════════════════════ -->
+  <header class="dossier-bar">
+    <div class="dossier-bar-inner">
+      <div class="dossier-bar-left">
+        <div class="dossier-bar-mark">F</div>
+        <span class="dossier-bar-title">Dossier · Interacciones</span>
+        <span>·</span>
+        <span class="dossier-bar-meta">V1.0 · 19.05.2026</span>
+      </div>
+      <div class="dossier-bar-progress">
+        <span>I01 — I12</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="progressPct">0%</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       COVER
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="cover" id="cover" data-screen-label="00 Cover">
+    <div class="cover-keyline"></div>
+    <div class="cover-keyline bottom"></div>
+    <div class="cover-inner">
+      <div class="cover-mark">
+        <div class="cover-logo">
+          <img src="assets/logo-fabric-gold.jpeg" alt="FabricSoft logo" />
+        </div>
+        <div class="cover-mark-text">
+          FABRIC · SOFT MEXICO<br />
+          <strong>Oracle Critical Engineering</strong>
+        </div>
+      </div>
+
+      <div class="label" style="margin-bottom: 32px;">Dossier de diseño · Volumen II · Interacciones</div>
+
+      <h1>
+        Lo que pasa<br />
+        cuando el lector<br />
+        decide <em>actuar.</em>
+      </h1>
+
+      <p class="cover-deck">
+        Doce pantallas secundarias donde el dossier de Home termina y empieza
+        la conversión: páginas internas, modales, wizards, calendly, gating
+        de papers y estados de confirmación. Cada interacción mantiene la
+        misma disciplina boutique — sin disfrazarse de SaaS, sin perder
+        densidad ejecutiva.
+      </p>
+
+      <div class="cover-meta-grid">
+        <div class="cover-meta-cell">
+          <span class="eyebrow">Volumen</span>
+          <div class="val">II<small>Pantallas secundarias</small></div>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="eyebrow">Alcance</span>
+          <div class="val">12 interacciones<small>I01 — I12</small></div>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="eyebrow">Vinculado a</span>
+          <div class="val">Dossier S07–S15<small>Volumen I aprobado</small></div>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="eyebrow">Estatus</span>
+          <div class="val">Para review<small>Comentarios bienvenidos</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TOC
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="toc" id="toc" data-screen-label="00 Índice">
+    <div class="container">
+      <div class="toc-header">
+        <div class="toc-title-block">
+          <div class="label">Índice del Dossier II</div>
+          <h2>De CTA <em>a conversión.</em></h2>
+        </div>
+        <div class="toc-intro">
+          <p>
+            Cada interacción se presenta como una sección: memoria de diseño
+            con propósito + comportamiento + mejoras + justificación, seguida
+            de la maqueta en su contexto real (modal flotando sobre el sitio,
+            página interna full-bleed, formulario en flow, etc.).
+          </p>
+          <p>
+            Cinco están agrupadas (las "próximamente" comparten patrón). Una
+            es transversal (states de éxito).
+          </p>
+        </div>
+      </div>
+
+      <div class="toc-list">
+        <a href="#i01" class="toc-row">
+          <span class="toc-id">I01</span>
+          <span class="toc-name">Caso completo · <em>/casos/ape-plazas</em></span>
+          <span class="toc-desc">Página · Hero + timeline + métricas + quote + POW</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i02" class="toc-row">
+          <span class="toc-id">I02</span>
+          <span class="toc-name">Proof of Work · <em>Modal</em></span>
+          <span class="toc-desc">Modal · Documentación verificable bajo NDA</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i03" class="toc-row">
+          <span class="toc-id">I03</span>
+          <span class="toc-name">FABRIC OS completo · <em>/fabric-os</em></span>
+          <span class="toc-desc">Página · 4 capas detalladas + catálogo FSO completo</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i04" class="toc-row">
+          <span class="toc-id">I04</span>
+          <span class="toc-name">Reservar conversación · <em>Calendly inline</em></span>
+          <span class="toc-desc">Modal · 30 min con Julio · Slots reales</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i05" class="toc-row">
+          <span class="toc-id">I05</span>
+          <span class="toc-name">Iniciar evaluación · <em>Contactar referencia</em></span>
+          <span class="toc-desc">Modal · Form gating + introducción FABRIC</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i06" class="toc-row">
+          <span class="toc-id">I06</span>
+          <span class="toc-name">Descargar paper · <em>Gating form</em></span>
+          <span class="toc-desc">Modal · Email corporativo + cargo + envío por mail</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i07" class="toc-row">
+          <span class="toc-id">I07</span>
+          <span class="toc-name">Wait List · <em>Wizard 10 preguntas</em></span>
+          <span class="toc-desc">Wizard · Cualificación + datos contacto + plazo</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i08" class="toc-row">
+          <span class="toc-id">I08</span>
+          <span class="toc-name">Diagnóstico Oracle · <em>Wizard 12 preguntas</em></span>
+          <span class="toc-desc">Wizard · Severity score + plan remediación + 5 días hábiles</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i09" class="toc-row">
+          <span class="toc-id">I09</span>
+          <span class="toc-name">ERP TCO Comparator · <em>Wizard 8 preguntas</em></span>
+          <span class="toc-desc">Wizard · Cálculo live + barras + reporte personalizado</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i10" class="toc-row">
+          <span class="toc-id">I10</span>
+          <span class="toc-name">Founder Line · <em>Copy email + toast</em></span>
+          <span class="toc-desc">Micro-interacción · Click copia + toast confirmación</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i11" class="toc-row">
+          <span class="toc-id">I11</span>
+          <span class="toc-name">Próximamente Q3/Q4 · <em>Landing pattern</em></span>
+          <span class="toc-desc">Plantilla · 9 features pendientes · Notificación por email</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+        <a href="#i12" class="toc-row">
+          <span class="toc-id">I12</span>
+          <span class="toc-name">Confirmación · <em>Success states</em></span>
+          <span class="toc-desc">Patrón · Mark + título + next steps · Aplicable a todos</span>
+          <span class="toc-jump">Ir</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I01 · CASO COMPLETO (/casos/ape-plazas)
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i01" data-screen-label="I01 Caso completo">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · One</div>
+              <div class="plaque-name">Caso Completo</div>
+              <div class="plaque-tag">Página · /casos/ape-plazas</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir <em>"leer caso"</em> en el activo editorial más
+                pesado del sitio — una página completa que funciona como paper.
+              </p>
+              <p>
+                Cuando el CFO clickea "Leer caso completo" en la home, no
+                espera un blog post. Espera <strong>un documento de caso al
+                estilo McKinsey/Bain</strong>: hero institucional, timeline
+                de hitos, narrativa estructurada, métricas finales con check
+                visual, quote del cliente firmado, y al pie un bloque
+                "Proof of Work" listando entregables documentados.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Hero institucional</div>
+                  <p>Back-link mono arriba a la izquierda. Tag "Caso Ancla · Abril 2026". Título H1 grande Cormorant. Deck italic. Meta-row con industria, revenue range, plazo y estado actual.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Sticky eyebrow</div>
+                  <p>En cada bloque, el eyebrow (columna izquierda) queda sticky al scrollear. El lector siempre sabe en qué sección está sin scroll-jacking ni TOC fija.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Timeline editorial</div>
+                  <p>Línea vertical con dots dorados. Cada hito tiene fecha, evento, sub-descripción y meta-tag de verificación. Visualmente un "registro" — no una infografía animada.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Quote callout</div>
+                  <p>Blockquote con border-left bronce. Tipografía Cormorant 22px italic. Atribución mono con cargo y mes. Pesa como firma editorial.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Proof of Work</div>
+                  <p>Lista de entregables documentados (contratos, dashboards, actas). Cada uno con ícono mono, título, meta, tamaño y access state. Click abre modal I02.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Footer del caso</div>
+                  <p>Bloque "Casos relacionados" con 2 thumbnails. CTAs: "Iniciar diagnóstico similar" y "Hablar con CFO de APE Plazas" (link a I05).</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">La página agrega sobre el card de S07.</p>
+              <ul class="improvements-list">
+                <li><strong>Hero institucional</strong> con meta-grid (industria · revenue · plazo · estado) — establece contexto en 5 segundos antes de la narrativa.</li>
+                <li><strong>Estructura en bloques con eyebrow sticky</strong> — el lector navega un documento, no un blog. Bloques: Contexto / Problema / Aproximación / Ejecución / Resultados / Proof.</li>
+                <li><strong>Timeline editorial</strong> con verificación por hito — convierte "rescatamos APE" en evidencia documentable.</li>
+                <li><strong>Quote callout fuerte</strong> en lugar de quote box pequeña — la cita del CFO es el argumento principal, debe pesar visualmente.</li>
+                <li><strong>Proof of Work como sección de catálogo</strong> — entregables listados con access state (descargable / NDA-locked).</li>
+                <li><strong>"Hablar con CFO" CTA</strong> al cierre — conecta directamente con I05 (referencias). La página de caso es el funnel hacia la referencia.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Las consultoras top-tier publican casos como
+                <strong>"insight papers" o "case studies" de 6-12 páginas</strong>
+                con título grande, hero limpio y narrativa larga sin imágenes
+                de stock. Bain Insights, McKinsey Quarterly, y Stripe's
+                case studies hacen exactamente esto. Aquí esa lógica se
+                traduce a página web manteniendo la densidad y los timestamps.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Showcase -->
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I01</span>
+          <span>·</span>
+          <span>Página interna · /casos/ape-plazas</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/casos/ape-plazas</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <!-- Hero -->
+        <div class="page-hero" style="padding: 96px 56px 64px;">
+          <div class="container" style="padding: 0;">
+            <a href="#" class="page-hero-back">Volver a casos</a>
+            <div class="page-hero-tag">Caso Ancla · Abril 2026 · Verificable bajo NDA</div>
+            <h1>Implementación Oracle Fusion Cloud en <em>APE Plazas.</em></h1>
+            <p class="page-hero-deck">
+              Un operador de centros comerciales con presencia multi-plaza
+              en México. Go-live en fecha planeada. Primer cierre contable
+              sin incidencias. Transición a soporte en firma.
+            </p>
+
+            <div class="page-meta">
+              <div class="cell">
+                <span class="eyebrow">Industria</span>
+                <div class="val">Inmobiliario<small>Centros comerciales · MX</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">Revenue range</span>
+                <div class="val">USD 100M+<small>Multi-plaza operativo</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">Duración total</span>
+                <div class="val">14 semanas<small>Diagnose → Stabilize</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">Estado actual</span>
+                <div class="val">En producción<small>Soporte L1/L2 · Acta firmada</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block: Contexto -->
+        <div class="case-block" style="padding: 96px 56px;">
+          <div class="container" style="padding: 0;">
+            <div class="case-block-grid">
+              <div class="case-block-eyebrow">01 · Contexto</div>
+              <div>
+                <h2>Un operador multi-plaza que necesitaba <em>consolidar la operación financiera.</em></h2>
+                <p>
+                  APE Plazas opera múltiples centros comerciales bajo entidades
+                  legales independientes. Hasta abril 2026, cada plaza tenía su
+                  propia versión de cierre contable con reportes parciales
+                  reconciliados manualmente en Excel.
+                </p>
+                <p>
+                  La meta del proyecto: <strong>una sola fuente de verdad
+                  financiera, consolidación multi-entidad nativa, y cierre
+                  contable mensual reducido de 12-15 días a menos de 5</strong>.
+                  Sin Oracle Fusion Cloud, esa meta no era alcanzable en menos
+                  de 18 meses.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block: Aproximación -->
+        <div class="case-block" style="padding: 96px 56px;">
+          <div class="container" style="padding: 0;">
+            <div class="case-block-grid">
+              <div class="case-block-eyebrow">02 · Aproximación</div>
+              <div>
+                <h2>Doctrina FABRIC aplicada <em>desde el SOW.</em></h2>
+                <p>
+                  El SOW se cerró con las cinco cláusulas doctrinales explícitas:
+                  entrega en primer cierre contable operado, solo seniors, fixed-price
+                  por fase, cero reportes manuales post go-live, y transición formal.
+                </p>
+                <p>
+                  Sobre FABRIC OS aplicamos <strong>FSO-01 (Rapid GL Close) y
+                  FSO-02 (Multi-Entity Retail Ops)</strong>. Ambos fueron validados
+                  en APE Plazas y hoy forman parte del catálogo de capacidades
+                  reusables.
+                </p>
+
+                <div class="case-quote-block">
+                  El SOW que firmó FABRIC fue distinto desde la primera lectura.
+                  Tenía cláusulas que nuestros abogados nunca habían visto en
+                  una consultora Oracle.
+                  <cite>— CIO · APE Plazas · enero 2026</cite>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block: Ejecución (timeline) -->
+        <div class="case-block" style="padding: 96px 56px;">
+          <div class="container" style="padding: 0;">
+            <div class="case-block-grid">
+              <div class="case-block-eyebrow">03 · Ejecución · Timeline</div>
+              <div>
+                <h2>Catorce semanas, <em>cinco hitos documentados.</em></h2>
+
+                <div class="case-timeline">
+                  <div class="case-timeline-row">
+                    <span class="case-timeline-date">06 ene 2026</span>
+                    <div class="case-timeline-marker"><div class="case-timeline-dot filled"></div></div>
+                    <div class="case-timeline-event">
+                      Diagnose firmado
+                      <small>Acta de diagnóstico ejecutivo · 2.5 semanas</small>
+                    </div>
+                    <div class="case-timeline-meta verified">Auditado</div>
+                  </div>
+                  <div class="case-timeline-row">
+                    <span class="case-timeline-date">29 ene 2026</span>
+                    <div class="case-timeline-marker"><div class="case-timeline-dot filled"></div></div>
+                    <div class="case-timeline-event">
+                      Blueprint técnico aprobado
+                      <small>SOW Fixed-Price firmado · 3.5 semanas</small>
+                    </div>
+                    <div class="case-timeline-meta verified">Firmado</div>
+                  </div>
+                  <div class="case-timeline-row">
+                    <span class="case-timeline-date">10 mar 2026</span>
+                    <div class="case-timeline-marker"><div class="case-timeline-dot filled"></div></div>
+                    <div class="case-timeline-event">
+                      Deploy completo
+                      <small>Configuración + migración datos + training · 6 semanas</small>
+                    </div>
+                    <div class="case-timeline-meta verified">Documentado</div>
+                  </div>
+                  <div class="case-timeline-row">
+                    <span class="case-timeline-date">06 abr 2026</span>
+                    <div class="case-timeline-marker"><div class="case-timeline-dot filled"></div></div>
+                    <div class="case-timeline-event">
+                      Go-live ejecutado en fecha
+                      <small>+0 días sobre planeado · 4 plazas simultáneas</small>
+                    </div>
+                    <div class="case-timeline-meta verified">+0 días</div>
+                  </div>
+                  <div class="case-timeline-row">
+                    <span class="case-timeline-date">04 may 2026</span>
+                    <div class="case-timeline-marker"><div class="case-timeline-dot filled"></div></div>
+                    <div class="case-timeline-event">
+                      Primer cierre contable operado
+                      <small>Mes abril · cierre &lt; 5 días · sin incidencias</small>
+                    </div>
+                    <div class="case-timeline-meta verified">Punto entrega</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block: Resultados -->
+        <div class="case-block" style="padding: 96px 56px; background: var(--bg-panel);">
+          <div class="container" style="padding: 0;">
+            <div class="case-block-grid">
+              <div class="case-block-eyebrow">04 · Resultados verificables</div>
+              <div>
+                <h2>Métricas <em>medibles y auditadas.</em></h2>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;">
+                  <div style="background: var(--bg-base); border: 1px solid var(--border); padding: 32px;">
+                    <div class="label" style="margin-bottom: 16px;">Cierre contable</div>
+                    <div class="beforeafter">
+                      <div class="ba-cell before"><span class="num">12d</span>Antes</div>
+                      <div class="ba-arrow">→</div>
+                      <div class="ba-cell after"><span class="num">5d</span>Hoy</div>
+                    </div>
+                    <p style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); margin-top: 16px; letter-spacing: 0.05em;">Cierre mensual consolidado multi-plaza · Validado por CFO interno.</p>
+                  </div>
+                  <div style="background: var(--bg-base); border: 1px solid var(--border); padding: 32px;">
+                    <div class="label" style="margin-bottom: 16px;">Incidencias críticas post go-live</div>
+                    <div style="display: flex; align-items: baseline; gap: 16px;">
+                      <span style="font-family: var(--serif); font-size: 72px; color: var(--accent); line-height: 1; font-weight: 400;">0</span>
+                      <span class="check" style="color: var(--accent); font-size: 24px;">✓</span>
+                    </div>
+                    <p style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); margin-top: 16px; letter-spacing: 0.05em;">90 días post go-live · Verificado por log Fusion ERP.</p>
+                  </div>
+                  <div style="background: var(--bg-base); border: 1px solid var(--border); padding: 32px;">
+                    <div class="label" style="margin-bottom: 16px;">Adopción usuarios clave</div>
+                    <div style="display: flex; align-items: baseline; gap: 16px;">
+                      <span style="font-family: var(--serif); font-size: 72px; color: var(--accent); line-height: 1; font-weight: 400;">93%</span>
+                    </div>
+                    <p style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); margin-top: 16px; letter-spacing: 0.05em;">Activos diarios sobre planta total · Medido a 60 días.</p>
+                  </div>
+                  <div style="background: var(--bg-base); border: 1px solid var(--border); padding: 32px;">
+                    <div class="label" style="margin-bottom: 16px;">Reportes manuales eliminados</div>
+                    <div style="display: flex; align-items: baseline; gap: 16px;">
+                      <span style="font-family: var(--serif); font-size: 72px; color: var(--accent); line-height: 1; font-weight: 400;">7</span>
+                      <span style="font-family: var(--mono); font-size: 13px; color: var(--text-secondary);">de 7</span>
+                    </div>
+                    <p style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); margin-top: 16px; letter-spacing: 0.05em;">Reportes paralelos al ERP que existían pre-proyecto.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block: Proof of Work -->
+        <div class="case-block" style="padding: 96px 56px;">
+          <div class="container" style="padding: 0;">
+            <div class="case-block-grid">
+              <div class="case-block-eyebrow">05 · Proof of Work</div>
+              <div>
+                <h2>Entregables documentados, <em>auditables.</em></h2>
+                <p>
+                  Cada uno de estos documentos está disponible bajo NDA tras
+                  evaluación post-admisión. Sin NDA: los meta-datos públicos
+                  son los siguientes.
+                </p>
+
+                <div class="pow-list">
+                  <div class="pow-item">
+                    <div class="pow-icon">SOW</div>
+                    <div>
+                      <div class="pow-info-title">SOW Fixed-Price firmado</div>
+                      <div class="pow-info-meta">28 pp · ES · Cláusulas doctrinales explícitas</div>
+                    </div>
+                    <span class="pow-size">2.4 MB</span>
+                    <span class="pow-access locked">NDA</span>
+                  </div>
+                  <div class="pow-item">
+                    <div class="pow-icon">ACTA</div>
+                    <div>
+                      <div class="pow-info-title">Acta de primer cierre contable</div>
+                      <div class="pow-info-meta">6 pp · Firmada por CFO + CTO + FABRIC · may 2026</div>
+                    </div>
+                    <span class="pow-size">820 KB</span>
+                    <span class="pow-access locked">NDA</span>
+                  </div>
+                  <div class="pow-item">
+                    <div class="pow-icon">KPI</div>
+                    <div>
+                      <div class="pow-info-title">Tablero KPI · primer ciclo</div>
+                      <div class="pow-info-meta">Dashboard ejecutivo · Auditado externamente</div>
+                    </div>
+                    <span class="pow-size">1.1 MB</span>
+                    <span class="pow-access locked">NDA</span>
+                  </div>
+                  <div class="pow-item">
+                    <div class="pow-icon">TRANS</div>
+                    <div>
+                      <div class="pow-info-title">Plan de transición a soporte</div>
+                      <div class="pow-info-meta">Documentación viva · 142 pp · En firma</div>
+                    </div>
+                    <span class="pow-size">4.2 MB</span>
+                    <span class="pow-access locked">NDA</span>
+                  </div>
+                  <div class="pow-item">
+                    <div class="pow-icon">PR</div>
+                    <div>
+                      <div class="pow-info-title">Comunicado público de go-live</div>
+                      <div class="pow-info-meta">2 pp · ES · Aprobado por APE Plazas · 25 may</div>
+                    </div>
+                    <span class="pow-size">340 KB</span>
+                    <span class="pow-access">Público</span>
+                  </div>
+                </div>
+
+                <div style="margin-top: 48px; display: flex; gap: 24px; flex-wrap: wrap;">
+                  <a href="#" class="btn-primary">Hablar con CFO de APE Plazas →</a>
+                  <a href="#" class="btn-secondary">Iniciar diagnóstico similar →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile companion -->
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>La página de caso colapsa<br />sin perder densidad.</h5>
+          <p>
+            Hero pierde el meta-grid 4×1 y se vuelve 2×2 compacto. La estructura
+            sticky eyebrow se mueve a in-flow (precede cada bloque). El timeline
+            se reorganiza vertical-only. POW cards mantienen su geometría — solo
+            el badge access state se vuelve full-width al pie.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Hero</span>
+              <div class="val">Meta 2×2 stack</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Eyebrow</span>
+              <div class="val">Inline · no sticky</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Timeline</span>
+              <div class="val">Sin dot column</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">POW</span>
+              <div class="val">Access full-width</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto;">
+              <a href="#" style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.2em; text-transform: uppercase; display: inline-block; margin-bottom: 20px;">← Volver a casos</a>
+              <div class="label" style="font-size: 9px; margin-bottom: 12px;">Caso Ancla · Abril 2026</div>
+              <h2 style="font-weight: 300; font-size: 26px; line-height: 1.05;">Implementación Oracle Fusion en <em>APE Plazas.</em></h2>
+              <p style="color: var(--text-secondary); font-style: italic; font-family: var(--serif); margin: 16px 0 24px; line-height: 1.5;">
+                Operador de centros comerciales con presencia multi-plaza. Go-live en fecha. Primer cierre sin incidencias.
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border);">
+                <div style="background: var(--bg-base); padding: 14px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">INDUSTRIA</div>
+                  <div style="font-family: var(--serif); font-size: 16px; margin-top: 4px;">Inmobiliario</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 14px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">REVENUE</div>
+                  <div style="font-family: var(--serif); font-size: 16px; margin-top: 4px;">USD 100M+</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 14px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">DURACIÓN</div>
+                  <div style="font-family: var(--serif); font-size: 16px; margin-top: 4px;">14 sem</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 14px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">ESTADO</div>
+                  <div style="font-family: var(--serif); font-size: 16px; margin-top: 4px; color: var(--accent);">Producción</div>
+                </div>
+              </div>
+
+              <div style="margin-top: 32px;">
+                <div class="label" style="font-size: 9px;">01 · Contexto</div>
+                <h3 style="font-family: var(--serif); font-size: 22px; font-weight: 300; line-height: 1.15; margin: 12px 0;">Necesitaban consolidar la operación financiera.</h3>
+                <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">APE opera múltiples plazas bajo entidades legales independientes. Cada una tenía su versión de cierre.</p>
+              </div>
+
+              <div style="margin-top: 32px;">
+                <div class="label" style="font-size: 9px;">03 · Timeline</div>
+                <div style="position: relative; padding-left: 20px; margin-top: 16px;">
+                  <div style="position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--accent);"></div>
+                  <div style="position: relative; padding: 8px 0; margin-bottom: 8px;">
+                    <div style="position: absolute; left: -18px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+                    <div style="font-family: var(--mono); font-size: 10px; color: var(--accent);">06 ENE 2026</div>
+                    <div style="font-family: var(--serif); font-size: 14px; margin-top: 2px;">Diagnose firmado</div>
+                  </div>
+                  <div style="position: relative; padding: 8px 0; margin-bottom: 8px;">
+                    <div style="position: absolute; left: -18px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+                    <div style="font-family: var(--mono); font-size: 10px; color: var(--accent);">29 ENE 2026</div>
+                    <div style="font-family: var(--serif); font-size: 14px; margin-top: 2px;">Blueprint aprobado</div>
+                  </div>
+                  <div style="position: relative; padding: 8px 0; margin-bottom: 8px;">
+                    <div style="position: absolute; left: -18px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+                    <div style="font-family: var(--mono); font-size: 10px; color: var(--accent);">06 ABR 2026</div>
+                    <div style="font-family: var(--serif); font-size: 14px; margin-top: 2px;">Go-live en fecha</div>
+                  </div>
+                  <div style="position: relative; padding: 8px 0;">
+                    <div style="position: absolute; left: -18px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent);"></div>
+                    <div style="font-family: var(--mono); font-size: 10px; color: var(--accent);">04 MAY 2026</div>
+                    <div style="font-family: var(--serif); font-size: 14px; margin-top: 2px;">Primer cierre operado</div>
+                  </div>
+                </div>
+              </div>
+
+              <a href="#" style="display: block; text-align: center; padding: 14px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; margin-top: 24px;">Hablar con CFO →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I01</span>
+      <span class="monogram">F</span>
+      <span>I02</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I02 · PROOF OF WORK · MODAL
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i02" data-screen-label="I02 Proof of Work">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Two</div>
+              <div class="plaque-name">Proof of Work</div>
+              <div class="plaque-tag">Modal · Documentación bajo NDA</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Mostrar que <em>"verificable bajo NDA"</em> no es promesa —
+                es <strong>catálogo de documentos con metadatos públicos</strong>.
+              </p>
+              <p>
+                Cuando un CFO clickea "Proof of Work" en S07 o en la página
+                de caso, lo que se le presenta no es un PDF abierto. Es un
+                modal de catálogo: cada documento listado con título,
+                tipo, páginas, tamaño y access state. El acceso real pasa
+                por evaluación post-admisión. Este modal es la <strong>vitrina
+                editorial del rigor documental</strong> de FABRIC.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Entrada del modal</div>
+                  <p>Overlay rgba(6,6,6,0.86) con gradiente radial sutil acento. Modal entra con fade-in 200ms + scale 0.97 → 1. Sin parallax, sin bounces.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Header del modal</div>
+                  <p>Eyebrow "Proof of Work · APE Plazas" en mono. Título serif 30px. X close de 36px con border. Línea acento de 64px a la izquierda como ornamento ceremonial.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Lista de documentos</div>
+                  <p>Cada fila tiene ícono mono (SOW/ACTA/KPI/TRANS/PR), título serif, meta mono, tamaño y access pill. Click en docs públicos: descarga directa. Click en NDA: abre evaluación I05.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Access state</div>
+                  <p>Tres estados: "Público" (descargable directo), "NDA" (locked con 🔒), "Bajo solicitud" (abre form). El badge comunica el state sin necesidad de explicación.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Hover en doc</div>
+                  <p>Border-color → accent, sin movimiento. La fila se ilumina, no se mueve. El usuario sabe que es clickable sin agitación visual.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Footer del modal</div>
+                  <p>Meta-info izquierda ("5 documentos · 8.9 MB total"), CTA derecha "Solicitar acceso completo →". El acceso pasa por evaluación.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">El modal no es un disclaimer — es vitrina.</p>
+              <ul class="improvements-list">
+                <li><strong>Modal como vitrina catálogo</strong>, no como un wall de NDA — comunica volumen y diversidad documental antes de la negociación.</li>
+                <li><strong>Ícono mono por tipo de doc</strong> (SOW, ACTA, KPI, TRANS, PR) — más institucional que un ícono PDF genérico.</li>
+                <li><strong>Access state en pill</strong> con iconografía mínima — el usuario entiende cuáles puede ver sin formulario.</li>
+                <li><strong>Sin previews internos</strong> — los documentos no se muestran ni siquiera blurred. La selectividad protege a los clientes.</li>
+                <li><strong>CTA único al pie</strong> ("Solicitar acceso completo") — todo lo NDA pasa por el mismo embudo, ningún acceso lateral.</li>
+                <li><strong>Línea acento vertical</strong> en el modal (igual que plaque + waitlist) — refuerza identidad visual del sitio.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Goldman Sachs y Morgan Stanley publican "data rooms" para
+                deals con <strong>una lista catalogada de documentos con
+                metadata pero sin contenido</strong>. El acceso pasa por
+                proceso de validación. Aquí adoptamos exactamente esa
+                lógica de M&A data room — el sitio web se vuelve catálogo
+                cerrado, no marketing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I02</span>
+          <span>·</span>
+          <span>Modal flotando sobre /casos/ape-plazas</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/casos/ape-plazas#proof</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage">
+          <div class="modal wide">
+            <div class="modal-head">
+              <div>
+                <div class="modal-eyebrow">Proof of Work · APE Plazas</div>
+                <div class="modal-title">Documentación <em>verificable.</em></div>
+              </div>
+              <button class="modal-close" type="button" aria-label="Cerrar">×</button>
+            </div>
+
+            <div class="modal-body">
+              <p style="color: var(--text-secondary); font-size: 15px; line-height: 1.7; margin-bottom: 24px;">
+                Cinco documentos producidos durante el engagement APE Plazas.
+                Acceso público a comunicados; el resto bajo NDA tras evaluación
+                post-admisión inicial.
+              </p>
+
+              <div class="pow-list">
+                <div class="pow-item">
+                  <div class="pow-icon">SOW</div>
+                  <div>
+                    <div class="pow-info-title">SOW Fixed-Price firmado</div>
+                    <div class="pow-info-meta">28 pp · ES · Cláusulas doctrinales explícitas · dic 2025</div>
+                  </div>
+                  <span class="pow-size">2.4 MB</span>
+                  <span class="pow-access locked">NDA</span>
+                </div>
+                <div class="pow-item">
+                  <div class="pow-icon">ACTA</div>
+                  <div>
+                    <div class="pow-info-title">Acta de primer cierre contable</div>
+                    <div class="pow-info-meta">6 pp · Firmada por CFO + CTO + FABRIC · may 2026</div>
+                  </div>
+                  <span class="pow-size">820 KB</span>
+                  <span class="pow-access locked">NDA</span>
+                </div>
+                <div class="pow-item">
+                  <div class="pow-icon">KPI</div>
+                  <div>
+                    <div class="pow-info-title">Tablero KPI · primer ciclo crítico</div>
+                    <div class="pow-info-meta">Dashboard ejecutivo · Auditado externamente · may 2026</div>
+                  </div>
+                  <span class="pow-size">1.1 MB</span>
+                  <span class="pow-access locked">NDA</span>
+                </div>
+                <div class="pow-item">
+                  <div class="pow-icon">TRANS</div>
+                  <div>
+                    <div class="pow-info-title">Plan de transición a soporte</div>
+                    <div class="pow-info-meta">Documentación viva · 142 pp · En firma · may 2026</div>
+                  </div>
+                  <span class="pow-size">4.2 MB</span>
+                  <span class="pow-access locked">NDA</span>
+                </div>
+                <div class="pow-item">
+                  <div class="pow-icon">PR</div>
+                  <div>
+                    <div class="pow-info-title">Comunicado público de go-live</div>
+                    <div class="pow-info-meta">2 pp · ES · Aprobado por APE Plazas · 25 may 2026</div>
+                  </div>
+                  <span class="pow-size">340 KB</span>
+                  <span class="pow-access">Descargar</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 32px; padding: 20px; background: var(--bg-deep); border: 1px solid var(--border); font-family: var(--mono); font-size: 11px; line-height: 1.7; color: var(--text-secondary); letter-spacing: 0.02em;">
+                <strong style="color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; display: block; margin-bottom: 6px; font-size: 10px;">Proceso de Acceso</strong>
+                El acceso a documentos bajo NDA se otorga tras evaluación inicial.
+                FABRIC valida el ajuste estratégico (revenue, industria,
+                patrocinio) y envía NDA mutuo. Tiempo típico: 3 días hábiles.
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <div class="modal-foot-meta">5 documentos · 8.9 MB total · 1 público</div>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Solicitar acceso completo →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Modal full-bleed con<br />access state al pie.</h5>
+          <p>
+            En mobile el modal ocupa toda la pantalla. La fila de documento
+            se reorganiza a 2 filas: ícono + título arriba; meta + tamaño +
+            access state debajo. El CTA al pie se vuelve sticky para
+            mantenerlo siempre visible.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Modal</span>
+              <div class="val">Full-screen</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Doc row</span>
+              <div class="val">2 filas internas</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">CTA</span>
+              <div class="val">Sticky bottom</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Close</span>
+              <div class="val">X · top-right</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div>
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">PROOF OF WORK · APE</div>
+                  <div style="font-family: var(--serif); font-size: 22px; line-height: 1.1; margin-top: 6px;">Documentación <em style="color: var(--accent); font-style: italic;">verificable.</em></div>
+                </div>
+                <button style="width: 30px; height: 30px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 14px;">×</button>
+              </div>
+
+              <div style="padding: 16px;">
+                <p style="color: var(--text-secondary); font-size: 12px; line-height: 1.55; margin-bottom: 16px;">5 documentos producidos durante el engagement. Acceso bajo NDA.</p>
+
+                <div style="display: grid; gap: 8px;">
+                  <div style="background: var(--bg-panel); border: 1px solid var(--border); padding: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                      <div style="width: 32px; height: 38px; border: 1px solid var(--accent-deep); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; color: var(--accent);">SOW</div>
+                      <div style="flex: 1;">
+                        <div style="font-family: var(--serif); font-size: 14px; line-height: 1.2;">SOW Fixed-Price firmado</div>
+                        <div style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); margin-top: 2px;">28 pp · dic 2025</div>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;">
+                      <span style="color: var(--text-tertiary);">2.4 MB</span>
+                      <span style="color: var(--text-tertiary); border: 1px solid var(--border-strong); padding: 3px 8px;">🔒 NDA</span>
+                    </div>
+                  </div>
+
+                  <div style="background: var(--bg-panel); border: 1px solid var(--border); padding: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                      <div style="width: 32px; height: 38px; border: 1px solid var(--accent-deep); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; color: var(--accent);">ACTA</div>
+                      <div style="flex: 1;">
+                        <div style="font-family: var(--serif); font-size: 14px; line-height: 1.2;">Acta primer cierre</div>
+                        <div style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); margin-top: 2px;">6 pp · may 2026</div>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;">
+                      <span style="color: var(--text-tertiary);">820 KB</span>
+                      <span style="color: var(--text-tertiary); border: 1px solid var(--border-strong); padding: 3px 8px;">🔒 NDA</span>
+                    </div>
+                  </div>
+
+                  <div style="background: var(--bg-panel); border: 1px solid var(--border); padding: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                      <div style="width: 32px; height: 38px; border: 1px solid var(--accent-deep); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; color: var(--accent);">PR</div>
+                      <div style="flex: 1;">
+                        <div style="font-family: var(--serif); font-size: 14px; line-height: 1.2;">Comunicado go-live</div>
+                        <div style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); margin-top: 2px;">2 pp · público</div>
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;">
+                      <span style="color: var(--text-tertiary);">340 KB</span>
+                      <span style="color: var(--accent); border: 1px solid var(--accent-deep); padding: 3px 8px;">↓ Descargar</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding: 14px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0;">
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.15em; margin-bottom: 10px; text-transform: uppercase;">5 docs · 8.9 MB</div>
+                <a href="#" style="display: block; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Solicitar acceso completo →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I02</span>
+      <span class="monogram">F</span>
+      <span>I03</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I03 · FABRIC OS COMPLETO · /fabric-os
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i03" data-screen-label="I03 FABRIC OS página">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Three</div>
+              <div class="plaque-name">FABRIC OS</div>
+              <div class="plaque-tag">Página · /fabric-os</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir <em>"4 capas + 6 FSOs"</em> de S09 en un documento
+                de arquitectura completo — el manual técnico de FABRIC.
+              </p>
+              <p>
+                S09 en la home es <strong>el teaser</strong>. /fabric-os es
+                el manual. Aquí el CTO ve cada capa con descripción amplia,
+                stack técnico, ejemplos de aplicación, FSOs asociados, y
+                roadmap de la capa. Es <strong>la sección que demuestra que
+                FABRIC piensa como producto</strong>, no como servicio.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Hero institucional</div>
+                  <p>Back-link a home. Tag "Arquitectura · FABRIC OS v2026". H1 grande. Deck italic. Meta-grid con 4 stats: capas, FSOs, agentes IA, proyectos validados.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Layer detail block</div>
+                  <p>Cada capa ocupa una fila con 3 columnas: número grande Cormorant izq, descripción + bullets centro, card de ejemplo / FSO destacado der.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Número grande</div>
+                  <p>Cada capa lleva su número en Cormorant 88px gold. Es ornamento funcional — convierte la lista en libro arquitectónico.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Catálogo FSO extendido</div>
+                  <p>Tabla completa de los 6 FSOs con: número, nombre, descripción larga, status, versión, validación, próxima feature. Más densa que en S09.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Sticky eyebrow</div>
+                  <p>Eyebrow de bloque permanece sticky mientras el lector scrollea cada capa. Navegación implícita sin TOC fija.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Footer del manual</div>
+                  <p>Sección "Cómo accedo a FABRIC OS". Tres caminos: cliente activo (acceso completo), waitlist (acceso parcial), partner Oracle (consulta).</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">La página agrega sobre S09 sin reinterpretar.</p>
+              <ul class="improvements-list">
+                <li><strong>Layer detail con número Cormorant gigante</strong> — convierte la lista de S09 en libro de arquitectura.</li>
+                <li><strong>Stack técnico por capa</strong> en bullets (Oracle modules, integraciones, frameworks aplicados) — pesa como spec real.</li>
+                <li><strong>FSO card destacado por capa</strong> con el FSO más representativo — ancla cada capa a evidencia concreta.</li>
+                <li><strong>Tabla FSO completa</strong> con 7 campos por FSO — más densidad que S09 (que es vitrina).</li>
+                <li><strong>Sección "Cómo acceder"</strong> — tres caminos diferenciados según perfil del lector.</li>
+                <li><strong>Hero meta-grid 4×1</strong> con stats verificables — orientación cuantitativa antes de la narrativa.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Stripe Docs y Vercel Docs presentan plataformas con
+                <strong>arquitectura capa por capa, descripción técnica
+                amplia y referencias cruzadas a SKUs/productos concretos</strong>.
+                No usan hero videos ni "hover to reveal". Aquí mantenemos
+                ese estándar — el lector técnico evalúa documentación
+                primero, lo demás después.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I03</span>
+          <span>·</span>
+          <span>Página interna · /fabric-os</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/fabric-os</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <!-- Hero -->
+        <div class="page-hero" style="padding: 96px 56px 64px;">
+          <div class="container" style="padding: 0;">
+            <a href="#" class="page-hero-back">Volver a home</a>
+            <div class="page-hero-tag">Arquitectura · FABRIC OS v2026</div>
+            <h1>El sistema operativo de <em>cada proyecto.</em></h1>
+            <p class="page-hero-deck">
+              FABRIC OS es la arquitectura común sobre la que operan todos los
+              engagements. Cuatro capas integradas. Seis FSOs nombrados. IP
+              institucionalizada que sobrevive al consultor.
+            </p>
+
+            <div class="page-meta">
+              <div class="cell">
+                <span class="eyebrow">Capas</span>
+                <div class="val">04<small>Doctrina · FSOs · Frameworks · Agentes</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">FSOs catalogados</span>
+                <div class="val">06<small>2 available · 2 building · 2 concept</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">Agentes IA</span>
+                <div class="val">04<small>v2.4 · Operativos en producción</small></div>
+              </div>
+              <div class="cell">
+                <span class="eyebrow">Proyectos validados</span>
+                <div class="val">02<small>APE Plazas · Aplazo</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer details -->
+        <div class="os-fullpage-section" style="padding: 96px 56px;">
+          <div class="container" style="padding: 0;">
+            <div style="margin-bottom: 48px;">
+              <div class="label" style="margin-bottom: 16px;">Las cuatro capas · Detalle técnico</div>
+              <h2 style="font-size: 40px; font-weight: 300;">Desde la <em>doctrina contractual</em> hasta los <em>agentes IA</em>.</h2>
+            </div>
+
+            <div class="os-layer-detail">
+              <div class="os-layer-detail-num">
+                Capa
+                <span class="big">01</span>
+                Base operativa
+              </div>
+              <div>
+                <h3>Doctrina · <em>El contrato es el producto.</em></h3>
+                <p class="os-layer-detail-desc">
+                  Cinco compromisos contractuales que viven en cada SOW que
+                  firma FABRIC. No son marketing — son cláusulas con consecuencias
+                  jurídicas y financieras documentadas.
+                </p>
+                <ul class="os-layer-detail-bullets">
+                  <li><strong>D-01</strong> Entrega en primer ciclo crítico operado</li>
+                  <li><strong>D-02</strong> Solo seniors · cero juniors facturables</li>
+                  <li><strong>D-03</strong> Fixed-price por fase · cero sorpresas</li>
+                  <li><strong>D-04</strong> Cero reportes manuales post go-live</li>
+                  <li><strong>D-05</strong> Transición formal · documentación viva</li>
+                </ul>
+              </div>
+              <div class="os-layer-detail-card">
+                <div class="label-row">
+                  <span>VALIDACIÓN</span>
+                  <span style="color: var(--accent);">✓ APE Plazas</span>
+                </div>
+                <h4>Cláusula activa</h4>
+                <p>Las 5 doctrinas están vigentes en el SOW de APE Plazas y Aplazo. Cláusula de devolución 100% honorarios en estabilización si subsiste reporte manual post 90 días.</p>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); padding-top: 12px; border-top: 1px dashed var(--border); letter-spacing: 0.15em; text-transform: uppercase;">Estado · Contractual</div>
+              </div>
+            </div>
+
+            <div class="os-layer-detail">
+              <div class="os-layer-detail-num">
+                Capa
+                <span class="big">02</span>
+                IP paquetizada
+              </div>
+              <div>
+                <h3>FSOs · <em>Soluciones reusables nombradas.</em></h3>
+                <p class="os-layer-detail-desc">
+                  Fabric Solution Objects. Cada FSO es una solución técnica
+                  paquetizada, documentada, versionada y vendible en Oracle
+                  Marketplace. Sustituye consultoría custom por catálogo.
+                </p>
+                <ul class="os-layer-detail-bullets">
+                  <li><strong>6 FSOs catalogados</strong> · Status visible (concept / building / available)</li>
+                  <li><strong>Documentación viva</strong> · Versión · Changelog · Validación</li>
+                  <li><strong>Reusabilidad cross-cliente</strong> · Solo seniors implementan</li>
+                  <li><strong>Roadmap público</strong> · Q3-Q4 2026 con 2 nuevos</li>
+                </ul>
+              </div>
+              <div class="os-layer-detail-card">
+                <div class="label-row">
+                  <span>FSO DESTACADO</span>
+                  <span class="status-badge available">Available</span>
+                </div>
+                <h4>FSO-01 · Rapid GL Close</h4>
+                <p>Cierre contable acelerado de 10-15 días a 3-5 días. Validado en APE Plazas. Aplicable en sector inmobiliario y servicios financieros multi-entidad.</p>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); padding-top: 12px; border-top: 1px dashed var(--border); letter-spacing: 0.15em; text-transform: uppercase;">v1.2 · Mayo 2026</div>
+              </div>
+            </div>
+
+            <div class="os-layer-detail">
+              <div class="os-layer-detail-num">
+                Capa
+                <span class="big">03</span>
+                Metodología
+              </div>
+              <div>
+                <h3>Frameworks · <em>Cómo se ejecuta cada proyecto.</em></h3>
+                <p class="os-layer-detail-desc">
+                  Metodologías aplicadas en cada engagement. Gobierno,
+                  control de cambios, gestión de riesgos, validación de
+                  calidad por fase. La operativa que sostiene la doctrina.
+                </p>
+                <ul class="os-layer-detail-bullets">
+                  <li><strong>Gobierno dual</strong> · CFO + CTO comité semanal</li>
+                  <li><strong>Control de cambios</strong> · Cero alcance creep post-SOW</li>
+                  <li><strong>Risk register</strong> · Top 10 riesgos · Actualizado quincenal</li>
+                  <li><strong>QA por fase</strong> · Acta firmada antes de avanzar</li>
+                </ul>
+              </div>
+              <div class="os-layer-detail-card">
+                <div class="label-row">
+                  <span>APLICACIÓN</span>
+                  <span style="color: var(--accent);">100% de proyectos</span>
+                </div>
+                <h4>Stack 2026</h4>
+                <p>Framework aplicado en APE Plazas, Aplazo y 7 proyectos activos. Auditado externamente. Documentado en SOW como obligación operativa.</p>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); padding-top: 12px; border-top: 1px dashed var(--border); letter-spacing: 0.15em; text-transform: uppercase;">Stack vigente · v2026</div>
+              </div>
+            </div>
+
+            <div class="os-layer-detail">
+              <div class="os-layer-detail-num">
+                Capa
+                <span class="big">04</span>
+                Inteligencia
+              </div>
+              <div>
+                <h3>Agentes IA · <em>Donde la IP se vuelve operativa.</em></h3>
+                <p class="os-layer-detail-desc">
+                  Cuatro agentes IA especializados en operaciones críticas
+                  Oracle. Operativos en producción con clientes activos. Cada
+                  agente publicado con métricas y capacidad de uso anual.
+                </p>
+                <ul class="os-layer-detail-bullets">
+                  <li><strong>Conciliation Copilot</strong> · Reduce conciliación manual 80%</li>
+                  <li><strong>Anomaly Detector</strong> · Detecta breaks en cierre antes del corte</li>
+                  <li><strong>CFO Assistant</strong> · Reportería ejecutiva on-demand</li>
+                  <li><strong>Document Intelligence</strong> · Extracción + clasificación de docs fiscales</li>
+                </ul>
+              </div>
+              <div class="os-layer-detail-card">
+                <div class="label-row">
+                  <span>AGENTE DESTACADO</span>
+                  <span class="status-badge available">Operativo</span>
+                </div>
+                <h4>Conciliation Copilot</h4>
+                <p>Reduce tiempo de conciliación bancaria de 8h diarias a 90 min. Operativo en APE Plazas desde abril 2026. Aprendizaje continuo sobre data del cliente.</p>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); padding-top: 12px; border-top: 1px dashed var(--border); letter-spacing: 0.15em; text-transform: uppercase;">v2.4 · 24h uptime · 99.8%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FSO Catalog -->
+        <div class="case-block" style="padding: 96px 56px; background: var(--bg-panel);">
+          <div class="container" style="padding: 0;">
+            <div style="margin-bottom: 48px;">
+              <div class="label" style="margin-bottom: 16px;">Catálogo FSO Completo · 2026</div>
+              <h2 style="font-size: 40px; font-weight: 300;">Seis soluciones nombradas, <em>versionadas, validables.</em></h2>
+            </div>
+
+            <div style="border-top: 1px solid var(--border);">
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--border-strong); font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.2em; text-transform: uppercase;">
+                <span>FSO</span>
+                <span>Nombre</span>
+                <span>Descripción</span>
+                <span>Status</span>
+                <span>Versión</span>
+                <span>Validado</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-01</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">Rapid GL Close</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Cierre contable acelerado · 10-15d → 3-5d</span>
+                <span class="status-badge available">Available</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">v1.2</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.05em;">APE Plazas</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-02</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">Multi-Entity Retail Ops</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Operación multi-plaza · Consolidación multi-entidad</span>
+                <span class="status-badge available">Available</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">v1.0</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.05em;">APE Plazas</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-03</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">Fintech Controls Pack</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Compliance regulatorio · CNBV / CONDUSEF</span>
+                <span class="status-badge building">Building</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">v0.9</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.05em;">Aplazo</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-04</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">Legacy Migration Engine</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Migración SAP / EBS / JDE / PS · Zero-downtime</span>
+                <span class="status-badge building">Building</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">v0.7</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.05em;">En desarrollo</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border); font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-05</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">Logistics Multi-CD Ops</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Operación multi-CD multi-país · Trazabilidad fiscal</span>
+                <span class="status-badge concept">Concept</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">spec</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.05em;">Q3 2026</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 80px 1.5fr 2fr 120px 120px 140px; gap: 24px; padding: 24px 0; font-size: 14px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em;">FSO-06</span>
+                <span style="font-family: var(--serif); font-size: 19px; line-height: 1.2;">DR & Business Continuity</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Disaster Recovery · RPO/RTO contractuales</span>
+                <span class="status-badge concept">Concept</span>
+                <span style="font-family: var(--mono); font-size: 12px; color: var(--text-primary); letter-spacing: 0.05em;">spec</span>
+                <span style="font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.05em;">Q4 2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Manual técnico en stack<br />vertical de capas.</h5>
+          <p>
+            Cada capa colapsa a una sola columna: número Cormorant arriba,
+            descripción + bullets centro, card destacado al pie. La tabla
+            FSO completa se vuelve cards verticales con todos los 6 campos
+            como filas internas (FSO num, nombre, status arriba; descripción
+            + versión + validación en footer).
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Capas</span>
+              <div class="val">Stack · 1 col</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Num grande</span>
+              <div class="val">56px Cormorant</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">FSO grid</span>
+              <div class="val">Cards verticales</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Sticky</span>
+              <div class="val">Desactivado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto;">
+              <a href="#" style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.2em; text-transform: uppercase; display: inline-block; margin-bottom: 16px;">← Volver a home</a>
+              <div class="label" style="font-size: 9px;">FABRIC OS v2026</div>
+              <h2 style="font-weight: 300; line-height: 1.05;">El sistema operativo de <em>cada proyecto.</em></h2>
+              <p style="color: var(--text-secondary); font-style: italic; font-family: var(--serif); margin: 12px 0 20px; line-height: 1.5; font-size: 14px;">
+                Cuatro capas. Seis FSOs. IP que sobrevive al consultor.
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 24px;">
+                <div style="background: var(--bg-base); padding: 12px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">CAPAS</div>
+                  <div style="font-family: var(--serif); font-size: 24px; color: var(--accent); margin-top: 2px;">04</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 12px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">FSOs</div>
+                  <div style="font-family: var(--serif); font-size: 24px; color: var(--accent); margin-top: 2px;">06</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 12px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">AGENTES IA</div>
+                  <div style="font-family: var(--serif); font-size: 24px; color: var(--accent); margin-top: 2px;">04</div>
+                </div>
+                <div style="background: var(--bg-base); padding: 12px;">
+                  <div style="font-family: var(--mono); font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.25em;">VALIDADOS</div>
+                  <div style="font-family: var(--serif); font-size: 24px; color: var(--accent); margin-top: 2px;">02</div>
+                </div>
+              </div>
+
+              <div style="border-top: 1px solid var(--border); padding-top: 20px;">
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 8px;">CAPA 01 · BASE</div>
+                <div style="font-family: var(--serif); font-size: 56px; color: var(--accent); line-height: 0.9; margin-bottom: 12px; font-weight: 300;">01</div>
+                <div style="font-family: var(--serif); font-size: 22px; line-height: 1.15; margin-bottom: 10px;">Doctrina · <em style="font-style: italic; color: var(--accent);">El contrato es el producto.</em></div>
+                <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">Cinco compromisos que viven en cada SOW. No marketing — cláusulas con consecuencias jurídicas.</p>
+              </div>
+
+              <div style="border-top: 1px solid var(--border); margin-top: 24px; padding-top: 20px;">
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 8px;">CAPA 02 · IP</div>
+                <div style="font-family: var(--serif); font-size: 56px; color: var(--accent); line-height: 0.9; margin-bottom: 12px; font-weight: 300;">02</div>
+                <div style="font-family: var(--serif); font-size: 22px; line-height: 1.15; margin-bottom: 10px;">FSOs · <em style="font-style: italic; color: var(--accent);">Soluciones reusables.</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I03</span>
+      <span class="monogram">F</span>
+      <span>I04</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I04 · RESERVAR CONVERSACIÓN · CALENDLY INLINE
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i04" data-screen-label="I04 Reservar conversación">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Four</div>
+              <div class="plaque-name">Reservar Conversación</div>
+              <div class="plaque-tag">Modal · Calendly inline</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir <em>el slot escaso</em> en una reserva real —
+                sin perder la estética del sitio.
+              </p>
+              <p>
+                El click en "Reservar conversación" (S11) abre un modal con
+                Calendly embebido, <strong>pero re-estilizado para mantener
+                la paleta y tipografía boutique</strong>. A la izquierda:
+                contexto del evento (30 min con Julio, criterios, NDA). A la
+                derecha: grid de slots de día seleccionado. Sin redirección,
+                sin pop-out de Calendly.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Side panel (left)</div>
+                  <p>Avatar circular con "J" Cormorant italic. Título del evento, duración, modalidad. Lista de criterios con dots. Border-right vertical separa del grid.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Slot grid</div>
+                  <p>3 columnas × N filas. Cada slot es un button con hora mono. Hover: border-color → accent + color → accent. Selected: background sólido bronce + color base.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Slot tomado</div>
+                  <p>Texto con strikethrough, color tertiary, cursor not-allowed. Comunica honestamente la escasez sin esconder la realidad.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Date picker</div>
+                  <p>Bar arriba de slots con días siguientes (LUN 12 / MAR 13 / etc). Día activo destacado en bronce. Sin calendario completo — máximo 5 días visibles.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Confirmación</div>
+                  <p>Tras seleccionar slot, modal transiciona a vista de confirmación con form mínimo (nombre, empresa, email) + resumen del slot elegido.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Footer del modal</div>
+                  <p>Zona horaria visible ("America/Mexico_City"). NDA seal a la derecha. Comunica formalidad sin abrir disclaimer.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">Calendly re-skinned, no Calendly default.</p>
+              <ul class="improvements-list">
+                <li><strong>Side panel con avatar editorial</strong> — la conversación es con una persona específica, no con un agendamiento genérico.</li>
+                <li><strong>Slot grid 3 cols con hora mono</strong> — comunica precisión y selectividad. Cero "select preferred time" UX SaaS.</li>
+                <li><strong>Slots tomados visibles con strikethrough</strong> — honestidad operativa, no esconde la disponibilidad real.</li>
+                <li><strong>Day-picker minimalista</strong> de 5 días — el lector no debe escanear un calendario completo. Hay 4 slots/mes.</li>
+                <li><strong>NDA seal en footer</strong> — eleva el agendamiento de "demo call" a "executive briefing".</li>
+                <li><strong>Calendly re-skinned 100%</strong> — el modal nunca debe sentirse fuera de la estética FABRIC.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Sequoia Capital y a16z no usan Calendly con su skin default.
+                Lo embeben con CSS overrides para mantener la estética.
+                Stripe, Vercel y Linear hacen lo mismo. El <strong>compromiso
+                visual es total</strong> — ningún componente externo rompe la
+                continuidad del sitio. Aquí seguimos ese estándar: Calendly
+                presta el backend, FABRIC presta la fachada.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I04</span>
+          <span>·</span>
+          <span>Modal Calendly · Estilo FABRIC</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/office-hours</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage">
+          <div class="modal wide">
+            <div class="modal-head">
+              <div>
+                <div class="modal-eyebrow">FABRIC Office Hours · Junio 2026</div>
+                <div class="modal-title">Reservar <em>conversación 30 min.</em></div>
+              </div>
+              <button class="modal-close" type="button">×</button>
+            </div>
+
+            <div class="modal-body" style="padding: 32px 40px;">
+              <div class="cal-inline">
+                <div class="cal-side">
+                  <div class="cal-side-event">FABRIC Office Hours</div>
+                  <h4>Conversación ejecutiva con el fundador</h4>
+
+                  <div class="cal-side-meta">
+                    <div class="cal-side-meta-row">30 minutos · 1:1 video conference</div>
+                    <div class="cal-side-meta-row">Google Meet · enlace al confirmar</div>
+                    <div class="cal-side-meta-row">Idioma · ES o EN según preferencia</div>
+                    <div class="cal-side-meta-row">Bajo NDA mutuo · Conversación cerrada</div>
+                  </div>
+
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;">Criterios</div>
+                  <ul style="list-style: none; display: grid; gap: 8px; margin-bottom: 24px;">
+                    <li style="font-family: var(--mono); font-size: 11px; color: var(--text-secondary); padding-left: 14px; position: relative; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--accent);">·</span>USD 50M+ revenue</li>
+                    <li style="font-family: var(--mono); font-size: 11px; color: var(--text-secondary); padding-left: 14px; position: relative; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--accent);">·</span>CFO / CIO / CTO</li>
+                    <li style="font-family: var(--mono); font-size: 11px; color: var(--text-secondary); padding-left: 14px; position: relative; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--accent);">·</span>Iniciativa Oracle activa</li>
+                    <li style="font-family: var(--mono); font-size: 11px; color: var(--text-secondary); padding-left: 14px; position: relative; line-height: 1.55;"><span style="position: absolute; left: 0; color: var(--accent);">·</span>Plazo &lt; 12 meses</li>
+                  </ul>
+
+                  <div class="cal-side-host">
+                    <div class="cal-side-host-avatar">J</div>
+                    <div class="cal-side-host-info">
+                      <strong>Julio Alvarez</strong><br />
+                      Founder · FABRIC
+                    </div>
+                  </div>
+                </div>
+
+                <div class="cal-times">
+                  <h5>Selecciona día</h5>
+                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 24px;">
+                    <button style="background: transparent; border: 1px solid var(--border-strong); padding: 12px 8px; font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; text-align: center; line-height: 1.4;">
+                      LUN<br /><span style="font-family: var(--serif); font-size: 22px; color: var(--text-secondary); font-style: italic; display: block; margin-top: 4px;">12</span>
+                    </button>
+                    <button style="background: rgba(201,169,110,0.08); border: 1px solid var(--accent); padding: 12px 8px; font-family: var(--mono); font-size: 11px; color: var(--accent); cursor: pointer; text-align: center; line-height: 1.4;">
+                      JUE<br /><span style="font-family: var(--serif); font-size: 22px; color: var(--accent); font-style: italic; display: block; margin-top: 4px;">19</span>
+                    </button>
+                    <button style="background: transparent; border: 1px solid var(--border-strong); padding: 12px 8px; font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; text-align: center; line-height: 1.4;">
+                      VIE<br /><span style="font-family: var(--serif); font-size: 22px; color: var(--text-secondary); font-style: italic; display: block; margin-top: 4px;">26</span>
+                    </button>
+                    <button style="background: transparent; border: 1px solid var(--border); padding: 12px 8px; font-family: var(--mono); font-size: 11px; color: var(--text-quaternary); cursor: not-allowed; text-align: center; line-height: 1.4;">
+                      MAR<br /><span style="font-family: var(--serif); font-size: 22px; color: var(--text-quaternary); font-style: italic; display: block; margin-top: 4px; text-decoration: line-through;">30</span>
+                    </button>
+                    <button style="background: transparent; border: 1px solid var(--border-strong); padding: 12px 8px; font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; text-align: center; line-height: 1.4;">
+                      JUL<br /><span style="font-family: var(--serif); font-size: 22px; color: var(--text-secondary); font-style: italic; display: block; margin-top: 4px;">03</span>
+                    </button>
+                  </div>
+
+                  <h5 style="margin-top: 8px;">Selecciona hora · Jueves 19 Junio</h5>
+                  <div class="cal-slot-grid">
+                    <button class="cal-slot taken">10:00</button>
+                    <button class="cal-slot taken">10:30</button>
+                    <button class="cal-slot">11:00</button>
+                    <button class="cal-slot selected">11:30</button>
+                    <button class="cal-slot">12:00</button>
+                    <button class="cal-slot taken">12:30</button>
+                    <button class="cal-slot">15:00</button>
+                    <button class="cal-slot">15:30</button>
+                    <button class="cal-slot">16:00</button>
+                    <button class="cal-slot">16:30</button>
+                    <button class="cal-slot">17:00</button>
+                    <button class="cal-slot taken">17:30</button>
+                  </div>
+
+                  <div style="margin-top: 24px; padding: 16px 20px; background: var(--bg-deep); border: 1px solid var(--accent-deep); font-family: var(--mono); font-size: 11px; color: var(--text-secondary); letter-spacing: 0.05em; line-height: 1.6;">
+                    <strong style="color: var(--accent); display: block; margin-bottom: 4px; letter-spacing: 0.2em; text-transform: uppercase; font-size: 10px;">Slot seleccionado</strong>
+                    Jueves 19 de Junio · 11:30 — 12:00 CDMX
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <div class="modal-foot-meta">
+                Zona horaria · America/Mexico_City &nbsp; · &nbsp;
+                <span class="nda-seal" style="margin-left: 12px; font-size: 9px;">NDA mutuo</span>
+              </div>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Confirmar reserva →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Side panel arriba,<br />slots abajo.</h5>
+          <p>
+            En mobile el side panel y los slots se apilan. El side panel se
+            compacta (avatar + título + criterios en collapsable). El slot
+            grid mantiene 2 columnas. El day picker se vuelve scrollable
+            horizontal. CTA confirmar queda sticky abajo.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Layout</span>
+              <div class="val">Stack · panel → slots</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Slots</span>
+              <div class="val">2 cols · 12 visibles</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Day picker</span>
+              <div class="val">Scroll horizontal</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Confirmar</span>
+              <div class="val">Sticky bottom</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border); position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div>
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">OFFICE HOURS · JUN 2026</div>
+                  <div style="font-family: var(--serif); font-size: 20px; line-height: 1.15; margin-top: 4px;">Reservar <em style="color: var(--accent); font-style: italic;">30 min.</em></div>
+                </div>
+                <button style="width: 28px; height: 28px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 13px;">×</button>
+              </div>
+
+              <div style="padding: 16px;">
+                <div style="display: flex; gap: 10px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 16px;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-style: italic; color: var(--accent); font-size: 14px;">J</div>
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); line-height: 1.5;"><strong style="color: var(--text-primary); font-weight: 500;">Julio Alvarez</strong> · Founder</div>
+                </div>
+
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 10px;">SELECCIONA DÍA</div>
+                <div style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 4px;">
+                  <button style="background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; font-family: var(--mono); font-size: 10px; color: var(--text-secondary); text-align: center; min-width: 56px;">LUN<br /><span style="font-family: var(--serif); font-size: 18px; display: block; margin-top: 2px;">12</span></button>
+                  <button style="background: rgba(201,169,110,0.08); border: 1px solid var(--accent); padding: 8px 10px; font-family: var(--mono); font-size: 10px; color: var(--accent); text-align: center; min-width: 56px;">JUE<br /><span style="font-family: var(--serif); font-size: 18px; display: block; margin-top: 2px;">19</span></button>
+                  <button style="background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; font-family: var(--mono); font-size: 10px; color: var(--text-secondary); text-align: center; min-width: 56px;">VIE<br /><span style="font-family: var(--serif); font-size: 18px; display: block; margin-top: 2px;">26</span></button>
+                  <button style="background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; font-family: var(--mono); font-size: 10px; color: var(--text-secondary); text-align: center; min-width: 56px;">JUL<br /><span style="font-family: var(--serif); font-size: 18px; display: block; margin-top: 2px;">03</span></button>
+                </div>
+
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 10px;">JUE 19 · HORA</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                  <button class="cal-slot taken" style="padding: 10px;">10:00</button>
+                  <button class="cal-slot taken" style="padding: 10px;">10:30</button>
+                  <button class="cal-slot" style="padding: 10px;">11:00</button>
+                  <button class="cal-slot selected" style="padding: 10px;">11:30</button>
+                  <button class="cal-slot" style="padding: 10px;">12:00</button>
+                  <button class="cal-slot" style="padding: 10px;">15:00</button>
+                  <button class="cal-slot" style="padding: 10px;">15:30</button>
+                  <button class="cal-slot" style="padding: 10px;">16:00</button>
+                </div>
+
+                <div style="margin-top: 16px; padding: 12px; background: var(--bg-deep); border: 1px solid var(--accent-deep); font-family: var(--mono); font-size: 10px; color: var(--text-secondary); line-height: 1.5;">
+                  <strong style="color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; font-size: 9px; display: block; margin-bottom: 4px;">Slot</strong>
+                  Jue 19 · 11:30 CDMX
+                </div>
+              </div>
+
+              <div style="padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0;">
+                <a href="#" style="display: block; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Confirmar reserva →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I04</span>
+      <span class="monogram">F</span>
+      <span>I05</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I05 · INICIAR EVALUACIÓN · REFERENCIA CONTACTO
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i05" data-screen-label="I05 Contactar referencia">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Five</div>
+              <div class="plaque-name">Iniciar Evaluación</div>
+              <div class="plaque-tag">Modal · Solicitar referencia</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir el click <em>"iniciar evaluación"</em> en un
+                proceso de validación antes de dar acceso a la referencia.
+              </p>
+              <p>
+                Las referencias son el activo más caro de FABRIC (S12). El
+                click sobre una referencia no debe abrir email directo —
+                debe abrir un <strong>form de evaluación que captura contexto
+                del solicitante</strong> (empresa, cargo, motivo, plazo).
+                FABRIC valida el ajuste estratégico y luego hace la
+                introducción. El form pre-califica sin sentirse como
+                "lead capture".
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Eyebrow del modal</div>
+                  <p>Identifica explícitamente qué referencia se está solicitando ("Referencia 01 · CFO Inmobiliario"). El usuario sabe a quién va a hablar antes de llenar el form.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Form de 6 campos</div>
+                  <p>Nombre, cargo (select C-level), empresa, revenue range (select), motivo de conversación (textarea), email corporativo. Validación gmail/hotmail blocked.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Field con label mono</div>
+                  <p>Cada campo lleva label mono arriba en --accent + indicador (req). Input con border-strong default; focus → accent en 200ms. Placeholder en italic Cormorant.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Motivo (textarea)</div>
+                  <p>Único campo textarea. Placeholder editorial: "¿Por qué quieres hablar con esta referencia? Sé específico sobre tu situación Oracle." Filtra solicitudes genéricas.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Checkbox NDA</div>
+                  <p>Antes de submit, checkbox que confirma que la conversación es bajo NDA mutuo. Sin marcar, submit deshabilitado.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Proceso explicado</div>
+                  <p>Bloque al pie del form explica el proceso (FABRIC valida → introducción en 3 días hábiles). Comunica que NO es contacto inmediato.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">El form pre-califica sin sentirse SaaS.</p>
+              <ul class="improvements-list">
+                <li><strong>Eyebrow identifica la referencia</strong> — el usuario sabe a quién pide hablar antes del form. Sin sorpresas post-submit.</li>
+                <li><strong>Solo 6 campos</strong> — todos obligatorios. No hay "phone (opcional)". La selectividad empieza en la captura.</li>
+                <li><strong>Motivo como textarea editorial</strong> con placeholder específico — separa solicitudes genéricas de las serias.</li>
+                <li><strong>Validación de email corporativo</strong> — gmail/hotmail/yahoo bloqueados. Mensaje claro: "Solo email corporativo".</li>
+                <li><strong>Checkbox NDA explícito</strong> — el solicitante acepta términos antes de submit. No es legal fine print.</li>
+                <li><strong>Proceso visible al pie</strong> — el usuario sabe que la introducción toma 3 días hábiles. Cero "we'll get back to you ASAP".</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Los M&A advisors y los fondos VC manejan referencias así:
+                <strong>form corto con campos críticos + validación interna +
+                introducción explícita</strong>. Nunca se da contacto directo
+                de un partner / portfolio company sin validación. Aquí
+                replicamos esa lógica boutique en el digital. El form se
+                ve como un <em>letter of intent</em>, no como un
+                "contact us".
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I05</span>
+          <span>·</span>
+          <span>Modal sobre /#referencias</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/#referencias</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage">
+          <div class="modal">
+            <div class="modal-head">
+              <div>
+                <div class="modal-eyebrow">Referencia 01 · CFO Inmobiliario · MX</div>
+                <div class="modal-title">Solicitar <em>introducción.</em></div>
+              </div>
+              <button class="modal-close" type="button">×</button>
+            </div>
+
+            <div class="modal-body">
+              <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin-bottom: 32px; font-family: var(--mono); letter-spacing: 0.02em;">
+                FABRIC valida el ajuste estratégico antes de coordinar la
+                conversación. Tiempo típico de introducción: 3 días hábiles.
+              </p>
+
+              <div class="field-row">
+                <div class="field">
+                  <div class="field-label">Nombre completo <span class="req">Requerido</span></div>
+                  <input type="text" class="field-input" placeholder="Tu nombre" value="María Fernández de la Torre" />
+                </div>
+                <div class="field">
+                  <div class="field-label">Cargo <span class="req">C-level</span></div>
+                  <div class="select-wrap">
+                    <select class="field-input">
+                      <option>CFO</option>
+                      <option>CIO</option>
+                      <option>CTO</option>
+                      <option>Director Transformación</option>
+                      <option>CEO</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <div class="field-label">Empresa <span class="req">Requerido</span></div>
+                  <input type="text" class="field-input" placeholder="Nombre de tu empresa" />
+                </div>
+                <div class="field">
+                  <div class="field-label">Revenue anual <span class="req">Filtro mín</span></div>
+                  <div class="select-wrap">
+                    <select class="field-input">
+                      <option>USD 50M — 100M</option>
+                      <option>USD 100M — 250M</option>
+                      <option>USD 250M — 500M</option>
+                      <option>USD 500M+</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-label">Email corporativo <span class="req">Requerido</span></div>
+                <input type="email" class="field-input" placeholder="tu.email@empresa.com" />
+                <div class="field-hint">Gmail, Hotmail, Yahoo no aceptados · Solo dominio corporativo</div>
+              </div>
+
+              <div class="field">
+                <div class="field-label">Motivo de la conversación <span class="req">Requerido · 100 chars mín</span></div>
+                <textarea class="field-input" rows="4" style="resize: vertical; font-family: var(--sans);" placeholder="¿Por qué quieres hablar con esta referencia? Sé específico sobre tu situación Oracle, plazos y patrocinio ejecutivo."></textarea>
+              </div>
+
+              <div class="field" style="margin-top: 32px;">
+                <div class="field-checkbox">
+                  <div class="field-checkbox-mark checked"></div>
+                  <span>Acepto que esta conversación es bajo NDA mutuo. La identidad de la referencia es confidencial hasta la coordinación formal.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <div class="modal-foot-meta">Validación · 3 días hábiles</div>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Solicitar introducción →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Form full-bleed,<br />campos en single column.</h5>
+          <p>
+            En mobile el modal ocupa toda la pantalla. Los pares de campos
+            (nombre+cargo, empresa+revenue) se vuelven single column. El
+            textarea ocupa más altura. La info de proceso queda en el
+            header del form, no al pie. CTA sticky al final.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Modal</span>
+              <div class="val">Full-screen</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Field rows</span>
+              <div class="val">Single col</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Textarea</span>
+              <div class="val">6 filas mín</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Submit</span>
+              <div class="val">Sticky bottom</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border); position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div>
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">REF 01 · CFO INMOBILIARIO</div>
+                  <div style="font-family: var(--serif); font-size: 22px; line-height: 1.1; margin-top: 4px;">Solicitar <em style="color: var(--accent); font-style: italic;">introducción.</em></div>
+                </div>
+                <button style="width: 28px; height: 28px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 13px;">×</button>
+              </div>
+
+              <div style="padding: 16px;">
+                <p style="font-family: var(--mono); font-size: 11px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 20px;">FABRIC valida ajuste antes de coordinar · 3 días hábiles</p>
+
+                <div style="display: grid; gap: 14px;">
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Nombre</div>
+                    <input type="text" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px; font-weight: 300;" value="María Fernández" />
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Cargo</div>
+                    <select style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;">
+                      <option>CFO</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Empresa</div>
+                    <input type="text" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;" placeholder="Tu empresa" />
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Email corporativo</div>
+                    <input type="email" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;" placeholder="email@empresa.com" />
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Motivo</div>
+                    <textarea rows="5" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px; font-weight: 300; resize: vertical;" placeholder="Sé específico sobre tu situación Oracle"></textarea>
+                  </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px; align-items: flex-start; font-family: var(--mono); font-size: 10px; color: var(--text-secondary); line-height: 1.55;">
+                  <div style="width: 14px; height: 14px; border: 1px solid var(--accent); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 10px; margin-top: 2px;">✓</div>
+                  Acepto NDA mutuo
+                </div>
+              </div>
+
+              <div style="padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0;">
+                <a href="#" style="display: block; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Solicitar introducción →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I05</span>
+      <span class="monogram">F</span>
+      <span>I06</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I06 · DESCARGAR PAPER · GATING FORM
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i06" data-screen-label="I06 Descargar paper">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Six</div>
+              <div class="plaque-name">Descargar Paper</div>
+              <div class="plaque-tag">Modal · Gating + envío email</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Gatear el paper sin <em>sentirse como SaaS</em> —
+                form corto, validación corporativa, envío por email.
+              </p>
+              <p>
+                El gating de papers tiene un propósito doble: (a) capturar
+                lead corporativo de calidad, (b) crear fricción ligera que
+                separe lectores serios de cazadores de PDFs gratis. La <strong>experiencia
+                debe sentirse como inscribirse a un journal académico</strong>,
+                no como descargar un e-book de marketing. Form corto, sin
+                hype, envío por email confirmado.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Cover del paper</div>
+                  <p>Mini preview a la izquierda: tag, título, abstract italic, mini-TOC y meta. Espejo del card de S14 pero compacto. Refuerza qué se descarga.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Form 3 campos</div>
+                  <p>Email corporativo, empresa, cargo. Más corto que I05 — el paper es entry-level. Validación: gmail/hotmail bloqueados con mensaje claro.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Envío por email</div>
+                  <p>El paper NO descarga directo. Llega como adjunto al email validado. Comunica que el lead va a un funnel post-descarga (newsletter / outreach).</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Checkbox términos</div>
+                  <p>Solo uno: "acepto recibir comunicaciones FABRIC". Sin "marketing emails", sin "promotional". Honest opt-in.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Side panel</div>
+                  <p>Modal usa grid 2 cols en desktop: cover paper + form. Permite mostrar título completo + abstract sin scroll dentro del modal.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Post-submit</div>
+                  <p>Transición a estado success (I12): "Paper enviado a tu email · Llega en menos de 2 min". Sin redirección. CTA "Explorar otros papers" abajo.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">El gating se siente como inscripción, no como captura.</p>
+              <ul class="improvements-list">
+                <li><strong>Modal en grid 2 cols</strong> — paper cover izq + form der. El usuario ve qué descarga mientras llena el form.</li>
+                <li><strong>Solo 3 campos</strong> — email, empresa, cargo. Ningún otro dato. La fricción es ligera deliberadamente.</li>
+                <li><strong>Envío por email (no descarga directa)</strong> — establece pipeline post-descarga sin sentirse engañoso.</li>
+                <li><strong>Validación de dominio corporativo</strong> — gmail/hotmail/yahoo bloqueados con mensaje editorial, no técnico.</li>
+                <li><strong>Mini-TOC visible</strong> — el lector decide si la inversión de 30 segundos vale la pena antes del submit.</li>
+                <li><strong>Estado success boutique</strong> — sin "Thanks!", sin emoji. Mark serif italic + mensaje editorial.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Stripe Press, First Round Review y a16z gatean papers con
+                <strong>formularios cortos, envío por email y aceptación
+                explícita</strong>. La descarga directa de PDF gratuito es
+                marca de marketing B2B genérico. El gating editorial es
+                marca de publicación seria. Aquí seguimos la línea de
+                publicación seria.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I06</span>
+          <span>·</span>
+          <span>Modal sobre /#investigacion</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/#investigacion</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage">
+          <div class="modal wide">
+            <div class="modal-head">
+              <div>
+                <div class="modal-eyebrow">Paper 01 · Research Note</div>
+                <div class="modal-title">Descargar <em>investigación.</em></div>
+              </div>
+              <button class="modal-close" type="button">×</button>
+            </div>
+
+            <div class="modal-body" style="padding: 32px 40px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px;">
+                <!-- Paper cover -->
+                <div style="background: var(--bg-panel); border: 1px solid var(--border); padding: 32px; position: relative;">
+                  <div style="position: absolute; top: 0; left: 0; width: 56px; height: 1px; background: var(--accent);"></div>
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.3em; margin-bottom: 6px;">PAPER 01</div>
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 24px;">Research Note · Mercado</div>
+
+                  <h4 style="font-family: var(--serif); font-size: 24px; line-height: 1.2; margin-bottom: 20px; font-weight: 400;">Por qué fallan los go-live de Oracle Fusion</h4>
+
+                  <p style="font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.6; padding-left: 16px; border-left: 1px solid var(--accent-deep); margin-bottom: 24px;">
+                    Análisis de 47 implementaciones LATAM. Tres patrones recurrentes
+                    de fracaso, causas raíz documentadas, modelo alternativo de entrega.
+                  </p>
+
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;">Tabla de contenidos</div>
+                  <ul style="list-style: none; font-family: var(--mono); font-size: 12px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px;">
+                    <li style="padding-left: 28px; position: relative;"><span style="position: absolute; left: 0; color: var(--accent);">01 ·</span> El patrón "abandono post go-live"</li>
+                    <li style="padding-left: 28px; position: relative;"><span style="position: absolute; left: 0; color: var(--accent);">02 ·</span> Los tres síntomas iniciales</li>
+                    <li style="padding-left: 28px; position: relative;"><span style="position: absolute; left: 0; color: var(--accent);">03 ·</span> Modelo de entrega FABRIC</li>
+                  </ul>
+
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase;">
+                    <div><strong style="color: var(--accent); font-family: var(--serif); font-style: italic; display: block; font-size: 16px; font-weight: 400;">8–10pp</strong>Páginas</div>
+                    <div><strong style="color: var(--accent); font-family: var(--serif); font-style: italic; display: block; font-size: 16px; font-weight: 400;">15min</strong>Lectura</div>
+                    <div><strong style="color: var(--accent); font-family: var(--serif); font-style: italic; display: block; font-size: 16px; font-weight: 400;">PDF · ES</strong>Formato</div>
+                    <div><strong style="color: var(--accent); font-family: var(--serif); font-style: italic; display: block; font-size: 16px; font-weight: 400;">May 2026</strong>Publicado</div>
+                  </div>
+                </div>
+
+                <!-- Form -->
+                <div>
+                  <div style="font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 24px;">Registro Corporativo</div>
+
+                  <div class="field">
+                    <div class="field-label">Email corporativo <span class="req">Requerido</span></div>
+                    <input type="email" class="field-input has-value" value="m.fernandez@grupoape.mx" />
+                    <div class="field-hint success">Dominio corporativo verificado</div>
+                  </div>
+
+                  <div class="field">
+                    <div class="field-label">Empresa <span class="req">Requerido</span></div>
+                    <input type="text" class="field-input has-value" value="Grupo APE Plazas" />
+                  </div>
+
+                  <div class="field">
+                    <div class="field-label">Cargo <span class="req">Requerido</span></div>
+                    <div class="select-wrap">
+                      <select class="field-input">
+                        <option>CFO</option>
+                        <option>CIO</option>
+                        <option>CTO</option>
+                        <option>Director Transformación</option>
+                        <option>Controller / VP Finance</option>
+                        <option>Otro</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="field" style="margin-top: 32px;">
+                    <div class="field-checkbox">
+                      <div class="field-checkbox-mark checked"></div>
+                      <span>Acepto recibir comunicaciones editoriales de FABRIC (papers nuevos, benchmark anual). Cero spam, cero promociones — solo investigación.</span>
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 24px; padding: 16px 20px; background: var(--bg-deep); border: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-secondary); letter-spacing: 0.02em; line-height: 1.6;">
+                    <strong style="color: var(--accent); display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;">Cómo lo recibes</strong>
+                    El PDF llega como adjunto al email indicado en menos de 2 minutos · No requiere registro de cuenta.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <div class="modal-foot-meta">3 papers disponibles · Cero spam</div>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Enviar paper a mi email →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Cover arriba, form abajo<br />en stack vertical.</h5>
+          <p>
+            En mobile el grid 2 cols colapsa. El cover del paper queda al inicio
+            compactado (sin TOC visible si no hay scroll). El form ocupa el
+            resto del viewport. Submit sticky al pie. Los 3 campos siempre
+            visibles sin scroll interno.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Modal</span>
+              <div class="val">Full-screen stack</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Cover</span>
+              <div class="val">Top · TOC oculto</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Form</span>
+              <div class="val">3 campos visibles</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Submit</span>
+              <div class="val">Sticky bottom</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border); position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div>
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">PAPER 01 · RESEARCH NOTE</div>
+                  <div style="font-family: var(--serif); font-size: 22px; line-height: 1.1; margin-top: 4px;">Descargar <em style="color: var(--accent); font-style: italic;">investigación.</em></div>
+                </div>
+                <button style="width: 28px; height: 28px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 13px;">×</button>
+              </div>
+
+              <div style="padding: 16px;">
+                <div style="background: var(--bg-panel); border: 1px solid var(--border); padding: 16px; margin-bottom: 20px; position: relative;">
+                  <div style="position: absolute; top: 0; left: 0; width: 40px; height: 1px; background: var(--accent);"></div>
+                  <div style="font-family: var(--serif); font-size: 17px; line-height: 1.2; margin-bottom: 8px;">Por qué fallan los go-live de Oracle Fusion</div>
+                  <div style="font-size: 11px; color: var(--text-secondary); font-style: italic; line-height: 1.5; padding-left: 12px; border-left: 1px solid var(--accent-deep); margin-bottom: 12px;">Análisis de 47 implementaciones LATAM.</div>
+                  <div style="display: flex; gap: 16px; font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; padding-top: 10px; border-top: 1px dashed var(--border);">
+                    <span><strong style="color: var(--accent);">8–10pp</strong> · 15min · PDF</span>
+                  </div>
+                </div>
+
+                <div style="display: grid; gap: 14px;">
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Email corporativo</div>
+                    <input type="email" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--accent-deep); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;" value="m.fernandez@grupoape.mx" />
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); margin-top: 4px;">· Dominio verificado</div>
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Empresa</div>
+                    <input type="text" style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;" value="Grupo APE Plazas" />
+                  </div>
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 6px;">Cargo</div>
+                    <select style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; font-family: var(--sans); font-size: 13px;">
+                      <option>CFO</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; font-family: var(--mono); font-size: 10px; color: var(--text-secondary); line-height: 1.55;">
+                  <div style="width: 14px; height: 14px; border: 1px solid var(--accent); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 10px; margin-top: 2px;">✓</div>
+                  Acepto comunicaciones editoriales · Cero spam
+                </div>
+              </div>
+
+              <div style="padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0;">
+                <a href="#" style="display: block; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Enviar a mi email →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I06</span>
+      <span class="monogram">F</span>
+      <span>I07</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I07 · WAIT LIST · WIZARD 10 PREGUNTAS
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i07" data-screen-label="I07 Wait List wizard">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Seven</div>
+              <div class="plaque-name">Wait List</div>
+              <div class="plaque-tag">Wizard · 10 preguntas</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir <em>"solicitar lugar"</em> en un wizard editorial
+                que pre-califica antes de capturar.
+              </p>
+              <p>
+                El wait list NO es un form de contacto. Es la entrada al
+                proceso de admisión de FABRIC. Diez preguntas secuenciales,
+                <strong>una por pantalla</strong>, que evalúan ajuste estratégico
+                antes de coleccionar el email. Si no califica, el wizard
+                redirige a contenido alternativo (papers, office hours).
+                La experiencia debe sentirse como solicitar entrada a una
+                <strong>cohort exclusiva</strong>, no a una lista de espera SaaS.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Progress bar mono</div>
+                  <p>Top del wizard. "Pregunta 03 / 10" en mono + barra fina con fill bronce. Sin porcentajes — el lector ve dónde está en serie finita.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Pregunta como título</div>
+                  <p>Cormorant 30px con énfasis italic en palabras críticas. Una pregunta = un H1. Espacio respira, sin distracción.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Opciones como cards</div>
+                  <p>Cada opción es un button de altura amplia con label sans 15px + numeración mono lateral. Selected: border accent + tick bronce.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Help text</div>
+                  <p>Bajo la pregunta, contexto en mono pequeño ("Tu honestidad acelera el proceso"). Comunica que el wizard no es prueba, es triage.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Navegación</div>
+                  <p>"← Atrás" texto mono izq + "Siguiente →" botón primary der. Atrás disponible siempre excepto en pregunta 01. Sin shortcuts.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Pregunta final</div>
+                  <p>Última pantalla captura email + nombre + empresa + teléfono opcional. Ya tiene los datos cualitativos — esto es coda, no captura.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">Wizard editorial · pre-cualificación antes de captura.</p>
+              <ul class="improvements-list">
+                <li><strong>Una pregunta por pantalla</strong> — Typeform-style sin sentirse Typeform. La densidad ejecutiva queda en el contenido, no en la pantalla.</li>
+                <li><strong>10 preguntas (no 12)</strong> — Diagnóstico es 12, Wait list es 10. Diferenciación deliberada: Wait list es de admisión, no de evaluación técnica.</li>
+                <li><strong>Pregunta 01 sobre tipo de iniciativa</strong> (rescate/migración/greenfield/evaluación) — segmenta desde la primera pantalla.</li>
+                <li><strong>Pregunta sobre patrocinio</strong> antes que sobre presupuesto — el patrocinio es disqualifier más común que el budget.</li>
+                <li><strong>Pregunta final coleccionando datos</strong> — al final, no al inicio. Reduce abandono y refuerza percepción de proceso.</li>
+                <li><strong>Si no califica</strong> (revenue &lt; 50M, industria fuera): wizard redirige a papers / office hours en lugar de capturar.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Y Combinator, Sequoia Scout y Anthropic Safety hiring usan
+                wizards de admisión con <strong>preguntas cualitativas
+                primero, datos de contacto al final</strong>. La fricción
+                pre-captura es marca de cohort selectiva. Aquí adoptamos esa
+                estructura: el wait list es <em>application</em>, no
+                <em>contact form</em>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I07</span>
+          <span>·</span>
+          <span>Wizard · /aplicar · Pregunta 03 / 10</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/aplicar</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage" style="min-height: 760px;">
+          <div class="modal" style="width: 720px;">
+            <div class="modal-head">
+              <div style="width: 100%;">
+                <div class="modal-eyebrow">FABRIC · Wait List Application · Q3 2026</div>
+                <div class="wizard-progress" style="margin-top: 16px;">
+                  <span class="wizard-step-count">03</span>
+                  <div class="wizard-track"><div class="wizard-fill" style="width: 30%;"></div></div>
+                  <span>10</span>
+                </div>
+              </div>
+              <button class="modal-close" type="button">×</button>
+            </div>
+
+            <div class="modal-body" style="padding: 48px 56px;">
+              <div class="wizard-slide">
+                <div class="wizard-q-num">Pregunta 03 · Patrocinio Ejecutivo</div>
+                <div class="wizard-question">
+                  ¿Tienes <em>patrocinio ejecutivo confirmado</em> para esta iniciativa Oracle?
+                </div>
+                <div class="wizard-help">
+                  · Sin patrocinio C-level, FABRIC no abre engagement. Tu honestidad acelera el triage.
+                </div>
+
+                <div class="field-options" style="margin-top: 12px;">
+                  <div class="field-option">
+                    <span>CFO + CTO firmando juntos</span>
+                    <span class="field-option-num">A</span>
+                  </div>
+                  <div class="field-option selected">
+                    <span>CFO firmando, CTO involucrado</span>
+                    <span class="field-option-num">B</span>
+                  </div>
+                  <div class="field-option">
+                    <span>Solo IT / un C-level</span>
+                    <span class="field-option-num">C</span>
+                  </div>
+                  <div class="field-option">
+                    <span>Sin patrocinio definido aún</span>
+                    <span class="field-option-num">D</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <span class="wizard-back">Atrás</span>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Siguiente →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Wizard full-bleed,<br />una pregunta por pantalla.</h5>
+          <p>
+            Wizard idéntico estructuralmente. Progress bar arriba. Pregunta
+            grande Cormorant. Options en stack vertical con altura amplia
+            (60px+) para hit target táctil. Navegación con "Atrás" texto
+            izquierda + botón siguiente full-width sticky abajo.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Layout</span>
+              <div class="val">Full-screen wizard</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Pregunta</span>
+              <div class="val">22px Cormorant</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Options</span>
+              <div class="val">Stack · 56px alto</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Submit</span>
+              <div class="val">Sticky · full width</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">WAIT LIST · Q3 2026</div>
+                  <button style="width: 24px; height: 24px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 12px;">×</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--text-tertiary);">
+                  <span style="color: var(--accent);">03</span>
+                  <div style="flex: 1; height: 1px; background: var(--border); position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 30%; background: var(--accent);"></div>
+                  </div>
+                  <span>10</span>
+                </div>
+              </div>
+
+              <div style="padding: 24px 16px;">
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 12px;">PREGUNTA 03 · PATROCINIO</div>
+                <div style="font-family: var(--serif); font-size: 22px; line-height: 1.2; font-weight: 300; margin-bottom: 16px;">
+                  ¿Tienes <em style="color: var(--accent); font-style: italic;">patrocinio ejecutivo</em> confirmado?
+                </div>
+                <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 20px;">
+                  · Sin C-level, FABRIC no abre engagement
+                </div>
+
+                <div style="display: grid; gap: 8px;">
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <span>CFO + CTO firmando juntos</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.15em;">A</span>
+                  </div>
+                  <div style="background: rgba(201,169,110,0.05); border: 1px solid var(--accent); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <span style="color: var(--text-primary);">✓ CFO firmando, CTO involucrado</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.15em;">B</span>
+                  </div>
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <span>Solo IT / un C-level</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.15em;">C</span>
+                  </div>
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                    <span>Sin patrocinio definido</span>
+                    <span style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.15em;">D</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding: 14px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0; display: flex; gap: 12px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.15em; text-transform: uppercase;">← Atrás</span>
+                <a href="#" style="flex: 1; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Siguiente →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I07</span>
+      <span class="monogram">F</span>
+      <span>I08</span>
+    </div>
+  </article>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       I08 · DIAGNÓSTICO ORACLE · WIZARD 12 PREGUNTAS
+       ══════════════════════════════════════════════════════════════ -->
+  <article class="section-block" id="i08" data-screen-label="I08 Diagnóstico Oracle">
+    <div class="section-opener">
+      <div class="container-wide">
+        <div class="section-opener-grid">
+          <aside>
+            <div class="plaque">
+              <div class="plaque-id">Interacción · Eight</div>
+              <div class="plaque-name">Diagnóstico Oracle</div>
+              <div class="plaque-tag">Wizard · 12 preguntas · Lead magnet</div>
+            </div>
+          </aside>
+
+          <div class="memoria">
+            <div class="memoria-section">
+              <h5>Propósito</h5>
+              <p class="lede">
+                Convertir <em>la duda operativa</em> en un score de severidad
+                cuantificable — y un plan de remediación auditable.
+              </p>
+              <p>
+                El Diagnóstico Oracle (S05 → /diagnostico) es <strong>el lead
+                magnet más sofisticado del sitio</strong>: doce preguntas
+                técnicas que generan un score interno (bajo / medio / alto /
+                crítico), y disparan respuesta humana de un consultor senior
+                en 5 días hábiles. La experiencia del wizard debe sentirse
+                como <strong>medical triage ejecutivo</strong>, no como un
+                quiz online.
+              </p>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Comportamiento e Interacción</h5>
+              <div class="behavior-grid">
+                <div class="behavior-item">
+                  <div class="trig">Categorías visibles</div>
+                  <p>Bajo el progress bar, micro-tags de categoría: "Implementación · Operación · Adopción · Contractual · Contacto". Comunica las dimensiones evaluadas.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Pregunta técnica</div>
+                  <p>Las 12 preguntas son específicas: tiempo cierre, # reportes manuales, % adopción, # incidencias. Cero opiniones — solo hechos verificables.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Opciones cuantitativas</div>
+                  <p>Cada pregunta con 4 opciones que son rangos (ej. "Menos de 5 días / 5-10 / 10-15 / Más de 15"). Sin "varía" — el lector elige el rango más cercano.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Score side-panel</div>
+                  <p>En pregunta 06+, side panel derecho muestra "Severidad acumulada · ALTA" con dots de patrón. El usuario ve su propio diagnóstico en tiempo real.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Pregunta industria</div>
+                  <p>Pregunta 09 sobre industria con 4 opciones (Servicios Financieros, Inmobiliario, Logística, Otro). Si "Otro", flag interno: industria fuera de focal.</p>
+                </div>
+                <div class="behavior-item">
+                  <div class="trig">Datos contacto</div>
+                  <p>Pregunta 12: nombre, cargo (validado C-level), empresa, email corporativo, teléfono opcional. Submit envía a backend + email auto-respuesta.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="improvements">
+              <h5 style="font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">Decisiones de Diseño</h5>
+              <p style="font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.05em;">Diferencia vs I07 (Wait List).</p>
+              <ul class="improvements-list">
+                <li><strong>Side panel con severidad acumulada</strong> en pregunta 06+ — el usuario ve cuán crítico es su escenario mientras avanza. Genera urgencia honesta.</li>
+                <li><strong>12 preguntas técnicas</strong> (vs 10 cualitativas de Wait List) — el diagnóstico evalúa estado operativo, no ajuste estratégico.</li>
+                <li><strong>Categorías visibles</strong> arriba del progress — el usuario sabe qué dimensiones se evalúan.</li>
+                <li><strong>Sub-help editorial</strong> ("Si no estás seguro, pregunta a tu controller") — comunica que la información debe ser real, no especulativa.</li>
+                <li><strong>Opciones siempre cuantitativas</strong> — ranges, conteos, porcentajes. Cero opciones tipo "todo bien / algunas dudas / mal".</li>
+                <li><strong>Respuesta humana en 5 días hábiles</strong> visible en el footer — comunica que el diagnóstico no es automatizado, lo lee un consultor.</li>
+              </ul>
+            </div>
+
+            <div class="memoria-section">
+              <h5>Justificación Boutique</h5>
+              <p>
+                Los <em>medical questionnaires</em> de Mayo Clinic, los
+                <em>assessment tools</em> de McKinsey Digital y los
+                <em>readiness scores</em> de Gartner usan la misma estructura:
+                <strong>preguntas técnicas cuantificables, score visible
+                durante el flow, respuesta humana al cierre</strong>. Aquí
+                replicamos exactamente eso. El diagnóstico se siente como
+                un assessment profesional, no como una calculadora de
+                marketing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-header">
+        <div class="showcase-header-left">
+          <span class="showcase-tag">Maqueta · I08</span>
+          <span>·</span>
+          <span>Wizard · /diagnostico · Pregunta 06 / 12</span>
+        </div>
+        <div class="showcase-header-right">
+          <span class="showcase-dot"></span>
+          <span>Para review · 19.05.2026</span>
+        </div>
+      </div>
+
+      <div class="mockup-desktop">
+        <div class="mockup-chrome">
+          <div class="chrome-dots"><span class="chrome-dot"></span><span class="chrome-dot"></span><span class="chrome-dot"></span></div>
+          <div class="chrome-url">fabricsoft.com.mx<span class="accent">/diagnostico</span></div>
+          <div class="chrome-spacer"></div>
+        </div>
+
+        <div class="modal-stage" style="min-height: 800px;">
+          <div class="modal wide">
+            <div class="modal-head">
+              <div style="width: 100%;">
+                <div class="modal-eyebrow">Diagnóstico Oracle Fusion Rescue · Confidencial</div>
+                <div class="wizard-progress" style="margin-top: 16px; margin-bottom: 12px;">
+                  <span class="wizard-step-count">06</span>
+                  <div class="wizard-track"><div class="wizard-fill" style="width: 50%;"></div></div>
+                  <span>12</span>
+                </div>
+                <div style="display: flex; gap: 16px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-tertiary);">
+                  <span style="color: var(--accent);">Implementación ✓</span>
+                  <span style="color: var(--accent);">Operación ✓</span>
+                  <span style="color: var(--accent); font-weight: 500;">Adopción</span>
+                  <span>Contractual</span>
+                  <span>Industria</span>
+                  <span>Contacto</span>
+                </div>
+              </div>
+              <button class="modal-close" type="button">×</button>
+            </div>
+
+            <div class="modal-body" style="padding: 40px 48px;">
+              <div style="display: grid; grid-template-columns: 1fr 220px; gap: 48px; align-items: start;">
+                <div class="wizard-slide">
+                  <div class="wizard-q-num">Pregunta 06 · Estado de la consultora original</div>
+                  <div class="wizard-question">
+                    ¿Cuál es el estado actual de <em>la consultora</em> que implementó tu Fusion?
+                  </div>
+                  <div class="wizard-help">
+                    · Si no estás seguro, pregunta a tu CIO o controller. Tu honestidad acelera el diagnóstico.
+                  </div>
+
+                  <div class="field-options" style="margin-top: 12px;">
+                    <div class="field-option">
+                      <div>
+                        <div>Sigue activa con soporte completo</div>
+                        <small style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em;">Equipo dedicado · SLA vigente</small>
+                      </div>
+                      <span class="field-option-num">A</span>
+                    </div>
+                    <div class="field-option">
+                      <div>
+                        <div>Soporte limitado · respuesta lenta</div>
+                        <small style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em;">SLA degradado · equipo reducido</small>
+                      </div>
+                      <span class="field-option-num">B</span>
+                    </div>
+                    <div class="field-option selected">
+                      <div>
+                        <div>Prácticamente no responde</div>
+                        <small style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em;">Tickets sin atención · sin escalamiento</small>
+                      </div>
+                      <span class="field-option-num">C</span>
+                    </div>
+                    <div class="field-option">
+                      <div>
+                        <div>No aplica · implementación interna</div>
+                        <small style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em;">Sin consultora externa</small>
+                      </div>
+                      <span class="field-option-num">D</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Score panel -->
+                <aside style="background: var(--bg-panel); border: 1px solid var(--border); padding: 24px; position: sticky; top: 0;">
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 12px;">Severidad acumulada</div>
+                  <div style="font-family: var(--serif); font-size: 32px; color: var(--danger); line-height: 1; font-weight: 400;">ALTA</div>
+                  <div style="font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.1em; margin-top: 6px; text-transform: uppercase;">5 / 6 preguntas críticas</div>
+
+                  <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;">Patrón detectado</div>
+                    <div style="font-family: var(--serif); font-size: 16px; line-height: 1.3; color: var(--text-primary); font-style: italic;">Abandono post go-live</div>
+                    <p style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); line-height: 1.6; margin-top: 8px;">Cierre &gt; 15d, reportes manuales activos, baja adopción.</p>
+                  </div>
+
+                  <div style="margin-top: 16px; padding: 12px; background: rgba(184,84,80,0.08); border: 1px solid rgba(184,84,80,0.3); font-family: var(--mono); font-size: 10px; color: var(--danger); letter-spacing: 0.05em; line-height: 1.55;">
+                    Tu situación califica para rescate prioritario.
+                  </div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <span class="wizard-back">Atrás</span>
+              <div class="modal-foot-meta">Respuesta humana · 5 días hábiles</div>
+              <a href="#" class="btn-primary" style="padding: 14px 28px;">Siguiente →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-pair">
+        <div class="pair-caption">
+          <div class="label">Companion · Mobile</div>
+          <h5>Wizard idéntico,<br />score panel debajo.</h5>
+          <p>
+            En mobile el grid 2 cols colapsa. El score panel se mueve abajo de
+            la pregunta (después de seleccionar opción). En pregunta 06+ el
+            score aparece como tarjeta inline antes del CTA siguiente. Permanece
+            visible durante toda la sesión.
+          </p>
+
+          <div class="pair-caption-grid">
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Categorías</span>
+              <div class="val">Scroll horizontal</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Score</span>
+              <div class="val">Tarjeta inline</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Options</span>
+              <div class="val">Stack 56px</div>
+            </div>
+            <div class="pair-caption-cell">
+              <span class="eyebrow">Sub-info</span>
+              <div class="val">Toggle por tap</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="iphone">
+          <div class="iphone-screen">
+            <div class="iphone-status">
+              <span>9:41</span>
+              <div class="iphone-status-icons"><span class="signal"></span><span class="battery"></span></div>
+            </div>
+            <div class="iphone-content" style="background: var(--bg-base); overflow-y: auto; padding: 0;">
+              <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 32px; background: var(--accent);"></div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em;">DIAGNÓSTICO ORACLE</div>
+                  <button style="width: 24px; height: 24px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); font-family: var(--mono); font-size: 12px;">×</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--text-tertiary);">
+                  <span style="color: var(--accent);">06</span>
+                  <div style="flex: 1; height: 1px; background: var(--border); position: relative;">
+                    <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 50%; background: var(--accent);"></div>
+                  </div>
+                  <span>12</span>
+                </div>
+              </div>
+
+              <div style="padding: 20px 16px;">
+                <div style="font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 0.25em; margin-bottom: 10px;">PREGUNTA 06 · ADOPCIÓN</div>
+                <div style="font-family: var(--serif); font-size: 20px; line-height: 1.2; font-weight: 300; margin-bottom: 12px;">
+                  Estado de <em style="color: var(--accent); font-style: italic;">la consultora</em> que implementó tu Fusion
+                </div>
+
+                <div style="display: grid; gap: 6px;">
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 12px 14px; font-size: 12px;">
+                    <div>Sigue activa con soporte completo</div>
+                    <small style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); display: block; margin-top: 2px;">SLA vigente</small>
+                  </div>
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 12px 14px; font-size: 12px;">
+                    <div>Soporte limitado</div>
+                  </div>
+                  <div style="background: rgba(201,169,110,0.05); border: 1px solid var(--accent); padding: 12px 14px; font-size: 12px; color: var(--text-primary);">
+                    <div>✓ No responde</div>
+                    <small style="font-family: var(--mono); font-size: 9px; color: var(--text-secondary); display: block; margin-top: 2px;">Tickets sin atención</small>
+                  </div>
+                  <div style="background: var(--bg-deep); border: 1px solid var(--border-strong); padding: 12px 14px; font-size: 12px;">
+                    <div>No aplica · interna</div>
+                  </div>
+                </div>
+
+                <!-- Score inline -->
+                <div style="margin-top: 20px; padding: 14px 16px; background: var(--bg-panel); border: 1px solid var(--border); display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;">
+                  <div>
+                    <div style="font-family: var(--mono); font-size: 8px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px;">SEVERIDAD</div>
+                    <div style="font-family: var(--serif); font-size: 22px; color: var(--danger); font-weight: 400; line-height: 1;">ALTA</div>
+                    <div style="font-family: var(--mono); font-size: 9px; color: var(--text-tertiary); margin-top: 4px; letter-spacing: 0.1em; text-transform: uppercase;">5/6 críticas</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-family: var(--mono); font-size: 8px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px;">PATRÓN</div>
+                    <div style="font-family: var(--serif); font-style: italic; font-size: 13px; line-height: 1.2;">Abandono<br />post go-live</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-deep); position: sticky; bottom: 0; display: flex; gap: 12px; align-items: center;">
+                <span style="font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.15em; text-transform: uppercase;">← Atrás</span>
+                <a href="#" style="flex: 1; text-align: center; padding: 12px; background: var(--accent); color: var(--bg-base); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;">Siguiente →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-ornament">
+      <span>Fin I08</span>
+      <span class="monogram">F</span>
+      <span>I09</span>
+    </div>
+  </article>
+
+  <div id="dossier-continued"></div>
+
+  <script>
+    (function () {
+      const fill = document.getElementById('progressFill');
+      const pct = document.getElementById('progressPct');
+      function update() {
+        const h = document.documentElement;
+        const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+        const v = Math.max(0, Math.min(1, scrolled));
+        if (fill) fill.style.width = (v * 100) + '%';
+        if (pct) pct.textContent = Math.round(v * 100) + '%';
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,302 @@
+% !TeX program = xelatex
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{fvextra}
+\setmainfont{TeXGyreHeros}
+\setsansfont{TeXGyreHeros}
+
+\definecolor{FabricBlack}{HTML}{0A0A0A}
+\definecolor{FabricPanel}{HTML}{131313}
+\definecolor{FabricChampagne}{HTML}{C9A96E}
+\definecolor{FabricText}{HTML}{252525}
+\definecolor{FabricSoft}{HTML}{F6F2EA}
+\hypersetup{colorlinks=true, linkcolor=FabricBlack, urlcolor=FabricChampagne}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textsf{FABRIC Oracle Critical Engineering}}
+\rhead{\textsf{Versi\'on ejecutiva explicada}}
+\cfoot{\thepage}
+\titleformat{\section}{\Large\bfseries\sffamily\color{FabricBlack}}{\thesection}{0.8em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\sffamily\color{FabricBlack}}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\sffamily\color{FabricBlack}}{\thesubsubsection}{0.8em}{}
+\setlist[enumerate]{leftmargin=*, itemsep=0.25em, topsep=0.25em}
+\setlist[itemize]{leftmargin=*, itemsep=0.25em, topsep=0.25em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+\newtcolorbox{executivebox}{colback=FabricSoft,colframe=FabricChampagne,boxrule=0.8pt,arc=2pt,left=8pt,right=8pt,top=8pt,bottom=8pt}
+
+\begin{document}
+
+\begin{titlepage}
+\pagecolor{FabricBlack}\color{white}
+\vspace*{2cm}
+{\Huge\bfseries\sffamily FABRIC\par}
+\vspace{0.3cm}
+{\Large Oracle Critical Engineering\par}
+\vfill
+{\huge\bfseries Documento de An\'alisis y Dise\~no\par}
+\vspace{0.35cm}
+{\Large Versi\'on ejecutiva explicada para direcci\'on\par}
+\vspace{1cm}
+{\large FabriSoft / fabricsoft.com.mx\par}
+{\large Mayo 2026\par}
+\vfill
+{\color{FabricChampagne}\rule{\textwidth}{1.2pt}}\par
+\vspace{0.4cm}
+{\large Equipo A -- Edi + Gerardo -- Supervisi\'on Julio \'Alvarez\par}
+\end{titlepage}
+\nopagecolor\color{FabricText}
+
+\tableofcontents
+\newpage
+
+\section*{Resumen para CEO}
+\addcontentsline{toc}{section}{Resumen para CEO}
+
+\begin{executivebox}
+\textbf{Idea central:} el sitio de FABRIC no debe funcionar como una p\'agina tradicional de ventas. Debe funcionar como una plataforma que demuestra especializaci\'on, filtra prospectos y permite que el equipo comercial reciba oportunidades mejor calificadas.
+\end{executivebox}
+
+La propuesta combina tres frentes:
+
+\begin{enumerate}
+\item \textbf{Sitio p\'ublico premium:} comunica autoridad, casos, doctrina, servicios y puntos de contacto.
+\item \textbf{Motor IA Oracle:} permite que un CFO, CTO o CIO haga preguntas t\'ecnicas y valide que FABRIC conoce problemas reales de Oracle.
+\item \textbf{Panel administrativo:} permite al equipo interno revisar leads, cambiar m\'etricas, controlar capacidad y operar el sitio sin pedir cambios al equipo de desarrollo.
+\end{enumerate}
+
+\textbf{Traducci\'on de negocio:} la web debe ayudar a FABRIC a atraer menos prospectos gen\'ericos y m\'as oportunidades de alto valor. Para lograrlo, el sistema filtra correos personales, valida datos de empresa, mide intenci\'on y registra informaci\'on accionable antes de una llamada humana.
+
+\section{Objetivo del proyecto}
+
+\subsection{Objetivo en lenguaje ejecutivo}
+
+Construir una plataforma digital para FABRIC que comunique especializaci\'on en Oracle, genere confianza ante directivos y convierta el inter\'es de los visitantes en datos claros para seguimiento comercial.
+
+\subsection{Qu\'e problema resuelve}
+
+Actualmente, una p\'agina web tradicional puede recibir contactos poco calificados: personas sin presupuesto, empresas fuera del perfil, curiosos, correos personales o solicitudes no relacionadas. Este proyecto busca reducir ese ruido mediante filtros y experiencias guiadas.
+
+\subsection{Resultado esperado}
+
+Al finalizar la V1, FABRIC tendr\'a:
+
+\begin{itemize}
+\item Un sitio p\'ublico con mensaje premium y enfoque Oracle.
+\item Formularios inteligentes para diagnosticar y filtrar prospectos.
+\item Un agente IA especializado en temas Oracle/FABRIC.
+\item Un panel privado para gestionar leads y m\'etricas.
+\item Una base t\'ecnica preparada para crecer sin rehacer toda la plataforma.
+\end{itemize}
+
+\section{Componentes principales del sistema}
+
+\subsection{Sitio p\'ublico}
+
+Es la cara visible de FABRIC. Su objetivo no es explicar todo, sino generar confianza r\'apidamente y llevar al visitante a una acci\'on: diagnosticar su problema, comparar costos, solicitar un paper, aplicar a una lista de espera o reservar Office Hours si califica.
+
+\subsection{Formularios y lead magnets}
+
+Los lead magnets son herramientas o contenidos que el visitante recibe a cambio de compartir informaci\'on. En este proyecto se contemplan:
+
+\begin{itemize}
+\item \textbf{Rescue Assessment:} diagn\'ostico para saber si una implementaci\'on Oracle requiere rescate.
+\item \textbf{ERP TCO Comparator:} comparador de costo total para evaluar impacto financiero.
+\item \textbf{Wait List:} lista de espera para empresas interesadas.
+\item \textbf{Office Hours:} espacios limitados para conversaciones con el equipo senior.
+\item \textbf{Papers:} documentos t\'ecnicos que se entregan a prospectos corporativos.
+\end{itemize}
+
+\subsection{Motor IA Oracle}
+
+Es un asistente dentro del sitio que responde preguntas relacionadas con Oracle y con el enfoque de FABRIC. Su valor es demostrar conocimiento t\'ecnico antes de una reuni\'on comercial.
+
+\begin{executivebox}
+\textbf{Ejemplo para explicarlo:} si un CTO pregunta por fallas en cierres financieros de Oracle Fusion, el agente debe responder con contexto t\'ecnico. Si pregunta algo fuera del tema, como marketing o pol\'itica, el sistema debe detenerse y redirigir a un canal humano.
+\end{executivebox}
+
+\subsection{Panel de administraci\'on}
+
+Es una secci\'on privada para el equipo FABRIC. Desde ah\'i se pueden revisar leads, aprobar o rechazar solicitudes, editar m\'etricas p\'ublicas, modificar disponibilidad de Office Hours y controlar si el sitio muestra agenda abierta o lista de espera.
+
+\section{Explicaci\'on simple de tecnolog\'ias y herramientas}
+
+\begin{longtable}{p{0.22\linewidth}p{0.36\linewidth}p{0.32\linewidth}}
+\toprule
+\textbf{Tecnolog\'ia} & \textbf{Qu\'e es en palabras simples} & \textbf{Por qu\'e se usa en FABRIC} \\
+\midrule
+Next.js & Framework para construir sitios web r\'apidos con React. & Permite buen SEO, buen rendimiento y rutas para backend ligero. \\
+React & Librer\'ia para crear interfaces interactivas. & Sirve para construir componentes reutilizables: botones, formularios, secciones y paneles. \\
+TypeScript & JavaScript con reglas de tipo. & Ayuda a evitar errores y vuelve el c\'odigo m\'as mantenible. \\
+Tailwind CSS & Sistema para aplicar estilos de forma consistente. & Facilita respetar colores, tipograf\'ias, espaciados y dise\~no responsive. \\
+Framer Motion & Librer\'ia de animaciones para React. & Se usa solo para microinteracciones sobrias: apariciones, hovers y estados visuales. \\
+Vercel & Plataforma para publicar y alojar el sitio. & Permite despliegues r\'apidos, previews por rama y buen rendimiento global. \\
+Cloudflare & Servicio de DNS, seguridad y protecci\'on web. & Ayuda con dominio, seguridad, CAPTCHA invisible y protecci\'on contra abuso. \\
+Sanity CMS & Administrador de contenido. & Permite editar casos, papers, textos y m\'etricas sin tocar c\'odigo. \\
+MongoDB Atlas & Base de datos en la nube. & Guarda leads, diagn\'osticos, conversaciones IA, reservas y logs administrativos. \\
+Clerk & Servicio de autenticaci\'on. & Protege el panel admin y limita el acceso al equipo FABRIC. \\
+Zod & Validador de datos. & Verifica que los formularios reciban datos correctos antes de guardarlos. \\
+Resend & Servicio para enviar correos transaccionales. & Env\'ia confirmaciones, papers o respuestas autom\'aticas. \\
+HubSpot & CRM para seguimiento comercial. & Recibe leads calificados para seguimiento del equipo comercial. \\
+Calendly & Agenda para reservar reuniones. & Permite mostrar slots de Office Hours solo a prospectos calificados. \\
+Plausible & Anal\'itica web enfocada en privacidad. & Mide eventos importantes sin depender de soluciones invasivas. \\
+Sentry & Monitoreo de errores. & Avisa cuando algo falla en producci\'on. \\
+\bottomrule
+\end{longtable}
+
+\section{Glosario ejecutivo de conceptos t\'ecnicos}
+
+\begin{longtable}{p{0.24\linewidth}p{0.68\linewidth}}
+\toprule
+\textbf{Concepto} & \textbf{Explicaci\'on para direcci\'on} \\
+\midrule
+Arquitectura desacoplada & Cada parte del sistema trabaja de forma separada: sitio, contenido, base de datos, IA y panel. Si una parte cambia, no debe romper todo. \\
+Server-side & L\'ogica que corre en el servidor, no en el navegador del usuario. Es m\'as segura para validar datos y proteger reglas de negocio. \\
+Client-side & L\'ogica que corre en el navegador. Se usa para interacci\'on visual, como wizards o animaciones. \\
+ISR & Permite actualizar contenido cada cierto tiempo sin reconstruir todo el sitio. Es \~util cuando Sanity cambia m\'etricas o textos. \\
+SSG & Genera p\'aginas est\'aticas muy r\'apidas. Se usa para secciones que no cambian constantemente. \\
+API Route & Ruta interna del sitio que recibe datos, valida informaci\'on o conecta con servicios externos. \\
+Server Action & Acci\'on segura del lado servidor para recibir formularios y ejecutar l\'ogica sin exponerla al cliente. \\
+RAG & M\'etodo para que la IA responda usando documentos internos o fuentes cargadas, en lugar de responder solo con conocimiento general. \\
+Embeddings & Representaciones num\'ericas de documentos que permiten a la IA encontrar informaci\'on relacionada. \\
+PgVector / Pinecone & Bases o motores para guardar embeddings y buscar contexto relevante para la IA. \\
+Fallback & Plan de respaldo. Si un proveedor de IA falla, el sistema intenta con otro. \\
+Kill Switch & Regla de seguridad que detiene la IA cuando detecta una pregunta fuera de alcance o riesgosa. \\
+High-Intent Routing & Detecci\'on de se\~nales de urgencia. Si el visitante muestra un problema cr\'itico, el sitio puede mostrar una ruta m\'as directa para agendar. \\
+Honeypot & Campo oculto que los humanos no llenan, pero muchos bots s\'i. Sirve para detectar spam. \\
+Rate limiting & L\'imite de intentos por IP para evitar abuso, spam o ataques. \\
+Turnstile & CAPTCHA invisible de Cloudflare. Ayuda a filtrar bots sin molestar al usuario. \\
+Lighthouse & Herramienta que mide rendimiento, accesibilidad, SEO y buenas pr\'acticas del sitio. \\
+LCP & Mide cu\'anto tarda en cargar el contenido principal visible. \\
+CLS & Mide si los elementos se mueven inesperadamente mientras carga la p\'agina. \\
+TTFB & Mide cu\'anto tarda el servidor en responder. \\
+FOUT & Efecto visual donde primero aparece una fuente temporal y luego cambia a la final. Se evita para que el sitio se vea estable. \\
+Webhook & Aviso autom\'atico entre sistemas. Por ejemplo, Calendly puede avisar a MongoDB cuando alguien agenda. \\
+Variables de entorno & Espacio seguro donde se guardan claves de API y configuraciones sensibles. \\
+Middleware & Capa que revisa una solicitud antes de permitir acceso. Sirve para proteger /admin. \\
+\bottomrule
+\end{longtable}
+
+\section{Flujo de negocio explicado}
+
+\subsection{Flujo general del visitante}
+
+\begin{enumerate}
+\item El visitante llega al sitio y entiende que FABRIC es una firma especializada en Oracle.
+\item Explora casos, doctrina, servicios o el agente IA.
+\item Si muestra inter\'es, completa un diagn\'ostico, comparador, solicitud de paper o aplicaci\'on.
+\item El sistema valida si su correo y datos cumplen criterios m\'inimos.
+\item Si califica, se guarda como lead y se notifica al equipo.
+\item Si no califica, se puede redirigir a Wait List sin generar fricci\'on.
+\item El equipo FABRIC revisa la oportunidad desde el panel admin.
+\end{enumerate}
+
+\subsection{Flujo interno del equipo FABRIC}
+
+\begin{enumerate}
+\item Entra al panel privado.
+\item Revisa nuevos leads con datos de empresa, cargo, revenue, iniciativa y score.
+\item Aprueba, rechaza o da seguimiento.
+\item Actualiza m\'etricas, slots y capacidad disponible.
+\item Cada acci\'on queda registrada para trazabilidad.
+\end{enumerate}
+
+\section{Arquitectura por capas explicada}
+
+\begin{longtable}{p{0.24\linewidth}p{0.35\linewidth}p{0.31\linewidth}}
+\toprule
+\textbf{Capa} & \textbf{Funci\'on} & \textbf{Beneficio de negocio} \\
+\midrule
+Frontend & Lo que ve el usuario: home, formularios, IA, contenidos y panel. & Experiencia premium, clara y r\'apida. \\
+Backend ligero & Rutas y acciones que validan datos y conectan servicios. & Protege reglas de negocio y evita datos basura. \\
+Base de datos & Guarda leads, diagn\'osticos, reservas, conversaciones y auditor\'ia. & Centraliza la operaci\'on y permite seguimiento. \\
+CMS & Administra contenido editorial y m\'etricas visibles. & Cambios sin depender de desarrollo. \\
+IA & Responde preguntas Oracle dentro de un alcance controlado. & Demuestra autoridad t\'ecnica y detecta urgencias. \\
+Autenticaci\'on & Controla qui\'en entra al panel privado. & Reduce riesgos de acceso no autorizado. \\
+Anal\'itica & Registra eventos clave del embudo. & Permite medir qu\'e funciona y qu\'e se debe ajustar. \\
+Seguridad & CAPTCHA, rate limit, validaciones, headers y protecci\'on de API keys. & Reduce abuso, spam y exposici\'on de informaci\'on sensible. \\
+\bottomrule
+\end{longtable}
+
+\section{Riesgos y decisiones importantes}
+
+\begin{longtable}{p{0.30\linewidth}p{0.34\linewidth}p{0.28\linewidth}}
+\toprule
+\textbf{Riesgo} & \textbf{Explicaci\'on} & \textbf{Mitigaci\'on propuesta} \\
+\midrule
+Prometer demasiado con IA & El agente podr\'ia responder fuera de alcance o con informaci\'on no validada. & Kill Switch, RAG con material validado y canal humano. \\
+Leads de baja calidad & Formularios abiertos pueden atraer curiosos o correos personales. & Validaci\'on corporativa, filtros de revenue y rate limiting. \\
+Dependencia de proveedores externos & IA, correos, agenda y hosting dependen de terceros. & Fallback, monitoreo y arquitectura modular. \\
+M\'etricas no verificadas & Mostrar cifras sin respaldo puede da\~nar credibilidad. & Sanity como fuente editable y aprobaci\'on interna antes de publicar. \\
+Acceso indebido al admin & El panel contiene informaci\'on comercial sensible. & Clerk, restricci\'on de dominio, roles y logs. \\
+Sobrecarga t\'ecnica en V1 & Demasiadas funciones pueden afectar tiempos de entrega. & Priorizar flujos core: home, formularios, IA controlada y admin b\'asico funcional. \\
+\bottomrule
+\end{longtable}
+
+\section{Alcance recomendado para V1}
+
+\subsection{Prioridad alta}
+
+\begin{enumerate}
+\item Home con mensaje claro y dise\~no premium.
+\item Formularios principales con validaci\'on del lado servidor.
+\item Base de datos para leads y diagn\'osticos.
+\item Panel admin m\'inimo: ver leads, filtrar, aprobar/rechazar y editar capacidad.
+\item Motor IA limitado a Oracle/FABRIC con Kill Switch.
+\item Deploy en Vercel con dominio, SSL y variables seguras.
+\end{enumerate}
+
+\subsection{Prioridad media}
+
+\begin{enumerate}
+\item Integraci\'on completa con HubSpot.
+\item Env\'io autom\'atico de papers por Resend.
+\item Anal\'itica con eventos custom.
+\item Edici\'on avanzada de m\'etricas desde admin.
+\end{enumerate}
+
+\subsection{Prioridad posterior}
+
+\begin{enumerate}
+\item Automatizaciones comerciales avanzadas.
+\item Reportes ejecutivos internos.
+\item RAG con corpus completo Oracle + documentos internos.
+\item Panel de auditor\'ia avanzado.
+\end{enumerate}
+
+\section{Indicadores de \'exito}
+
+\begin{longtable}{p{0.36\linewidth}p{0.56\linewidth}}
+\toprule
+\textbf{Indicador} & \textbf{Qu\'e demuestra} \\
+\midrule
+Lighthouse 95+ & El sitio est\'a optimizado y carga correctamente. \\
+Leads con correo corporativo & El filtro evita contactos de baja calidad. \\
+Diagn\'osticos completados & Hay inter\'es real y datos de dolor operativo. \\
+Consultas IA completadas & El agente aporta valor en la exploraci\'on t\'ecnica. \\
+Office Hours ocupadas & La propuesta genera suficiente inter\'es en prospectos calificados. \\
+M\'etricas editables sin deploy & El equipo puede operar sin depender de desarrollo para cada ajuste. \\
+Errores monitoreados & Hay capacidad de detectar y corregir fallas en producci\'on. \\
+\bottomrule
+\end{longtable}
+
+\section{Explicaci\'on final para presentar al CEO}
+
+\begin{executivebox}
+\textbf{Mensaje sugerido:} Esta plataforma no es solo una p\'agina web. Es un sistema de calificaci\'on comercial y demostraci\'on t\'ecnica. El sitio atrae, filtra, diagnostica y entrega al equipo FABRIC oportunidades m\'as preparadas para una conversaci\'on ejecutiva. La tecnolog\'ia elegida busca tres objetivos: velocidad, seguridad y capacidad de operar contenido y leads sin depender de cambios constantes en c\'odigo.
+\end{executivebox}
+
+En t\'erminos simples, FABRIC gana una presencia digital que comunica autoridad, reduce ruido comercial y permite que el equipo se enfoque en empresas que realmente tienen presupuesto, urgencia y perfil adecuado para proyectos Oracle cr\'iticos.
+
+\end{document}

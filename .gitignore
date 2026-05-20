@@ -1,0 +1,17 @@
+# Logs
+*.log
+backend/logs/
+
+# Archivos temporales de oficina
+~$*
+.~$*
+
+# Directorios de configuración local
+.claude/
+.gemini/
+.idea/
+.vscode/
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
