@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 
 interface AnimatedNumberProps {
@@ -25,24 +26,25 @@ function AnimatedNumber({
   const hasAnimated = useRef(false);
 
   const motionValue = useMotionValue(0);
-  const springValue = useSpring(motionValue, { 
-    duration: duration * 1000, 
+  const springValue = useSpring(0, {
+    duration: duration * 1000,
     bounce: 0,
-    ease: [0.25, 0.1, 0.25, 1.0] // Easing suave tipo BlueBox
   });
 
   useEffect(() => {
     if (isInView && value > 0 && !hasAnimated.current) {
       hasAnimated.current = true;
       motionValue.set(value);
+      springValue.set(value);
     }
-  }, [isInView, value, motionValue]);
+  }, [isInView, value, motionValue, springValue]);
 
   useEffect(() => {
     const unsubscribe = springValue.on("change", (latest) => {
-      const rounded = decimals > 0 
-        ? latest.toFixed(decimals) 
-        : Math.round(latest).toLocaleString("en-US");
+      const num = typeof latest === "string" ? parseFloat(latest) : latest;
+      const rounded = decimals > 0
+        ? num.toFixed(decimals)
+        : Math.round(num).toLocaleString("en-US");
       setDisplayValue(rounded);
     });
     return () => unsubscribe();
@@ -73,6 +75,7 @@ interface MapDot {
   lng: number;
   label: string;
   color?: string;
+  key?: string;
 }
 
 interface MapConnection {
@@ -102,7 +105,7 @@ function OptimizedWorldMap({ connections, className = "" }: WorldMapProps) {
   };
 
   // Animaciones suaves estilo BlueBox
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -113,25 +116,25 @@ function OptimizedWorldMap({ connections, className = "" }: WorldMapProps) {
     }
   };
 
-  const pathVariants = {
+  const pathVariants: Variants = {
     hidden: { pathLength: 0, opacity: 0 },
-    visible: { 
-      pathLength: 1, 
+    visible: {
+      pathLength: 1,
       opacity: 0.6,
       transition: {
-        pathLength: { duration: 2.5, ease: [0.33, 1, 0.68, 1] },
-        opacity: { duration: 0.8, ease: "easeOut" }
+        pathLength: { duration: 2.5, ease: [0.33, 1, 0.68, 1] as [number, number, number, number] },
+        opacity: { duration: 0.8, ease: "easeOut" as const }
       }
     }
   };
 
-  const dotVariants = {
+  const dotVariants: Variants = {
     hidden: { scale: 0, opacity: 0 },
-    visible: { 
-      scale: 1, 
+    visible: {
+      scale: 1,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 200,
         damping: 20,
         delay: 0.5
@@ -139,14 +142,14 @@ function OptimizedWorldMap({ connections, className = "" }: WorldMapProps) {
     }
   };
 
-  const pulseVariants = {
+  const pulseVariants: Variants = {
     pulse: {
       scale: [1, 1.5, 1],
       opacity: [0.8, 0, 0.8],
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: "easeInOut" as const
       }
     }
   };

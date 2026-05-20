@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./maquetado-dossier.css";
+@import "./maquetado-interacciones.css";
 
 @theme {
   --color-fabric-base: #0A0A0A;
@@ -28,6 +30,26 @@
   }
 }
 
+/* ── Tokens de compatibilidad para secciones S07-S15 del dossier ── */
+:root {
+  --bg-base:       #0A0A0A;
+  --bg-panel:      #131313;
+  --bg-elevated:   #1A1A1A;
+  --border:        #252525;
+  --border-strong: #353535;
+  --text-primary:  #F5F5F5;
+  --text-secondary:#8A8A8A;
+  --text-tertiary: #5A5A5A;
+  --accent:        #C9A96E;
+  --accent-2:      #A07845;
+  --accent-deep:   rgba(201, 169, 110, 0.35);
+  --accent-soft:   rgba(201, 169, 110, 0.08);
+  --danger:        #B85450;
+  --serif:         'Cormorant Garamond', Georgia, serif;
+  --sans:          'Inter', system-ui, sans-serif;
+  --mono:          'JetBrains Mono', 'Fira Mono', monospace;
+}
+
 @layer base {
   body {
     background-color: var(--color-fabric-base);
@@ -35,6 +57,130 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE OVERRIDES — secciones S07-S15
+   ════════════════════════════════════════════════════════════════ */
+
+.s10-desktop { display: block; }
+.s10-mobile  { display: none; }
+
+.s10-mobile-inner {
+  position: relative;
+  padding-left: 24px;
+  margin-top: 24px;
+}
+
+.s10-mobile-spine {
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent) 70%, var(--border) 30%);
+}
+
+.s10-mobile-step {
+  position: relative;
+  padding: 12px 0;
+}
+
+.s10-mobile-step.highlight {
+  padding: 16px 12px;
+  margin: 4px 0 4px -8px;
+  background: linear-gradient(to bottom, var(--accent-soft), transparent);
+  border: 1px solid var(--accent-deep);
+}
+
+.s10-mobile-step.muted { opacity: 0.7; }
+
+.s10-mobile-node {
+  position: absolute;
+  left: -22px;
+  top: 16px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: var(--bg-base);
+}
+
+.s10-mobile-node.highlight { left: -14px; top: 22px; background: var(--accent); }
+.s10-mobile-node.muted     { border-color: var(--border-strong); }
+
+.s10-mobile-entry-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--bg-base);
+  background: var(--accent);
+  padding: 3px 8px;
+  letter-spacing: 0.2em;
+  display: inline-block;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.s10-mobile-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.s10-mobile-num.muted  { color: var(--text-secondary); }
+
+.s10-mobile-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  margin-top: 4px;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.s10-mobile-name.highlight { color: var(--accent); }
+.s10-mobile-name.muted     { color: var(--text-secondary); }
+
+.s10-mobile-deliverable {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+.s11-heading-mobile,
+.s11-para-mobile,
+.s11-cta-mobile  { display: none; }
+
+.s11-heading-desktop,
+.s11-para-desktop,
+.s11-cta-desktop { display: block; }
+
+@media (max-width: 968px) {
+  .caso-card { border-top: 2px solid var(--accent); }
+
+  .caso-metric { grid-template-columns: 1fr auto; gap: 8px; }
+  .caso-metric > .eyebrow,
+  .caso-metric > span:last-child:not(.caso-metric-val) { display: none; }
+
+  .caso-ctas { flex-direction: column; width: 100%; gap: 10px; }
+  .caso-ctas .cta { display: block; text-align: center; padding: 12px; border: 1px solid var(--accent); }
+
+  .industry-monogram { width: 40px; height: 40px; font-size: 20px; margin-bottom: 20px; }
+
+  .s10-desktop { display: none; }
+  .s10-mobile  { display: block; }
+
+  .s11-heading-desktop,
+  .s11-para-desktop,
+  .s11-cta-desktop { display: none; }
+
+  .s11-heading-mobile,
+  .s11-para-mobile  { display: block; }
+
+  .s11-cta-mobile { display: block; text-align: center; margin-top: 16px; }
 }
 
 
