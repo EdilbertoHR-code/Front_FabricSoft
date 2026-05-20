@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --color-fabric-base: #0A0A0A;
+  --color-fabric-panel: #161616;
+  --color-fabric-text: #F5F5F5;
+  --color-fabric-gold: #C9A96E;
+  --color-fabric-gold-hover: #A07845;
+  --color-fabric-border: #2A2A2A;
+
+  /* NUEVO: Definimos la animación de entrada suave */
+  --animate-fade-in-down: fade-in-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes grid {
+    0% { transform: translateY(-50%); }
+    100% { transform: translateY(0); }
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-fabric-base);
+    color: var(--color-fabric-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+
+@layer utilities {
+  /* Crea la textura de cuadritos dorados finísimos */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(201, 169, 110, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(201, 169, 110, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px; /* Tamaño de cada cuadrito */
+  }
+  
+  /* Aplica la animación */
+  .animate-grid {
+    animation: moveGrid 40s linear infinite; /* 40 segundos: Súper lento y elegante */
+  }
+  
+  /* El motor de la animación: mueve la cuadrícula en diagonal */
+  @keyframes moveGrid {
+    0% { background-position: 0 0; }
+    100% { background-position: 48px 48px; }
+  }
+}
