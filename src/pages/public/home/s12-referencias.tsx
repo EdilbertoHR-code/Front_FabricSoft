@@ -7,9 +7,12 @@ const references = [
   ["05", "Director de Consultoría · Oracle ACS", "LATAM · Partner Oracle senior · Externo", "Partner Oracle", ["ES", "EN"]]
 ] as const;
 
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
+
 export default function S12Referencias() {
+  const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section id="s12" className="demo-section s12">
+    <section ref={ref} id="s12" className={`demo-section s12 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="s12-intro">
           <div className="label">Referencias Disponibles</div>

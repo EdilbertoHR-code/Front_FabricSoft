@@ -17,6 +17,7 @@ import S13Transparencia from '../home/s13-transparencia';
 import S14Investigacion from '../home/s14-investigacion';
 import S15Founder from '../home/s15-founder';
 import InteractionManager from '../../../components/InteractionManager';
+import Parte8Home from './parte8.home';
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
       <ChatIa />
       <Parte5Home />
       <Parte6Home />
+      <Parte8Home />
       <S07Casos />
       <S08Industrias />
       <S09FabricOS />

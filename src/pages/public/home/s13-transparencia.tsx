@@ -14,9 +14,12 @@ const upcoming: [string, string][] = [
   ["Tasa proyectos en primer ciclo", "Anual"]
 ];
 
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
+
 export default function S13Transparencia() {
+  const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section id="s13" className="demo-section s13">
+    <section ref={ref} id="s13" className={`demo-section s13 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="s13-intro">
           <div className="label">Transparencia Honesta</div>

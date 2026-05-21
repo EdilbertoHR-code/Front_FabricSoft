@@ -7,9 +7,12 @@ const days = [
   ["29", "active"], ["30", "active today"], ["1", "muted"], ["2", "muted"], ["3", "slot", "4/4"], ["4", "muted"], ["5", "muted"]
 ] as const;
 
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
+
 export default function S11OfficeHours() {
+  const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section id="s11" className="demo-section s11">
+    <section ref={ref} id="s11" className={`demo-section s11 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="office-hours">
           <div className="office-hours-text">

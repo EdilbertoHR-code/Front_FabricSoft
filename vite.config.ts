@@ -9,5 +9,16 @@ export default defineConfig({
   ],
   resolve: {
     dedupe: ['react', 'react-dom']
-  }
+  },
+  build: {
+    sourcemap: false,
+  },
+  css: {
+    devSourcemap: false,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      sourcemap: false,
+    },
+  },
 })

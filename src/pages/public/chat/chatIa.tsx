@@ -60,7 +60,7 @@ const scenarios: Scenario[] = [
 // --- ICONS ---
 function ArrowIcon() {
   return (
-    <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 12H19" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
       <path d="M13 6L19 12L13 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -69,7 +69,7 @@ function ArrowIcon() {
 
 function SparkIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M12 3L13.9 8.1L19 10L13.9 11.9L12 17L10.1 11.9L5 10L10.1 8.1L12 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
   );
@@ -77,7 +77,7 @@ function SparkIcon() {
 
 function UserIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
@@ -100,12 +100,11 @@ function TypingEffect({ text, isTyping }: { text: string; isTyping: boolean }) {
       setVisibleText(text.slice(0, i + 1));
       i++;
       if (i >= text.length) clearInterval(interval);
-    }, 15); // Velocidad de tipeo del agente
+    }, 15);
 
     return () => clearInterval(interval);
   }, [text, isTyping]);
 
-  // FIX: Scroll estricto interno mientras tipea (evita que brinque la página)
   useEffect(() => {
     const container = document.getElementById("chat-scroll-container");
     if (container) {
@@ -114,12 +113,12 @@ function TypingEffect({ text, isTyping }: { text: string; isTyping: boolean }) {
   }, [visibleText]);
 
   return (
-    <p className="text-sm leading-relaxed text-[#F5F5F5]/80 whitespace-pre-wrap">
+    <div className="font-sans text-[12px] leading-[1.7] text-[#A0A0A0] whitespace-pre-wrap">
       {visibleText}
       {isTyping && visibleText.length < text.length && (
-        <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-[#C9A96E] align-middle" />
+        <span className="ml-1 inline-block h-[12px] w-[3px] animate-pulse bg-[#C9A96E] align-middle" />
       )}
-    </p>
+    </div>
   );
 }
 
@@ -137,7 +136,6 @@ export default function ChatIa() {
   
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // FIX: Scroll suave solo cuando se envía un mensaje nuevo
   useEffect(() => {
     const container = document.getElementById("chat-scroll-container");
     if (container) {
@@ -149,11 +147,9 @@ export default function ChatIa() {
     if (isTyping) return;
     const scenario = scenarios.find(s => s.key === scenarioKey)!;
     
-    // El usuario "escribe" el prompt
     setChatHistory(prev => [...prev, { role: 'user', text: scenario.prompt }]);
     setIsTyping(true);
 
-    // El agente responde después de un breve delay
     setTimeout(() => {
       setChatHistory(prev => [...prev, { role: 'agent', text: scenario.response }]);
       setIsTyping(false);
@@ -179,158 +175,164 @@ export default function ChatIa() {
   };
 
   return (
-    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-20 text-[#F5F5F5] md:py-28">
+    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-16 md:py-24 text-[#F5F5F5] border-t border-[#111]">
       
       {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
-      <div className="pointer-events-none absolute left-0 right-0 top-1/2 -z-10 m-auto h-[600px] w-[600px] -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
+      <div className="pointer-events-none absolute left-0 right-0 top-1/2 -z-10 m-auto h-[500px] w-[500px] -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
 
-      <div ref={sectionRef} className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-12">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-center xl:gap-20">
+      <div ref={sectionRef} className="relative z-10 mx-auto max-w-[1240px] px-6 md:px-12">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center xl:gap-16">
           
           {/* =========================================
               LEFT: COPYWRITING & INTRO
               ========================================= */}
           <div className={`relative transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-1.5 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/20 bg-[#C9A96E]/5 px-3 py-1 rounded-sm mb-5">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C9A96E]"></span>
               </span>
-              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E]">
-                Fabric AI · Inferencia Técnica
+              <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.2em] text-[#C9A96E]">
+                Fabric AI · Inferencia
               </span>
             </div>
 
-            <h2 className="font-serif text-[38px] leading-[1.05] md:text-[54px] lg:text-[60px] text-[#F5F5F5] mb-6">
+            <h2 className="font-serif text-[32px] md:text-[44px] lg:text-[50px] leading-[1.05] text-[#F5F5F5] mb-5">
               Asistente de diagnóstico <span className="text-[#C9A96E] italic">Oracle</span>.
             </h2>
 
-            <p className="text-base leading-relaxed text-[#F5F5F5]/60 mb-10 max-w-[500px]">
-              Evalúa tu infraestructura en segundos. Identifica riesgos ocultos en tu implementación Fusion o planifica migraciones sin sobrecostos usando nuestro motor de inferencia técnica.
+            <p className="font-sans text-[13px] md:text-[14px] leading-[1.7] text-[#888] mb-8 max-w-[460px]">
+              Evalúa tu infraestructura en segundos. Identifica riesgos ocultos en tu implementación Fusion o planifica migraciones sin sobrecostos usando nuestro motor técnico.
             </p>
 
             {/* Badges de estado */}
-            <div className="flex flex-wrap gap-4 border-l border-[#C9A96E]/30 pl-5">
+            <div className="flex flex-wrap gap-5 border-l border-[#2A2A2A] pl-4">
               <div>
-                <p className="font-mono text-[8px] uppercase tracking-widest text-[#F5F5F5]/40 mb-1">Versión</p>
-                <p className="font-mono text-xs font-bold text-[#F5F5F5]">FABRIC AI v2.4</p>
+                <p className="font-mono text-[8px] uppercase tracking-widest text-[#555] mb-1">Versión</p>
+                <p className="font-mono text-[10.5px] font-bold text-[#F5F5F5]">FABRIC AI v2.4</p>
               </div>
               <div>
-                <p className="font-mono text-[8px] uppercase tracking-widest text-[#F5F5F5]/40 mb-1">Estado</p>
-                <p className="font-mono text-xs font-bold text-green-400">Operational</p>
+                <p className="font-mono text-[8px] uppercase tracking-widest text-[#555] mb-1">Estado</p>
+                <p className="font-mono text-[10.5px] font-bold text-[#C9A96E]">Operational</p>
               </div>
             </div>
 
-            <div className="mt-10 flex gap-4">
-              {/* FIX 2: Botón que hace auto-focus a la terminal en lugar de recargar */}
+            <div className="mt-8">
               <button 
                 onClick={handleFocusChat}
-                className="group inline-flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/10 px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all hover:bg-[#C9A96E] hover:text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]"
+                className="group inline-flex items-center justify-center gap-2.5 border border-[#2A2A2A] bg-transparent px-5 py-3 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] transition-all hover:border-[#C9A96E] hover:text-[#C9A96E] rounded-sm"
               >
-                Diagnóstico Interactivo <ArrowIcon />
+                Activar Consola <ArrowIcon />
               </button>
             </div>
           </div>
 
           {/* =========================================
-              RIGHT: CHATBOX INTERACTIVO
+              RIGHT: CHATBOX INTERACTIVO (Atelier Grade)
               ========================================= */}
-          <div className={`relative w-full max-w-[700px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="relative flex flex-col h-[550px] overflow-hidden border border-[#2A2A2A] bg-[#0A0A0A] rounded-xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] transition-all duration-300 focus-within:border-[#C9A96E]/50 focus-within:shadow-[0_30px_100px_rgba(201,169,110,0.15)]">
+          <div className={`relative w-full max-w-[640px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            
+            {/* Contenedor principal de la Consola con la animación del borde */}
+            <div className="relative flex flex-col h-[460px] rounded-sm shadow-[0_20px_60px_rgba(0,0,0,0.6)] group">
               
-              {/* Resplandor superior */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
-
-              {/* Cabecera del chat */}
-              <div className="flex items-center justify-between border-b border-[#2A2A2A] bg-[#111] px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#C9A96E]/30 bg-[#C9A96E]/10 text-[#C9A96E]">
-                    <SparkIcon />
-                  </div>
-                  <div>
-                    <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-[#F5F5F5]">Diagnostic Engine</p>
-                    <p className="font-mono text-[8px] uppercase tracking-[0.1em] text-[#C9A96E]">Oracle ecosystem ready</p>
-                  </div>
-                </div>
+              {/* === LA LÍNEA ANIMADA DORADA QUE RECORRE EL BORDE === */}
+              <div className="absolute inset-0 z-0 overflow-hidden rounded-sm bg-[#161616]">
+                <div className="absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(transparent_270deg,#C9A96E_360deg)] animate-[spin_3s_linear_infinite]" />
               </div>
 
-              {/* Historial del Chat (Id estricto para scroll nativo) */}
-              <div id="chat-scroll-container" className="flex-1 overflow-y-auto p-5 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#2A2A2A] scroll-smooth">
-                {chatHistory.map((msg, idx) => {
-                  const isAgent = msg.role === 'agent';
-                  // Solo animar el último mensaje del agente si está tipeando
-                  const animateText = isAgent && idx === chatHistory.length - 1 && isTyping;
+              {/* El interior que enmascara el centro, dejando solo un borde de 1px visible */}
+              <div className="absolute inset-[1px] z-10 flex flex-col bg-[#0A0A0A] rounded-sm transition-shadow duration-500 focus-within:shadow-[inset_0_0_40px_rgba(201,169,110,0.05)]">
+                
+                {/* Cabecera del chat */}
+                <div className="flex items-center justify-between border-b border-[#1A1A1A] bg-[#050505] px-4 py-3 shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-6 w-6 items-center justify-center border border-[#C9A96E]/20 bg-[#C9A96E]/5 text-[#C9A96E] rounded-sm">
+                      <SparkIcon />
+                    </div>
+                    <div>
+                      <p className="font-mono text-[9.5px] font-bold uppercase tracking-[0.15em] text-[#F5F5F5]">Diagnostic Engine</p>
+                      <p className="font-mono text-[7.5px] uppercase tracking-wider text-[#555]">Oracle ecosystem ready</p>
+                    </div>
+                  </div>
+                </div>
 
-                  return (
-                    <div key={idx} className={`flex ${isAgent ? 'justify-start' : 'justify-end'} animate-[fadeIn_0.4s_ease-out]`}>
-                      <div className={`max-w-[85%] flex flex-col gap-2 ${isAgent ? 'items-start' : 'items-end'}`}>
-                        
-                        {/* Etiqueta del remitente */}
-                        <div className="flex items-center gap-1.5 opacity-60">
-                          {isAgent ? <SparkIcon /> : <UserIcon />}
-                          <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]">
-                            {isAgent ? 'FABRIC AI' : 'Tú'}
-                          </span>
-                        </div>
-                        
-                        {/* Burbuja del mensaje */}
-                        <div className={`p-4 text-sm ${
-                          isAgent 
-                            ? 'bg-[#161616] border border-[#2A2A2A] rounded-r-xl rounded-bl-xl' 
-                            : 'bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-l-xl rounded-br-xl text-[#F5F5F5]'
-                        }`}>
-                          {animateText ? (
-                            <TypingEffect text={msg.text} isTyping={true} />
-                          ) : (
-                            <p className="text-[#F5F5F5]/80 whitespace-pre-wrap leading-relaxed">{msg.text}</p>
-                          )}
+                {/* Historial del Chat */}
+                <div id="chat-scroll-container" className="flex-1 overflow-y-auto p-4 space-y-5 scrollbar-thin scrollbar-thumb-[#1A1A1A] scrollbar-track-transparent">
+                  {chatHistory.map((msg, idx) => {
+                    const isAgent = msg.role === 'agent';
+                    const animateText = isAgent && idx === chatHistory.length - 1 && isTyping;
+
+                    return (
+                      <div key={idx} className={`flex ${isAgent ? 'justify-start' : 'justify-end'} animate-[fadeIn_0.3s_ease-out]`}>
+                        <div className={`max-w-[85%] flex flex-col gap-1.5 ${isAgent ? 'items-start' : 'items-end'}`}>
+                          
+                          <div className="flex items-center gap-1.5 opacity-50">
+                            {isAgent ? <SparkIcon /> : <UserIcon />}
+                            <span className="font-mono text-[8px] uppercase tracking-widest text-[#F5F5F5]">
+                              {isAgent ? 'FABRIC AI' : 'Usuario'}
+                            </span>
+                          </div>
+                          
+                          {/* Burbuja mejorada: Textos a 12px y padding ajustado */}
+                          <div className={`px-4 py-3 rounded-sm ${
+                            isAgent 
+                              ? 'bg-[#050505] border border-[#1A1A1A]' 
+                              : 'bg-[#C9A96E]/5 border border-[#C9A96E]/20 text-[#E0E0E0] font-sans text-[12px]'
+                          }`}>
+                            {animateText ? (
+                              <TypingEffect text={msg.text} isTyping={true} />
+                            ) : (
+                              <p className={`whitespace-pre-wrap leading-[1.7] ${isAgent ? 'font-sans text-[12px] text-[#A0A0A0]' : 'font-sans text-[12px]'}`}>
+                                {msg.text}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Controles Inferiores (Prompts y Input) */}
-              <div className="border-t border-[#2A2A2A] bg-[#111] p-4">
-                
-                {/* Preguntas Sugeridas */}
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {scenarios.map((scen) => (
-                    <button
-                      key={scen.key}
-                      onClick={() => handleScenarioClick(scen.key)}
-                      disabled={isTyping}
-                      className="border border-[#2A2A2A] bg-[#0A0A0A] px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
-                    >
-                      {scen.shortLabel}
-                    </button>
-                  ))}
+                    );
+                  })}
                 </div>
 
-                {/* Input interactivo */}
-                <form onSubmit={handleManualSubmit} className="relative flex items-center">
-                  <span className="absolute left-4 font-mono text-[#C9A96E]">&gt;</span>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    disabled={isTyping}
-                    placeholder={isTyping ? "Diagnosticando..." : "Describe tu escenario técnico..."}
-                    className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-md py-3.5 pl-8 pr-12 font-mono text-xs text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/50 disabled:opacity-50 focus:shadow-[0_0_15px_rgba(201,169,110,0.1)]"
-                  />
-                  <button 
-                    type="submit" 
-                    disabled={!inputValue.trim() || isTyping}
-                    className="absolute right-3 text-[#C9A96E] disabled:text-[#2A2A2A] transition-colors"
-                  >
-                    <ArrowIcon />
-                  </button>
-                </form>
-              </div>
+                {/* Controles Inferiores */}
+                <div className="border-t border-[#1A1A1A] bg-[#050505] p-3 shrink-0">
+                  
+                  {/* Preguntas Sugeridas: Single line, ultra compact, letras en 8px */}
+                  <div className="mb-3 flex flex-nowrap overflow-x-auto gap-2 pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    {scenarios.map((scen) => (
+                      <button
+                        key={scen.key}
+                        onClick={() => handleScenarioClick(scen.key)}
+                        disabled={isTyping}
+                        className="shrink-0 whitespace-nowrap border border-[#1A1A1A] bg-[#0A0A0A] px-2.5 py-1 font-mono text-[8px] uppercase tracking-widest text-[#666] transition-colors hover:border-[#C9A96E]/40 hover:text-[#C9A96E] disabled:opacity-30 rounded-sm"
+                      >
+                        {scen.shortLabel}
+                      </button>
+                    ))}
+                  </div>
 
+                  <form onSubmit={handleManualSubmit} className="relative flex items-center">
+                    <span className="absolute left-3 font-mono text-[10px] text-[#C9A96E]">&gt;</span>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      disabled={isTyping}
+                      placeholder={isTyping ? "Diagnosticando..." : "Describe tu escenario técnico..."}
+                      className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-sm py-2.5 pl-7 pr-10 font-mono text-[10.5px] text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
+                    />
+                    <button 
+                      type="submit" 
+                      disabled={!inputValue.trim() || isTyping}
+                      className="absolute right-3 text-[#C9A96E] disabled:text-[#333] transition-colors"
+                    >
+                      <ArrowIcon />
+                    </button>
+                  </form>
+                </div>
+
+              </div>
             </div>
           </div>
           

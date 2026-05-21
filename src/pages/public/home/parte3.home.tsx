@@ -152,11 +152,11 @@ function TextScramble({
   trigger?: boolean; duration?: number; speed?: number;
   chars?: string; onComplete?: () => void;
 }) {
-  const [text, setText] = useState(children);
+  const [text, setText] = useState(typeof children === 'string' ? children : '');
   const [busy, setBusy] = useState(false);
-  useEffect(() => { setText(children); }, [children]);
+  useEffect(() => { if (typeof children === 'string') setText(children); }, [children]);
   useEffect(() => {
-    if (!trigger || busy) return;
+    if (!trigger || busy || typeof children !== 'string') return;
     setBusy(true);
     const steps = Math.max(1, Math.floor(duration / speed));
     let step = 0;
@@ -169,6 +169,7 @@ function TextScramble({
     }, speed * 1000);
     return () => clearInterval(id);
   }, [chars, children, duration, busy, onComplete, speed, trigger]);
+  if (typeof children !== 'string') return <Tag className={className}>{children}</Tag>;
   return <Tag className={className}>{text}</Tag>;
 }
 
@@ -465,7 +466,7 @@ export default function ErpCostCalculatorSection() {
   const handleOpen = useCallback(() => setOpen(true), []);
 
   return (
-    <section id="tco" className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
+    <section className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
 
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />

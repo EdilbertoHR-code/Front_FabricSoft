@@ -15,9 +15,12 @@ const fsos = [
   ["FSO-06", "Concept", "concept", "DR & Business Continuity", "Disaster Recovery · RPO/RTO contractuales", "Diseño · Q4 2026", "spec"]
 ] as const;
 
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
+
 export default function S09FabricOS() {
+  const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section id="s09" className="demo-section s09">
+    <section ref={ref} id="s09" className={`demo-section s09 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="s09-intro">
           <div className="label">FABRIC OS</div>
