@@ -219,9 +219,9 @@ export default function ChatIa() {
             </div>
 
             <div className="mt-8">
-              <button 
+              <button
                 onClick={handleFocusChat}
-                className="group inline-flex items-center justify-center gap-2.5 border border-[#2A2A2A] bg-transparent px-5 py-3 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] transition-all hover:border-[#C9A96E] hover:text-[#C9A96E] rounded-sm"
+                className="group inline-flex items-center gap-3 border border-[#2A2A2A] bg-transparent px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/[0.04]"
               >
                 Activar Consola <ArrowIcon />
               </button>
@@ -297,15 +297,16 @@ export default function ChatIa() {
                 {/* Controles Inferiores */}
                 <div className="border-t border-[#1A1A1A] bg-[#050505] p-3 shrink-0">
                   
-                  {/* Preguntas Sugeridas: Single line, ultra compact, letras en 8px */}
+                  {/* Escenarios predeterminados */}
                   <div className="mb-3 flex flex-nowrap overflow-x-auto gap-2 pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {scenarios.map((scen) => (
                       <button
                         key={scen.key}
                         onClick={() => handleScenarioClick(scen.key)}
                         disabled={isTyping}
-                        className="shrink-0 whitespace-nowrap border border-[#1A1A1A] bg-[#0A0A0A] px-2.5 py-1 font-mono text-[8px] uppercase tracking-widest text-[#666] transition-colors hover:border-[#C9A96E]/40 hover:text-[#C9A96E] disabled:opacity-30 rounded-sm"
+                        className="group shrink-0 relative flex items-center gap-2 border border-[#2A2A2A] bg-[#0D0D0D] px-3.5 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-[#888] transition-all duration-300 hover:border-[#C9A96E]/50 hover:text-[#C9A96E] hover:bg-[#C9A96E]/[0.04] disabled:opacity-30"
                       >
+                        <span className="text-[#C9A96E]/40 group-hover:text-[#C9A96E] transition-colors duration-300">›</span>
                         {scen.shortLabel}
                       </button>
                     ))}
