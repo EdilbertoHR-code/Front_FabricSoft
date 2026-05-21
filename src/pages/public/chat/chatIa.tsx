@@ -298,15 +298,32 @@ export default function ChatIa() {
                 <div className="border-t border-[#1A1A1A] bg-[#050505] p-3 shrink-0">
                   
                   {/* Escenarios predeterminados */}
-                  <div className="mb-3 flex flex-nowrap overflow-x-auto gap-2 pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  <div className="mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {scenarios.map((scen) => (
                       <button
                         key={scen.key}
                         onClick={() => handleScenarioClick(scen.key)}
                         disabled={isTyping}
-                        className="group shrink-0 relative flex items-center gap-2 border border-[#2A2A2A] bg-[#0D0D0D] px-3.5 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-[#888] transition-all duration-300 hover:border-[#C9A96E]/50 hover:text-[#C9A96E] hover:bg-[#C9A96E]/[0.04] disabled:opacity-30"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          border: '1px solid #2A2A2A',
+                          background: '#0D0D0D',
+                          padding: '6px 12px',
+                          fontFamily: 'var(--mono)',
+                          fontSize: 9,
+                          textTransform: 'uppercase' as const,
+                          letterSpacing: '0.1em',
+                          color: '#666',
+                          transition: 'all 0.3s',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap' as const,
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.5)'; e.currentTarget.style.color = '#C9A96E'; e.currentTarget.style.background = 'rgba(201,169,110,0.04)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#666'; e.currentTarget.style.background = '#0D0D0D'; }}
                       >
-                        <span className="text-[#C9A96E]/40 group-hover:text-[#C9A96E] transition-colors duration-300">›</span>
+                        <span style={{ color: 'rgba(201,169,110,0.4)', fontSize: 11 }}>›</span>
                         {scen.shortLabel}
                       </button>
                     ))}
