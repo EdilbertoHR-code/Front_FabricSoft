@@ -1,3 +1,8 @@
+packages:
+  - .          # Frontend Vite/React (app principal)
+  - frontend   # Frontend Next.js (Edilberto - SSR/SEO)
+  - backend    # Backend API Express (en desarrollo)
+
 allowBuilds:
   '@clerk/shared': true
   '@tsparticles/engine': true
