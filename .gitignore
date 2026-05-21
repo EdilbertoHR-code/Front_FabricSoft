@@ -58,3 +58,9 @@ fLVl*
 
 # Permitir documentos LaTeX del proyecto
 !docs/*.tex
+*.pdf
+*.docx
+
+# Permitir documentos del proyecto en docs/
+!docs/*.pdf
+!docs/*.docx
