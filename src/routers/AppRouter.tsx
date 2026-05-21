@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import PublicLayout from '../layouts/public/publicLayaout';
 import Home from '../pages/public/home/home';
@@ -8,11 +9,19 @@ import CasoPage from '../pages/public/casos/CasoPage';
 // import ProyectosBlog from '../components/public/proyectos/poryecto';
 // import Clientes from '../components/public/clientes/clientes';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 export const AppRouter = () => {
   return (
-    <Routes>
-      {/* RUTAS PÚBLICAS 
-        Todo lo que esté dentro de esta ruta principal tendrá el Header y Footer 
+    <>
+      <ScrollToTop />
+      <Routes>
+      {/* RUTAS PÚBLICAS
+        Todo lo que esté dentro de esta ruta principal tendrá el Header y Footer
       */}
       <Route path="/" element={<PublicLayout />}>
         
@@ -53,6 +62,7 @@ export const AppRouter = () => {
       {/* REDIRECCIÓN POR DEFECTO: Si escriben una URL que no existe, los manda al Home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 };
 

@@ -10,15 +10,14 @@ const days = [
 export default function S11OfficeHours() {
   return (
     <section id="s11" className="demo-section s11">
-      <div className="demo-section-marker">S11 · Office Hours</div>
       <div className="container">
         <div className="office-hours">
           <div className="office-hours-text">
             <div className="label">FABRIC Office Hours</div>
             {/* Desktop heading */}
-            <h2 className="s11-heading-desktop">Conversaciones directas con <em>el fundador.</em></h2>
+            <h2 className="s11-heading-desktop">Conversaciones directas con <span className="text-[#C9A96E]">el fundador.</span></h2>
             {/* Mobile heading */}
-            <h2 className="s11-heading-mobile">Con <em>el fundador.</em></h2>
+            <h2 className="s11-heading-mobile">Con <span className="text-[#C9A96E]">el fundador.</span></h2>
 
             {/* Desktop paragraph */}
             <p className="s11-para-desktop">Una vez al mes, Julio Álvarez recibe cuatro conversaciones de 30 minutos con CFO/CTO de empresas evaluando iniciativas Oracle.</p>

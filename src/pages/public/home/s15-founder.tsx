@@ -10,13 +10,12 @@ const admissionRows = [
 export default function S15Founder() {
   return (
     <section id="s15" className="demo-section s15">
-      <div className="demo-section-marker">S15 · Fundador · Wait List · Founder Line</div>
       <div className="container">
         <div className="founder-manifesto">
           <div className="label" style={{ marginBottom: 24 }}>Manifiesto del Fundador</div>
           <blockquote>
             No construimos sitios bonitos.<br />
-            Construimos <em>la firma de Oracle Critical Engineering</em><br />
+            Construimos <span className="text-[#C9A96E]">la firma de Oracle Critical Engineering</span><br />
             más seria de México y LATAM.
           </blockquote>
           <cite>— Julio Álvarez</cite>
@@ -64,7 +63,7 @@ export default function S15Founder() {
           <div className="waitlist-head">
             <div>
               <div className="label" style={{ marginBottom: 16 }}>Wait List · Q3 2026</div>
-              <h3>FABRIC opera con un máximo de <em>12 proyectos simultáneos.</em></h3>
+              <h3>FABRIC opera con un máximo de <span className="text-[#C9A96E]">12 proyectos simultáneos.</span></h3>
             </div>
             <div className="waitlist-capacity" title="Capacidad: 9 ocupados · 2 reservados · 1 disponible">
               {Array.from({ length: 9 }).map((_, index) => <span className="slot filled" key={`filled-${index}`}></span>)}
@@ -114,7 +113,7 @@ export default function S15Founder() {
         <div className="founder-line">
           <div className="founder-line-label">Founder Line · Acceso Directo</div>
           <p className="founder-line-text">
-            Si tu organización considera una iniciativa Oracle mayor a USD 1M, <em>Julio Álvarez recibe estas conversaciones directamente.</em>
+            Si tu organización considera una iniciativa Oracle mayor a USD 1M, <span className="text-[#C9A96E]">Julio Álvarez recibe estas conversaciones directamente.</span>
           </p>
           <a className="founder-line-email" href="mailto:julio@fabricsoft.com.mx">
             <span>julio@fabricsoft.com.mx</span>

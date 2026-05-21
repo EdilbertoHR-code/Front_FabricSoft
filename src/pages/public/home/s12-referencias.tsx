@@ -10,11 +10,10 @@ const references = [
 export default function S12Referencias() {
   return (
     <section id="s12" className="demo-section s12">
-      <div className="demo-section-marker">S12 · Referencias Disponibles</div>
       <div className="container">
         <div className="s12-intro">
           <div className="label">Referencias Disponibles</div>
-          <h2>Habla directamente con <em>ejecutivos</em><br />que operan con FABRIC.</h2>
+          <h2>Habla directamente con <span className="text-[#C9A96E]">ejecutivos</span><br />que operan con FABRIC.</h2>
           <p>La decisión de contratar Oracle Critical Engineering requiere validación directa. Prospectos calificados acceden a conversaciones con:</p>
         </div>
 

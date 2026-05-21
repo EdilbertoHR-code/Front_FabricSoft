@@ -26,3 +26,21 @@ dist-ssr
 .env
 .env.local
 .env.production
+
+# AI / Claude tooling — no util en el repo
+.claude/
+.vite/
+documentacion/
+maquetado/zip_extracted/uploads/
+
+# Archivos sueltos de documentación
+*.docx
+*.pdf
+*.zip
+*.tex
+*.toc
+*.aux
+fLVl*
+
+# Assets raíz (solo src/assets/ es el path correcto)
+/logo.png

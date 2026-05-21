@@ -18,11 +18,10 @@ const fsos = [
 export default function S09FabricOS() {
   return (
     <section id="s09" className="demo-section s09">
-      <div className="demo-section-marker">S09 · FABRIC OS</div>
       <div className="container">
         <div className="s09-intro">
           <div className="label">FABRIC OS</div>
-          <h2>El sistema operativo de <em>cada proyecto.</em></h2>
+          <h2>El sistema operativo de <span className="text-[#C9A96E]">cada proyecto.</span></h2>
           <p>Cuatro capas integradas. IP institucionalizada. Cada proyecto opera sobre la misma arquitectura — la entrega no depende del consultor.</p>
         </div>
 
@@ -43,7 +42,7 @@ export default function S09FabricOS() {
           <div className="fso-section-header">
             <div>
               <div className="label" style={{ marginBottom: 12 }}>Catálogo FSO · En construcción 2026</div>
-              <h3>Seis soluciones nombradas. <em>Cada una, validable.</em></h3>
+              <h3>Seis soluciones nombradas. <span className="text-[#C9A96E]">Cada una, validable.</span></h3>
             </div>
             <div className="fso-legend">
               <span className="status-badge available">Available</span>

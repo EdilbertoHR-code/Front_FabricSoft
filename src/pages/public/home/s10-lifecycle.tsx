@@ -49,7 +49,7 @@ const steps: LifecycleStep[] = [
     name: "Stabilize",
     duration: "Duración · 6-12 sem",
     shortDuration: "6–12 SEM",
-    desc: <>Acompañamiento hasta el <em>primer ciclo crítico operado</em> en producción con estabilidad documentada.</>,
+    desc: <>Acompañamiento hasta el <span className="text-[#C9A96E]">primer ciclo crítico operado</span> en producción con estabilidad documentada.</>,
     deliverableTitle: "Entregable contractual",
     deliverable: "Acta de primer ciclo · Tablero KPI auditado",
     shortDeliverable: "Acta · KPI auditado",
@@ -71,11 +71,10 @@ const steps: LifecycleStep[] = [
 export default function S10Lifecycle() {
   return (
     <section id="s10" className="demo-section s10">
-      <div className="demo-section-marker">S10 · Lifecycle Operativo</div>
       <div className="container">
         <div className="s10-intro">
           <div className="label">Cómo Entregamos</div>
-          <h2>De diagnóstico a<br /><em>primer ciclo crítico operado.</em></h2>
+          <h2>De diagnóstico a<br /><span className="text-[#C9A96E]">primer ciclo crítico operado.</span></h2>
         </div>
 
         {/* Desktop: horizontal timeline */}

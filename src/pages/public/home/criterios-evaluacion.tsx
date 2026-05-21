@@ -17,12 +17,11 @@ const rejections = [
 
 export default function CriteriosEvaluacion() {
   return (
-    <section id="criterios" className="demo-section" style={{ background: "var(--bg-panel)" }}>
-      <div className="demo-section-marker">Criterios de Evaluación</div>
+    <section id="criterios" className="demo-section s07">
       <div className="container">
         <div style={{ maxWidth: 820 }}>
           <div className="label">Criterios de Evaluación</div>
-          <h2 style={{ fontWeight: 300 }}><em>No somos para todos.</em></h2>
+          <h2 style={{ fontWeight: 300 }}><span className="text-[#C9A96E]">No somos para todos.</span></h2>
           <p style={{ color: "var(--text-secondary)", fontSize: 17, lineHeight: 1.7, marginTop: 24 }}>
             FABRIC opera con criterios claros de admisión. Aceptamos proyectos donde podemos cumplir nuestra doctrina contractual. Rechazamos los demás.
           </p>

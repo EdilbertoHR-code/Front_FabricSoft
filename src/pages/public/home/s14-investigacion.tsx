@@ -29,11 +29,10 @@ const papers = [
 export default function S14Investigacion() {
   return (
     <section id="s14" className="demo-section s14">
-      <div className="demo-section-marker">S14 · Investigación FABRIC</div>
       <div className="container">
         <div className="s14-intro">
           <div className="label">Investigación</div>
-          <h2>Lo que aprendemos en producción.<br /><em>Lo publicamos.</em></h2>
+          <h2>Lo que aprendemos en producción.<br /><span className="text-[#C9A96E]">Lo publicamos.</span></h2>
           <p>Papers técnicos descargables. Acceso requiere registro corporativo — no formulario marketing.</p>
         </div>
 
@@ -60,7 +59,7 @@ export default function S14Investigacion() {
         <div className="research-banner">
           <div>
             <div className="label">FABRIC Benchmark Index · Anual</div>
-            <h3>El Estado de las Implementaciones Oracle Fusion en <em>México y LATAM 2026</em></h3>
+            <h3>El Estado de las Implementaciones Oracle Fusion en <span className="text-[#C9A96E]">México y LATAM 2026</span></h3>
             <p>Reporte anual. Tasa de fracaso real del mercado, razones más comunes, best practices para CFO/CTO en RFP de Oracle. Lanzamiento Q4 2026: registro abierto para early access.</p>
           </div>
           <a href="#aplicar" data-interaction="paper" className="btn-secondary">Reservar lugar →</a>

@@ -17,11 +17,10 @@ const upcoming: [string, string][] = [
 export default function S13Transparencia() {
   return (
     <section id="s13" className="demo-section s13">
-      <div className="demo-section-marker">S13 · Transparencia Honesta</div>
       <div className="container">
         <div className="s13-intro">
           <div className="label">Transparencia Honesta</div>
-          <h2>Lo que medimos hoy.<br />Lo que <em>publicaremos mañana.</em></h2>
+          <h2>Lo que medimos hoy.<br />Lo que <span className="text-[#C9A96E]">publicaremos mañana.</span></h2>
         </div>
 
         <div className="transparency-grid">

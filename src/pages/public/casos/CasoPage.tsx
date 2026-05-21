@@ -135,7 +135,7 @@ export default function CasoPage() {
             </Link>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 24 }}>{c.tag}</div>
             <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px,5vw,72px)', fontWeight: 300, lineHeight: 1.05, marginBottom: 24, maxWidth: 900 }}>{c.title}</h1>
-            <p style={{ fontFamily: 'var(--serif)', fontSize: 20, fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 720, marginBottom: 56 }}>{c.deck}</p>
+            <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: 720, marginBottom: 56 }}>{c.deck}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 0, border: '1px solid var(--border)', borderBottom: 'none' }}>
               {c.meta.map((m, i) => (
                 <div key={i} style={{ padding: '24px 28px', borderBottom: '1px solid var(--border)', borderRight: i < c.meta.length - 1 ? '1px solid var(--border)' : 'none' }}>
@@ -190,7 +190,7 @@ export default function CasoPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'clamp(120px,20vw,240px) 1fr', gap: '64px', alignItems: 'start' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.25em', textTransform: 'uppercase', paddingTop: 8, position: 'sticky', top: 100 }}>04 · Resultados verificables</div>
               <div>
-                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 40, lineHeight: 1.15 }}>Métricas <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>medibles y auditadas.</em></h2>
+                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 40, lineHeight: 1.15 }}>Métricas <span style={{ color: 'var(--accent)' }}>medibles y auditadas.</span></h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
                   {c.results.map((r, ri) => (
                     <div key={ri} style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', padding: '28px 24px' }}>
@@ -218,7 +218,7 @@ export default function CasoPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'clamp(120px,20vw,240px) 1fr', gap: '64px', alignItems: 'start' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.25em', textTransform: 'uppercase', paddingTop: 8, position: 'sticky', top: 100 }}>05 · Proof of Work</div>
               <div>
-                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 16, lineHeight: 1.15 }}>Entregables documentados, <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>auditables.</em></h2>
+                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 16, lineHeight: 1.15 }}>Entregables documentados, <span style={{ color: 'var(--accent)' }}>auditables.</span></h2>
                 <p style={{ color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>Cada documento está disponible bajo NDA tras evaluación post-admisión.</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 40 }}>
                   {c.pow.map((doc) => (

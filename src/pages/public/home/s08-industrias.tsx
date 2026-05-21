@@ -43,11 +43,10 @@ const industries = [
 export default function S08Industrias() {
   return (
     <section id="s08" className="demo-section s08">
-      <div className="demo-section-marker">S08 · Industrias Focales</div>
       <div className="container">
         <div className="s08-intro">
           <div className="label">Industrias Focales</div>
-          <h2>Tres verticales donde el ERP es <em>columna vertebral</em> de la operación crítica.</h2>
+          <h2>Tres verticales donde el ERP es <span className="text-[#C9A96E]">columna vertebral</span> de la operación crítica.</h2>
         </div>
 
         <div className="industries-grid">

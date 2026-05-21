@@ -302,7 +302,7 @@ export default function ChatIa() {
                       key={scen.key}
                       onClick={() => handleScenarioClick(scen.key)}
                       disabled={isTyping}
-                      className="border border-solid border-[#2A2A2A] bg-[#0A0A0A] px-4 py-2 font-mono text-xs uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
+                      className="border border-[#2A2A2A] bg-[#0A0A0A] px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
                     >
                       {scen.shortLabel}
                     </button>

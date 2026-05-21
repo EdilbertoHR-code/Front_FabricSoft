@@ -62,12 +62,11 @@ const cases: CaseData[] = [
 export default function S07Casos() {
   return (
     <section id="s07" className="demo-section s07">
-      <div className="demo-section-marker">S07 · Casos Ancla</div>
       <div className="container">
         <div className="s07-intro">
           <div className="label">Casos Seleccionados · 2026</div>
           <h2>
-            Rescates documentados, <em>verificables bajo NDA.</em>
+            Rescates documentados, <span className="text-[#C9A96E]">verificables bajo NDA.</span>
           </h2>
           <p>
             Dos implementaciones Oracle Fusion que llegaron a FABRIC en estado crítico.
@@ -98,7 +97,7 @@ export default function S07Casos() {
                   <div className="caso-metric" key={metric.label}>
                     <span className="caso-metric-label">{metric.label}</span>
                     <span className="caso-metric-val">
-                      {metric.highlight ? <em>{metric.value}</em> : metric.value}
+                      {metric.highlight ? <span className="text-[#C9A96E]">{metric.value}</span> : metric.value}
                       <span className="check">✓</span>
                     </span>
                     <span className="caso-metric-label">{metric.detail}</span>
@@ -116,9 +115,9 @@ export default function S07Casos() {
                   <Link to={item.href} className="cta">
                     Leer caso completo <span className="cta-arrow">→</span>
                   </Link>
-                  <a href="#proof" className="cta" data-interaction="proof">
+                  <button type="button" className="cta" data-interaction="proof">
                     Proof of Work <span className="cta-arrow">→</span>
-                  </a>
+                  </button>
                 </div>
                 <span className="nda-seal">NDA · Auditado</span>
               </div>
