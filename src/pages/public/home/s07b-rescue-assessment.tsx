@@ -297,56 +297,14 @@ export default function S07bRescueAssessment() {
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: '0 64px',
-              alignItems: 'start',
+              alignItems: 'center',
               animation: 'fadeIn .25s ease',
             }}>
 
-              {/* IZQUIERDA — pregunta + navegación */}
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 260 }}>
-                <p style={{ fontSize: 20, lineHeight: 1.6, color: 'var(--text-primary)', fontWeight: 500 }}>
-                  {q.text}
-                </p>
-
-                <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 12 }}>
-                  {current > 0 && (
-                    <button
-                      onClick={handleBack}
-                      style={{
-                        padding: '12px 20px',
-                        fontFamily: 'var(--mono)',
-                        fontSize: 10,
-                        letterSpacing: '0.18em',
-                        textTransform: 'uppercase',
-                        background: 'transparent',
-                        border: '1px solid var(--border)',
-                        color: 'var(--text-secondary)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ← Anterior
-                    </button>
-                  )}
-                  <button
-                    onClick={handleNext}
-                    disabled={!hasAnswer}
-                    style={{
-                      padding: '13px 32px',
-                      fontFamily: 'var(--mono)',
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      background: hasAnswer ? 'var(--accent)' : 'transparent',
-                      border: hasAnswer ? 'none' : '1px solid var(--border)',
-                      color: hasAnswer ? '#0A0A0A' : 'var(--text-secondary)',
-                      cursor: hasAnswer ? 'pointer' : 'not-allowed',
-                      transition: 'all .2s ease',
-                    }}
-                  >
-                    {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
-                  </button>
-                </div>
-              </div>
+              {/* IZQUIERDA — solo la pregunta, centrada contra las opciones */}
+              <p style={{ fontSize: 20, lineHeight: 1.6, color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
+                {q.text}
+              </p>
 
               {/* DERECHA — opciones de respuesta */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -383,6 +341,47 @@ export default function S07bRescueAssessment() {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Navegación — debajo del grid */}
+            <div style={{ marginTop: 36, display: 'flex', alignItems: 'center', gap: 12 }}>
+              {current > 0 && (
+                <button
+                  onClick={handleBack}
+                  style={{
+                    padding: '12px 20px',
+                    fontFamily: 'var(--mono)',
+                    fontSize: 10,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ← Anterior
+                </button>
+              )}
+              <button
+                onClick={handleNext}
+                disabled={!hasAnswer}
+                style={{
+                  padding: '13px 32px',
+                  fontFamily: 'var(--mono)',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  background: hasAnswer ? 'var(--accent)' : 'transparent',
+                  border: hasAnswer ? 'none' : '1px solid var(--border)',
+                  color: hasAnswer ? '#0A0A0A' : 'var(--text-secondary)',
+                  cursor: hasAnswer ? 'pointer' : 'not-allowed',
+                  transition: 'all .2s ease',
+                }}
+              >
+                {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
+              </button>
             </div>
           </div>
         )}
