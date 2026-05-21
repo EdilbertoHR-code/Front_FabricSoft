@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
@@ -85,11 +85,11 @@ function TypewriterCarousel() {
   const gold = charIndex > phrase.base.length ? phrase.gold.slice(0, charIndex - phrase.base.length) : "";
 
   return (
-    <div className="relative mt-6 flex min-h-[66px] w-full max-w-[680px] items-center overflow-hidden border-l-2 border-[#D4AF37] bg-gradient-to-r from-[#D4AF37]/13 via-[#D4AF37]/6 to-transparent px-5 py-4">
-      <span className="relative z-10 text-sm font-bold leading-relaxed text-[#F5F5F5] md:text-base">
+    <div className="fabric-typewriter relative mt-6 flex min-h-[66px] w-full max-w-[680px] items-center overflow-hidden border-l-2 border-[#C9A96E] bg-gradient-to-r from-[#C9A96E]/10 via-[#C9A96E]/5 to-transparent px-5 py-4">
+      <span className="relative z-10 font-serif text-sm font-light italic leading-relaxed text-[#F5F5F5] md:text-base">
         {base}
-        <span className="text-[#D4AF37]">{gold}</span>
-        <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#D4AF37] align-middle" />
+        <span className="text-[#C9A96E]">{gold}</span>
+        <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#C9A96E] align-middle" />
       </span>
     </div>
   );
@@ -124,7 +124,7 @@ function PremiumGlobe() {
   ];
 
   return (
-    <div className="relative mx-auto flex min-h-[390px] w-full max-w-[560px] items-center justify-center overflow-visible md:min-h-[470px] lg:min-h-[540px]">
+    <div className="fabric-orb-stage relative mx-auto flex min-h-[390px] w-full max-w-[560px] items-center justify-center overflow-visible md:min-h-[470px] lg:min-h-[540px]">
       {globeStars.map((star, index) => (
         <span
           key={index}
@@ -153,7 +153,7 @@ function PremiumGlobe() {
 
       <div className="relative z-10" style={{ animation: "globeFloat 7s ease-in-out infinite" }}>
         <div
-          className="relative h-[205px] w-[205px] overflow-hidden rounded-full md:h-[275px] md:w-[275px] lg:h-[335px] lg:w-[335px]"
+          className="fabric-orb-core relative h-[205px] w-[205px] overflow-hidden rounded-full md:h-[275px] md:w-[275px] lg:h-[335px] lg:w-[335px]"
           style={{
             backgroundImage: "url('https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/globe.jpeg')",
             backgroundSize: "cover",
@@ -172,7 +172,7 @@ function PremiumGlobe() {
       {globeLabels.map((label) => (
         <div
           key={`${label.number ?? "info"}-${label.title}`}
-          className={`absolute z-30 max-w-[190px] border border-[#353535] bg-[#0A0A0A]/90 px-3.5 py-2.5 shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md transition duration-300 hover:border-[#C9A96E] hover:bg-[#111111]/95 md:max-w-[210px] ${label.className}`}
+          className={`fabric-orb-label absolute z-30 max-w-[190px] border border-[#353535] bg-[#0A0A0A]/90 px-3.5 py-2.5 shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md transition duration-300 hover:border-[#C9A96E] hover:bg-[#111111]/95 md:max-w-[210px] ${label.className}`}
         >
           {label.number ? (
             <p className="font-mono text-[7px] font-black uppercase leading-none tracking-[0.22em] text-[#C9A96E] md:text-[8px]">
@@ -186,7 +186,7 @@ function PremiumGlobe() {
         </div>
       ))}
 
-      <div className="absolute bottom-[2%] left-1/2 z-30 w-[260px] -translate-x-1/2 border border-[rgba(201,169,110,0.24)] bg-[#0A0A0A]/88 px-4 py-3 text-center shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md md:w-[300px]">
+      <div className="fabric-orb-caption absolute bottom-[2%] left-1/2 z-30 w-[260px] -translate-x-1/2 border border-[rgba(201,169,110,0.24)] bg-[#0A0A0A]/88 px-4 py-3 text-center shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md md:w-[300px]">
         <p className="font-mono text-[7px] font-black uppercase leading-none tracking-[0.22em] text-[#C9A96E]/80 md:text-[8px]">
           ERP Mission Critical
         </p>
@@ -207,7 +207,7 @@ export default function Parte1HomeSplineAI() {
   }, []);
 
   return (
-    <section className="relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#0A0A0A] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
+    <section className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#0A0A0A] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
       <style>{`
         @keyframes fabricStar {
           0%, 100% { opacity: 0; transform: translateY(0) scale(.85); }
@@ -248,12 +248,12 @@ export default function Parte1HomeSplineAI() {
       <div className="relative z-10 mx-auto grid w-full max-w-[1420px] grid-cols-1 items-center gap-12 lg:grid-cols-[1.14fr_0.86fr] lg:gap-12">
         <div className="relative z-20 max-w-4xl">
           <div
-            className={`inline-flex items-center gap-2.5 rounded-full border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 backdrop-blur-md transition-all duration-700 ${
+            className={`fabric-hero-badge inline-flex items-center gap-2.5 rounded-full border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 backdrop-blur-md transition-all duration-700 ${
               mounted ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
             }`}
           >
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inset-0 animate-ping rounded-full bg-[#D4AF37] opacity-70" />
+              <span className="absolute inset-0 animate-ping rounded-full bg-[#C9A96E] opacity-70" />
               <span className="relative h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
             </span>
             <span className="font-mono text-[8.5px] font-semibold uppercase tracking-[0.22em] text-[#F5F5F5]">

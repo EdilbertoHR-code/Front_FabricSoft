@@ -1,0 +1,89 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {subsection}{\numberline {0.1}Índice ejecutivo}{4}{subsection.0.1}%
+\contentsline {section}{\numberline {1}Contexto del negocio y dirección estratégica}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Misión y visión}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Misión}{4}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Visión}{5}{subsubsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.2}Posicionamiento estratégico y doctrina operativa}{5}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Matriz de Posicionamiento Maestro}{5}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Fórmula del ROI Técnico}{5}{subsubsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.3}Objetivo general del ecosistema digital}{5}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Objetivos específicos del proyecto}{6}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Ciclo de vida del servicio (FABRIC Lifecycle)}{6}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Requerimientos técnicos}{6}{subsection.1.6}%
+\contentsline {subsubsection}{\numberline {1.6.1}Performance obligatorio}{6}{subsubsection.1.6.1}%
+\contentsline {subsubsection}{\numberline {1.6.2}Requerimientos arquitectónicos}{7}{subsubsection.1.6.2}%
+\contentsline {subsubsection}{\numberline {1.6.3}Requerimientos de código}{7}{subsubsection.1.6.3}%
+\contentsline {subsection}{\numberline {1.7}Reglas de negocio y lógica de filtrado}{8}{subsection.1.7}%
+\contentsline {subsubsection}{\numberline {1.7.1}Arquitectura de entornos y flujos de precalificación}{8}{subsubsection.1.7.1}%
+\contentsline {subsubsection}{\numberline {1.7.2}Doctrina FABRIC V4.0 — Compromisos operativos y contractuales}{8}{subsubsection.1.7.2}%
+\contentsline {subsubsection}{\numberline {1.7.3}Motor de admisión y filtros server-side (Zod + API Validation)}{9}{subsubsection.1.7.3}%
+\contentsline {subsubsection}{\numberline {1.7.4}Doctrina de filtrado — Criterios de exclusión}{9}{subsubsection.1.7.4}%
+\contentsline {subsubsection}{\numberline {1.7.5}Motor IA (Agente Oracle) — Reglas operativas}{9}{subsubsection.1.7.5}%
+\contentsline {subsubsection}{\numberline {1.7.6}Panel admin — Reglas de acceso y control de capacidad}{10}{subsubsection.1.7.6}%
+\contentsline {subsection}{\numberline {1.8}Metas e indicadores de éxito}{10}{subsection.1.8}%
+\contentsline {subsection}{\numberline {1.9}Alcance}{11}{subsection.1.9}%
+\contentsline {subsubsection}{\numberline {1.9.1}Entregables contemplados para el 25 de mayo}{11}{subsubsection.1.9.1}%
+\contentsline {subsubsection}{\numberline {1.9.2}Fuera de alcance para V1}{11}{subsubsection.1.9.2}%
+\contentsline {section}{\numberline {2}Análisis de mercado y perfil del usuario}{11}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Segmentación y mercado objetivo}{12}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Caso de Éxito Ancla: APE Plazas (Estabilización en Producción)}{12}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Contexto y Problemática Operativa}{12}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Ejecución de Ingeniería de Remediación}{12}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Buyer persona y perfiles de decisión}{13}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Persona A — CFO (Comprador Económico)}{13}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Persona B — CTO / CIO (Comprador Técnico)}{13}{subsubsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.4}Casos de uso core}{13}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Diagrama de casos de uso}{14}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Descripción ejecutiva de actores}{15}{subsubsection.2.5.1}%
+\contentsline {section}{\numberline {3}Arquitectura de la información y navegación}{15}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Sitemap — resumen ejecutivo}{15}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Navegación persistente}{15}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Prueba del tronco}{16}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Especificaciones de UI/UX}{16}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Tokens de diseño}{16}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Paleta de colores}{16}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Especificación tipográfica}{17}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Restricciones visuales}{17}{subsubsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.2}Microinteracciones y política de movimiento}{17}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Formularios de alta conversión}{18}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Maquetado y prototipado visual}{18}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Entregables de maquetado}{18}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Criterios de aprobacion visual}{18}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Arquitectura técnica — capa de presentación}{19}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Stack seleccionado}{19}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Arquitectura de componentes}{20}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Estrategia de render por página}{21}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Explicación simple de tecnologías y herramientas}{21}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Glosario ejecutivo de conceptos técnicos}{22}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Motor IA — especificación técnica}{24}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Arquitectura del agente}{24}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Componentes técnicos}{25}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Contenido RAG pendiente de carga}{26}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Panel de administración — especificación técnica}{26}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Arquitectura y acceso}{26}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Funcionalidades completas}{27}{subsection.8.2}%
+\contentsline {subsubsection}{\numberline {8.2.1}Gestión de leads}{27}{subsubsection.8.2.1}%
+\contentsline {subsubsection}{\numberline {8.2.2}Edición de métricas en vivo}{27}{subsubsection.8.2.2}%
+\contentsline {subsubsection}{\numberline {8.2.3}Control de capacidad operativa}{27}{subsubsection.8.2.3}%
+\contentsline {subsection}{\numberline {8.3}Wireframe del dashboard admin}{27}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Integración y consumo de datos}{28}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Servicios y costos}{28}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Modelo documental MongoDB Atlas}{29}{subsection.9.2}%
+\contentsline {subsubsection}{\numberline {9.2.1}Colecciones propuestas}{29}{subsubsection.9.2.1}%
+\contentsline {subsubsection}{\numberline {9.2.2}Documento base: lead}{30}{subsubsection.9.2.2}%
+\contentsline {subsubsection}{\numberline {9.2.3}Justificación técnica y criterios de diseño de la base de datos}{31}{subsubsection.9.2.3}%
+\contentsline {subsubsection}{\numberline {9.2.4}Flujo de trabajo de admisión y ciclo de vida del lead (Customer Journey)}{32}{subsubsection.9.2.4}%
+\contentsline {subsection}{\numberline {9.3}Flujos de lead magnets}{33}{subsection.9.3}%
+\contentsline {subsubsection}{\numberline {9.3.1}Flujo 1 — Rescue Assessment (/diagnostico)}{33}{subsubsection.9.3.1}%
+\contentsline {subsubsection}{\numberline {9.3.2}Flujo 2 — ERP TCO Comparator (/comparator/erp)}{33}{subsubsection.9.3.2}%
+\contentsline {subsubsection}{\numberline {9.3.3}Flujo 3 — Wait List (/aplicar)}{33}{subsubsection.9.3.3}%
+\contentsline {subsubsection}{\numberline {9.3.4}Flujo 4 — Office Hours (/office-hours)}{34}{subsubsection.9.3.4}%
+\contentsline {subsubsection}{\numberline {9.3.5}Flujo 5 — Papers Técnicos (/investigacion)}{34}{subsubsection.9.3.5}%
+\contentsline {subsubsection}{\numberline {9.3.6}Flujo 6 — Agente IA (S04)}{35}{subsubsection.9.3.6}%
+\contentsline {subsubsection}{\numberline {9.3.7}Flujo 7 — Portal de Transparencia (/transparencia)}{35}{subsubsection.9.3.7}%
+\contentsline {section}{\numberline {10}Infraestructura, rendimiento y despliegue}{35}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Hosting y entornos}{35}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Estrategia Lighthouse 95+}{36}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Seguridad}{36}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}SEO técnico}{36}{subsection.10.4}%

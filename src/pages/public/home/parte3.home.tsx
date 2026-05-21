@@ -1,117 +1,135 @@
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+﻿import {
+  useEffect, useMemo, useRef, useState,
+  memo, useCallback,
+  type ElementType, type ReactNode,
+} from "react";
+import { Toaster, toast } from "sonner";
 
-type Scenario = "rescue" | "stabilize" | "migrate";
-
-type BreakdownItem = {
-  label: string;
-  value: number;
-  short: string;
-};
-
-type InputState = {
+// ─── TYPES ────────────────────────────────────────────────────────────────────
+type CurrentSystem = "SAP S/4 HANA" | "Oracle EBS" | "JD Edwards" | "PeopleSoft" | "Microsoft Dynamics";
+type IconName = "shield" | "scan" | "chart" | "cloud" | "calculator";
+type FormState = {
+  currentSystem: CurrentSystem;
   users: number;
-  licenseCost: number;
-  supportCost: number;
-  manualHours: number;
-  hourlyCost: number;
-  closingDays: number;
+  currentYearOne: number;
+  oracleYearOne: number;
+  migrationCost: number;
   manualReports: number;
+  closingDays: number;
   adoptionRate: number;
-  remediationCost: number;
 };
 
-const initialInput: InputState = {
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const SYSTEMS: CurrentSystem[] = ["SAP S/4 HANA", "Oracle EBS", "JD Edwards", "PeopleSoft", "Microsoft Dynamics"];
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+const DEFAULT_FORM: FormState = {
+  currentSystem: "SAP S/4 HANA",
   users: 150,
-  licenseCost: 285000,
-  supportCost: 120000,
-  manualHours: 220,
-  hourlyCost: 75,
-  closingDays: 15,
+  currentYearOne: 485000,
+  oracleYearOne: 310000,
+  migrationCost: 372000,
   manualReports: 12,
-  adoptionRate: 42,
-  remediationCost: 180000,
+  closingDays: 15,
+  adoptionRate: 72,
 };
 
-const scenarioCopy: Record<
-  Scenario,
-  {
-    title: string;
-    description: string;
-    multiplier: number;
-  }
-> = {
-  rescue: {
-    title: "Rescate Oracle Fusion",
-    description: "Reduce reportes paralelos, cierre lento y operación fuera del ERP.",
-    multiplier: 0.42,
-  },
-  stabilize: {
-    title: "Estabilización post go-live",
-    description: "Optimiza adopción, gobierno operativo y primer ciclo crítico.",
-    multiplier: 0.36,
-  },
-  migrate: {
-    title: "Migración controlada",
-    description: "Proyecta TCO para migrar sin trasladar deuda operativa.",
-    multiplier: 0.55,
-  },
-};
+const FEATURES = [
+  { id: "01", title: "Costo Total",        text: "Análisis de costo total a 5 y 10 años.",         icon: "chart"  as IconName },
+  { id: "02", title: "Punto de Equilibrio", text: "Breakeven de migración estimado.",                icon: "scan"   as IconName },
+  { id: "03", title: "Proyección Exacta",   text: "ROI proyectado con benchmarks Oracle.",           icon: "cloud"  as IconName },
+  { id: "04", title: "Privacidad",          text: "Opción de análisis detallado con datos reales.",  icon: "shield" as IconName },
+];
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(8px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  },
-};
+// ─── FORMATTERS ───────────────────────────────────────────────────────────────
+const fmt   = (v: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
+const fmtCo = (v: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 }).format(v);
+const clamp = (v: number, min = 0, max = Infinity) => isNaN(v) ? min : Math.min(Math.max(v, min), max);
 
-const stagger: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.075, delayChildren: 0.08 },
-  },
-};
-
-const wordReveal: Variants = {
-  hidden: { opacity: 0, y: 18, filter: "blur(8px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-function clamp(value: number, min = 0, max = Number.POSITIVE_INFINITY) {
-  if (Number.isNaN(value)) return min;
-  return Math.min(Math.max(value, min), max);
+// ─── HOOKS ────────────────────────────────────────────────────────────────────
+function useInView<T extends HTMLElement>(threshold = 0.2) {
+  const ref = useRef<T | null>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      ([e]) => setVisible(e.isIntersecting),
+      { threshold }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible] as const;
 }
 
-function formatUsd(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
+function useTco(form: FormState) {
+  return useMemo(() => {
+    const base      = Math.max(form.currentYearOne - form.oracleYearOne, 0);
+    const reports   = form.manualReports * 3500;
+    const closing   = Math.max(form.closingDays - 10, 0) * 6200;
+    const adoption  = form.adoptionRate < 70 ? (70 - form.adoptionRate) * form.users * 38 : 0;
+    const annual    = base + reports + closing + adoption;
+    const five      = annual * 5;
+    const ten       = annual * 10 * 1.532;
+    const breakeven = annual > 0 ? Math.ceil((form.migrationCost / annual) * 12) : 0;
+    const roi5      = form.migrationCost > 0 ? Math.round(((five - form.migrationCost) / form.migrationCost) * 100) : 0;
+    const currTco5  = form.currentYearOne * 5 + reports * 5 + closing * 5 + adoption * 5;
+    const oracleTco5 = form.oracleYearOne * 5 + form.migrationCost;
+    return { annual, five, ten, breakeven, roi5, currTco5, oracleTco5 };
+  }, [form]);
 }
 
-function formatCompactUsd(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(value);
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+const toastBase = {
+  style: {
+    background: "#0A0A0A", borderRadius: "4px",
+    fontFamily: "'JetBrains Mono', monospace",
+    fontSize: "11px", fontWeight: 700,
+    letterSpacing: "0.12em", textTransform: "uppercase" as const,
+    padding: "14px 18px",
+  },
+};
+const toastOk  = (msg: string) => { toast.dismiss(); toast.success(msg, { ...toastBase, style: { ...toastBase.style, border: "1px solid #C9A96E", color: "#C9A96E" }, icon: null }); };
+const toastErr = (msg: string) => { toast.dismiss(); toast.error(msg,   { ...toastBase, style: { ...toastBase.style, border: "1px solid #b85450", color: "#b85450" }, icon: null }); };
+
+// ─── ICONS ────────────────────────────────────────────────────────────────────
+function Icon({ name, className = "h-5 w-5" }: { name: IconName; className?: string }) {
+  const s = "1.5";
+  if (name === "calculator") return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="5" y="3" width="14" height="18" stroke="currentColor" strokeWidth={s} />
+      <path d="M8 7H16M8 11H8.01M12 11H12.01M16 11H16.01M8 15H8.01M12 15H12.01M16 15H16.01" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+    </svg>
+  );
+  if (name === "shield") return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 3L20 6.5V11.5C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11.5V6.5L12 3Z" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
+      <path d="M9 12L11 14L15 9" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
+  );
+  if (name === "scan") return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 8V6C4 4.9 4.9 4 6 4H8M16 4H18C19.1 4 20 4.9 20 6V8M20 16V18C20 19.1 19.1 20 18 20H16M8 20H6C4.9 20 4 19.1 4 18V16" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
+      <path d="M7 12H17" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
+    </svg>
+  );
+  if (name === "cloud") return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6.5 17.5H18C20.2 17.5 22 15.7 22 13.5C22 11.3 20.2 9.5 18 9.5C17.6 6.5 15.1 4 12 4C9.2 4 6.8 5.9 6.1 8.5C3.8 8.9 2 10.9 2 13.25C2 15.6 3.9 17.5 6.5 17.5Z" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
+  );
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 19H20M7 16V10M12 16V6M17 16V12" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
+    </svg>
+  );
 }
 
 function ArrowIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 12H19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M13 6L19 12L13 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" />
     </svg>
   );
 }
@@ -119,577 +137,404 @@ function ArrowIcon() {
 function CloseIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
     </svg>
   );
 }
 
-function CalculatorIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="5" y="3" width="14" height="18" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 7H16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M8 11H8.01M12 11H12.01M16 11H16.01M8 15H8.01M12 15H12.01M16 15H16.01" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-    </svg>
-  );
+// ─── TEXT SCRAMBLE ────────────────────────────────────────────────────────────
+function TextScramble({
+  children, as: Tag = "span", className,
+  trigger = true, duration = 0.8, speed = 0.03,
+  chars = SCRAMBLE_CHARS, onComplete,
+}: {
+  children: string; as?: ElementType; className?: string;
+  trigger?: boolean; duration?: number; speed?: number;
+  chars?: string; onComplete?: () => void;
+}) {
+  const [text, setText] = useState(children);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setText(children); }, [children]);
+  useEffect(() => {
+    if (!trigger || busy) return;
+    setBusy(true);
+    const steps = Math.max(1, Math.floor(duration / speed));
+    let step = 0;
+    const id = window.setInterval(() => {
+      const p = step / steps;
+      setText(children.split("").map((c, i) =>
+        c === " " ? " " : p * children.length > i ? c : chars[Math.floor(Math.random() * chars.length)]
+      ).join(""));
+      if (++step > steps) { clearInterval(id); setText(children); setBusy(false); onComplete?.(); }
+    }, speed * 1000);
+    return () => clearInterval(id);
+  }, [chars, children, duration, busy, onComplete, speed, trigger]);
+  return <Tag className={className}>{text}</Tag>;
 }
 
-function ChartIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 19H20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M7 16V10M12 16V6M17 16V12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 3.5L18.5 6.2V11.2C18.5 15.5 15.8 19.3 12 20.5C8.2 19.3 5.5 15.5 5.5 11.2V6.2L12 3.5Z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M9 12L11 14L15.5 9.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function AnimatedHeadline({ text }: { text: string }) {
-  return (
-    <motion.h2
-      variants={stagger}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.55 }}
-      className="font-display text-[clamp(42px,5.4vw,84px)] leading-[0.95] tracking-[-0.05em] text-text-primary"
-    >
-      {text.split(" ").map((word, index) => {
-        const isAccent = word.includes("ERP") || word.includes("actual");
-
-        return (
-          <motion.span key={`${word}-${index}`} variants={wordReveal} className="mr-[0.18em] inline-block">
-            <span className={isAccent ? "text-accent" : undefined}>{word}</span>
-          </motion.span>
-        );
-      })}
-    </motion.h2>
-  );
-}
-
-function FinancialButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+// ─── SHARED PRIMITIVES ────────────────────────────────────────────────────────
+function Btn({ children, onClick, disabled = false, className = "" }: {
+  children: ReactNode; onClick: () => void; disabled?: boolean; className?: string;
+}) {
   return (
     <button
-      type="button"
-      onClick={onClick}
-      className="group relative inline-flex w-fit items-center justify-center gap-3 overflow-hidden border border-border-strong bg-transparent px-8 py-4 font-technical text-[11px] font-black uppercase tracking-[0.22em] text-text-primary transition duration-300 hover:-translate-y-1 hover:border-accent hover:bg-accent-soft hover:text-accent hover:shadow-[0_0_34px_rgba(201,169,110,0.12)]"
+      type="button" onClick={onClick} disabled={disabled}
+      className={`group inline-flex items-center justify-center gap-3
+        border border-[#2A2A2A] bg-transparent
+        px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.15em]
+        text-[#F5F5F5] transition-all duration-300
+        hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/5
+        disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(201,169,110,0)] hover:shadow-[0_0_20px_-5px_rgba(201,169,110,0.3)] ${className}`}
     >
-      <span className="absolute left-0 top-0 h-full w-[2px] bg-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <span className="relative z-10">{children}</span>
+      {children}
     </button>
   );
 }
 
-function NumberField({
-  label,
-  value,
-  onChange,
-  prefix,
-  suffix,
-}: {
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  prefix?: string;
-  suffix?: string;
+function ScrollReveal({ children, up = true, delay = 0 }: {
+  children: ReactNode; up?: boolean; delay?: number;
+}) {
+  const [ref, visible] = useInView<HTMLDivElement>(0.2);
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 will-change-transform ${
+        visible ? "translate-y-0 opacity-100" : up ? "translate-y-10 opacity-0" : "-translate-y-10 opacity-0"
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ─── FORM INPUTS ──────────────────────────────────────────────────────────────
+const inputBase = "flex items-center bg-[#0A0A0A] px-4 py-3.5 border border-[#2A2A2A] transition-colors duration-200 focus-within:border-[#C9A96E]/60 focus-within:shadow-[0_0_10px_rgba(201,169,110,0.1)] rounded-sm";
+
+const NumberInput = memo(function NumberInput({ label, value, onChange, prefix, suffix }: {
+  label: string; value: number; onChange: (v: number) => void; prefix?: string; suffix?: string;
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
-        {label}
-      </span>
-      <div className="flex items-center border border-border bg-bg-base/82 px-4 py-3 transition duration-300 focus-within:border-accent/70 focus-within:bg-bg-elevated/70">
-        {prefix ? <span className="mr-2 font-technical text-xs text-accent/75">{prefix}</span> : null}
+      <span className="mb-2 block font-mono text-[10px] uppercase tracking-wider text-[#888]">{label}</span>
+      <div className={inputBase}>
+        {prefix && <span className="mr-2 font-mono text-[#888]">{prefix}</span>}
         <input
-          type="number"
-          min={0}
-          value={value}
-          onChange={(event) => onChange(clamp(Number(event.target.value)))}
-          className="w-full bg-transparent font-technical text-sm text-text-primary outline-none placeholder:text-text-tertiary"
+          type="number" min={0} value={value}
+          onChange={(e) => onChange(clamp(Number(e.target.value)))}
+          className="w-full bg-transparent font-mono text-sm text-[#F5F5F5] outline-none"
         />
-        {suffix ? <span className="ml-2 font-technical text-xs text-text-tertiary">{suffix}</span> : null}
+        {suffix && <span className="ml-2 font-mono text-xs text-[#888]">{suffix}</span>}
       </div>
     </label>
   );
-}
+});
 
-function RangeField({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  suffix,
-  helper,
-}: {
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  min: number;
-  max: number;
-  suffix?: string;
-  helper: string;
+const SelectInput = memo(function SelectInput({ value, onChange }: {
+  value: CurrentSystem; onChange: (v: CurrentSystem) => void;
 }) {
   return (
-    <div className="border border-border bg-bg-panel/70 p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="font-technical text-[9px] font-black uppercase tracking-[0.2em] text-text-primary">
-            {label}
-          </p>
-          <p className="mt-2 text-xs leading-5 text-text-tertiary">{helper}</p>
-        </div>
-        <span className="shrink-0 font-technical text-sm font-black text-accent">
-          {value}
-          {suffix ?? ""}
-        </span>
-      </div>
-
-      <input
-        type="range"
-        min={min}
-        max={max}
+    <label className="block">
+      <span className="mb-2 block font-mono text-[10px] uppercase tracking-wider text-[#888]">Sistema Actual</span>
+      <select
         value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        className="mt-4 h-1 w-full accent-[#C9A96E]"
-      />
-    </div>
+        onChange={(e) => onChange(e.target.value as CurrentSystem)}
+        className="w-full cursor-pointer appearance-none bg-[#0A0A0A] px-4 py-3.5 font-mono text-sm text-[#F5F5F5] outline-none border border-[#2A2A2A] transition-colors duration-200 focus:border-[#C9A96E]/60 rounded-sm"
+      >
+        {SYSTEMS.map((s) => <option key={s} value={s} className="bg-[#0A0A0A]">{s}</option>)}
+      </select>
+    </label>
   );
-}
+});
 
-function useErpCalculation(input: InputState, scenario: Scenario) {
-  return useMemo(() => {
-    const manualAnnualCost = input.manualHours * input.hourlyCost * 12;
-    const adoptionLeakage = input.licenseCost * Math.max(0, 100 - input.adoptionRate) * 0.006;
-    const closingPenalty = input.closingDays * 8500;
-    const reportsPenalty = input.manualReports * 12500;
-
-    const currentTco = input.licenseCost + input.supportCost + manualAnnualCost + adoptionLeakage + closingPenalty + reportsPenalty;
-    const projectedTco = currentTco * scenarioCopy[scenario].multiplier + input.remediationCost * 0.22;
-    const annualSaving = Math.max(currentTco - projectedTco, 0);
-    const saving3Years = annualSaving * 3 - input.remediationCost;
-    const saving5Years = annualSaving * 5 - input.remediationCost;
-    const breakevenMonths = annualSaving > 0 ? Math.ceil((input.remediationCost / annualSaving) * 12) : 0;
-    const roi = input.remediationCost > 0 ? (saving5Years / input.remediationCost) * 100 : 0;
-
-    const breakdown: BreakdownItem[] = [
-      { label: "Licencias", value: input.licenseCost, short: "Lic." },
-      { label: "Soporte", value: input.supportCost, short: "Sup." },
-      { label: "Horas manuales", value: manualAnnualCost, short: "Manual" },
-      { label: "Cierre lento", value: closingPenalty, short: "Close" },
-      { label: "Reportes", value: reportsPenalty, short: "Reports" },
-      { label: "Baja adopción", value: adoptionLeakage, short: "Adopt." },
-    ];
-
-    return {
-      manualAnnualCost,
-      currentTco,
-      projectedTco,
-      annualSaving,
-      saving3Years,
-      saving5Years,
-      breakevenMonths,
-      roi,
-      breakdown,
-    };
-  }, [input, scenario]);
-}
-
-function KpiCard({ label, value, featured = false }: { label: string; value: string; featured?: boolean }) {
+// ─── RESULT CHART ─────────────────────────────────────────────────────────────
+const ResultChart = memo(function ResultChart({ currTco5, oracleTco5, five }: {
+  currTco5: number; oracleTco5: number; five: number;
+}) {
+  const max = Math.max(currTco5, oracleTco5, five, 1);
+  const bars = [
+    { label: "TCO Actual (5 Años)",  value: currTco5,   color: "bg-[#444]" },
+    { label: "TCO Nuevo (5 Años)",   value: oracleTco5, color: "bg-[#C9A96E]" },
+    { label: "Ahorro Neto Estimado", value: five,       color: "bg-[#C9A96E]" },
+  ];
   return (
-    <motion.article
-      variants={fadeUp}
-      className={`relative overflow-hidden border p-4 ${
-        featured ? "border-accent bg-accent text-bg-base" : "border-border bg-bg-panel/78 text-text-primary"
-      }`}
-    >
-      <p className={`font-technical text-[9px] font-black uppercase tracking-[0.2em] ${featured ? "text-bg-base" : "text-accent/75"}`}>
-        {label}
-      </p>
-      <p className="mt-3 font-technical text-2xl font-black tracking-[-0.05em] md:text-3xl">{value}</p>
-    </motion.article>
-  );
-}
-
-function ComparisonBars({ currentTco, projectedTco }: { currentTco: number; projectedTco: number }) {
-  const max = Math.max(currentTco, projectedTco, 1);
-  const currentWidth = `${(currentTco / max) * 100}%`;
-  const projectedWidth = `${(projectedTco / max) * 100}%`;
-
-  return (
-    <div className="border border-border bg-bg-panel/72 p-5">
-      <div className="mb-5 flex items-center justify-between gap-4">
-        <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
-          TCO Comparison
-        </p>
-        <ChartIcon />
-      </div>
-
-      {[
-        { label: "ERP actual", value: currentTco, width: currentWidth, accent: false },
-        { label: "Con FABRIC", value: projectedTco, width: projectedWidth, accent: true },
-      ].map((bar) => (
-        <div key={bar.label} className="mb-5 last:mb-0">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em] text-text-secondary">
-              {bar.label}
-            </span>
-            <span className="font-technical text-xs font-black text-text-primary">{formatCompactUsd(bar.value)}</span>
-          </div>
-          <div className="h-2 overflow-hidden bg-bg-base">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: bar.width }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-              className={`h-full ${bar.accent ? "bg-accent" : "bg-border-strong"}`}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CostBreakdownChart({ breakdown }: { breakdown: BreakdownItem[] }) {
-  const max = Math.max(...breakdown.map((item) => item.value), 1);
-
-  return (
-    <div className="border border-border bg-bg-panel/72 p-5">
-      <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
-        Hidden Cost Breakdown
-      </p>
-
-      <div className="mt-5 space-y-3">
-        {breakdown.map((item, index) => (
-          <div key={item.label} className="grid grid-cols-[72px_1fr_72px] items-center gap-3">
-            <span className="font-technical text-[8px] font-black uppercase tracking-[0.14em] text-text-tertiary">
-              {item.short}
-            </span>
-            <div className="h-2 overflow-hidden bg-bg-base">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${(item.value / max) * 100}%` }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.75, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] }}
-                className="h-full bg-accent/80"
+    <div className="bg-[#0A0A0A] p-6 border border-[#1A1A1A] rounded-sm">
+      <p className="font-mono text-[10px] uppercase tracking-wider mb-6 text-[#888]">Análisis Financiero</p>
+      <div className="space-y-5">
+        {bars.map((b, i) => (
+          <div key={b.label}>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-sans text-xs text-[#888]">{b.label}</span>
+              <span className="font-mono text-sm text-[#F5F5F5]">{fmtCo(b.value)}</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden bg-[#161616]">
+              <div
+                className={`h-full ${b.color} transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]`}
+                style={{ width: `${(b.value / max) * 100}%`, transitionDelay: `${i * 150}ms` }}
               />
             </div>
-            <span className="text-right font-technical text-[9px] font-black text-text-secondary">
-              {formatCompactUsd(item.value)}
-            </span>
           </div>
         ))}
       </div>
     </div>
   );
-}
+});
 
-function SavingsLineChart({ currentTco, projectedTco, remediationCost }: { currentTco: number; projectedTco: number; remediationCost: number }) {
-  const yearSavings = [1, 2, 3, 4, 5].map((year) => Math.max((currentTco - projectedTco) * year - remediationCost, 0));
-  const max = Math.max(...yearSavings, 1);
-  const points = yearSavings
-    .map((value, index) => {
-      const x = 24 + index * 60;
-      const y = 130 - (value / max) * 92;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
+// ─── FEATURE CARD ─────────────────────────────────────────────────────────────
+const FeatureCard = memo(function FeatureCard({ feature, index }: {
+  feature: (typeof FEATURES)[number]; index: number;
+}) {
+  const [ref, visible] = useInView<HTMLElement>(0.15);
   return (
-    <div className="border border-border bg-bg-panel/72 p-5">
-      <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
-        5Y Savings Projection
-      </p>
+    <article
+      ref={ref}
+      className={`bg-[#0A0A0A] border border-[#1A1A1A] group relative flex flex-col p-6 transition-all duration-700
+        hover:border-[#C9A96E]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(201,169,110,0.05)] rounded-sm
+        ${visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
+      style={{ transitionDelay: `${index * 100 + 150}ms` }}
+    >
+      <div className="mb-5 flex h-10 w-10 items-center justify-center bg-[#050505] text-[#C9A96E] border border-[#2A2A2A] transition-colors group-hover:bg-[#C9A96E]/10 rounded-sm">
+        <Icon name={feature.icon} className="h-4 w-4" />
+      </div>
+      <h3 className="font-serif text-lg text-[#F5F5F5] mb-2">{feature.title}</h3>
+      <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>
+    </article>
+  );
+});
 
-      <svg viewBox="0 0 290 150" className="mt-4 h-[150px] w-full" aria-hidden="true">
-        <path d="M24 130H270" stroke="var(--border)" strokeWidth="1" />
-        <path d="M24 38H270" stroke="var(--border)" strokeWidth="1" opacity="0.45" />
-        <motion.polyline
-          points={points}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          whileInView={{ pathLength: 1, opacity: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 1.15, ease: "easeInOut" }}
-        />
-        {yearSavings.map((value, index) => {
-          const x = 24 + index * 60;
-          const y = 130 - (value / max) * 92;
-          return <circle key={index} cx={x} cy={y} r="3.5" fill="var(--accent)" />;
-        })}
-      </svg>
+// ─── PREVIEW ROW ──────────────────────────────────────────────────────────────
+const PreviewRow = memo(function PreviewRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-[#1A1A1A] pb-3 last:border-0 last:pb-0">
+      <span className="font-sans text-[13px] text-[#888]">{label}</span>
+      <span className="font-mono text-sm text-[#F5F5F5]">{value}</span>
     </div>
   );
-}
+});
 
-function FinancialDashboard({ result }: { result: ReturnType<typeof useErpCalculation> }) {
+// ─── LEAD PREVIEW CARD ────────────────────────────────────────────────────────
+const LeadPreviewCard = memo(function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
+  const rows = [
+    { label: "Sistema actual", value: "SAP S/4 HANA" },
+    { label: "Usuarios",       value: "150"          },
+    { label: "Año 1 actual",   value: "$485,000"     },
+    { label: "Año 1 Oracle",   value: "$310,000"     },
+    { label: "Ahorro 5 años",  value: "$1,240,000"   },
+    { label: "Breakeven",      value: "18 meses"     },
+  ];
   return (
-    <motion.div variants={stagger} initial="hidden" animate="visible" className="grid content-start gap-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <KpiCard label="TCO anual actual" value={formatUsd(result.currentTco)} />
-        <KpiCard label="TCO proyectado" value={formatUsd(result.projectedTco)} />
-        <KpiCard label="Breakeven" value={`${result.breakevenMonths} meses`} />
-        <KpiCard label="Ahorro neto 5 años" value={formatUsd(result.saving5Years)} featured />
-      </div>
-
-      <ComparisonBars currentTco={result.currentTco} projectedTco={result.projectedTco} />
-      <CostBreakdownChart breakdown={result.breakdown} />
-      <SavingsLineChart currentTco={result.currentTco} projectedTco={result.projectedTco} remediationCost={initialInput.remediationCost} />
-    </motion.div>
-  );
-}
-
-function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [scenario, setScenario] = useState<Scenario>("rescue");
-  const [input, setInput] = useState<InputState>(initialInput);
-  const result = useErpCalculation(input, scenario);
-
-  const updateInput = (key: keyof InputState, value: number) => {
-    setInput((current) => ({ ...current, [key]: value }));
-  };
-
-  return (
-    <AnimatePresence>
-      {open ? (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 px-4 py-6 backdrop-blur-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 18, scale: 0.96 }}
-            transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
-            className="fabric-panel relative max-h-[92vh] w-full max-w-7xl overflow-y-auto bg-bg-base p-5 shadow-[0_42px_180px_rgba(0,0,0,0.78)] md:p-7"
-          >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/75 to-transparent" />
-            <div className="pointer-events-none absolute -right-28 -top-28 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center border border-border-strong text-text-primary transition duration-300 hover:border-accent hover:bg-accent-soft hover:text-accent"
-              aria-label="Cerrar calculadora"
-            >
-              <CloseIcon />
-            </button>
-
-            <div className="pr-12">
-              <div className="label inline-flex border border-accent/25 bg-accent-soft px-4 py-2">
-                Financial ERP Diagnostic
-              </div>
-              <h3 className="mt-5 max-w-4xl font-display text-[clamp(34px,4.5vw,64px)] leading-[0.96] tracking-[-0.045em] text-text-primary">
-                Modelo financiero del costo oculto de tu ERP.
-              </h3>
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-text-secondary md:text-base">
-                Ajusta operación, adopción, reportes y cierre contable. El dashboard calcula TCO actual, TCO proyectado, breakeven y ahorro acumulado.
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-7 lg:grid-cols-[0.86fr_1.14fr]">
-              <div className="space-y-5">
-                <div>
-                  <p className="mb-3 font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
-                    Escenario
-                  </p>
-                  <div className="grid gap-2 sm:grid-cols-3">
-                    {(Object.keys(scenarioCopy) as Scenario[]).map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => setScenario(item)}
-                        className={`border px-4 py-3 text-left transition duration-300 ${
-                          scenario === item
-                            ? "border-accent bg-accent-soft text-accent"
-                            : "border-border bg-bg-panel/70 text-text-secondary hover:border-accent/55 hover:text-accent"
-                        }`}
-                      >
-                        <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em]">
-                          {scenarioCopy[item].title}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <p className="mt-3 text-xs leading-5 text-text-tertiary">{scenarioCopy[scenario].description}</p>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <NumberField label="Usuarios Oracle" value={input.users} onChange={(value) => updateInput("users", value)} />
-                  <NumberField label="Licencias anuales" value={input.licenseCost} onChange={(value) => updateInput("licenseCost", value)} prefix="$" />
-                  <NumberField label="Soporte anual" value={input.supportCost} onChange={(value) => updateInput("supportCost", value)} prefix="$" />
-                  <NumberField label="Costo remediación" value={input.remediationCost} onChange={(value) => updateInput("remediationCost", value)} prefix="$" />
-                  <NumberField label="Horas manuales / mes" value={input.manualHours} onChange={(value) => updateInput("manualHours", value)} suffix="h" />
-                  <NumberField label="Costo hora interna" value={input.hourlyCost} onChange={(value) => updateInput("hourlyCost", value)} prefix="$" />
-                </div>
-
-                <div className="grid gap-3">
-                  <RangeField label="Días de cierre contable" value={input.closingDays} onChange={(value) => updateInput("closingDays", value)} min={0} max={30} suffix=" días" helper="Retraso del cierre mensual después del go-live." />
-                  <RangeField label="Reportes manuales activos" value={input.manualReports} onChange={(value) => updateInput("manualReports", value)} min={0} max={40} helper="Archivos paralelos usados fuera del ERP." />
-                  <RangeField label="Adopción real" value={input.adoptionRate} onChange={(value) => updateInput("adoptionRate", value)} min={0} max={100} suffix="%" helper="Usuarios clave operando correctamente en el flujo Oracle." />
-                </div>
-              </div>
-
-              <FinancialDashboard result={result} />
-            </div>
-
-            <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-technical text-[9px] uppercase tracking-[0.22em] text-text-tertiary">
-                Estimación ejecutiva · Validación final bajo NDA
-              </p>
-              <FinancialButton onClick={onClose}>Cerrar cálculo</FinancialButton>
-            </div>
-          </motion.div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
-  );
-}
-
-function PreviewDashboard({ onOpen }: { onOpen: () => void }) {
-  const current = 1200000;
-  const projected = 610000;
-  const max = Math.max(current, projected);
-
-  return (
-    <motion.article
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.35 }}
-      whileHover={{ y: -6 }}
-      className="fabric-panel relative w-full max-w-[480px] overflow-hidden bg-bg-panel/82 p-5 shadow-[0_30px_110px_rgba(0,0,0,0.48)] backdrop-blur-xl md:p-6"
-    >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/75 to-transparent" />
-      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
-
-      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+    <article className="relative w-full max-w-[460px] bg-[#0A0A0A] p-8 border border-[#2A2A2A] shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:p-10 rounded-none">
+      <div className="mb-8 flex items-center justify-between border-b border-[#1A1A1A] pb-6">
         <div>
-          <p className="font-technical text-[9px] font-black uppercase tracking-[0.24em] text-accent">
-            ERP Cost Model
-          </p>
-          <p className="mt-2 text-sm text-text-secondary">Vista financiera ejecutiva</p>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
+            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Live Preview</p>
+          </div>
+          <p className="font-serif text-2xl text-[#F5F5F5]">Modelo Financiero TCO</p>
         </div>
-
-        <span className="flex h-10 w-10 items-center justify-center border border-accent/30 bg-accent-soft text-accent">
-          <CalculatorIcon />
-        </span>
+        <div className="flex h-12 w-12 items-center justify-center bg-[#111111] text-[#888] border border-[#2A2A2A] rounded-sm">
+          <Icon name="calculator" />
+        </div>
       </div>
+      <div className="space-y-4">
+        {rows.map((r) => <PreviewRow key={r.label} label={r.label} value={r.value} />)}
+      </div>
+      <div
+        onClick={onOpen}
+        className="group mt-8 cursor-pointer bg-[#C9A96E]/5 p-6 border border-[#C9A96E]/20 transition-all duration-300 hover:bg-[#C9A96E] rounded-sm"
+      >
+        <p className="font-mono text-[10px] uppercase tracking-wider mb-2 text-[#C9A96E] transition-colors duration-300 group-hover:text-black">Ahorro 10 años</p>
+        <p className="font-serif text-4xl text-[#F5F5F5] transition-colors duration-300 group-hover:text-black">$3.8M</p>
+      </div>
+    </article>
+  );
+});
 
-      <div className="mt-5 grid gap-4">
-        {[
-          { label: "TCO actual", value: current, accent: false },
-          { label: "TCO con FABRIC", value: projected, accent: true },
-        ].map((row) => (
-          <div key={row.label}>
-            <div className="mb-2 flex items-center justify-between gap-4">
-              <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em] text-text-tertiary">
-                {row.label}
-              </span>
-              <span className="font-technical text-sm font-black text-text-primary">{formatCompactUsd(row.value)}</span>
+// ─── CALCULATOR MODAL ─────────────────────────────────────────────────────────
+function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm]         = useState<FormState>(DEFAULT_FORM);
+  const [hasResult, setResult]  = useState(false);
+  const [busy, setBusy]         = useState(false);
+  const tco = useTco(form);
+
+  const update = useCallback(<K extends keyof FormState>(key: K, val: FormState[K]) => {
+    setForm((f) => ({ ...f, [key]: val }));
+    setResult(false);
+  }, []);
+
+  const calculate = useCallback(() => {
+    if (busy) return;
+    if (!form.users || !form.currentYearOne || !form.oracleYearOne || !form.migrationCost) {
+      toastErr("Completa los campos obligatorios");
+      return;
+    }
+    setBusy(true);
+    setResult(true);
+    toastOk("Análisis TCO generado");
+    setTimeout(() => setBusy(false), 500);
+  }, [form, busy]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+      <div className="relative max-h-[90vh] w-full max-w-[1100px] overflow-y-auto bg-[#050505] border border-[#2A2A2A] shadow-[0_0_60px_rgba(0,0,0,0.8)] rounded-none">
+
+        <button
+          type="button" onClick={onClose}
+          className="group absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center bg-transparent border border-[#2A2A2A] text-[#888] transition-colors duration-300 hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/10 rounded-sm"
+        >
+          <CloseIcon />
+        </button>
+
+        <div className="grid lg:grid-cols-[1fr_1.1fr]">
+          {/* Form */}
+          <div className="p-8 md:p-12">
+            <div className="mb-8">
+              <div className="mb-5 inline-flex items-center bg-[#C9A96E]/10 px-3 py-1 border border-[#C9A96E]/30 rounded-sm">
+                <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">Calculadora Ejecutiva</span>
+              </div>
+              <h3 className="font-serif text-3xl md:text-4xl text-[#F5F5F5]">Configura tu escenario</h3>
+              <p className="mt-3 font-sans text-sm text-[#888] leading-relaxed">
+                Introduce los parámetros de tu infraestructura actual para proyectar el ahorro.
+              </p>
             </div>
-            <div className="h-2 overflow-hidden bg-bg-base">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${(row.value / max) * 100}%` }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                className={`h-full ${row.accent ? "bg-accent" : "bg-border-strong"}`}
-              />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <SelectInput value={form.currentSystem} onChange={(v) => update("currentSystem", v)} />
+              <NumberInput label="Usuarios Totales"      value={form.users}          onChange={(v) => update("users", v)} />
+              <NumberInput label="Costo Anual Actual"    value={form.currentYearOne} onChange={(v) => update("currentYearOne", v)} prefix="$" />
+              <NumberInput label="Costo Anual Nuevo"     value={form.oracleYearOne}  onChange={(v) => update("oracleYearOne", v)}  prefix="$" />
+              <NumberInput label="Inversión Migración"   value={form.migrationCost}  onChange={(v) => update("migrationCost", v)}  prefix="$" />
+              <NumberInput label="Reportes Manuales/Mes" value={form.manualReports}  onChange={(v) => update("manualReports", v)} />
+              <NumberInput label="Días Cierre Contable"  value={form.closingDays}    onChange={(v) => update("closingDays", v)}    suffix="días" />
+              <NumberInput label="Adopción Estimada"     value={form.adoptionRate}   onChange={(v) => update("adoptionRate", v)}   suffix="%" />
+            </div>
+            <div className="mt-10">
+              <Btn onClick={calculate} disabled={busy} className="w-full">
+                {busy ? "Procesando..." : "Generar Proyección"}
+                <ArrowIcon />
+              </Btn>
             </div>
           </div>
-        ))}
-      </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        <div className="border border-border bg-bg-base/70 p-4">
-          <p className="font-technical text-[8px] font-black uppercase tracking-[0.18em] text-text-tertiary">Breakeven</p>
-          <p className="mt-2 font-technical text-xl font-black text-accent">8-14m</p>
-        </div>
-        <div className="border border-border bg-bg-base/70 p-4">
-          <p className="font-technical text-[8px] font-black uppercase tracking-[0.18em] text-text-tertiary">5Y saving</p>
-          <p className="mt-2 font-technical text-xl font-black text-text-primary">$2.4M</p>
+          {/* Results */}
+          <div className="relative border-t border-[#1A1A1A] bg-[#0A0A0A] p-8 lg:border-l lg:border-t-0 md:p-12">
+            {!hasResult ? (
+              <div className="flex h-full min-h-[400px] flex-col items-center justify-center text-center">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center bg-[#111111] text-[#666] border border-[#2A2A2A]">
+                  <Icon name="calculator" className="h-8 w-8" />
+                </div>
+                <h4 className="font-serif text-2xl text-[#F5F5F5]">Esperando parámetros</h4>
+                <p className="mt-3 max-w-[280px] font-sans text-[13px] text-[#888] leading-relaxed">
+                  Completa la información para generar el dashboard de TCO y ROI.
+                </p>
+              </div>
+            ) : (
+              <div className="flex h-full flex-col justify-center animate-[fadeIn_0.5s_ease-out]">
+                <div className="mb-8 grid gap-4 sm:grid-cols-2">
+                  <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm">
+                    <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-[#888]">Ahorro 5 Años</p>
+                    <p className="font-mono text-xl text-[#C9A96E]">{fmt(tco.five)}</p>
+                  </div>
+                  <div className="bg-[#C9A96E] p-6 rounded-sm shadow-[0_0_20px_rgba(201,169,110,0.2)]">
+                    <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-black">Ahorro 10 Años</p>
+                    <p className="font-mono text-xl font-bold text-black">{fmtCo(tco.ten)}</p>
+                  </div>
+                  <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm">
+                    <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-[#888]">Breakeven</p>
+                    <p className="font-mono text-lg text-[#F5F5F5]">{tco.breakeven} Meses</p>
+                  </div>
+                  <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm">
+                    <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-[#888]">ROI 5 Años</p>
+                    <p className="font-mono text-lg text-[#F5F5F5]">{tco.roi5}%</p>
+                  </div>
+                </div>
+                <ResultChart currTco5={tco.currTco5} oracleTco5={tco.oracleTco5} five={tco.five} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="mt-5">
-        <FinancialButton onClick={onOpen}>
-          Calcular costo real
-          <ArrowIcon />
-        </FinancialButton>
-      </div>
-    </motion.article>
+    </div>
   );
 }
 
+// ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
 export default function ErpCostCalculatorSection() {
-  const [openCalculator, setOpenCalculator] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleOpen = useCallback(() => setOpen(true), []);
 
   return (
-    <section className="relative overflow-hidden bg-bg-base px-6 py-20 text-text-primary md:px-12 md:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-30" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(201,169,110,0.11),transparent_28%),radial-gradient(circle_at_82%_58%,rgba(201,169,110,0.08),transparent_34%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg-base to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg-base to-transparent" />
+    <section className="pre-dossier-section relative overflow-hidden bg-[#0A0A0A] px-6 py-24 md:px-12 md:py-32">
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
 
-      <div className="relative z-10 mx-auto grid max-w-[1240px] items-center gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} className="max-w-3xl">
-          <div className="label inline-flex items-center gap-2 border border-accent/25 bg-accent-soft px-4 py-2">
-            <ShieldIcon />
-            ERP Cost Intelligence
-          </div>
+      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
+      <div className="pointer-events-none absolute left-0 right-0 top-0 -z-10 m-auto h-[400px] w-[400px] bg-[#C9A96E] opacity-[0.05] blur-[120px]" />
 
-          <div className="mt-7">
-            <AnimatedHeadline text="¿Cuánto te está costando realmente tu ERP actual?" />
-          </div>
+      <div className="relative z-10 mx-auto max-w-[1300px]">
+        <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] lg:gap-20">
 
-          <p className="mt-7 max-w-2xl text-base leading-8 text-text-secondary md:text-lg">
-            Calculamos el costo total del ERP sumando licencias, soporte, horas manuales, reportes paralelos, cierre contable lento y adopción incompleta. El resultado muestra si conviene rescatar, estabilizar o migrar.
-          </p>
+          {/* Left */}
+          <div className="relative flex flex-col justify-center">
+            <ScrollReveal delay={0}>
+              <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#2A2A2A] bg-[#0A0A0A] px-4 py-2 rounded-sm">
+                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Lead Magnet · TCO Analysis</span>
+              </div>
+            </ScrollReveal>
 
-          <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-2">
-            {["TCO anual real", "Costo oculto operativo", "Breakeven de remediación", "Ahorro acumulado a 5 años"].map((item) => (
-              <motion.div
-                key={item}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.35 }}
-                className="flex gap-3 border border-border bg-bg-panel/65 p-4 backdrop-blur-sm transition duration-300 hover:border-accent/50 hover:bg-bg-elevated/70"
+            <ScrollReveal delay={100}>
+              <TextScramble
+                as="h2" trigger duration={1.2} speed={0.02}
+                className="font-serif text-[38px] leading-[1.1] text-[#F5F5F5] md:text-[52px] lg:text-[60px]"
               >
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
-                <p className="text-sm leading-6 text-text-secondary">{item}</p>
-              </motion.div>
-            ))}
+                ¿Cuánto te está costando realmente tu ERP actual?
+              </TextScramble>
+            </ScrollReveal>
+
+            <ScrollReveal delay={200}>
+              <p className="mt-8 max-w-2xl font-sans text-base md:text-lg leading-relaxed text-[#888]">
+                Comparativo TCO Oracle Fusion vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal delay={300}>
+              <div className="mt-12 flex flex-col items-start gap-6">
+                <Btn onClick={handleOpen}>
+                  Calcular Ahorro
+                  <ArrowIcon />
+                </Btn>
+                <p className="font-mono text-[10px] uppercase tracking-wider text-[#555]">8 preguntas · Resultado inmediato en pantalla</p>
+              </div>
+            </ScrollReveal>
+
+            <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:hidden">
+              {FEATURES.map((f, i) => <FeatureCard key={f.id} feature={f} index={i} />)}
+            </div>
           </div>
 
-          <div className="mt-9">
-            <FinancialButton onClick={() => setOpenCalculator(true)}>
-              Calcular costo real
-              <ArrowIcon />
-            </FinancialButton>
+          {/* Right */}
+          <div className="relative hidden flex-col justify-center lg:flex">
+            <div className="absolute left-1/2 top-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[100px]" />
+            <ScrollReveal up={false} delay={200}>
+              <LeadPreviewCard onOpen={handleOpen} />
+            </ScrollReveal>
           </div>
-        </motion.div>
+        </div>
 
-        <div className="flex justify-center lg:justify-end">
-          <PreviewDashboard onOpen={() => setOpenCalculator(true)} />
+        {/* Feature cards — desktop */}
+        <div className="mt-24 hidden grid-cols-1 gap-6 sm:grid-cols-2 lg:grid lg:grid-cols-4">
+          {FEATURES.map((f, i) => <FeatureCard key={f.id} feature={f} index={i} />)}
+        </div>
+
+        {/* Preview card — mobile */}
+        <div className="mt-16 flex justify-center lg:hidden">
+          <ScrollReveal delay={400}>
+            <LeadPreviewCard onOpen={handleOpen} />
+          </ScrollReveal>
         </div>
       </div>
 
-      <CalculatorModal open={openCalculator} onClose={() => setOpenCalculator(false)} />
+      <CalculatorModal open={open} onClose={() => setOpen(false)} />
     </section>
   );
 }
