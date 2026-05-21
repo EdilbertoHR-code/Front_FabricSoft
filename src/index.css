@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
 @import "./maquetado-dossier.css";
@@ -411,7 +411,7 @@
   background-color: rgba(19, 19, 19, 0.78) !important;
 }
 
-.pre-dossier-section [class*="shadow-"] {
+.pre-dossier-section [class*="shadow-"]:not(.fabric-orb-label):not(.fabric-orb-caption) {
   box-shadow: none !important;
 }
 
@@ -473,73 +473,51 @@
 }
 
 .fabric-typewriter {
-  background: var(--bg-panel) !important;
-  border: 1px solid var(--border) !important;
-  border-left: 2px solid var(--accent) !important;
+  border-left: 2px solid #D4AF37 !important;
   min-height: 0 !important;
 }
 
 .fabric-typewriter span {
-  font-family: var(--serif) !important;
-  font-size: 18px !important;
-  font-weight: 300 !important;
-  font-style: italic;
+  font-weight: 600 !important;
   color: var(--text-primary) !important;
 }
 
 .fabric-typewriter span span:last-child {
-  background: var(--accent) !important;
+  background: #D4AF37 !important;
 }
 
 .fabric-orb-stage {
   min-height: 480px !important;
-  max-width: 520px !important;
-  border: 1px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(19, 19, 19, 0.88), rgba(10, 10, 10, 0.92)),
-    radial-gradient(circle at 50% 45%, rgba(201, 169, 110, 0.08), transparent 58%);
-  overflow: hidden !important;
+  max-width: 560px !important;
 }
 
-.fabric-orb-stage::before {
-  content: "FABRIC OS / GLOBAL OPERATIONS";
-  position: absolute;
-  top: 22px;
-  left: 24px;
-  z-index: 20;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  color: var(--accent);
-}
-
-.fabric-orb-stage::after {
-  content: "";
-  position: absolute;
-  inset: 14px;
-  border: 1px solid rgba(201, 169, 110, 0.12);
-  pointer-events: none;
-}
-
+/* El globo se muestra con sus colores originales — sin filtros */
 .fabric-orb-core {
-  filter: grayscale(1) sepia(0.18) saturate(0.6) brightness(0.72) contrast(1.1);
-  opacity: 0.72;
-  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.92) !important;
+  /* Sin grayscale, sin opacity reducida — colores reales del globo */
 }
 
-.fabric-orb-label,
-.fabric-orb-caption {
-  background: var(--bg-base) !important;
-  border-color: var(--border) !important;
-  box-shadow: none !important;
-}
-
+/* Recuadros del globo — estilo original de Edilberto: glass oscuro translúcido */
 .fabric-orb-label {
-  max-width: 176px !important;
+  max-width: 210px !important;
+  background: rgba(10, 10, 10, 0.90) !important;
+  border-color: #353535 !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.fabric-orb-label:hover {
+  border-color: rgba(201, 169, 110, 0.6) !important;
+  background: rgba(17, 17, 17, 0.95) !important;
 }
 
 .fabric-orb-caption {
-  bottom: 28px !important;
+  background: rgba(10, 10, 10, 0.88) !important;
+  border-color: rgba(201, 169, 110, 0.24) !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.42) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  bottom: 2% !important;
 }
 
 .p1-dossier-aligned [class*="rounded-full"]:not([class*="h-[205px]"]):not([class*="md:h-[275px]"]):not([class*="lg:h-[335px]"]) {

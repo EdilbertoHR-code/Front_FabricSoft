@@ -1,0 +1,241 @@
+Total lines: 804
+
+--- Line 121 ---
+119: Imponer Autoridad Visual y Carga Cognitiva Cero: Proyectar expertise absoluto desde el primer scroll mediante una estética premium y oscura, erradicando clichés B2B. La arquitectura de información debe ser tan intuitiva que el directivo encuentre la propuesta de valor sin tener que descifrar menús complejos.
+120: Ejecutar un Gatekeeping Activo (Filtro, No Captura): Invertir la lógica web usando el contenido y los flujos ("No somos para todos") como un mecanismo de rechazo selectivo. El diseño debe repeler empresas fuera del Perfil de Cliente Ideal, garantizando que solo C-levels calificados superen las barreras de admisión.
+121: Demostración Empírica (Agente IA en Vivo): Reemplazar el discurso comercial de la pantalla principal por un Agente de IA interactivo. El cliente validará nuestra capacidad técnica haciendo preguntas corporativas y recibiendo soluciones precisas en tiempo real.
+122: Exhibir Transparencia Cruda y Datos Duros: Publicar la "Doctrina" operativa, casos de éxito "no genéricos" con métricas exactas, y responder las preguntas difíciles (SLA, costos) de frente. El usuario no debe buscar respuestas ni lidiar con información ambigua.
+123: Alcanzar Rendimiento Técnico de Referencia: El sitio web es la primera prueba de nuestra ingeniería. Se debe garantizar un rendimiento Lighthouse 95+ (Performance, Accesibilidad, Mejores Prácticas y SEO), asegurando tiempos de carga casi instantáneos.
+124: Construir una Arquitectura Base Escalable: Desarrollar el ecosistema con una infraestructura sólida que soporte la evolución orgánica del negocio (de sitio de validación a portal de clientes, y posteriormente a API pública) sin necesidad de reescribir la estructura base.
+125: 
+126: 
+127: 
+128: 
+
+--- Line 122 ---
+120: Ejecutar un Gatekeeping Activo (Filtro, No Captura): Invertir la lógica web usando el contenido y los flujos ("No somos para todos") como un mecanismo de rechazo selectivo. El diseño debe repeler empresas fuera del Perfil de Cliente Ideal, garantizando que solo C-levels calificados superen las barreras de admisión.
+121: Demostración Empírica (Agente IA en Vivo): Reemplazar el discurso comercial de la pantalla principal por un Agente de IA interactivo. El cliente validará nuestra capacidad técnica haciendo preguntas corporativas y recibiendo soluciones precisas en tiempo real.
+122: Exhibir Transparencia Cruda y Datos Duros: Publicar la "Doctrina" operativa, casos de éxito "no genéricos" con métricas exactas, y responder las preguntas difíciles (SLA, costos) de frente. El usuario no debe buscar respuestas ni lidiar con información ambigua.
+123: Alcanzar Rendimiento Técnico de Referencia: El sitio web es la primera prueba de nuestra ingeniería. Se debe garantizar un rendimiento Lighthouse 95+ (Performance, Accesibilidad, Mejores Prácticas y SEO), asegurando tiempos de carga casi instantáneos.
+124: Construir una Arquitectura Base Escalable: Desarrollar el ecosistema con una infraestructura sólida que soporte la evolución orgánica del negocio (de sitio de validación a portal de clientes, y posteriormente a API pública) sin necesidad de reescribir la estructura base.
+125: 
+126: 
+127: 
+128: 
+129: 
+
+--- Line 157 ---
+155: Estrictamente prohibido el uso de métricas estáticas (hardcoded). El NPS, los tiempos de SLA y los casos de éxito se inyectan en tiempo real. Ante la falta de volumen estadístico, se publica el compromiso de medición en lugar de inventar cifras.
+156: Privacidad (NDA Implícito) y Cotizaciones:
+157: La información financiera de las calculadoras (Auditoría OCI, TCO) se encripta en tránsito y reposo, quedando estrictamente prohibido su uso para el entrenamiento de modelos de IA públicos.
+158: El ecosistema público jamás emitirá presupuestos finales. Solo arrojará rangos de inversión o porcentajes de Success-Fee, supeditando el precio final a una auditoría técnica humana.
+159: 
+160: 
+161: 1.5  Metas e Indicadores de Éxito
+162: El objetivo es consolidar a FABRIC como la élite inalcanzable de la ingeniería Oracle. Usaremos Google Analytics configurado estrictamente para medir calidad, autoridad y pre-calificación financiera, ignorando el tráfico masivo de baja calidad.
+163: Filtro Implacable (Gatekeeping Efectivo): Un alto porcentaje de rebote de visitantes genéricos es un éxito, no un fracaso. La meta es que el 100% de los leads en el CRM sean C-Levels de empresas que facturan >USD 50M.
+164: Validación Técnica Autónoma: Medir mediante eventos (Analytics) que los prospectos calificados interactúan con el Agente IA, el Optimizador OCI y descargan los Papers. El sitio debe validar nuestra superioridad técnica antes del primer contacto humano.
+
+--- Line 171 ---
+169: 1.6 Alcance y Límites del Proyecto
+170: LO QUE SÍ HAREMOS
+171: Frontend "Gatekeeper": Sitio público premium y ultrarrápido. Incluye el Agente IA, las calculadoras de pre-calificación (TCO/Auditoría OCI) y los flujos de captura de prospectos.
+172: Panel de Administración: Dashboard privado blindado con autenticación (Clerk). Permite gestionar leads, editar métricas de Transparencia en vivo y controlar la capacidad operativa (Lista de Espera / Office Hours).
+173: Motor IA de Alta Disponibilidad: Orquestación del Agente (Claude/OpenAI/Grok) entrenado estrictamente en Oracle, con capacidad para detectar urgencia y agendar reuniones automáticamente.
+174: LO QUE NO HAREMOS (Límites Estrictos)
+175: Cero Ejecución Cloud: Las herramientas (como la Auditoría OCI) solo diagnostican y generan reportes de ahorro. El sistema jamás ejecutará scripts ni modificará la infraestructura real del cliente.
+176: Sin Precios Cerrados ni E-commerce: No habrá carritos de compra ni pasarelas de pago. El sitio proyecta ahorros o esquemas Success-Fee; los contratos (tickets de alto valor) se negocian y cierran siempre offline con un ingeniero senior.
+177: No es un CRM Completo: El panel de administración sirve como un filtro inicial implacable para entregar leads 100% limpios y perfilados, pero no reemplazará herramientas robustas de seguimiento de ventas (como Salesforce).
+178: Sin IA Generalista: El Agente no sirve para dar soporte técnico operativo ni conversar sobre tecnologías ajenas a nuestro enfoque. Se activará el Kill Switch si el usuario insiste en salirse del ámbito de Oracle.
+
+--- Line 198 ---
+196: o   Drivers: Certeza financiera, mitigación de riesgos, KPIs auditables.
+197: o   Frustración principal: Consultoras que celebran el go-live, cobran y los dejan con cierres contables caóticos y reportes manuales en Excel.
+198: o   Acción clave en la web: Validar la "Doctrina FABRIC" (Principios 01, 03 y 04), revisar el caso ancla (APE Plazas) y usar el TCO Comparator para pre-calificar su presupuesto.
+199: ·       El CIO / CTO (Comprador Técnico)
+200: o   Drivers: Arquitectura limpia, estabilidad del sistema, capacidad técnica real.
+201: o   Frustración principal: Firmas que venden ingenieros Senior en la propuesta y envían Juniors improvisados que rompen la operación.
+202: o   Acción clave en la web: Interrogar al Agente IA de Diagnóstico para buscar fallas en su lógica, inspeccionar las capas de FABRIC OS y descargar los Research Papers.
+203: 
+204: 2.3 Casos de Uso Core
+205: El ecosistema de la página web FABRIC ejecuta cuatro flujos principales: tres públicos (para filtrar a los prospectos) y uno privado (para el control interno de la firma).
+
+--- Line 212 ---
+210: ·       Resultado: El sitio valida la autoridad técnica de FABRIC en tiempo real, demostrando conocimiento crítico sin intervención humana.
+211: Caso de Uso 2: Intercambio de Valor (Captura de Leads)
+212: ·       Módulo Web: S02 · ERP TCO, S03 · Cloud Cost y S05 · Rescue Assessment
+213: ·       Actor: CFO (Buscando ROI financiero).
+214: ·       Flujo: El directivo ingresa los datos de su corporativo (usuarios, costo anual en SAP/AWS) $\rightarrow$ El sistema procesa las reglas de negocio $\rightarrow$ Entrega un reporte con proyecciones de ahorro y tiempo de breakeven.
+215: ·       Resultado: El usuario recibe valor cuantificable; el sistema captura los datos financieros y genera un lead calificado listo para negociar.
+216: Caso de Uso 3: Filtro de Admisión y Agendamiento
+217: ·       Módulo Web: S11 · Office Hours y S15 · Wait List
+218: ·       Actor: Prospecto C-Level con alta intención de compra.
+219: ·       Flujo: El usuario decide aplicar $\rightarrow$ Llena el formulario bajo los "Criterios de Evaluación" $\rightarrow$ El sistema valida si factura >USD 50M.
+
+--- Line 219 ---
+217: ·       Módulo Web: S11 · Office Hours y S15 · Wait List
+218: ·       Actor: Prospecto C-Level con alta intención de compra.
+219: ·       Flujo: El usuario decide aplicar $\rightarrow$ Llena el formulario bajo los "Criterios de Evaluación" $\rightarrow$ El sistema valida si factura >USD 50M.
+220: ·       Resultado Dinámico: * Si la capacidad de la firma lo permite (menos de 12 proyectos): Se le asigna un slot en las Office Hours con el fundador.
+221: o   Si la firma está llena: El sistema bloquea el calendario y lo empuja a la Wait List de manera automatizada.
+222: Caso de Uso 4: Centro de Mando (El Panel Oculto)
+223: ·       Actor: Super Administrador (Fundador / Equipo FABRIC).
+224: ·       Flujo (Ghost Login): El administrador navega a la URL secreta (ej. /admin) $\rightarrow$ Pasa la barrera de seguridad de Clerk $\rightarrow$ Accede al Dashboard privado.
+225: ·       Resultado: Desde aquí, el administrador evalúa los leads entrantes, rechaza a las empresas que no califican, y actualiza los números en vivo del S01 · Rescue Counter y S15 · Proyectos Activos. El público general jamás ve esta interfaz.
+226: 
+
+--- Line 276 ---
+274: Mercado objetivo, perfiles CFO/CTO y casos de uso principales.
+275: §3 Arquitectura de información
+276: Sitemap, navegación persistente y criterios de orientación del usuario.
+277: §4 Especificaciones UI/UX
+278: Sistema visual, tokens, microinteracciones y lineamientos de formularios.
+279: §5 Arquitectura técnica frontend
+280: Stack, componentes, estrategia de render y criterios responsive.
+281: §6 Motor IA
+282: Arquitectura del agente Oracle, RAG, fallback, Kill Switch y High-Intent Routing.
+283: §7 Panel de administración
+
+--- Line 280 ---
+278: Sistema visual, tokens, microinteracciones y lineamientos de formularios.
+279: §5 Arquitectura técnica frontend
+280: Stack, componentes, estrategia de render y criterios responsive.
+281: §6 Motor IA
+282: Arquitectura del agente Oracle, RAG, fallback, Kill Switch y High-Intent Routing.
+283: §7 Panel de administración
+284: Acceso, roles, funcionalidades, métricas y control operativo.
+285: §8 Integración y datos
+286: Servicios, costos estimados y flujos de lead magnets.
+287: §9 Infraestructura y despliegue
+
+--- Line 472 ---
+470: CU2 — Intercambio de valor
+471: CFO
+472: ERP TCO, Cloud y Rescue Assessment. Resultado: lead con datos financieros y contexto de iniciativa.
+473: CU3 — Filtro y agendamiento
+474: Prospecto C-Level de alta intención
+475: Office Hours y Wait List. Resultado: agenda visible solo si pasa criterios mínimos.
+476: CU4 — Centro de mando privado
+477: Super Admin y equipo FABRIC
+478: /admin con Clerk. Resultado: leads, métricas y capacidad operativa gestionables sin tocar código.
+479: 
+
+--- Line 475 ---
+473: CU3 — Filtro y agendamiento
+474: Prospecto C-Level de alta intención
+475: Office Hours y Wait List. Resultado: agenda visible solo si pasa criterios mínimos.
+476: CU4 — Centro de mando privado
+477: Super Admin y equipo FABRIC
+478: /admin con Clerk. Resultado: leads, métricas y capacidad operativa gestionables sin tocar código.
+479: 
+480: 
+481: Arquitectura de la información y navegación
+482: Referencia visual: fabric_wireframes_s01_s16.html, entregable con las 16 secciones anotadas para desarrollo.
+
+--- Line 552 ---
+550: --danger
+551: #B85450
+552: Criterios de rechazo o alerta
+553: 
+554: 
+555: 
+556: Restricciones visuales
+557: 41.   Evitar azul saturado, gradientes evidentes, glassmorphism y fotografías genéricas de stock.
+558: 42.   No usar Font Awesome, Roboto ni Arial como fuente principal de titulares.
+559: 43.   No usar parallax, scroll-jacking ni animaciones superiores a 400 ms.
+
+--- Line 571 ---
+569: Principio
+570: Implementación
+571: Una pregunta por pantalla
+572: Wizard secuencial; no mostrar formularios largos completos.
+573: Progreso visible
+574: Indicador “Paso N de N” en JetBrains Mono y barra champagne animada.
+575: Validación campo a campo
+576: Errores inline, específicos y visibles en el momento.
+577: Email corporativo
+578: Validación cliente y servidor contra dominios genéricos.
+
+--- Line 618 ---
+616: 
+617: 5.2 Arquitectura de componentes
+618: fabricsoft/ ├── app/ │   ├── page.tsx               # Home — S01 a S16 │   ├── layout.tsx             # Root layout, metadata y fuentes │   ├── globals.css            # Variables CSS del design system │   ├── casos/ · doctrina/ · industrias/ · fabric-os/ │   ├── diagnostico/page.tsx    # Rescue Assessment wizard │   ├── comparator/erp/page.tsx # TCO Comparator wizard │   ├── aplicar/page.tsx        # Wait List form │   ├── office-hours/page.tsx   # Calendly + gate de validación │   ├── admin/                  # Panel privado con Clerk │   └── api/                    # Endpoints, Server Actions y agente IA ├── components/ │   ├── layout/ Nav · Footer · MobileMenu · SkipToContent │   ├── sections/   S01-S16 · un archivo por sección │   ├── admin/  LeadsTable · MetricsEditor · CapacityControl │   ├── forms/  DiagnosticWizard · ComparatorWizard · WaitListForm │   └── ui/     Button · Label · ProgressBar · TerminalDot ├── lib/ │   ├── sanity.ts · mongodb.ts · resend.ts · hubspot.ts │   ├── ai.ts · validators.ts · tco-calculator.ts · analytics.ts └── middleware.ts              # Protección de /admin/*
+619: 5.3 Estrategia de render por página
+620: Página
+621: Estrategia
+622: Razón
+623: /
+624: Static Generation
+625: No requiere datos críticos en primer render.
+
+--- Line 629 ---
+627: ISR revalidate 3600 s
+628: Contenido de Sanity con cambios ocasionales.
+629: /diagnostico · /comparator/erp
+630: Client-side
+631: Wizard interactivo; SEO secundario.
+632: /aplicar · /office-hours
+633: Static + Server Action
+634: Formulario estático con submit seguro del lado servidor.
+635: /admin/*
+636: Server-side + Clerk middleware
+
+--- Line 727 ---
+725: Gratuito
+726: MongoDB Atlas
+727: Leads, diagnósticos, resultados TCO, bookings, descargas y logs
+728: Gratuito 512 MB
+729: Resend
+730: Templates de email transaccional
+731: Gratuito 3,000/mes
+732: HubSpot CRM
+733: Registro de leads y estados comerciales
+734: Gratuito
+
+--- Line 767 ---
+765: 
+766: 8.2 Flujos de lead magnets
+767: Flujo 1 — Rescue Assessment (/diagnostico)
+768: 12 preguntas; score automático en browser; submit validado con Zod; registro en MongoDB; HubSpot; Resend; Slack; revisión desde admin.
+769: Flujo 2 — ERP TCO Comparator (/comparator/erp)
+770: 8 pasos con cálculo TCO en browser; submit a MongoDB; HubSpot; envío de PDF; notificación a admin.
+771: Flujo 3 — Wait List (/aplicar)
+772: Formulario con 10 campos; Server Action; MongoDB; HubSpot waitlist; confirmación con próxima ventana; counter editable desde admin.
+773: Flujo 4 — Office Hours (/office-hours)
+774: Gate por cargo y revenue; si califica, muestra Calendly inline; si no, redirige a /aplicar; webhook post-booking.
+
+--- Line 768 ---
+766: 8.2 Flujos de lead magnets
+767: Flujo 1 — Rescue Assessment (/diagnostico)
+768: 12 preguntas; score automático en browser; submit validado con Zod; registro en MongoDB; HubSpot; Resend; Slack; revisión desde admin.
+769: Flujo 2 — ERP TCO Comparator (/comparator/erp)
+770: 8 pasos con cálculo TCO en browser; submit a MongoDB; HubSpot; envío de PDF; notificación a admin.
+771: Flujo 3 — Wait List (/aplicar)
+772: Formulario con 10 campos; Server Action; MongoDB; HubSpot waitlist; confirmación con próxima ventana; counter editable desde admin.
+773: Flujo 4 — Office Hours (/office-hours)
+774: Gate por cargo y revenue; si califica, muestra Calendly inline; si no, redirige a /aplicar; webhook post-booking.
+775: Flujo 5 — Papers (/investigacion)
+
+--- Line 769 ---
+767: Flujo 1 — Rescue Assessment (/diagnostico)
+768: 12 preguntas; score automático en browser; submit validado con Zod; registro en MongoDB; HubSpot; Resend; Slack; revisión desde admin.
+769: Flujo 2 — ERP TCO Comparator (/comparator/erp)
+770: 8 pasos con cálculo TCO en browser; submit a MongoDB; HubSpot; envío de PDF; notificación a admin.
+771: Flujo 3 — Wait List (/aplicar)
+772: Formulario con 10 campos; Server Action; MongoDB; HubSpot waitlist; confirmación con próxima ventana; counter editable desde admin.
+773: Flujo 4 — Office Hours (/office-hours)
+774: Gate por cargo y revenue; si califica, muestra Calendly inline; si no, redirige a /aplicar; webhook post-booking.
+775: Flujo 5 — Papers (/investigacion)
+776: Email corporativo, empresa y cargo; validación con Zod; tracking en MongoDB; envío por Resend sin descarga directa.
+
+--- Line 770 ---
+768: 12 preguntas; score automático en browser; submit validado con Zod; registro en MongoDB; HubSpot; Resend; Slack; revisión desde admin.
+769: Flujo 2 — ERP TCO Comparator (/comparator/erp)
+770: 8 pasos con cálculo TCO en browser; submit a MongoDB; HubSpot; envío de PDF; notificación a admin.
+771: Flujo 3 — Wait List (/aplicar)
+772: Formulario con 10 campos; Server Action; MongoDB; HubSpot waitlist; confirmación con próxima ventana; counter editable desde admin.
+773: Flujo 4 — Office Hours (/office-hours)
+774: Gate por cargo y revenue; si califica, muestra Calendly inline; si no, redirige a /aplicar; webhook post-booking.
+775: Flujo 5 — Papers (/investigacion)
+776: Email corporativo, empresa y cargo; validación con Zod; tracking en MongoDB; envío por Resend sin descarga directa.
+777: Flujo 6 — Agente IA (S04)

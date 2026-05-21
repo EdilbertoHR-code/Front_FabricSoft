@@ -465,7 +465,7 @@ export default function ErpCostCalculatorSection() {
   const handleOpen = useCallback(() => setOpen(true), []);
 
   return (
-    <section className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
+    <section id="tco" className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
 
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />

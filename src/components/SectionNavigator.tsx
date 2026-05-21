@@ -7,12 +7,21 @@ type SectionItem = {
 };
 
 const sections: SectionItem[] = [
-  { id: "inicio", label: "Inicio", number: "01" },
-  { id: "diagnostico", label: "Diagnóstico", number: "02" },
-  { id: "tco", label: "ERP TCO", number: "03" },
-  { id: "fabric-ai", label: "FABRIC AI", number: "04" },
-  { id: "doctrina", label: "Doctrina", number: "05" },
-  { id: "contacto", label: "Contacto", number: "06" },
+  { id: "inicio",      label: "Hero",         number: "01" },
+  { id: "tco",         label: "ERP TCO",      number: "02" },
+  { id: "cloud-tco",   label: "Cloud TCO",    number: "03" },
+  { id: "diagnostico", label: "Diagnóstico",  number: "04" },
+  { id: "doctrina",    label: "Doctrina",     number: "05" },
+  { id: "fabric-ai",   label: "FABRIC AI",    number: "06" },
+  { id: "s07",         label: "Casos",        number: "07" },
+  { id: "s08",         label: "Industrias",   number: "08" },
+  { id: "s09",         label: "FABRIC OS",    number: "09" },
+  { id: "s10",         label: "Lifecycle",    number: "10" },
+  { id: "s11",         label: "Office Hours", number: "11" },
+  { id: "s12",         label: "Referencias",  number: "12" },
+  { id: "s13",         label: "Transparencia",number: "13" },
+  { id: "s14",         label: "Investigación",number: "14" },
+  { id: "s15",         label: "Contacto",     number: "15" },
 ];
 
 export default function SectionNavigator() {

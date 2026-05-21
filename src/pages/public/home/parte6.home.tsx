@@ -100,7 +100,7 @@ export default function Parte6Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#050505] py-24 md:py-32 border-t border-[#111]">
+    <section id="doctrina" className="relative w-full overflow-hidden bg-[#050505] py-24 md:py-32 border-t border-[#111]">
       
       {/* --- FONDOS Y EFECTOS --- */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-[0.05]" />

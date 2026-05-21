@@ -183,7 +183,7 @@ export default function Parte5Home() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
+    <section id="diagnostico" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
       
       {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />

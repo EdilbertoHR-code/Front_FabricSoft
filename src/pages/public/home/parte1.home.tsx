@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
@@ -85,11 +85,11 @@ function TypewriterCarousel() {
   const gold = charIndex > phrase.base.length ? phrase.gold.slice(0, charIndex - phrase.base.length) : "";
 
   return (
-    <div className="fabric-typewriter relative mt-6 flex min-h-[66px] w-full max-w-[680px] items-center overflow-hidden border-l-2 border-[#C9A96E] bg-gradient-to-r from-[#C9A96E]/10 via-[#C9A96E]/5 to-transparent px-5 py-4">
-      <span className="relative z-10 font-serif text-sm font-light italic leading-relaxed text-[#F5F5F5] md:text-base">
+    <div className="fabric-typewriter relative mt-6 flex min-h-[66px] w-full max-w-[680px] items-center overflow-hidden border-l-2 border-[#D4AF37] bg-gradient-to-r from-[#D4AF37]/13 via-[#D4AF37]/6 to-transparent px-5 py-4">
+      <span className="relative z-10 text-sm font-bold leading-relaxed text-[#F5F5F5] md:text-base">
         {base}
-        <span className="text-[#C9A96E]">{gold}</span>
-        <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#C9A96E] align-middle" />
+        <span className="text-[#D4AF37]">{gold}</span>
+        <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#D4AF37] align-middle" />
       </span>
     </div>
   );
@@ -207,7 +207,7 @@ export default function Parte1HomeSplineAI() {
   }, []);
 
   return (
-    <section className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#0A0A0A] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
+    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#0A0A0A] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
       <style>{`
         @keyframes fabricStar {
           0%, 100% { opacity: 0; transform: translateY(0) scale(.85); }
@@ -253,7 +253,7 @@ export default function Parte1HomeSplineAI() {
             }`}
           >
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inset-0 animate-ping rounded-full bg-[#C9A96E] opacity-70" />
+              <span className="absolute inset-0 animate-ping rounded-full bg-[#D4AF37] opacity-70" />
               <span className="relative h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
             </span>
             <span className="font-mono text-[8.5px] font-semibold uppercase tracking-[0.22em] text-[#F5F5F5]">
