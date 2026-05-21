@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type SectionItem = {
   id: string;
@@ -24,6 +25,8 @@ const sections: SectionItem[] = [
 ];
 
 export default function SectionNavigator() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
@@ -37,7 +40,8 @@ export default function SectionNavigator() {
         const element = document.getElementById(section.id);
         if (!element) return;
 
-        if (element.offsetTop <= scrollPosition) {
+        const sectionTop = element.getBoundingClientRect().top + window.scrollY;
+        if (sectionTop <= scrollPosition) {
           nextSection = section.id;
         }
       });
@@ -62,14 +66,21 @@ export default function SectionNavigator() {
     };
   }, []);
 
+  useEffect(() => {
+    const hashId = decodeURIComponent(location.hash.replace("#", ""));
+    if (sections.some((section) => section.id === hashId)) {
+      setActiveSection(hashId);
+    }
+  }, [location.hash]);
+
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (!section) return;
     setActiveSection(id);
-    section.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    navigate({ pathname: "/", hash: `#${id}` }, { replace: false });
+
+    const top = section.getBoundingClientRect().top + window.scrollY - 118;
+    window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
