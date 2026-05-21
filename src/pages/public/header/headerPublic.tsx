@@ -59,8 +59,8 @@ export default function Header() {
             w-full flex items-center justify-between gap-6
             transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
             ${scrolled
-              ? 'max-w-[1000px] bg-[#0D0D0D]/90 backdrop-blur-2xl border border-[#C9A96E]/20 px-5 py-2.5 shadow-[0_16px_48px_rgba(0,0,0,0.75)]'
-              : 'max-w-[1440px] bg-transparent border border-[#C9A96E]/0 px-0 py-5'
+              ? 'max-w-[1000px] bg-[#0D0D0D]/90 backdrop-blur-2xl border border-[#C9A96E]/20 rounded-2xl px-5 py-2.5 shadow-[0_16px_48px_rgba(0,0,0,0.75)]'
+              : 'max-w-[1440px] bg-transparent border border-[#C9A96E]/0 rounded-2xl px-0 py-5'
             }
           `}
         >

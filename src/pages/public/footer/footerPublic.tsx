@@ -46,7 +46,7 @@ export default function Footer() {
           
           {/* COLUMNA IZQUIERDA (Marca y Contacto) */}
           <div className="sm:col-span-2 lg:col-span-2 flex flex-col">
-            <h2 className="text-white font-sans text-5xl tracking-[0.14em] uppercase mb-4 transition-colors duration-300 hover:text-fabric-gold">
+            <h2 className="text-white font-serif text-5xl tracking-wide mb-4 transition-colors duration-300 hover:text-fabric-gold">
               FABRIC
             </h2>
             <p className="text-fabric-gold text-xs font-bold tracking-[0.2em] uppercase mb-10">
