@@ -27,36 +27,50 @@ export default function SectionNavigator() {
   const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
-    const elements = sections
-      .map((section) => document.getElementById(section.id))
-      .filter(Boolean) as HTMLElement[];
+    let ticking = false;
 
-    if (!elements.length) return;
+    const updateActiveSection = () => {
+      const viewportAnchor = window.innerHeight * 0.38;
+      let nextSection = sections[0].id;
+      let shortestDistance = Number.POSITIVE_INFINITY;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+      sections.forEach((section) => {
+        const element = document.getElementById(section.id);
+        if (!element) return;
 
-        if (visibleEntries.length > 0) {
-          const mostVisible = visibleEntries.reduce((prev, current) =>
-            current.intersectionRatio > prev.intersectionRatio ? current : prev
-          );
-          setActiveSection(mostVisible.target.id);
+        const rect = element.getBoundingClientRect();
+        const distance = Math.abs(rect.top - viewportAnchor);
+
+        if (distance < shortestDistance) {
+          shortestDistance = distance;
+          nextSection = section.id;
         }
-      },
-      {
-        threshold: [0.2, 0.4, 0.6],
-        rootMargin: "-30% 0px -45% 0px",
-      }
-    );
+      });
 
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+      setActiveSection(nextSection);
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (!section) return;
+    setActiveSection(id);
     section.scrollIntoView({
       behavior: "smooth",
       block: "start",
