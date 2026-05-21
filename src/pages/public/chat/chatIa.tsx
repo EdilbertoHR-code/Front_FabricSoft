@@ -192,7 +192,7 @@ export default function ChatIa() {
               LEFT: COPYWRITING & INTRO
               ========================================= */}
           <div className={`relative transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/30 bg-transparent px-4 py-1.5 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-1.5 rounded-full mb-6">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C9A96E]"></span>
@@ -226,7 +226,7 @@ export default function ChatIa() {
               {/* FIX 2: Botón que hace auto-focus a la terminal en lugar de recargar */}
               <button 
                 onClick={handleFocusChat}
-                className="group inline-flex items-center justify-center gap-3 border border-[#C9A96E] bg-transparent px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all hover:bg-[#C9A96E] hover:text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]"
+                className="group inline-flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/10 px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all hover:bg-[#C9A96E] hover:text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]"
               >
                 Diagnóstico Interactivo <ArrowIcon />
               </button>
@@ -277,8 +277,8 @@ export default function ChatIa() {
                         {/* Burbuja del mensaje */}
                         <div className={`p-4 text-sm ${
                           isAgent 
-                            ? 'bg-[#161616] border border-[#2A2A2A] rounded-xl' 
-                            : 'bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-xl text-[#F5F5F5]'
+                            ? 'bg-[#161616] border border-[#2A2A2A] rounded-r-xl rounded-bl-xl' 
+                            : 'bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-l-xl rounded-br-xl text-[#F5F5F5]'
                         }`}>
                           {animateText ? (
                             <TypingEffect text={msg.text} isTyping={true} />
@@ -302,7 +302,7 @@ export default function ChatIa() {
                       key={scen.key}
                       onClick={() => handleScenarioClick(scen.key)}
                       disabled={isTyping}
-                      className="border border-[#2A2A2A] bg-[#0A0A0A] px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
+                      className="border border-solid border-[#2A2A2A] bg-[#0A0A0A] px-4 py-2 font-mono text-xs uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
                     >
                       {scen.shortLabel}
                     </button>
