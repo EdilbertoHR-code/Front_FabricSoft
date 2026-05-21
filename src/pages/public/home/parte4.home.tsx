@@ -558,47 +558,42 @@ export default function ErpCostCalculatorSection() {
   };
 
   return (
-    <section ref={sectionRef} className="pre-dossier-section relative overflow-hidden bg-bg-base px-6 py-20 text-text-primary md:px-12 md:py-28">
+    <section id="s03" ref={sectionRef} className="demo-section s03">
+      <div className="demo-section-marker">S03 · TCO Comparador</div>
       <SingleToast toast={toastState} />
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-30" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(201,169,110,0.10),transparent_28%),radial-gradient(circle_at_82%_58%,rgba(201,169,110,0.07),transparent_34%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg-base to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg-base to-transparent" />
 
-      <div className="relative z-10 mx-auto max-w-[1240px]">
-        <div className="grid lg:grid-cols-[1.06fr_0.94fr]">
-          <div className={`relative min-h-[430px] overflow-hidden border-b border-border/40 p-7 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-10 lg:border-b-0 lg:border-r lg:border-border/40 lg:p-12 ${isInView ? "translate-y-0 opacity-100 blur-0" : "translate-y-10 opacity-0 blur-sm"}`}>
-            <div className="relative z-10 flex h-full flex-col justify-center">
-              <div className="label inline-flex w-fit items-center gap-2 border border-accent/25 bg-accent-soft px-4 py-2">
-                <TextScramble as="span" trigger={isInView} speed={0.02} duration={0.55}>Lead Magnet · ERP TCO</TextScramble>
-              </div>
-
-              <div className="mt-7">
-                <TextScramble as="h2" trigger={isInView} duration={1.05} speed={0.028} className="max-w-3xl font-display text-[clamp(42px,5.2vw,78px)] leading-[0.95] tracking-[-0.05em] text-text-primary">
-                  ¿Cuánto te está costando realmente tu ERP actual?
-                </TextScramble>
-              </div>
-
-              <p className={`mt-7 max-w-2xl text-base leading-8 text-text-secondary transition-all duration-700 md:text-lg ${isInView ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"}`} style={{ transitionDelay: "180ms" }}>
-                Comparativo TCO Oracle Fusion vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
-              </p>
-
-              <div className="mt-9">
-                <FinancialButton onClick={() => setOpenCalculator(true)}>
-                  Calcular ahorro
-                  <Icon name="arrow" className="h-4 w-4" />
-                </FinancialButton>
-                <p className="mt-4 font-technical text-[9px] font-black uppercase tracking-[0.22em] text-text-tertiary">8 preguntas · Resultado inmediato en pantalla</p>
-              </div>
-            </div>
+      <div className="container">
+        <div className="s03-intro">
+          <div className="label" style={{ marginBottom: 24 }}>
+            <TextScramble as="span" trigger={isInView} speed={0.02} duration={0.55}>Lead Magnet · ERP TCO</TextScramble>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2">
-            {features.map((feature, index) => <FeatureCard key={feature.id} feature={feature} index={index} visible={isInView} />)}
+          <TextScramble
+            as="h2"
+            trigger={isInView}
+            duration={1.05}
+            speed={0.028}
+          >
+            {`¿Cuánto te está costando realmente tu ERP actual?`}
+          </TextScramble>
+          <p style={{ marginTop: 24 }}>
+            Comparativo TCO Oracle Fusion vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
+          </p>
+          <div style={{ marginTop: 48, display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
+            <FinancialButton onClick={() => setOpenCalculator(true)}>
+              Calcular ahorro
+              <Icon name="arrow" className="h-4 w-4" />
+            </FinancialButton>
+            <span className="eyebrow">8 preguntas · Resultado inmediato en pantalla</span>
           </div>
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="s03-features">
+          {features.map((feature, index) => (
+            <FeatureCard key={feature.id} feature={feature} index={index} visible={isInView} />
+          ))}
+        </div>
+
+        <div style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
           <LeadPreviewCard onOpen={() => setOpenCalculator(true)} visible={isInView} />
         </div>
       </div>

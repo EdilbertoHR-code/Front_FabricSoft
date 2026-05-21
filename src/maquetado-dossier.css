@@ -998,6 +998,35 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   z-index: 3;
 }
 
+/* TCO COMPARADOR (S03) */
+
+.s03 { background: var(--bg-base); }
+
+.s03-intro {
+  max-width: 820px;
+  margin-bottom: 80px;
+}
+.s03-intro h2 { font-weight: 300; margin-bottom: 0; }
+.s03-intro p { color: var(--text-secondary); font-size: 18px; line-height: 1.7; }
+
+.s03-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.s03-features article {
+  border-right: 1px solid var(--border);
+  background: transparent !important;
+}
+.s03-features article:last-child { border-right: none; }
+
+@media (max-width: 968px) {
+  .s03-features { grid-template-columns: repeat(2, 1fr); }
+  .s03-features article:nth-child(2n) { border-right: none; }
+}
+
 /* CASOS (S07) — refined */
 
 .s07 { background: var(--bg-panel); }
