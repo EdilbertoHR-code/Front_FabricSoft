@@ -12,28 +12,29 @@ import './index.css'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Falta la variable de entorno VITE_CLERK_PUBLISHABLE_KEY")
-}
+const app = (
+  <BrowserRouter>
+    <App />
+    <Toaster theme="dark" position="bottom-right" richColors />
+  </BrowserRouter>
+)
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ClerkProvider 
-      publishableKey={PUBLISHABLE_KEY} 
-      localization={esES}
-      appearance={{
-        baseTheme: dark,
-        variables: { 
-          colorPrimary: '#ffffff', 
-          colorBackground: '#111111'
-        }
-      }}
-    >
-      <BrowserRouter>
-        <App />
-        {/* Sonner Toaster inyectado a nivel global para notificaciones premium */}
-        <Toaster theme="dark" position="bottom-right" richColors />
-      </BrowserRouter>
-    </ClerkProvider>
+    {PUBLISHABLE_KEY ? (
+      <ClerkProvider
+        publishableKey={PUBLISHABLE_KEY}
+        localization={esES}
+        appearance={{
+          baseTheme: dark,
+          variables: {
+            colorPrimary: '#ffffff',
+            colorBackground: '#111111'
+          }
+        }}
+      >
+        {app}
+      </ClerkProvider>
+    ) : app}
   </React.StrictMode>,
 )

@@ -1,0 +1,84 @@
+@media (max-width: 968px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  .container,
+  .container-narrow { width: 100%; max-width: 100%; padding: 0 24px; overflow-x: hidden; }
+  section { padding: 96px 0; }
+  h2 { max-width: 100%; font-size: clamp(30px, 8.5vw, 38px); overflow-wrap: anywhere; word-break: normal; }
+  p, li, a, span, div { overflow-wrap: anywhere; }
+  .container > div[style*="max-width"] { max-width: 100% !important; }
+  .nav-inner { padding: 0 24px; }
+  .nav-lang { display: none; }
+
+  .lead-magnet { padding: 48px 32px; }
+  .lead-magnet-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  .casos-grid { grid-template-columns: 1fr; }
+  .casos-grid > *,
+  .industries-grid > *,
+  .fso-grid > *,
+  .lifecycle-flow > *,
+  .transparency-grid > *,
+  .criterios-grid > *,
+  .research-grid > *,
+  .founder-grid > * { min-width: 0; }
+  .caso-card,
+  .office-hours-box,
+  .criterios-block,
+  .transparency-block,
+  .research-card,
+  .waitlist-section,
+  .founder-line { padding: 40px 24px; }
+  .caso-data-row { display: grid; grid-template-columns: 1fr; gap: 4px; align-items: start; }
+  .office-hours-date { align-items: flex-start; gap: 12px; }
+  .caso-data-value,
+  .date-slots { text-align: left; }
+  .cta + .cta { margin-left: 0; }
+
+  .industries-grid { grid-template-columns: 1fr; }
+  .industry-card { border-right: none; border-bottom: 1px solid var(--border); }
+
+  .os-layer { grid-template-columns: 1fr; padding: 32px 24px; gap: 12px; }
+  .os-layer:hover { padding-left: 24px; }
+  .os-layer-arrow { display: none; }
+
+  .lifecycle-flow { grid-template-columns: 1fr; }
+  .lifecycle-step { margin-right: 0; margin-bottom: -1px; }
+
+  .transparency-grid { grid-template-columns: 1fr; }
+  .criterios-grid { grid-template-columns: 1fr; }
+  .research-grid { grid-template-columns: 1fr; }
+
+  .founder-grid { grid-template-columns: 1fr; gap: 48px; }
+  .julio-photo { max-width: 280px; }
+  .julio-name { font-size: 40px; }
+  .waitlist-stats { grid-template-columns: 1fr; gap: 0; }
+  .waitlist-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 24px 0; }
+  .waitlist-stat:last-child { border-bottom: none; }
+  .founder-line-email { font-size: 15px; }
+
+  .footer-top { grid-template-columns: 1fr; gap: 48px; }
+  .footer-links { grid-template-columns: 1fr 1fr; }
+
+  .doctrine-item { grid-template-columns: 1fr; gap: 16px; }
+
+  .nav-links { display: none; }
+
+  .fso-grid { grid-template-columns: 1fr; }
+  .ai-scenarios { grid-template-columns: 1fr; }
+
+  .office-hours-grid { grid-template-columns: 1fr; }
+  .office-hours-dates { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 32px; }
+
+  .counter-number { font-size: 96px; }
+
+  .reference-item { grid-template-columns: 40px 1fr; }
+  .reference-status { grid-column: 1 / -1; padding-top: 8px; }
+
+  .admission-row { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .wizard-body { padding: 32px 24px; }
+  .wizard-footer { padding: 16px 24px 28px; }
+  .wizard-header { padding: 20px 24px 16px; }
+  .wizard-question { font-size: 22px; }
+  .tco-comparison { grid-template-columns: 1fr; }
+}

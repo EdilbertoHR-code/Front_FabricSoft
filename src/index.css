@@ -5,26 +5,34 @@
 @import "./maquetado-interacciones.css";
 
 @theme {
-  /* Tailwind tokens */
-  --color-bg-base: #0a0a0a;
-  --color-bg-panel: #131313;
-  --color-bg-elevated: #1a1a1a;
+  /* ── Tokens con prefijo fabric- (usados por el layout y componentes de Edilberto) ── */
+  --color-fabric-base:        #0a0a0a;
+  --color-fabric-panel:       #131313;
+  --color-fabric-elevated:    #1a1a1a;
+  --color-fabric-text:        #f5f5f5;
+  --color-fabric-text-muted:  #8a8a8a;
+  --color-fabric-gold:        #c9a96e;
+  --color-fabric-gold-hover:  #a07845;
+  --color-fabric-border:      #252525;
+  --color-fabric-border-strong: #353535;
+  --color-fabric-danger:      #b85450;
 
+  /* ── Tokens alternativos (bg-*, text-*, accent-*) ── */
+  --color-bg-base:      #0a0a0a;
+  --color-bg-panel:     #131313;
+  --color-bg-elevated:  #1a1a1a;
   --color-text-primary: #f5f5f5;
   --color-text-secondary: #8a8a8a;
-  --color-text-tertiary: #5a5a5a;
-
-  --color-accent: #c9a96e;
-  --color-accent-2: #a07845;
-  --color-accent-soft: rgba(201, 169, 110, 0.08);
-
-  --color-border: #252525;
-  --color-border-strong: #353535;
-  --color-danger: #b85450;
+  --color-text-tertiary:  #5a5a5a;
+  --color-accent:       #c9a96e;
+  --color-accent-2:     #a07845;
+  --color-border:       #252525;
+  --color-border-strong:#353535;
+  --color-danger:       #b85450;
 
   --font-serif: "Cormorant Garamond", "Times New Roman", serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:  "JetBrains Mono", monospace;
 
   --animate-fade-in-down: fade-in-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-grid: move-grid 40s linear infinite;

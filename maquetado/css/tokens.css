@@ -1,0 +1,22 @@
+:root {
+  --bg-base:        #0A0A0A;
+  --bg-panel:       #131313;
+  --bg-elevated:    #1a1a1a;
+  --border:         #252525;
+  --border-strong:  #353535;
+  --text-primary:   #F5F5F5;
+  --text-secondary: #8A8A8A;
+  --text-tertiary:  #5A5A5A;
+  --accent:         #C9A96E;
+  --accent-2:       #A07845;
+  --accent-soft:    rgba(201, 169, 110, 0.08);
+  --danger:         #B85450;
+  --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --sans:  'Inter', -apple-system, sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg-base);
+}
