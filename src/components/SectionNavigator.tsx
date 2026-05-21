@@ -10,8 +10,8 @@ type SectionItem = {
 // Secciones obligatorias del Brief2. Los recursos opcionales viven en el footer.
 const sections: SectionItem[] = [
   { id: "inicio", label: "Hero", number: "01" },
-  { id: "diagnostico", label: "Diagnóstico", number: "02" },
-  { id: "fabric-ai", label: "FABRIC AI", number: "03" },
+  { id: "fabric-ai", label: "FABRIC AI", number: "02" },
+  { id: "diagnostico", label: "Diagnóstico", number: "03" },
   { id: "doctrina", label: "Doctrina", number: "04" },
   { id: "s07", label: "Casos", number: "05" },
   { id: "s08", label: "Industrias", number: "06" },
