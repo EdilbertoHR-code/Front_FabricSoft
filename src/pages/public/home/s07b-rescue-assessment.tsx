@@ -270,10 +270,10 @@ export default function S07bRescueAssessment() {
 
         {/* ── UNA PREGUNTA A LA VEZ ── */}
         {started && !submitted && (
-          <div style={{ marginTop: 48, maxWidth: 720, marginInline: 'auto', animation: 'fadeIn .3s ease' }}>
+          <div style={{ marginTop: 48, animation: 'fadeIn .3s ease' }}>
 
-            {/* Barra de progreso */}
-            <div style={{ marginBottom: 32 }}>
+            {/* Barra de progreso — ancho completo */}
+            <div style={{ marginBottom: 40 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
                   {String(current + 1).padStart(2, '0')} / {questions.length}
@@ -292,11 +292,63 @@ export default function S07bRescueAssessment() {
               </div>
             </div>
 
-            {/* Pregunta actual */}
-            <div key={q.id} style={{ animation: 'fadeIn .25s ease' }}>
-              <p style={{ fontSize: 18, lineHeight: 1.65, color: 'var(--text-primary)', marginBottom: 24, fontWeight: 500 }}>
-                {q.text}
-              </p>
+            {/* Dos columnas: pregunta izquierda · opciones derecha */}
+            <div key={q.id} style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '0 64px',
+              alignItems: 'start',
+              animation: 'fadeIn .25s ease',
+            }}>
+
+              {/* IZQUIERDA — pregunta + navegación */}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 260 }}>
+                <p style={{ fontSize: 20, lineHeight: 1.6, color: 'var(--text-primary)', fontWeight: 500 }}>
+                  {q.text}
+                </p>
+
+                <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 12 }}>
+                  {current > 0 && (
+                    <button
+                      onClick={handleBack}
+                      style={{
+                        padding: '12px 20px',
+                        fontFamily: 'var(--mono)',
+                        fontSize: 10,
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        background: 'transparent',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ← Anterior
+                    </button>
+                  )}
+                  <button
+                    onClick={handleNext}
+                    disabled={!hasAnswer}
+                    style={{
+                      padding: '13px 32px',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      background: hasAnswer ? 'var(--accent)' : 'transparent',
+                      border: hasAnswer ? 'none' : '1px solid var(--border)',
+                      color: hasAnswer ? '#0A0A0A' : 'var(--text-secondary)',
+                      cursor: hasAnswer ? 'pointer' : 'not-allowed',
+                      transition: 'all .2s ease',
+                    }}
+                  >
+                    {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
+                  </button>
+                </div>
+              </div>
+
+              {/* DERECHA — opciones de respuesta */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {q.options.map((opt) => {
                   const isSelected = answers[q.id] === opt.score;
@@ -306,7 +358,7 @@ export default function S07bRescueAssessment() {
                       onClick={() => handleSelect(opt.score)}
                       style={{
                         textAlign: 'left',
-                        padding: '13px 18px',
+                        padding: '14px 18px',
                         fontSize: 14,
                         fontFamily: 'var(--sans)',
                         background: isSelected ? 'rgba(201,169,110,0.12)' : 'rgba(255,255,255,0.03)',
@@ -331,47 +383,6 @@ export default function S07bRescueAssessment() {
                   );
                 })}
               </div>
-            </div>
-
-            {/* Navegación */}
-            <div style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 12 }}>
-              {current > 0 && (
-                <button
-                  onClick={handleBack}
-                  style={{
-                    padding: '12px 20px',
-                    fontFamily: 'var(--mono)',
-                    fontSize: 10,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    background: 'transparent',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-secondary)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ← Anterior
-                </button>
-              )}
-              <button
-                onClick={handleNext}
-                disabled={!hasAnswer}
-                style={{
-                  padding: '13px 32px',
-                  fontFamily: 'var(--mono)',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  background: hasAnswer ? 'var(--accent)' : 'transparent',
-                  border: hasAnswer ? 'none' : '1px solid var(--border)',
-                  color: hasAnswer ? '#0A0A0A' : 'var(--text-secondary)',
-                  cursor: hasAnswer ? 'pointer' : 'not-allowed',
-                  transition: 'all .2s ease',
-                }}
-              >
-                {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
-              </button>
             </div>
           </div>
         )}
