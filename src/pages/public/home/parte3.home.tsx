@@ -180,11 +180,11 @@ function Btn({ children, onClick, disabled = false, className = "" }: {
     <button
       type="button" onClick={onClick} disabled={disabled}
       className={`group inline-flex items-center justify-center gap-3
-        border border-[#2A2A2A] bg-transparent
+        border border-[#C9A96E] bg-[#C9A96E]/5
         px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.15em]
-        text-[#F5F5F5] transition-all duration-300
-        hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/5
-        disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(201,169,110,0)] hover:shadow-[0_0_20px_-5px_rgba(201,169,110,0.3)] ${className}`}
+        text-[#C9A96E] transition-all duration-300
+        hover:bg-[#C9A96E] hover:text-[#0A0A0A]
+        disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)] ${className}`}
     >
       {children}
     </button>
@@ -259,7 +259,7 @@ const ResultChart = memo(function ResultChart({ currTco5, oracleTco5, five }: {
   ];
   return (
     <div className="bg-[#0A0A0A] p-6 border border-[#1A1A1A] rounded-sm">
-      <p className="font-mono text-[10px] uppercase tracking-wider mb-6 text-[#888]">Análisis Financiero</p>
+      <p className="font-mono text-[10px] uppercase tracking-wider mb-6 text-[#C9A96E]">Análisis Financiero</p>
       <div className="space-y-5">
         {bars.map((b, i) => (
           <div key={b.label}>
@@ -330,9 +330,9 @@ const LeadPreviewCard = memo(function LeadPreviewCard({ onOpen }: { onOpen: () =
             <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
             <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Live Preview</p>
           </div>
-          <p className="font-serif text-2xl text-[#F5F5F5]">Modelo Financiero TCO</p>
+          <p className="font-serif text-2xl text-[#F5F5F5]">Modelo Financiero <span className="text-[#C9A96E]">TCO</span></p>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center bg-[#111111] text-[#888] border border-[#2A2A2A] rounded-sm">
+        <div className="flex h-12 w-12 items-center justify-center bg-[#111111] text-[#C9A96E] border border-[#2A2A2A] rounded-sm">
           <Icon name="calculator" />
         </div>
       </div>
@@ -426,7 +426,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 </div>
                 <h4 className="font-serif text-2xl text-[#F5F5F5]">Esperando parámetros</h4>
                 <p className="mt-3 max-w-[280px] font-sans text-[13px] text-[#888] leading-relaxed">
-                  Completa la información para generar el dashboard de TCO y ROI.
+                  Completa la información para generar el dashboard de <span className="text-[#C9A96E]">TCO</span> y <span className="text-[#C9A96E]">ROI</span>.
                 </p>
               </div>
             ) : (
@@ -442,11 +442,11 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                   </div>
                   <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm">
                     <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-[#888]">Breakeven</p>
-                    <p className="font-mono text-lg text-[#F5F5F5]">{tco.breakeven} Meses</p>
+                    <p className="font-mono text-lg text-[#C9A96E]">{tco.breakeven} <span className="text-[#888] text-sm">Meses</span></p>
                   </div>
                   <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm">
                     <p className="font-mono text-[9px] uppercase tracking-wider mb-2 text-[#888]">ROI 5 Años</p>
-                    <p className="font-mono text-lg text-[#F5F5F5]">{tco.roi5}%</p>
+                    <p className="font-mono text-lg text-[#C9A96E]">{tco.roi5}%</p>
                   </div>
                 </div>
                 <ResultChart currTco5={tco.currTco5} oracleTco5={tco.oracleTco5} five={tco.five} />
@@ -477,7 +477,7 @@ export default function ErpCostCalculatorSection() {
           {/* Left */}
           <div className="relative flex flex-col justify-center">
             <ScrollReveal delay={0}>
-              <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#2A2A2A] bg-[#0A0A0A] px-4 py-2 rounded-sm">
+              <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 rounded-sm backdrop-blur-sm">
                 <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Lead Magnet · TCO Analysis</span>
               </div>
             </ScrollReveal>
@@ -487,13 +487,13 @@ export default function ErpCostCalculatorSection() {
                 as="h2" trigger duration={1.2} speed={0.02}
                 className="font-serif text-[38px] leading-[1.1] text-[#F5F5F5] md:text-[52px] lg:text-[60px]"
               >
-                ¿Cuánto te está costando realmente tu ERP actual?
+                ¿Cuánto te está costando <span className="text-[#C9A96E]">realmente</span> tu ERP actual?
               </TextScramble>
             </ScrollReveal>
 
             <ScrollReveal delay={200}>
               <p className="mt-8 max-w-2xl font-sans text-base md:text-lg leading-relaxed text-[#888]">
-                Comparativo TCO Oracle Fusion vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
+                Comparativo TCO <span className="text-[#F5F5F5]">Oracle Fusion</span> vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
               </p>
             </ScrollReveal>
 
@@ -503,7 +503,7 @@ export default function ErpCostCalculatorSection() {
                   Calcular Ahorro
                   <ArrowIcon />
                 </Btn>
-                <p className="font-mono text-[10px] uppercase tracking-wider text-[#555]">8 preguntas · Resultado inmediato en pantalla</p>
+                <p className="font-mono text-[10px] uppercase tracking-wider text-[#C9A96E]/70">8 preguntas · Resultado inmediato en pantalla</p>
               </div>
             </ScrollReveal>
 
