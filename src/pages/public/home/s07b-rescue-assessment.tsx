@@ -302,7 +302,7 @@ export default function S07bRescueAssessment() {
             }}>
 
               {/* IZQUIERDA — solo la pregunta, centrada contra las opciones */}
-              <p style={{ fontSize: 20, lineHeight: 1.6, color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
+              <p style={{ fontSize: 26, lineHeight: 1.5, color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
                 {q.text}
               </p>
 
