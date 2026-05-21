@@ -1,4 +1,6 @@
 
+import { Link } from 'react-router-dom';
+
 interface MetricRow {
   label: string;
   value: string;
@@ -111,9 +113,9 @@ export default function S07Casos() {
 
               <div className="caso-footer">
                 <div className="caso-ctas">
-                  <a href={item.href} className="cta">
+                  <Link to={item.href} className="cta">
                     Leer caso completo <span className="cta-arrow">→</span>
-                  </a>
+                  </Link>
                   <a href="#proof" className="cta" data-interaction="proof">
                     Proof of Work <span className="cta-arrow">→</span>
                   </a>

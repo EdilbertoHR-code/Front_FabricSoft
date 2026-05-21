@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { SignIn, SignUp } from '@clerk/clerk-react';
 import PublicLayout from '../layouts/public/publicLayaout';
 import Home from '../pages/public/home/home';
+import CasoPage from '../pages/public/casos/CasoPage';
 // import SobreNosotros from '../components/public/sobreNoostros/sobreNosotros';
 // import ServiciosAdministrados from '../components/public/serviciosAdministractivos/serviciosAdministrados';
 // import ProyectosBlog from '../components/public/proyectos/poryecto';
@@ -17,6 +18,9 @@ export const AppRouter = () => {
         
         {/* Página Principal (Home) */}
         <Route index element={<Home />} />
+
+        {/* Casos de éxito */}
+        <Route path="casos/:slug" element={<CasoPage />} />
            {/* <Route path="/sobre-nosotros" element={< SobreNosotros/>} />
              <Route path="/servicios" element={< ServiciosAdministrados/>} />
           
