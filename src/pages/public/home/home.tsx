@@ -12,17 +12,15 @@ import CriteriosEvaluacion from '../home/criterios-evaluacion';
 import S13Transparencia from '../home/s13-transparencia';
 import S14Investigacion from '../home/s14-investigacion';
 import S15Founder from '../home/s15-founder';
+import InteractionManager from '../../../components/InteractionManager';
 
 export default function Home() {
   return (
     <div className="w-full flex flex-col">
-      {/* S01-S06: Hero, TCO, Mapa Global, Rescue, Doctrina — Edilberto */}
       <Parte1Home />
       <Parte2Home />
       <Parte3Home />
       <Parte4Home />
-
-      {/* S07-S15: Casos, Industrias, OS, Lifecycle, Office Hours, Referencias, Criterios, Transparencia, Investigación, Founder */}
       <S07Casos />
       <S08Industrias />
       <S09FabricOS />
@@ -33,6 +31,7 @@ export default function Home() {
       <S13Transparencia />
       <S14Investigacion />
       <S15Founder />
+      <InteractionManager />
     </div>
   );
 }
