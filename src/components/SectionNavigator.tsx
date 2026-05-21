@@ -84,7 +84,7 @@ export default function SectionNavigator() {
   };
 
   return (
-    <aside className="fixed right-4 lg:right-6 top-1/2 z-50 hidden -translate-y-1/2 xl:block pointer-events-none">
+    <aside className="fixed right-4 lg:right-6 top-1/2 z-50 hidden -translate-y-1/2 lg:block pointer-events-none">
       <nav className="relative flex flex-col items-center gap-4 py-6 pointer-events-auto">
         <div className="absolute left-1/2 top-0 bottom-0 w-[1px] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#2A2A2A] to-transparent opacity-80" />
 

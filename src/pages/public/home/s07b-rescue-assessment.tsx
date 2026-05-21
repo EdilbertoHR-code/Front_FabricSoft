@@ -326,12 +326,14 @@ export default function S07bRescueAssessment() {
 
         {/* ── RESULTADO ── */}
         {submitted && severity ? (
-          <div style={{
-            border: `1px solid ${severity.color}40`,
-            background: `${severity.color}08`,
-            padding: '40px 40px',
-            animation: 'fadeIn .4s ease',
-          }}>
+          <div
+            className="rescue-result-card"
+            style={{
+              border: `1px solid ${severity.color}40`,
+              background: `${severity.color}08`,
+              animation: 'fadeIn .4s ease',
+            }}
+          >
             <div style={{
               fontFamily: 'var(--mono)',
               fontSize: 10,

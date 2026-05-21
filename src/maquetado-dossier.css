@@ -1,4 +1,4 @@
-﻿/* ════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════════
    FABRICSOFT · DOSSIER DE MAQUETAS · STYLES
    ════════════════════════════════════════════════════════════════ */
 
@@ -1346,6 +1346,10 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 }
 
 .os-layer-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--text-tertiary);
@@ -1838,6 +1842,10 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   transition: padding 0.3s ease;
 }
 .refs-row:hover { padding-left: 16px; }
+
+.refs-meta-group {
+  display: contents;
+}
 
 .refs-num {
   font-family: var(--mono);
@@ -2418,6 +2426,40 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 .julio-credentials .cell .num { font-family: var(--serif); font-size: 36px; color: var(--accent); line-height: 1; font-weight: 400; }
 .julio-credentials .cell .lbl { font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; }
 
+/* Countdown Banner */
+.countdown-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(201, 169, 110, 0.05);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  padding: 10px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 32px;
+  letter-spacing: 0.05em;
+}
+.countdown-emoji {
+  font-size: 14px;
+}
+.countdown-label {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.countdown-time {
+  color: var(--accent);
+  font-weight: 600;
+}
+.countdown-sub {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+/* Rescue Result Card */
+.rescue-result-card {
+  padding: 40px;
+}
+
 /* Wait list */
 
 .waitlist {
@@ -2705,8 +2747,17 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .lifecycle-grid { grid-template-columns: 1fr; gap: 24px; }
   .lifecycle-rail { display: none; }
   .refs-row { grid-template-columns: 40px 1fr; gap: 12px; }
-  .refs-vertical, .refs-lang, .refs-action { grid-column: 2; }
+  .refs-meta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    grid-column: 2;
+    margin-top: 8px;
+    align-items: center;
+  }
+  .refs-action { justify-content: flex-start; }
   .criterios-grid { grid-template-columns: 1fr; }
+  .criterios-list { padding: 16px 16px; }
   .transparency-grid { grid-template-columns: 1fr; }
   .research-grid { grid-template-columns: 1fr; }
   .acceptance-banner { grid-template-columns: 1fr; gap: 24px; }
@@ -2715,10 +2766,66 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .waitlist-head { grid-template-columns: 1fr; }
   .waitlist-stats { grid-template-columns: 1fr; }
   .waitlist-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 0; }
-  .admission-row { grid-template-columns: 80px 100px 1fr; gap: 16px; font-size: 11px; }
+  .admission-row { grid-template-columns: 80px 100px 1fr auto; gap: 16px; font-size: 11px; }
   .julio-credentials { grid-template-columns: 1fr; }
   .julio-credentials .cell { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 0; }
+  .julio-credentials .cell:last-child { padding-left: 0; border-bottom: none; }
   .dossier-bar-progress { display: none; }
   .demo-section { padding: 64px 24px; }
   .caso-card { padding: 32px 28px; }
 }
+
+@media (max-width: 768px) {
+  .os-layer {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 16px;
+    align-items: start;
+  }
+  .os-layer::after {
+    display: none;
+  }
+  .os-layer-body {
+    padding-left: 0;
+  }
+  .os-layer-meta {
+    text-align: left;
+    align-items: flex-start;
+  }
+  .rescue-result-card {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admission-row {
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
+  }
+  .admission-deadline {
+    text-align: right;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdown-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .criterios-list {
+    padding: 12px 12px;
+  }
+  .criterios-list li {
+    grid-template-columns: 24px 1fr;
+    gap: 8px 12px;
+    align-items: start;
+  }
+  .crit-weight {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 4px;
+  }
+}
+

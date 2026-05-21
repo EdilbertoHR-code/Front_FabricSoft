@@ -28,12 +28,14 @@ export default function S12Referencias() {
                 {title}
                 <small>{subtitle}</small>
               </div>
-              <span className="refs-vertical">{vertical}</span>
-              <div className="refs-lang">
-                <span className="active">ES</span>
-                <span className={langs.includes("EN") ? "active" : undefined}>EN</span>
+              <div className="refs-meta-group">
+                <span className="refs-vertical">{vertical}</span>
+                <div className="refs-lang">
+                  <span className="active">ES</span>
+                  <span className={langs.includes("EN") ? "active" : undefined}>EN</span>
+                </div>
+                <span className="refs-action">Disponible</span>
               </div>
-              <span className="refs-action">Disponible</span>
             </div>
           ))}
         </div>

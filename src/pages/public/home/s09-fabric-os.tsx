@@ -91,7 +91,7 @@ export default function S09FabricOS() {
                     </div>
                   )}
                 </div>
-                <div className="os-layer-meta" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+                <div className="os-layer-meta">
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
                     {isOpen ? '▲ Cerrar' : '▼ Ver más'}
                   </span>

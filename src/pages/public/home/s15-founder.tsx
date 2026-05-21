@@ -34,25 +34,13 @@ function CountdownBanner() {
   const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-      background: 'rgba(201,169,110,0.07)',
-      border: '1px solid rgba(201,169,110,0.25)',
-      padding: '10px 18px',
-      marginBottom: 24,
-      fontFamily: 'var(--mono)',
-      fontSize: 11,
-      letterSpacing: '0.18em',
-      textTransform: 'uppercase',
-    }}>
-      <span style={{ color: 'var(--accent)' }}>⏳</span>
-      <span style={{ color: 'var(--text-secondary)' }}>Cierre Q3 2026:</span>
-      <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+    <div className="countdown-banner">
+      <span className="countdown-emoji">⏳</span>
+      <span className="countdown-label">Cierre Q3 2026:</span>
+      <span className="countdown-time">
         {pad(days)}d {pad(hours)}h {pad(minutes)}m {pad(seconds)}s
       </span>
-      <span style={{ color: 'var(--text-secondary)' }}>restantes · 30 julio</span>
+      <span className="countdown-sub">restantes · 30 julio</span>
     </div>
   );
 }
