@@ -69,7 +69,7 @@ export default function SectionNavigator() {
   };
 
   return (
-    <aside className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 xl:block 2xl:right-8">
+    <aside className="fixed right-2 lg:right-4 top-1/2 z-50 hidden -translate-y-1/2 lg:block 2xl:right-8">
       <nav className="relative flex flex-col items-end">
         
         {/* Línea vertical central */}
