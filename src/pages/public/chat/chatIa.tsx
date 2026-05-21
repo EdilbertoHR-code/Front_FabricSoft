@@ -84,76 +84,6 @@ function UserIcon() {
   );
 }
 
-// --- AVATARS & BORDERS (Edilberto v1 Premium Design) ---
-function FabricAvatar() {
-  return (
-    <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border border-[#D4AF37]/40"
-      style={{ background: 'radial-gradient(circle at 40% 35%,#2a1f06 0%,#0D0900 100%)' }}>
-      <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="#D4AF37">
-        <path d="M8 1 L9.8 6 L15 8 L9.8 10 L8 15 L6.2 10 L1 8 L6.2 6 Z" />
-      </svg>
-    </div>
-  );
-}
-
-function UserAvatar() {
-  return (
-    <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center border border-[#3B5FDB]/50"
-      style={{ background: 'linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%)' }}>
-      <svg className="w-3.5 h-3.5 text-white/90" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-3.33 0-10 1.67-10 5v1h20v-1c0-3.33-6.67-5-10-5z"/>
-      </svg>
-    </div>
-  );
-}
-
-function SnakeBorder({ children }: { children: React.ReactNode }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [dims, setDims] = useState({ w: 700, h: 550 });
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(([e]) => setDims({ w: e.contentRect.width, h: e.contentRect.height }));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const R = 14;
-
-  return (
-    <div ref={wrapRef} className="relative w-full h-full rounded-[14px]" style={{ isolation: 'isolate' }}>
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 20 }} xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="snakeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="transparent" />
-            <stop offset="20%"  stopColor="#8B6914" />
-            <stop offset="60%"  stopColor="#D4AF37" />
-            <stop offset="90%"  stopColor="#F5D98B" />
-            <stop offset="100%" stopColor="#FFFFFF" />
-          </linearGradient>
-          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="3.5" result="b" />
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <rect x="1" y="1" width={dims.w - 2} height={dims.h - 2} rx={R} ry={R} fill="none" stroke="#2A2A2A" strokeWidth="1.5" />
-        <rect x="1" y="1" width={dims.w - 2} height={dims.h - 2} rx={R} ry={R} fill="none"
-          stroke="url(#snakeGrad)" strokeWidth="2.5" strokeLinecap="round" pathLength="100" strokeDasharray="30 70" filter="url(#glow)"
-          style={{ animation: 'snakeRun 4s linear infinite' }}
-        />
-        <style>{`
-          @keyframes snakeRun { 0% { stroke-dashoffset: 100; } 100% { stroke-dashoffset: 0; } }
-          @keyframes msgIn { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:translateY(0); } }
-        `}</style>
-      </svg>
-      <div className="relative w-full h-full flex flex-col rounded-[14px] overflow-hidden bg-[#070707]" style={{ zIndex: 10 }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 // --- TYPEWRITER EFFECT COMPONENT ---
 function TypingEffect({ text, isTyping }: { text: string; isTyping: boolean }) {
   const [visibleText, setVisibleText] = useState("");
@@ -307,14 +237,13 @@ export default function ChatIa() {
               RIGHT: CHATBOX INTERACTIVO
               ========================================= */}
           <div className={`relative w-full max-w-[700px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <SnakeBorder>
-              <div className="relative flex flex-col h-[550px] overflow-hidden bg-transparent">
+            <div className="relative flex flex-col h-[550px] overflow-hidden border border-[#2A2A2A] bg-[#0A0A0A] rounded-xl shadow-[0_30px_100px_rgba(0,0,0,0.5)] transition-all duration-300 focus-within:border-[#C9A96E]/50 focus-within:shadow-[0_30px_100px_rgba(201,169,110,0.15)]">
               
               {/* Resplandor superior */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
 
               {/* Cabecera del chat */}
-              <div className="flex items-center justify-between border-b border-[#2A2A2A] bg-[rgba(0,0,0,0.75)] px-5 py-4">
+              <div className="flex items-center justify-between border-b border-[#2A2A2A] bg-[#111] px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#C9A96E]/30 bg-[#C9A96E]/10 text-[#C9A96E]">
                     <SparkIcon />
@@ -338,9 +267,9 @@ export default function ChatIa() {
                       <div className={`max-w-[85%] flex flex-col gap-2 ${isAgent ? 'items-start' : 'items-end'}`}>
                         
                         {/* Etiqueta del remitente */}
-                        <div className="flex items-center gap-1.5 opacity-80 mb-1">
-                          {isAgent ? <FabricAvatar /> : <UserAvatar />}
-                          <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5] ml-1">
+                        <div className="flex items-center gap-1.5 opacity-60">
+                          {isAgent ? <SparkIcon /> : <UserIcon />}
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]">
                             {isAgent ? 'FABRIC AI' : 'Tú'}
                           </span>
                         </div>
@@ -373,7 +302,7 @@ export default function ChatIa() {
                       key={scen.key}
                       onClick={() => handleScenarioClick(scen.key)}
                       disabled={isTyping}
-                      className="border border-[#2A2A2A] bg-[rgba(0,0,0,0.4)] px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
+                      className="border border-[#2A2A2A] bg-[#0A0A0A] px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-[#F5F5F5]/60 transition-colors hover:border-[#C9A96E]/50 hover:text-[#C9A96E] disabled:opacity-30 rounded-full"
                     >
                       {scen.shortLabel}
                     </button>
@@ -403,7 +332,6 @@ export default function ChatIa() {
               </div>
 
             </div>
-            </SnakeBorder>
           </div>
           
         </div>
