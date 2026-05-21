@@ -1,66 +1,96 @@
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 
-const features = [
-  "Análisis de costo total a 5 y 10 años",
-  "Breakeven de migración estimado",
-  "ROI proyectado con benchmarks Oracle",
-  "Opción de análisis detallado con datos reales",
-];
+type Scenario = "rescue" | "stabilize" | "migrate";
 
-const previewRows = [
-  { label: "Sistema actual", value: "SAP S/4 HANA" },
-  { label: "Usuarios", value: "150" },
-  { label: "Año 1 actual", value: "$485,000" },
-  { label: "Año 1 Oracle", value: "$310,000" },
-  { label: "Ahorro 5 años", value: "$1,240,000" },
-  { label: "Breakeven", value: "18 meses" },
-];
+type BreakdownItem = {
+  label: string;
+  value: number;
+  short: string;
+};
 
-function ArrowIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M5 12H19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M13 6L19 12L13 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+type InputState = {
+  users: number;
+  licenseCost: number;
+  supportCost: number;
+  manualHours: number;
+  hourlyCost: number;
+  closingDays: number;
+  manualReports: number;
+  adoptionRate: number;
+  remediationCost: number;
+};
+
+const initialInput: InputState = {
+  users: 150,
+  licenseCost: 285000,
+  supportCost: 120000,
+  manualHours: 220,
+  hourlyCost: 75,
+  closingDays: 15,
+  manualReports: 12,
+  adoptionRate: 42,
+  remediationCost: 180000,
+};
+
+const scenarioCopy: Record<
+  Scenario,
+  {
+    title: string;
+    description: string;
+    multiplier: number;
+  }
+> = {
+  rescue: {
+    title: "Rescate Oracle Fusion",
+    description: "Reduce reportes paralelos, cierre lento y operación fuera del ERP.",
+    multiplier: 0.42,
+  },
+  stabilize: {
+    title: "Estabilización post go-live",
+    description: "Optimiza adopción, gobierno operativo y primer ciclo crítico.",
+    multiplier: 0.36,
+  },
+  migrate: {
+    title: "Migración controlada",
+    description: "Proyecta TCO para migrar sin trasladar deuda operativa.",
+    multiplier: 0.55,
+  },
+};
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 28, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.075, delayChildren: 0.08 },
+  },
+};
+
+const wordReveal: Variants = {
+  hidden: { opacity: 0, y: 18, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+function clamp(value: number, min = 0, max = Number.POSITIVE_INFINITY) {
+  if (Number.isNaN(value)) return min;
+  return Math.min(Math.max(value, min), max);
 }
 
-function SparkIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 2L14.25 8.15L20.5 10.5L14.25 12.85L12 19L9.75 12.85L3.5 10.5L9.75 8.15L12 2Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function CalculatorIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 7H16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path
-        d="M8 11H8.01M12 11H12.01M16 11H16.01M8 15H8.01M12 15H12.01M16 15H16.01"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function formatCurrency(value: number) {
+function formatUsd(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -68,159 +98,459 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function NumberInput({
+function formatCompactUsd(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+function ArrowIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 12H19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M13 6L19 12L13 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CalculatorIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="5" y="3" width="14" height="18" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 7H16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M8 11H8.01M12 11H12.01M16 11H16.01M8 15H8.01M12 15H12.01M16 15H16.01" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ChartIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 19H20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M7 16V10M12 16V6M17 16V12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 3.5L18.5 6.2V11.2C18.5 15.5 15.8 19.3 12 20.5C8.2 19.3 5.5 15.5 5.5 11.2V6.2L12 3.5Z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M9 12L11 14L15.5 9.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AnimatedHeadline({ text }: { text: string }) {
+  return (
+    <motion.h2
+      variants={stagger}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.55 }}
+      className="font-display text-[clamp(42px,5.4vw,84px)] leading-[0.95] tracking-[-0.05em] text-text-primary"
+    >
+      {text.split(" ").map((word, index) => {
+        const isAccent = word.includes("ERP") || word.includes("actual");
+
+        return (
+          <motion.span key={`${word}-${index}`} variants={wordReveal} className="mr-[0.18em] inline-block">
+            <span className={isAccent ? "text-accent" : undefined}>{word}</span>
+          </motion.span>
+        );
+      })}
+    </motion.h2>
+  );
+}
+
+function FinancialButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative inline-flex w-fit items-center justify-center gap-3 overflow-hidden border border-border-strong bg-transparent px-8 py-4 font-technical text-[11px] font-black uppercase tracking-[0.22em] text-text-primary transition duration-300 hover:-translate-y-1 hover:border-accent hover:bg-accent-soft hover:text-accent hover:shadow-[0_0_34px_rgba(201,169,110,0.12)]"
+    >
+      <span className="absolute left-0 top-0 h-full w-[2px] bg-accent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <span className="relative z-10">{children}</span>
+    </button>
+  );
+}
+
+function NumberField({
   label,
   value,
   onChange,
   prefix,
+  suffix,
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
   prefix?: string;
+  suffix?: string;
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block font-mono text-[10px] font-black uppercase tracking-[0.24em] text-[#D4AF37]/80">
+      <span className="mb-2 block font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
         {label}
       </span>
-      <div className="flex items-center border border-[#D4AF37]/18 bg-[#050505]/70 px-4 py-3 transition focus-within:border-[#D4AF37]/60">
-        {prefix ? <span className="mr-2 font-mono text-sm text-[#F5E6A3]/60">{prefix}</span> : null}
+      <div className="flex items-center border border-border bg-bg-base/82 px-4 py-3 transition duration-300 focus-within:border-accent/70 focus-within:bg-bg-elevated/70">
+        {prefix ? <span className="mr-2 font-technical text-xs text-accent/75">{prefix}</span> : null}
         <input
           type="number"
-          value={value}
           min={0}
-          onChange={(event) => onChange(Number(event.target.value))}
-          className="w-full bg-transparent font-mono text-sm text-[#F8F5EA] outline-none placeholder:text-[#D8D0BB]/30"
+          value={value}
+          onChange={(event) => onChange(clamp(Number(event.target.value)))}
+          className="w-full bg-transparent font-technical text-sm text-text-primary outline-none placeholder:text-text-tertiary"
         />
+        {suffix ? <span className="ml-2 font-technical text-xs text-text-tertiary">{suffix}</span> : null}
       </div>
     </label>
   );
 }
 
-function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [users, setUsers] = useState(150);
-  const [currentCost, setCurrentCost] = useState(485000);
-  const [oracleCost, setOracleCost] = useState(310000);
-  const [migrationCost, setMigrationCost] = useState(260000);
+function RangeField({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  suffix,
+  helper,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  suffix?: string;
+  helper: string;
+}) {
+  return (
+    <div className="border border-border bg-bg-panel/70 p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-technical text-[9px] font-black uppercase tracking-[0.2em] text-text-primary">
+            {label}
+          </p>
+          <p className="mt-2 text-xs leading-5 text-text-tertiary">{helper}</p>
+        </div>
+        <span className="shrink-0 font-technical text-sm font-black text-accent">
+          {value}
+          {suffix ?? ""}
+        </span>
+      </div>
 
-  const result = useMemo(() => {
-    const annualSaving = Math.max(currentCost - oracleCost, 0);
-    const saving5Years = annualSaving * 5 - migrationCost;
-    const saving10Years = annualSaving * 10 - migrationCost;
-    const breakevenMonths = annualSaving > 0 ? Math.ceil((migrationCost / annualSaving) * 12) : 0;
-    const savingPerUser = users > 0 ? annualSaving / users : 0;
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="mt-4 h-1 w-full accent-[#C9A96E]"
+      />
+    </div>
+  );
+}
+
+function useErpCalculation(input: InputState, scenario: Scenario) {
+  return useMemo(() => {
+    const manualAnnualCost = input.manualHours * input.hourlyCost * 12;
+    const adoptionLeakage = input.licenseCost * Math.max(0, 100 - input.adoptionRate) * 0.006;
+    const closingPenalty = input.closingDays * 8500;
+    const reportsPenalty = input.manualReports * 12500;
+
+    const currentTco = input.licenseCost + input.supportCost + manualAnnualCost + adoptionLeakage + closingPenalty + reportsPenalty;
+    const projectedTco = currentTco * scenarioCopy[scenario].multiplier + input.remediationCost * 0.22;
+    const annualSaving = Math.max(currentTco - projectedTco, 0);
+    const saving3Years = annualSaving * 3 - input.remediationCost;
+    const saving5Years = annualSaving * 5 - input.remediationCost;
+    const breakevenMonths = annualSaving > 0 ? Math.ceil((input.remediationCost / annualSaving) * 12) : 0;
+    const roi = input.remediationCost > 0 ? (saving5Years / input.remediationCost) * 100 : 0;
+
+    const breakdown: BreakdownItem[] = [
+      { label: "Licencias", value: input.licenseCost, short: "Lic." },
+      { label: "Soporte", value: input.supportCost, short: "Sup." },
+      { label: "Horas manuales", value: manualAnnualCost, short: "Manual" },
+      { label: "Cierre lento", value: closingPenalty, short: "Close" },
+      { label: "Reportes", value: reportsPenalty, short: "Reports" },
+      { label: "Baja adopción", value: adoptionLeakage, short: "Adopt." },
+    ];
 
     return {
+      manualAnnualCost,
+      currentTco,
+      projectedTco,
       annualSaving,
+      saving3Years,
       saving5Years,
-      saving10Years,
       breakevenMonths,
-      savingPerUser,
+      roi,
+      breakdown,
     };
-  }, [users, currentCost, oracleCost, migrationCost]);
+  }, [input, scenario]);
+}
+
+function KpiCard({ label, value, featured = false }: { label: string; value: string; featured?: boolean }) {
+  return (
+    <motion.article
+      variants={fadeUp}
+      className={`relative overflow-hidden border p-4 ${
+        featured ? "border-accent bg-accent text-bg-base" : "border-border bg-bg-panel/78 text-text-primary"
+      }`}
+    >
+      <p className={`font-technical text-[9px] font-black uppercase tracking-[0.2em] ${featured ? "text-bg-base" : "text-accent/75"}`}>
+        {label}
+      </p>
+      <p className="mt-3 font-technical text-2xl font-black tracking-[-0.05em] md:text-3xl">{value}</p>
+    </motion.article>
+  );
+}
+
+function ComparisonBars({ currentTco, projectedTco }: { currentTco: number; projectedTco: number }) {
+  const max = Math.max(currentTco, projectedTco, 1);
+  const currentWidth = `${(currentTco / max) * 100}%`;
+  const projectedWidth = `${(projectedTco / max) * 100}%`;
+
+  return (
+    <div className="border border-border bg-bg-panel/72 p-5">
+      <div className="mb-5 flex items-center justify-between gap-4">
+        <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
+          TCO Comparison
+        </p>
+        <ChartIcon />
+      </div>
+
+      {[
+        { label: "ERP actual", value: currentTco, width: currentWidth, accent: false },
+        { label: "Con FABRIC", value: projectedTco, width: projectedWidth, accent: true },
+      ].map((bar) => (
+        <div key={bar.label} className="mb-5 last:mb-0">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em] text-text-secondary">
+              {bar.label}
+            </span>
+            <span className="font-technical text-xs font-black text-text-primary">{formatCompactUsd(bar.value)}</span>
+          </div>
+          <div className="h-2 overflow-hidden bg-bg-base">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: bar.width }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
+              className={`h-full ${bar.accent ? "bg-accent" : "bg-border-strong"}`}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CostBreakdownChart({ breakdown }: { breakdown: BreakdownItem[] }) {
+  const max = Math.max(...breakdown.map((item) => item.value), 1);
+
+  return (
+    <div className="border border-border bg-bg-panel/72 p-5">
+      <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
+        Hidden Cost Breakdown
+      </p>
+
+      <div className="mt-5 space-y-3">
+        {breakdown.map((item, index) => (
+          <div key={item.label} className="grid grid-cols-[72px_1fr_72px] items-center gap-3">
+            <span className="font-technical text-[8px] font-black uppercase tracking-[0.14em] text-text-tertiary">
+              {item.short}
+            </span>
+            <div className="h-2 overflow-hidden bg-bg-base">
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${(item.value / max) * 100}%` }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.75, delay: index * 0.055, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full bg-accent/80"
+              />
+            </div>
+            <span className="text-right font-technical text-[9px] font-black text-text-secondary">
+              {formatCompactUsd(item.value)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SavingsLineChart({ currentTco, projectedTco, remediationCost }: { currentTco: number; projectedTco: number; remediationCost: number }) {
+  const yearSavings = [1, 2, 3, 4, 5].map((year) => Math.max((currentTco - projectedTco) * year - remediationCost, 0));
+  const max = Math.max(...yearSavings, 1);
+  const points = yearSavings
+    .map((value, index) => {
+      const x = 24 + index * 60;
+      const y = 130 - (value / max) * 92;
+      return `${x},${y}`;
+    })
+    .join(" ");
+
+  return (
+    <div className="border border-border bg-bg-panel/72 p-5">
+      <p className="font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
+        5Y Savings Projection
+      </p>
+
+      <svg viewBox="0 0 290 150" className="mt-4 h-[150px] w-full" aria-hidden="true">
+        <path d="M24 130H270" stroke="var(--border)" strokeWidth="1" />
+        <path d="M24 38H270" stroke="var(--border)" strokeWidth="1" opacity="0.45" />
+        <motion.polyline
+          points={points}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0, opacity: 0 }}
+          whileInView={{ pathLength: 1, opacity: 1 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 1.15, ease: "easeInOut" }}
+        />
+        {yearSavings.map((value, index) => {
+          const x = 24 + index * 60;
+          const y = 130 - (value / max) * 92;
+          return <circle key={index} cx={x} cy={y} r="3.5" fill="var(--accent)" />;
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function FinancialDashboard({ result }: { result: ReturnType<typeof useErpCalculation> }) {
+  return (
+    <motion.div variants={stagger} initial="hidden" animate="visible" className="grid content-start gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <KpiCard label="TCO anual actual" value={formatUsd(result.currentTco)} />
+        <KpiCard label="TCO proyectado" value={formatUsd(result.projectedTco)} />
+        <KpiCard label="Breakeven" value={`${result.breakevenMonths} meses`} />
+        <KpiCard label="Ahorro neto 5 años" value={formatUsd(result.saving5Years)} featured />
+      </div>
+
+      <ComparisonBars currentTco={result.currentTco} projectedTco={result.projectedTco} />
+      <CostBreakdownChart breakdown={result.breakdown} />
+      <SavingsLineChart currentTco={result.currentTco} projectedTco={result.projectedTco} remediationCost={initialInput.remediationCost} />
+    </motion.div>
+  );
+}
+
+function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [scenario, setScenario] = useState<Scenario>("rescue");
+  const [input, setInput] = useState<InputState>(initialInput);
+  const result = useErpCalculation(input, scenario);
+
+  const updateInput = (key: keyof InputState, value: number) => {
+    setInput((current) => ({ ...current, [key]: value }));
+  };
 
   return (
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-4 py-8 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 px-4 py-6 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.96 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.96 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="relative max-h-[90vh] w-full max-w-5xl overflow-y-auto border border-[#D4AF37]/22 bg-[#0B0B09] p-6 shadow-[0_40px_160px_rgba(0,0,0,0.75)] md:p-8"
+            exit={{ opacity: 0, y: 18, scale: 0.96 }}
+            transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+            className="fabric-panel relative max-h-[92vh] w-full max-w-7xl overflow-y-auto bg-bg-base p-5 shadow-[0_42px_180px_rgba(0,0,0,0.78)] md:p-7"
           >
-            <div className="absolute left-0 top-0 h-16 w-px bg-[#D4AF37]" />
-            <div className="absolute left-0 top-0 h-px w-24 bg-[#D4AF37]" />
-            <div className="absolute bottom-0 right-0 h-16 w-px bg-[#D4AF37]/60" />
-            <div className="absolute bottom-0 right-0 h-px w-24 bg-[#D4AF37]/60" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/75 to-transparent" />
+            <div className="pointer-events-none absolute -right-28 -top-28 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
 
             <button
               type="button"
               onClick={onClose}
-              className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center border border-[#D4AF37]/18 text-[#F5E6A3] transition hover:border-[#D4AF37]/70 hover:bg-[#D4AF37]/10"
+              className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center border border-border-strong text-text-primary transition duration-300 hover:border-accent hover:bg-accent-soft hover:text-accent"
               aria-label="Cerrar calculadora"
             >
               <CloseIcon />
             </button>
 
             <div className="pr-12">
-              <div className="mb-3 inline-flex bg-[#D4AF37] px-3 py-1 font-mono text-[10px] font-black uppercase tracking-[0.28em] text-[#050505]">
-                Calculadora TCO
+              <div className="label inline-flex border border-accent/25 bg-accent-soft px-4 py-2">
+                Financial ERP Diagnostic
               </div>
-              <h3 className="max-w-3xl text-3xl font-black tracking-tight text-[#F8F5EA] md:text-5xl">
-                Estima el costo real de tu ERP actual.
+              <h3 className="mt-5 max-w-4xl font-display text-[clamp(34px,4.5vw,64px)] leading-[0.96] tracking-[-0.045em] text-text-primary">
+                Modelo financiero del costo oculto de tu ERP.
               </h3>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#D8D0BB]/72 md:text-base">
-                Ajusta los datos y calcula una proyección rápida de ahorro, breakeven y costo por usuario.
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-text-secondary md:text-base">
+                Ajusta operación, adopción, reportes y cierre contable. El dashboard calcula TCO actual, TCO proyectado, breakeven y ahorro acumulado.
               </p>
             </div>
 
-            <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="mt-8 grid gap-7 lg:grid-cols-[0.86fr_1.14fr]">
               <div className="space-y-5">
-                <NumberInput label="Usuarios" value={users} onChange={setUsers} />
-                <NumberInput label="Costo anual ERP actual" value={currentCost} onChange={setCurrentCost} prefix="$" />
-                <NumberInput label="Costo anual Oracle" value={oracleCost} onChange={setOracleCost} prefix="$" />
-                <NumberInput label="Costo estimado de migración" value={migrationCost} onChange={setMigrationCost} prefix="$" />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="border border-[#D4AF37]/16 bg-white/[0.035] p-5">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#D4AF37]/75">
-                    Ahorro anual
+                <div>
+                  <p className="mb-3 font-technical text-[9px] font-black uppercase tracking-[0.22em] text-accent/80">
+                    Escenario
                   </p>
-                  <p className="mt-3 text-3xl font-black text-[#F5E6A3]">{formatCurrency(result.annualSaving)}</p>
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {(Object.keys(scenarioCopy) as Scenario[]).map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setScenario(item)}
+                        className={`border px-4 py-3 text-left transition duration-300 ${
+                          scenario === item
+                            ? "border-accent bg-accent-soft text-accent"
+                            : "border-border bg-bg-panel/70 text-text-secondary hover:border-accent/55 hover:text-accent"
+                        }`}
+                      >
+                        <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em]">
+                          {scenarioCopy[item].title}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-text-tertiary">{scenarioCopy[scenario].description}</p>
                 </div>
 
-                <div className="border border-[#D4AF37]/16 bg-white/[0.035] p-5">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#D4AF37]/75">
-                    Breakeven
-                  </p>
-                  <p className="mt-3 text-3xl font-black text-[#F5E6A3]">
-                    {result.breakevenMonths > 0 ? `${result.breakevenMonths} meses` : "Sin ahorro"}
-                  </p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <NumberField label="Usuarios Oracle" value={input.users} onChange={(value) => updateInput("users", value)} />
+                  <NumberField label="Licencias anuales" value={input.licenseCost} onChange={(value) => updateInput("licenseCost", value)} prefix="$" />
+                  <NumberField label="Soporte anual" value={input.supportCost} onChange={(value) => updateInput("supportCost", value)} prefix="$" />
+                  <NumberField label="Costo remediación" value={input.remediationCost} onChange={(value) => updateInput("remediationCost", value)} prefix="$" />
+                  <NumberField label="Horas manuales / mes" value={input.manualHours} onChange={(value) => updateInput("manualHours", value)} suffix="h" />
+                  <NumberField label="Costo hora interna" value={input.hourlyCost} onChange={(value) => updateInput("hourlyCost", value)} prefix="$" />
                 </div>
 
-                <div className="border border-[#D4AF37]/16 bg-white/[0.035] p-5">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#D4AF37]/75">
-                    Ahorro 5 años
-                  </p>
-                  <p className="mt-3 text-3xl font-black text-[#F5E6A3]">{formatCurrency(result.saving5Years)}</p>
-                </div>
-
-                <div className="border border-[#D4AF37]/16 bg-[#D4AF37] p-5 text-[#050505]">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em]">
-                    Ahorro 10 años
-                  </p>
-                  <p className="mt-3 text-4xl font-black">{formatCurrency(result.saving10Years)}</p>
-                </div>
-
-                <div className="border border-[#D4AF37]/16 bg-white/[0.035] p-5 sm:col-span-2">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#D4AF37]/75">
-                    Ahorro anual aproximado por usuario
-                  </p>
-                  <p className="mt-3 text-3xl font-black text-[#F5E6A3]">{formatCurrency(result.savingPerUser)}</p>
+                <div className="grid gap-3">
+                  <RangeField label="Días de cierre contable" value={input.closingDays} onChange={(value) => updateInput("closingDays", value)} min={0} max={30} suffix=" días" helper="Retraso del cierre mensual después del go-live." />
+                  <RangeField label="Reportes manuales activos" value={input.manualReports} onChange={(value) => updateInput("manualReports", value)} min={0} max={40} helper="Archivos paralelos usados fuera del ERP." />
+                  <RangeField label="Adopción real" value={input.adoptionRate} onChange={(value) => updateInput("adoptionRate", value)} min={0} max={100} suffix="%" helper="Usuarios clave operando correctamente en el flujo Oracle." />
                 </div>
               </div>
+
+              <FinancialDashboard result={result} />
             </div>
 
-            <div className="mt-8 flex flex-col gap-4 border-t border-[#D4AF37]/14 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#D4AF37]/65">
-                Resultado estimado · Requiere validación con datos reales
+            <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-technical text-[9px] uppercase tracking-[0.22em] text-text-tertiary">
+                Estimación ejecutiva · Validación final bajo NDA
               </p>
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-fit bg-[#D4AF37] px-6 py-3 font-mono text-xs font-black uppercase tracking-[0.22em] text-[#050505] transition hover:bg-[#F5E6A3]"
-              >
-                Cerrar resultado
-              </button>
+              <FinancialButton onClick={onClose}>Cerrar cálculo</FinancialButton>
             </div>
           </motion.div>
         </motion.div>
@@ -229,168 +559,137 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
   );
 }
 
-function PreviewCard() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 34, rotate: -1.2 }}
-      whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -8, rotate: 0.4 }}
-      className="relative w-full max-w-[430px] overflow-hidden border border-[#D4AF37]/20 bg-[#0D0D0B]/90 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-8"
-    >
-      <div className="absolute -right-24 -top-24 h-56 w-56 rounded-full bg-[#D4AF37]/12 blur-3xl" />
-      <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-[#D4AF37]/45 to-transparent" />
+function PreviewDashboard({ onOpen }: { onOpen: () => void }) {
+  const current = 1200000;
+  const projected = 610000;
+  const max = Math.max(current, projected);
 
-      <div className="relative mb-7 flex items-center justify-between">
-        <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.35em] text-[#D4AF37]">
-          <SparkIcon />
-          Preview
+  return (
+    <motion.article
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.35 }}
+      whileHover={{ y: -6 }}
+      className="fabric-panel relative w-full max-w-[480px] overflow-hidden bg-bg-panel/82 p-5 shadow-[0_30px_110px_rgba(0,0,0,0.48)] backdrop-blur-xl md:p-6"
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/75 to-transparent" />
+      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
+
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div>
+          <p className="font-technical text-[9px] font-black uppercase tracking-[0.24em] text-accent">
+            ERP Cost Model
+          </p>
+          <p className="mt-2 text-sm text-text-secondary">Vista financiera ejecutiva</p>
         </div>
-        <div className="rounded-full border border-[#D4AF37]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[#F5E6A3]/70">
-          TCO
-        </div>
+
+        <span className="flex h-10 w-10 items-center justify-center border border-accent/30 bg-accent-soft text-accent">
+          <CalculatorIcon />
+        </span>
       </div>
 
-      <div className="relative space-y-1">
-        {previewRows.map((row, index) => (
-          <motion.div
-            key={row.label}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.12 + index * 0.06, duration: 0.45 }}
-            className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-dashed border-[#D4AF37]/14 py-3 text-sm"
-          >
-            <span className="font-mono text-[#F5E6A3]/72">{row.label}</span>
-            <span className="bg-[#D4AF37] px-2 py-1 font-mono text-xs font-black text-[#050505]">
-              {row.value}
-            </span>
-          </motion.div>
+      <div className="mt-5 grid gap-4">
+        {[
+          { label: "TCO actual", value: current, accent: false },
+          { label: "TCO con FABRIC", value: projected, accent: true },
+        ].map((row) => (
+          <div key={row.label}>
+            <div className="mb-2 flex items-center justify-between gap-4">
+              <span className="font-technical text-[9px] font-black uppercase tracking-[0.18em] text-text-tertiary">
+                {row.label}
+              </span>
+              <span className="font-technical text-sm font-black text-text-primary">{formatCompactUsd(row.value)}</span>
+            </div>
+            <div className="h-2 overflow-hidden bg-bg-base">
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${(row.value / max) * 100}%` }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className={`h-full ${row.accent ? "bg-accent" : "bg-border-strong"}`}
+              />
+            </div>
+          </div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.7, duration: 0.55 }}
-        className="relative mt-7 border-t border-[#D4AF37]/22 pt-6 text-right"
-      >
-        <p className="font-mono text-sm uppercase tracking-[0.18em] text-[#F5E6A3]">Ahorro 10 años:</p>
-        <p className="mt-2 text-4xl font-black tracking-tight text-[#D4AF37] md:text-5xl">$3.8M</p>
-      </motion.div>
-    </motion.div>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="border border-border bg-bg-base/70 p-4">
+          <p className="font-technical text-[8px] font-black uppercase tracking-[0.18em] text-text-tertiary">Breakeven</p>
+          <p className="mt-2 font-technical text-xl font-black text-accent">8-14m</p>
+        </div>
+        <div className="border border-border bg-bg-base/70 p-4">
+          <p className="font-technical text-[8px] font-black uppercase tracking-[0.18em] text-text-tertiary">5Y saving</p>
+          <p className="mt-2 font-technical text-xl font-black text-text-primary">$2.4M</p>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <FinancialButton onClick={onOpen}>
+          Calcular costo real
+          <ArrowIcon />
+        </FinancialButton>
+      </div>
+    </motion.article>
   );
 }
 
-export default function ErpTcoLeadMagnet() {
-  const [calculatorOpen, setCalculatorOpen] = useState(false);
+export default function ErpCostCalculatorSection() {
+  const [openCalculator, setOpenCalculator] = useState(false);
 
   return (
-    <section className="relative overflow-hidden bg-[#050505] px-6 py-24 text-white md:px-10 md:py-32">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,175,55,0.14),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(212,175,55,0.08),transparent_32%)]" />
-      <div className="absolute inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#D4AF37_1px,transparent_1px),linear-gradient(to_bottom,#D4AF37_1px,transparent_1px)] bg-[size:82px_82px]" />
-      <div className="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#D4AF37]/70 to-transparent" />
+    <section className="relative overflow-hidden bg-bg-base px-6 py-20 text-text-primary md:px-12 md:py-28">
+      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(201,169,110,0.11),transparent_28%),radial-gradient(circle_at_82%_58%,rgba(201,169,110,0.08),transparent_34%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg-base to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg-base to-transparent" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 border border-[#D4AF37]/14 bg-[#0B0B09]/72 p-6 shadow-[0_40px_140px_rgba(0,0,0,0.55)] backdrop-blur-xl md:p-12 lg:grid-cols-[1.05fr_0.85fr] lg:p-16"
-      >
-        <div className="absolute left-0 top-0 h-16 w-px bg-[#D4AF37]" />
-        <div className="absolute left-0 top-0 h-px w-24 bg-[#D4AF37]" />
-        <div className="absolute bottom-0 right-0 h-16 w-px bg-[#D4AF37]/55" />
-        <div className="absolute bottom-0 right-0 h-px w-24 bg-[#D4AF37]/55" />
+      <div className="relative z-10 mx-auto grid max-w-[1240px] items-center gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} className="max-w-3xl">
+          <div className="label inline-flex items-center gap-2 border border-accent/25 bg-accent-soft px-4 py-2">
+            <ShieldIcon />
+            ERP Cost Intelligence
+          </div>
 
-        <div className="relative">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, delay: 0.1 }}
-            className="mb-7 inline-flex bg-[#D4AF37] px-3 py-1 font-mono text-[10px] font-black uppercase tracking-[0.32em] text-[#050505]"
-          >
-            Lead Magnet · ERP TCO
-          </motion.div>
+          <div className="mt-7">
+            <AnimatedHeadline text="¿Cuánto te está costando realmente tu ERP actual?" />
+          </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.75, delay: 0.15 }}
-            className="max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-[#F8F5EA] md:text-7xl"
-          >
-            ¿Cuánto te está costando realmente tu ERP actual?
-          </motion.h2>
+          <p className="mt-7 max-w-2xl text-base leading-8 text-text-secondary md:text-lg">
+            Calculamos el costo total del ERP sumando licencias, soporte, horas manuales, reportes paralelos, cierre contable lento y adopción incompleta. El resultado muestra si conviene rescatar, estabilizar o migrar.
+          </p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.75, delay: 0.22 }}
-            className="mt-7 max-w-2xl text-lg leading-8 text-[#D8D0BB]/82"
-          >
-            Comparativo TCO Oracle Fusion vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.75, delay: 0.3 }}
-            className="mt-9 space-y-3"
-          >
-            {features.map((feature, index) => (
+          <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-2">
+            {["TCO anual real", "Costo oculto operativo", "Breakeven de remediación", "Ahorro acumulado a 5 años"].map((item) => (
               <motion.div
-                key={feature}
-                initial={{ opacity: 0, x: -18 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.36 + index * 0.06 }}
-                className="group flex items-center gap-3 border-b border-[#D4AF37]/12 py-3 text-sm text-[#F5E6A3]/82"
+                key={item}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.35 }}
+                className="flex gap-3 border border-border bg-bg-panel/65 p-4 backdrop-blur-sm transition duration-300 hover:border-accent/50 hover:bg-bg-elevated/70"
               >
-                <span className="text-[#D4AF37] transition-transform duration-300 group-hover:translate-x-1">
-                  <ArrowIcon />
-                </span>
-                <span className="text-[#D8D0BB]/88 transition-colors group-hover:text-[#F5E6A3]">
-                  {feature}
-                </span>
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                <p className="text-sm leading-6 text-text-secondary">{item}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.75, delay: 0.55 }}
-            className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center"
-          >
-            <button
-              type="button"
-              onClick={() => setCalculatorOpen(true)}
-              className="group inline-flex w-fit items-center justify-center gap-3 bg-[#D4AF37] px-8 py-5 font-mono text-xs font-black uppercase tracking-[0.26em] text-[#050505] shadow-[0_0_50px_rgba(212,175,55,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-[#F5E6A3]"
-            >
-              <CalculatorIcon />
-              Calcular ahorro
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </button>
+          <div className="mt-9">
+            <FinancialButton onClick={() => setOpenCalculator(true)}>
+              Calcular costo real
+              <ArrowIcon />
+            </FinancialButton>
+          </div>
+        </motion.div>
 
-            <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#D4AF37]/75">
-              8 preguntas · Resultado inmediato en pantalla
-            </span>
-          </motion.div>
+        <div className="flex justify-center lg:justify-end">
+          <PreviewDashboard onOpen={() => setOpenCalculator(true)} />
         </div>
+      </div>
 
-        <div className="relative flex justify-center lg:justify-end">
-          <PreviewCard />
-        </div>
-      </motion.div>
-
-      <CalculatorModal open={calculatorOpen} onClose={() => setCalculatorOpen(false)} />
+      <CalculatorModal open={openCalculator} onClose={() => setOpenCalculator(false)} />
     </section>
   );
 }

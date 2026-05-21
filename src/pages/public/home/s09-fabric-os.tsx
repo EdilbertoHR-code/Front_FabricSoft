@@ -1,3 +1,4 @@
+
 const layers = [
   ["04", "Agentes IA", "Conciliation Copilot · Anomaly Detector · CFO Assistant · Document Intelligence", <>v2.4 · Operativo<br /><strong>4 agentes activos</strong></>],
   ["03", "Frameworks", "Metodologías aplicadas en cada proyecto · Gobierno · Control de cambios · Riesgos", <>Aplicado en 100%<br /><strong>Stack 2026</strong></>],

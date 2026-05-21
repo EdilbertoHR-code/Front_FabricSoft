@@ -1,3 +1,4 @@
+
 const days = [
   ["26", "muted"], ["27", "muted"], ["28", "muted"], ["29", "muted"], ["30", "muted"], ["31", "muted"], ["1", "active"],
   ["2", "active"], ["3", "active"], ["4", "active"], ["5", "active"], ["12", "slot", "3/4"], ["13", "muted"], ["14", "muted"],

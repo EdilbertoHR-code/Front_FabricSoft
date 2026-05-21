@@ -1,3 +1,4 @@
+
 const references = [
   ["01", "CFO de operadora de centros comerciales", "México · USD 100M+ revenue · Multi-plaza", "Inmobiliario", ["ES"] as string[]],
   ["02", "CTO de institución financiera", "México · USD 300M+ revenue · Regulada", "Serv. Financieros", ["ES", "EN"]],

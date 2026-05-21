@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import logoImg from '../../../assets/logo/logo.jpeg';
+import logoImg from '../../../assets/logo/logo.png';
 
 const NAV = [
   { name: 'Doctrina',      href: '/doctrina' },

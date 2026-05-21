@@ -1,4 +1,5 @@
 
+
 const admissionRows = [
   ["Q1 2026", "closed", "Cerrado", "3 proyectos aceptados", "○ Completo"],
   ["Q2 2026", "closed", "Cerrado", "2 proyectos aceptados", "○ Completo"],
