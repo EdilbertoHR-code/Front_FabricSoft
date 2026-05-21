@@ -84,14 +84,16 @@ export default function S07Casos() {
         <div className="casos-grid">
           {cases.map((item) => (
             <article className="caso-card" key={item.id}>
-              <div className="nda-stamp">Verificable bajo NDA</div>
               <div className="caso-head">
                 <div>
                   <div className="caso-tag">{item.tag}</div>
                   <h3 className="caso-title">{item.title}</h3>
                   <div className="caso-subtitle">{item.subtitle}</div>
                 </div>
-                <span className="status-badge available">{item.status}</span>
+                <div className="caso-head-meta">
+                  <span className="status-badge available">{item.status}</span>
+                  <div className="nda-stamp">Verificable bajo NDA</div>
+                </div>
               </div>
 
               <div className="caso-metrics">

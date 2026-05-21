@@ -1040,6 +1040,29 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   gap: 16px;
 }
 
+.caso-head-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Stamp dentro del caso-head: sin posición absoluta ni rotación */
+.caso-head-meta .nda-stamp {
+  position: static;
+  transform: none;
+  right: auto;
+  top: auto;
+  font-size: 8px;
+  padding: 5px 10px;
+  letter-spacing: 0.2em;
+  opacity: 0.85;
+}
+.caso-head-meta .nda-stamp::after {
+  display: none;
+}
+
 .caso-tag {
   font-family: var(--mono);
   font-size: 10px;
