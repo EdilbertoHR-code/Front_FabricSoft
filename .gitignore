@@ -32,6 +32,13 @@ dist-ssr
 .vite/
 documentacion/
 maquetado/zip_extracted/uploads/
+SESION_*.md
+CONTEXTO_*.md
+
+# Caché de Next.js
+frontend/.next/
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
 
 # Archivos sueltos de documentación
 *.docx
@@ -41,6 +48,10 @@ maquetado/zip_extracted/uploads/
 *.toc
 *.aux
 fLVl*
+
+# Backups
+*.bak.tsx
+*.bak.ts
 
 # Assets raíz (solo src/assets/ es el path correcto)
 /logo.png
