@@ -55,3 +55,6 @@ fLVl*
 
 # Assets raíz (solo src/assets/ es el path correcto)
 /logo.png
+
+# Permitir documentos LaTeX del proyecto
+!docs/*.tex
