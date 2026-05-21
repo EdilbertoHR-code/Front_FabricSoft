@@ -488,7 +488,7 @@ export default function ErpCostCalculatorSection() {
                 as="h2" trigger duration={1.2} speed={0.02}
                 className="font-serif text-[38px] leading-[1.1] text-[#F5F5F5] md:text-[52px] lg:text-[60px]"
               >
-                ¿Cuánto te está costando <span className="text-[#C9A96E]">realmente</span> tu ERP actual?
+                ¿Cuánto te está costando realmente tu ERP actual?
               </TextScramble>
             </ScrollReveal>
 

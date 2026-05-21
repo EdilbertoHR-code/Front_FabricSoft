@@ -61,6 +61,11 @@
   --mono: "JetBrains Mono", monospace;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes fade-in-down {
   0% {
     opacity: 0;
@@ -344,4 +349,99 @@
 .fabric-footer {
   background: var(--bg-base) !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE GLOBAL — Admin + Secciones públicas
+   ═══════════════════════════════════════════════════════ */
+
+/* Admin: KPI grid */
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #1e1e1e;
+  border: 1px solid #1e1e1e;
+}
+@media (max-width: 1023px) { .admin-kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 639px)  { .admin-kpi-grid { grid-template-columns: 1fr; } }
+
+/* Admin: table scroll wrapper */
+.admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.admin-table-wrap table { min-width: 680px; width: 100%; }
+
+/* Admin: metrics editor grid */
+.admin-metrics-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 180px;
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 1023px) { .admin-metrics-card-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 639px)  { .admin-metrics-card-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* Admin: capacidad grid */
+.admin-cap-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+@media (max-width: 1023px) { .admin-cap-grid { grid-template-columns: 1fr; } }
+
+/* Admin: page padding */
+.admin-page-header {
+  padding: 28px 36px 24px;
+  border-bottom: 1px solid #1e1e1e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-page-body { padding: 32px 36px; display: flex; flex-direction: column; gap: 28px; }
+@media (max-width: 639px) {
+  .admin-page-header { padding: 16px; }
+  .admin-page-body   { padding: 16px; }
+}
+
+/* Admin: detail panel */
+.admin-detail-panel {
+  width: 420px;
+  height: 100%;
+  background: #0A0A0A;
+  border-left: 1px solid #252525;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideIn .2s ease;
+}
+@media (max-width: 639px) {
+  .admin-detail-panel { width: 100%; border-left: none; border-top: 1px solid #252525; }
+}
+
+/* Admin: header action buttons */
+.admin-header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 639px) {
+  .admin-header-actions { width: 100%; }
+  .admin-header-actions button { flex: 1; font-size: 8px; padding: 8px; }
+}
+
+/* parte8: altura adaptable */
+.parte8-section { height: auto !important; min-height: 500px; }
+@media (max-width: 639px) { .parte8-section { min-height: 360px; padding: 40px 0; } }
+
+/* ChatIa: altura adaptable */
+.chat-console { height: 460px; }
+@media (max-width: 639px) { .chat-console { height: 360px; } }
+
+/* Rescue Assessment chips */
+.rescue-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; margin-bottom: 32px; }
+.rescue-result-ctas { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+@media (max-width: 639px) {
+  .rescue-result-ctas { flex-direction: column; align-items: stretch; }
+  .rescue-result-ctas > * { width: 100%; text-align: center; }
+}
+
+/* DoctrinaModal */
+.doctrina-modal-content { width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+@media (max-width: 639px) { .doctrina-modal-content { max-height: 100dvh; } }
+
+/* Chat scenario buttons */
+.chat-scenario-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 

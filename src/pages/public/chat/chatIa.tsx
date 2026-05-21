@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // --- HOOK PARA ANIMACIÓN AL HACER SCROLL ---
 function useInView(threshold = 0.2) {
@@ -36,24 +36,26 @@ type Scenario = {
   response: string;
 };
 
+const DISCLAIMER = "\n\n— Recomendaciones generales basadas en best practices. Cada caso requiere evaluación específica con un senior de FABRIC. fabricsoft.com.mx/aplicar";
+
 const scenarios: Scenario[] = [
   {
     key: "fusion",
     shortLabel: "Mi Fusion está fallando",
     prompt: "Mi implementación Fusion tiene 6 meses y aún tenemos cierre contable manual. ¿Qué sugieres?",
-    response: "Alerta: Patrón de abandono post go-live detectado.\nDiagnóstico: Usualmente provocado por falta de estabilización técnica. Síntomas incluyen reportes paralelos, cierres lentos y baja adopción.\nAcción: Recomendamos una inyección de protocolos de ingeniería crítica. Plazo típico de remediación: 8 a 12 semanas. ¿Deseas agendar una revisión técnica?",
+    response: "Patrón detectado: abandono post go-live.\n\nUn cierre contable manual a los 6 meses indica falta de estabilización técnica. Los síntomas típicos son: reportes paralelos en Excel, baja adopción de usuarios y conciliaciones fuera del ERP.\n\nFABRIC opera bajo doctrina pública: el proyecto no se entrega en el go-live, sino al cierre del primer ciclo crítico operado en producción. Si tu consultora anterior ya no está presente, esto es exactamente el escenario de rescate que atendemos.\n\nPlazo típico de remediación: 8–12 semanas. Inversión estimada: USD 150–300K." + DISCLAIMER,
   },
   {
     key: "migration",
     shortLabel: "Migración SAP/EBS a Fusion",
     prompt: "Queremos migrar desde SAP/EBS a Oracle Fusion con menor riesgo.",
-    response: "Escenario estratégico detectado: Migración con control de riesgo.\nDiagnóstico: Este caso requiere estricto gobierno de programa y estimación TCO antes del diseño.\nAcción: Recomendamos un assessment técnico y financiero para validar dependencias. Plazo típico de planeación: 6-10 semanas. ¿Te gustaría calcular el TCO estimado?",
+    response: "Escenario: Migración con control de riesgo.\n\nMigraciones SAP S/4 HANA o EBS R12 a Fusion Cloud típicamente toman entre 6 y 18 meses dependiendo de la complejidad, número de módulos y geografías. El riesgo principal no es técnico — es la falta de estabilización post go-live.\n\nFABRIC aplica su doctrina de entrega en primer ciclo crítico: el proyecto no se considera entregado hasta que tu primer cierre contable opera sin incidencias en producción.\n\nPlazo de assessment y diseño: 6–10 semanas. ¿Quieres calcular el TCO comparativo con tu sistema actual?" + DISCLAIMER,
   },
   {
     key: "greenfield",
     shortLabel: "Greenfield Oracle",
     prompt: "Quiero iniciar un greenfield Oracle Fusion sin sobrecostos.",
-    response: "Escenario de diseño detectado: Greenfield con gobierno temprano.\nDiagnóstico: El foco crítico debe ser el diseño de arquitectura y criterios de éxito desde el día cero.\nAcción: Sugerimos ejecutar nuestra fase de discovery orientada al primer ciclo crítico. Plazo típico de diseño: 6-10 semanas.",
+    response: "Escenario: Greenfield con gobierno desde día cero.\n\nUn greenfield Oracle Fusion en empresa USD 50M+ requiere decisiones críticas tempranas: arquitectura financiera multi-entidad, definición de chart of accounts, diseño de integraciones y gobierno del proyecto antes de que el primer consultor toque la configuración.\n\nEl riesgo más frecuente en greenfield es el scope creep y la definición tardía de criterios de éxito. FABRIC mitiga esto con Fixed-Price por fase y un hito de entrega en primer ciclo crítico, no en go-live.\n\nPlazo típico de discovery y diseño: 4–6 semanas." + DISCLAIMER,
   },
 ];
 
@@ -175,39 +177,39 @@ export default function ChatIa() {
   };
 
   return (
-    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-16 md:py-24 text-[#F5F5F5] border-t border-[#111]">
+    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] border-t border-[#111] md:py-32">
       
       {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute left-0 right-0 top-1/2 -z-10 m-auto h-[500px] w-[500px] -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
 
-      <div ref={sectionRef} className="relative z-10 mx-auto max-w-[1240px] px-6 md:px-12">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center xl:gap-16">
+      <div ref={sectionRef} className="relative z-10 mx-auto max-w-[1360px] px-6 md:px-12">
+        <div className="grid gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:items-center xl:gap-20">
           
           {/* =========================================
               LEFT: COPYWRITING & INTRO
               ========================================= */}
           <div className={`relative transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/20 bg-[#C9A96E]/5 px-3 py-1 rounded-sm mb-5">
+            <div className="inline-flex items-center gap-2 border border-[#C9A96E]/20 bg-[#C9A96E]/5 px-4 py-1.5 rounded-sm mb-6">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C9A96E]"></span>
               </span>
-              <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.2em] text-[#C9A96E]">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E]">
                 Fabric AI · Inferencia
               </span>
             </div>
 
-            <h2 className="font-serif text-[32px] md:text-[44px] lg:text-[50px] leading-[1.05] text-[#F5F5F5] mb-5">
+            <h2 className="font-serif text-[42px] md:text-[56px] lg:text-[64px] leading-[1.02] text-[#F5F5F5] mb-7">
               Asistente de diagnóstico <span className="text-[#C9A96E] italic">Oracle</span>.
             </h2>
 
-            <p className="font-sans text-[13px] md:text-[14px] leading-[1.7] text-[#888] mb-8 max-w-[460px]">
+            <p className="font-sans text-base md:text-lg leading-[1.75] text-[#888] mb-10 max-w-[560px]">
               Evalúa tu infraestructura en segundos. Identifica riesgos ocultos en tu implementación Fusion o planifica migraciones sin sobrecostos usando nuestro motor técnico.
             </p>
 
             {/* Badges de estado */}
-            <div className="flex flex-wrap gap-5 border-l border-[#2A2A2A] pl-4">
+            <div className="flex flex-wrap gap-8 border-l border-[#2A2A2A] pl-5">
               <div>
                 <p className="font-mono text-[8px] uppercase tracking-widest text-[#555] mb-1">Versión</p>
                 <p className="font-mono text-[10.5px] font-bold text-[#F5F5F5]">FABRIC AI v2.4</p>
@@ -218,10 +220,10 @@ export default function ChatIa() {
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-12">
               <button
                 onClick={handleFocusChat}
-                className="group inline-flex items-center gap-3 border border-[#2A2A2A] bg-transparent px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/[0.04]"
+                className="group inline-flex items-center gap-3 border border-[#2A2A2A] bg-transparent px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/[0.04]"
               >
                 Activar Consola <ArrowIcon />
               </button>
@@ -231,10 +233,10 @@ export default function ChatIa() {
           {/* =========================================
               RIGHT: CHATBOX INTERACTIVO (Atelier Grade)
               ========================================= */}
-          <div className={`relative w-full max-w-[640px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+          <div className={`relative w-full max-w-[760px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             
             {/* Contenedor principal de la Consola con la animación del borde */}
-            <div className="relative flex flex-col h-[460px] rounded-sm shadow-[0_20px_60px_rgba(0,0,0,0.6)] group">
+            <div className="chat-console relative flex flex-col rounded-sm shadow-[0_24px_80px_rgba(0,0,0,0.66)] group">
               
               {/* === LA LÍNEA ANIMADA DORADA QUE RECORRE EL BORDE === */}
               <div className="absolute inset-0 z-0 overflow-hidden rounded-sm bg-[#161616]">
@@ -245,20 +247,20 @@ export default function ChatIa() {
               <div className="absolute inset-[1px] z-10 flex flex-col bg-[#0A0A0A] rounded-sm transition-shadow duration-500 focus-within:shadow-[inset_0_0_40px_rgba(201,169,110,0.05)]">
                 
                 {/* Cabecera del chat */}
-                <div className="flex items-center justify-between border-b border-[#1A1A1A] bg-[#050505] px-4 py-3 shrink-0">
+                <div className="flex items-center justify-between border-b border-[#1A1A1A] bg-[#050505] px-5 py-4 shrink-0">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center border border-[#C9A96E]/20 bg-[#C9A96E]/5 text-[#C9A96E] rounded-sm">
+                    <div className="flex h-7 w-7 items-center justify-center border border-[#C9A96E]/20 bg-[#C9A96E]/5 text-[#C9A96E] rounded-sm">
                       <SparkIcon />
                     </div>
                     <div>
-                      <p className="font-mono text-[9.5px] font-bold uppercase tracking-[0.15em] text-[#F5F5F5]">Diagnostic Engine</p>
-                      <p className="font-mono text-[7.5px] uppercase tracking-wider text-[#555]">Oracle ecosystem ready</p>
+                      <p className="font-mono text-[10.5px] font-bold uppercase tracking-[0.15em] text-[#F5F5F5]">Diagnostic Engine</p>
+                      <p className="font-mono text-[8px] uppercase tracking-wider text-[#555]">Oracle ecosystem ready</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Historial del Chat */}
-                <div id="chat-scroll-container" className="flex-1 overflow-y-auto p-4 space-y-5 scrollbar-thin scrollbar-thumb-[#1A1A1A] scrollbar-track-transparent">
+                <div id="chat-scroll-container" className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-[#1A1A1A] scrollbar-track-transparent">
                   {chatHistory.map((msg, idx) => {
                     const isAgent = msg.role === 'agent';
                     const animateText = isAgent && idx === chatHistory.length - 1 && isTyping;
@@ -275,7 +277,7 @@ export default function ChatIa() {
                           </div>
                           
                           {/* Burbuja mejorada: Textos a 12px y padding ajustado */}
-                          <div className={`px-4 py-3 rounded-sm ${
+                          <div className={`px-5 py-4 rounded-sm ${
                             isAgent 
                               ? 'bg-[#050505] border border-[#1A1A1A]' 
                               : 'bg-[#C9A96E]/5 border border-[#C9A96E]/20 text-[#E0E0E0] font-sans text-[12px]'
@@ -295,7 +297,7 @@ export default function ChatIa() {
                 </div>
 
                 {/* Controles Inferiores */}
-                <div className="border-t border-[#1A1A1A] bg-[#050505] p-3 shrink-0">
+                <div className="border-t border-[#1A1A1A] bg-[#050505] p-4 shrink-0">
                   
                   {/* Escenarios predeterminados */}
                   <div className="mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -310,9 +312,9 @@ export default function ChatIa() {
                           gap: 6,
                           border: '1px solid #2A2A2A',
                           background: '#0D0D0D',
-                          padding: '6px 12px',
+                          padding: '8px 14px',
                           fontFamily: 'var(--mono)',
-                          fontSize: 9,
+                          fontSize: 10,
                           textTransform: 'uppercase' as const,
                           letterSpacing: '0.1em',
                           color: '#666',
@@ -330,7 +332,7 @@ export default function ChatIa() {
                   </div>
 
                   <form onSubmit={handleManualSubmit} className="relative flex items-center">
-                    <span className="absolute left-3 font-mono text-[10px] text-[#C9A96E]">&gt;</span>
+                    <span className="absolute left-4 font-mono text-[11px] text-[#C9A96E]">&gt;</span>
                     <input
                       ref={inputRef}
                       type="text"
@@ -338,12 +340,12 @@ export default function ChatIa() {
                       onChange={(e) => setInputValue(e.target.value)}
                       disabled={isTyping}
                       placeholder={isTyping ? "Diagnosticando..." : "Describe tu escenario técnico..."}
-                      className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-sm py-2.5 pl-7 pr-10 font-mono text-[10.5px] text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
+                      className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-sm py-3.5 pl-9 pr-12 font-mono text-xs text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
                     />
                     <button 
                       type="submit" 
                       disabled={!inputValue.trim() || isTyping}
-                      className="absolute right-3 text-[#C9A96E] disabled:text-[#333] transition-colors"
+                      className="absolute right-4 text-[#C9A96E] disabled:text-[#333] transition-colors"
                     >
                       <ArrowIcon />
                     </button>

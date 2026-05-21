@@ -1,14 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef, type MouseEvent } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoImg from '../../../assets/logo/logo.png';
 
 const NAV = [
-  { name: 'Doctrina',      href: '/doctrina' },
-  { name: 'Casos',         href: '/casos' },
-  { name: 'Industrias',    href: '/industrias' },
-  { name: 'FABRIC OS',     href: '/fabric-os' },
-  { name: 'Transparencia', href: '/transparencia' },
+  { name: 'Doctrina',      href: '/#doctrina', sectionId: 'doctrina' },
+  { name: 'Casos',         href: '/#s07',       sectionId: 's07' },
+  { name: 'Industrias',    href: '/#s08',       sectionId: 's08' },
+  { name: 'FABRIC OS',     href: '/#s09',       sectionId: 's09' },
+  { name: 'Transparencia', href: '/#s13',       sectionId: 's13' },
 ];
+
+const HEADER_SCROLL_OFFSET = 118;
+
+function scrollToSection(sectionId: string) {
+  window.setTimeout(() => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const top = target.getBoundingClientRect().top + window.scrollY - HEADER_SCROLL_OFFSET;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }, 30);
+}
 
 export default function Header() {
   const [scrolled,   setScrolled]   = useState(false);
@@ -16,6 +28,7 @@ export default function Header() {
   const [mounted,    setMounted]    = useState(false);
   const ticking  = useRef(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -36,12 +49,22 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); }, [location.pathname, location.hash]);
   
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  const handleSectionNavigation = (
+    event: MouseEvent<HTMLAnchorElement>,
+    sectionId: string,
+  ) => {
+    event.preventDefault();
+    setMobileOpen(false);
+    navigate({ pathname: '/', hash: `#${sectionId}` });
+    scrollToSection(sectionId);
+  };
 
   return (
     <>
@@ -107,11 +130,12 @@ export default function Header() {
             />
 
             {NAV.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = location.pathname === '/' && location.hash === `#${item.sectionId}`;
               return (
                 <Link
                   key={item.name}
                   to={item.href}
+                  onClick={(event) => handleSectionNavigation(event, item.sectionId)}
                   className={`
                     group relative z-10 select-none px-[16px] py-[6px] rounded-full
                     flex items-center justify-center flex-col
@@ -148,7 +172,8 @@ export default function Header() {
             style={{ transitionDelay: '480ms' }}
           >
             <Link
-              to="/aplicar"
+              to="/#diagnostico"
+              onClick={(event) => handleSectionNavigation(event, 'diagnostico')}
               className="hidden lg:inline-flex items-center gap-1.5 relative overflow-hidden group bg-[#C9A96E] hover:bg-[#B8914A] text-[#0A0A0A] font-mono font-bold text-[10px] tracking-[0.2em] uppercase px-[16px] py-[8px] rounded-full transition-all duration-300 shadow-[0_0_20px_-8px_rgba(201,169,110,0.5)] hover:shadow-[0_0_30px_-4px_rgba(201,169,110,0.7)] hover:scale-[1.03] active:scale-[0.98]"
             >
               <span aria-hidden="true" className="absolute inset-0 -translate-x-full skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/28 to-transparent group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out pointer-events-none" />
@@ -191,9 +216,10 @@ export default function Header() {
         </div>
         <nav className="flex-1 flex flex-col justify-center px-10 gap-8 overflow-y-auto">
           {NAV.map((item, i) => {
-            const isActive = location.pathname === item.href;
+            const isActive = location.pathname === '/' && location.hash === `#${item.sectionId}`;
             return (
               <Link key={item.name} to={item.href}
+                onClick={(event) => handleSectionNavigation(event, item.sectionId)}
                 style={{ transitionDelay: mobileOpen ? `${i * 75}ms` : '0ms' }}
                 className={`group flex items-center text-[1.75rem] font-serif tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'} ${isActive ? 'text-[#C9A96E]' : 'text-[#F5F5F5]/65 hover:text-[#C9A96E]'}`}
               >
@@ -204,7 +230,11 @@ export default function Header() {
           })}
         </nav>
         <div className={`px-8 py-6 border-t border-[#2A2A2A]/60 transition-all duration-500 ${mobileOpen ? 'opacity-100 translate-y-0 delay-[400ms]' : 'opacity-0 translate-y-4'}`}>
-          <Link to="/aplicar" className="flex items-center justify-center gap-3 w-full py-[12px] relative overflow-hidden group bg-[#C9A96E] hover:bg-[#B8914A] text-[#0A0A0A] font-mono font-bold text-[10.5px] tracking-[0.22em] uppercase rounded-full transition-all duration-300 shadow-[0_0_32px_-6px_rgba(201,169,110,0.55)] active:scale-[0.97]">
+          <Link
+            to="/#diagnostico"
+            onClick={(event) => handleSectionNavigation(event, 'diagnostico')}
+            className="flex items-center justify-center gap-3 w-full py-[12px] relative overflow-hidden group bg-[#C9A96E] hover:bg-[#B8914A] text-[#0A0A0A] font-mono font-bold text-[10.5px] tracking-[0.22em] uppercase rounded-full transition-all duration-300 shadow-[0_0_32px_-6px_rgba(201,169,110,0.55)] active:scale-[0.97]"
+          >
             <span aria-hidden="true" className="absolute inset-0 -translate-x-full skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/25 to-transparent group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out pointer-events-none" />
             <span className="relative">Iniciar conversación</span>
             <span className="relative transition-transform duration-300 group-hover:translate-x-1">→</span>

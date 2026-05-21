@@ -7,6 +7,7 @@ import Parte6Home from './parte6.home';
 import SectionNavigator from '../../../components/SectionNavigator';
 import ChatIa from '../chat/chatIa';
 import S07Casos from '../home/s07-casos';
+import S07bRescueAssessment from '../home/s07b-rescue-assessment';
 import S08Industrias from '../home/s08-industrias';
 import S09FabricOS from '../home/s09-fabric-os';
 import S10Lifecycle from '../home/s10-lifecycle';
@@ -18,7 +19,6 @@ import S14Investigacion from '../home/s14-investigacion';
 import S15Founder from '../home/s15-founder';
 import InteractionManager from '../../../components/InteractionManager';
 import Parte8Home from './parte8.home';
-
 export default function Home() {
   return (
     <div className="w-full flex flex-col">
@@ -32,6 +32,7 @@ export default function Home() {
       <Parte6Home />
       <Parte8Home />
       <S07Casos />
+      <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />
       <S10Lifecycle />
@@ -44,4 +45,4 @@ export default function Home() {
       <InteractionManager />
     </div>
   );
-}
+}

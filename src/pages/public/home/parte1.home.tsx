@@ -207,7 +207,7 @@ export default function Parte1HomeSplineAI() {
   }, []);
 
   return (
-    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
+    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28">
       <style>{`
         @keyframes fabricStar {
           0%, 100% { opacity: 0; transform: translateY(0) scale(.85); }
@@ -282,6 +282,13 @@ export default function Parte1HomeSplineAI() {
             El 73% de las implementaciones Oracle Fusion celebran el go-live y abandonan al cliente con cierres pesados e incidencias abiertas.
           </p>
 
+          <p
+            className="mt-4 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A8A8A]"
+            style={{ animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .6s both" }}
+          >
+            Migraciones: SAP · EBS · JD Edwards · PeopleSoft · Greenfield
+          </p>
+
           <TypewriterCarousel />
 
       
@@ -292,20 +299,19 @@ export default function Parte1HomeSplineAI() {
             }`}
           >
             <Link
-              to="/diagnostico"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
+              to="/contacto"
+              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#C9A96E] bg-[#C9A96E]/10 px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#C9A96E] transition-all duration-300 hover:-translate-y-1 hover:bg-[#C9A96E] hover:text-[#0A0A0A] hover:shadow-[0_0_28px_rgba(201,169,110,0.25)]"
             >
-              <span className="absolute left-0 top-0 h-full w-[2px] bg-[#C9A96E] opacity-0 transition-opacity duration-300 hover:opacity-100" />
-              <span className="relative z-10">Diagnóstico Oracle</span>
-              <span className="relative z-10 ml-3 text-[#C9A96E]">→</span>
+              <span className="relative z-10">Iniciar conversación</span>
+              <span className="relative z-10 ml-3">→</span>
             </Link>
 
             <Link
-              to="/contacto"
+              to="/herramientas/erp-tco"
               className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
             >
               <span className="absolute left-0 top-0 h-full w-[2px] bg-[#C9A96E] opacity-0 transition-opacity duration-300 hover:opacity-100" />
-              <span className="relative z-10">Iniciar conversación</span>
+              <span className="relative z-10">Auditoría OCI gratuita</span>
               <span className="relative z-10 ml-3 text-[#C9A96E]">→</span>
             </Link>
           </div>

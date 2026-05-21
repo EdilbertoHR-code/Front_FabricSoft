@@ -10,7 +10,7 @@ export function DoctrinaModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="relative w-full max-w-[800px] h-[90vh] bg-[#0A0A0A] border border-[#1A1A1A] shadow-2xl flex flex-col overflow-hidden">
+      <div className="doctrina-modal-content relative bg-[#0A0A0A] border border-[#1A1A1A] shadow-2xl flex flex-col">
         
         {/* Header del documento */}
         <div className="px-8 py-6 border-b border-[#1A1A1A] flex justify-between items-center bg-[#050505]">

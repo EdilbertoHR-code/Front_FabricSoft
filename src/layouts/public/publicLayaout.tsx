@@ -17,7 +17,7 @@ export default function PublicLayout() {
         <Header />
         
        
-        <main className="flex flex-col flex-grow w-full pt-24">
+        <main className="flex flex-col w-full">
           <Outlet />
         </main>
 

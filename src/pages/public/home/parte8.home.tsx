@@ -4,12 +4,28 @@ import { useEffect, useRef, useState } from 'react';
 // 1. MOTOR 3D NATIVO (Cero dependencias, 100% optimizado)
 // =========================================================================
 class Vector2D {
-  constructor(public x: number, public y: number) {}
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+
   static random(min: number, max: number): number { return min + Math.random() * (max - min); }
 }
 
 class Vector3D {
-  constructor(public x: number, public y: number, public z: number) {}
+  x: number;
+  y: number;
+  z: number;
+
+  constructor(x: number, y: number, z: number) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
   static random(min: number, max: number): number { return min + Math.random() * (max - min); }
 }
 
@@ -19,7 +35,6 @@ class AnimationController {
   private startTime = Date.now();
   private readonly duration = 15000; // 15 segundos por ciclo
   
-  private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private size: number;
   private stars: Star[] = [];
@@ -31,8 +46,7 @@ class AnimationController {
   private readonly viewZoom = 100;
   private readonly numberOfStars = 2500; // Optimizado para 60fps constantes
   
-  constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, size: number) {
-    this.canvas = canvas;
+  constructor(_canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, size: number) {
     this.ctx = ctx;
     this.size = size;
     
@@ -298,7 +312,7 @@ export default function Parte8Home() {
   }, [dimensions]);
 
   return (
-    <section ref={containerRef} className="relative w-full h-[800px] bg-[#050505] overflow-hidden flex items-center justify-center border-t border-[#111]">
+    <section ref={containerRef} className="parte8-section relative w-full bg-[#050505] overflow-hidden flex items-center justify-center border-t border-[#111] py-20 md:py-32">
       
       {/* 1. ANIMACIÓN DE FONDO (CANVAS NATIVO) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-60">

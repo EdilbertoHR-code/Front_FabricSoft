@@ -1,4 +1,6 @@
 
+import { useEffect, useState } from 'react';
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
 
 const admissionRows = [
   ["Q1 2026", "closed", "Cerrado", "3 proyectos aceptados", "○ Completo"],
@@ -7,7 +9,53 @@ const admissionRows = [
   ["Q4 2026", "upcoming", "Próximo", "Aplicaciones desde 01 sept", "○ Próximo"]
 ] as const;
 
-import { useInViewOnce } from '../../../hooks/useInViewOnce';
+function useCountdown(targetDate: Date) {
+  const calc = () => {
+    const diff = targetDate.getTime() - Date.now();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return {
+      days: Math.floor(diff / 86400000),
+      hours: Math.floor((diff % 86400000) / 3600000),
+      minutes: Math.floor((diff % 3600000) / 60000),
+      seconds: Math.floor((diff % 60000) / 1000),
+    };
+  };
+  const [time, setTime] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setTime(calc()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
+function CountdownBanner() {
+  const deadline = new Date('2026-07-30T23:59:59-06:00');
+  const { days, hours, minutes, seconds } = useCountdown(deadline);
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      background: 'rgba(201,169,110,0.07)',
+      border: '1px solid rgba(201,169,110,0.25)',
+      padding: '10px 18px',
+      marginBottom: 24,
+      fontFamily: 'var(--mono)',
+      fontSize: 11,
+      letterSpacing: '0.18em',
+      textTransform: 'uppercase',
+    }}>
+      <span style={{ color: 'var(--accent)' }}>⏳</span>
+      <span style={{ color: 'var(--text-secondary)' }}>Cierre Q3 2026:</span>
+      <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+        {pad(days)}d {pad(hours)}h {pad(minutes)}m {pad(seconds)}s
+      </span>
+      <span style={{ color: 'var(--text-secondary)' }}>restantes · 30 julio</span>
+    </div>
+  );
+}
 
 export default function S15Founder() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
@@ -24,17 +72,7 @@ export default function S15Founder() {
           <cite>— Julio Álvarez</cite>
         </div>
 
-        <div className="founder-grid">
-          <div className="julio-portrait">
-            <img
-              src="/julio_alvarez.png"
-              alt="Julio Álvarez"
-              style={{ objectFit: "cover", filter: "grayscale(1)", width: "100%", height: "100%", position: "absolute", inset: 0 }}
-            />
-            <div className="julio-portrait-corner tl">FABRIC · MX</div>
-            <div className="julio-portrait-corner br">2026</div>
-          </div>
-
+        <div className="founder-grid" style={{ gridTemplateColumns: "1fr", maxWidth: 920, marginInline: "auto" }}>
           <div className="julio-bio-block">
             <div className="julio-name">Julio Álvarez</div>
             <div className="julio-title">Founder · FABRIC</div>
@@ -63,6 +101,7 @@ export default function S15Founder() {
         </div>
 
         <div className="waitlist">
+          <CountdownBanner />
           <div className="waitlist-head">
             <div>
               <div className="label" style={{ marginBottom: 16 }}>Wait List · Q3 2026</div>
