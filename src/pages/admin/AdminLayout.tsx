@@ -2,11 +2,12 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 const NAV = [
-  { path: '/admin',           label: 'Dashboard', badge: null },
-  { path: '/admin/leads',     label: 'Leads',     badge: '12' },
-  { path: '/admin/metricas',  label: 'Métricas',  badge: null },
-  { path: '/admin/capacidad', label: 'Capacidad', badge: null },
-  { path: '/admin/logs',      label: 'Logs',      badge: '∞' },
+  { path: '/admin',                label: 'Dashboard',   badge: null },
+  { path: '/admin/leads',          label: 'Leads',       badge: '8'  },
+  { path: '/admin/capacidad',      label: 'Capacidad',   badge: null },
+  { path: '/admin/office-hours',   label: 'Office Hours',badge: '4'  },
+  { path: '/admin/metricas',       label: 'Métricas',    badge: null },
+  { path: '/admin/logs',           label: 'Logs',        badge: '∞'  },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

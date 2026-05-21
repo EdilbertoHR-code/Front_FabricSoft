@@ -7,15 +7,18 @@ import { dark } from '@clerk/themes'
 import { Toaster } from 'sonner'
 
 import App from './App.tsx'
-import './index.css' 
+import './index.css'
+import { FabricProvider } from './store/FabricContext.tsx'
 
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 const app = (
   <BrowserRouter>
-    <App />
-    <Toaster theme="dark" position="bottom-right" richColors />
+    <FabricProvider>
+      <App />
+      <Toaster theme="dark" position="bottom-right" richColors />
+    </FabricProvider>
   </BrowserRouter>
 )
 

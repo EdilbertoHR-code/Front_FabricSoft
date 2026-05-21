@@ -9,6 +9,7 @@ import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminLeads from '../pages/admin/AdminLeads';
 import AdminMetricas from '../pages/admin/AdminMetricas';
 import AdminCapacidad from '../pages/admin/AdminCapacidad';
+import AdminOfficeHours from '../pages/admin/AdminOfficeHours';
 import AdminLogs from '../pages/admin/AdminLogs';
 // import SobreNosotros from '../components/public/sobreNoostros/sobreNosotros';
 // import ServiciosAdministrados from '../components/public/serviciosAdministractivos/serviciosAdministrados';
@@ -90,12 +91,13 @@ export const AppRouter = () => {
       </Route>
 
       {/* RUTAS ADMIN — fuera del PublicLayout (sin header/footer público) */}
-      <Route path="/admin/login"     element={<AdminLogin />} />
-      <Route path="/admin"           element={<AdminDashboard />} />
-      <Route path="/admin/leads"     element={<AdminLeads />} />
-      <Route path="/admin/metricas"  element={<AdminMetricas />} />
-      <Route path="/admin/capacidad" element={<AdminCapacidad />} />
-      <Route path="/admin/logs"      element={<AdminLogs />} />
+      <Route path="/admin/login"         element={<AdminLogin />} />
+      <Route path="/admin"             element={<AdminDashboard />} />
+      <Route path="/admin/leads"       element={<AdminLeads />} />
+      <Route path="/admin/metricas"    element={<AdminMetricas />} />
+      <Route path="/admin/capacidad"   element={<AdminCapacidad />} />
+      <Route path="/admin/office-hours" element={<AdminOfficeHours />} />
+      <Route path="/admin/logs"        element={<AdminLogs />} />
 
       {/* REDIRECCIÓN POR DEFECTO: Si escriben una URL que no existe, los manda al Home */}
       <Route path="*" element={<Navigate to="/" replace />} />

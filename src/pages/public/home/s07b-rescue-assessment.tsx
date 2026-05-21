@@ -174,17 +174,38 @@ export default function S07bRescueAssessment() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [current, setCurrent] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
-  const answered = Object.keys(answers).length;
   const totalScore = Object.values(answers).reduce((a, b) => a + b, 0);
-  const allAnswered = answered === questions.length;
+  const severity = submitted ? getSeverity(totalScore) : null;
 
-  const handleSelect = (qId: string, score: number) => {
-    setAnswers((prev) => ({ ...prev, [qId]: score }));
+  const q = questions[current];
+  const hasAnswer = q.id in answers;
+  const isLast = current === questions.length - 1;
+
+  const handleSelect = (score: number) => {
+    setAnswers((prev) => ({ ...prev, [q.id]: score }));
   };
 
-  const severity = submitted ? getSeverity(totalScore) : null;
+  const handleNext = () => {
+    if (isLast) {
+      setSubmitted(true);
+    } else {
+      setCurrent((c) => c + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (current > 0) setCurrent((c) => c - 1);
+  };
+
+  const handleReset = () => {
+    setSubmitted(false);
+    setStarted(false);
+    setAnswers({});
+    setCurrent(0);
+  };
 
   return (
     <section
@@ -196,130 +217,161 @@ export default function S07bRescueAssessment() {
       <div className="container">
 
         {/* ── TEASER: siempre visible ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, maxWidth: 820 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 0, maxWidth: 820, marginInline: 'auto' }}>
           <div className="label">Oracle Fusion Rescue Assessment</div>
           <h2>
             ¿Qué tan grave está <span className="text-[#C9A96E]">tu implementación?</span>
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 17, lineHeight: 1.7, marginTop: 24 }}>
-            12 preguntas · 3 minutos · Diagnóstico de severidad inmediato.
-          </p>
-
-          {/* Síntomas como chips */}
-          {!started && (
-            <div className="rescue-chips">
-              {symptoms.map((s) => (
-                <span key={s} style={{
-                  fontFamily: 'var(--mono)',
-                  fontSize: 10,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  padding: '6px 12px',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text-secondary)',
-                  background: 'rgba(255,255,255,0.02)',
-                }}>
-                  {s}
-                </span>
-              ))}
-            </div>
-          )}
 
           {!started && (
-            <div style={{ marginTop: 8 }}>
-              <button
-                onClick={() => setStarted(true)}
-                style={{
-                  padding: '14px 36px',
-                  fontFamily: 'var(--mono)',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  background: 'var(--accent)',
-                  color: '#0A0A0A',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all .2s ease',
-                }}
-              >
-                Iniciar diagnóstico →
-              </button>
-            </div>
+            <>
+              <p style={{ color: 'var(--text-secondary)', fontSize: 17, lineHeight: 1.7, marginTop: 24 }}>
+                12 preguntas · 3 minutos · Diagnóstico de severidad inmediato.
+              </p>
+              <div className="rescue-chips" style={{ justifyContent: 'center' }}>
+                {symptoms.map((s) => (
+                  <span key={s} style={{
+                    fontFamily: 'var(--mono)',
+                    fontSize: 10,
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    padding: '6px 12px',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
+                    background: 'rgba(255,255,255,0.02)',
+                  }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <button
+                  onClick={() => setStarted(true)}
+                  style={{
+                    padding: '14px 36px',
+                    fontFamily: 'var(--mono)',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    background: 'var(--accent)',
+                    color: '#0A0A0A',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all .2s ease',
+                  }}
+                >
+                  Iniciar diagnóstico →
+                </button>
+              </div>
+            </>
           )}
         </div>
 
-        {/* ── PREGUNTAS: solo cuando started y no submitted ── */}
+        {/* ── UNA PREGUNTA A LA VEZ ── */}
         {started && !submitted && (
-          <div style={{ marginTop: 48, animation: 'fadeIn .3s ease' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-              {questions.map((q, i) => (
-                <div key={q.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: 28 }}>
-                  <div style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: 10,
-                    color: 'var(--accent)',
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    marginBottom: 10,
-                  }}>
-                    {String(i + 1).padStart(2, '0')} / {questions.length}
-                  </div>
-                  <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--text-primary)', marginBottom: 16, fontWeight: 500 }}>
-                    {q.text}
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {q.options.map((opt) => {
-                      const selected = answers[q.id] === opt.score;
-                      return (
-                        <button
-                          key={opt.label}
-                          onClick={() => handleSelect(q.id, opt.score)}
-                          style={{
-                            textAlign: 'left',
-                            padding: '11px 16px',
-                            fontSize: 14,
-                            fontFamily: 'var(--sans)',
-                            background: selected ? 'rgba(201,169,110,0.12)' : 'rgba(255,255,255,0.03)',
-                            border: selected ? '1px solid var(--accent)' : '1px solid var(--border)',
-                            color: selected ? 'var(--accent)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            transition: 'all .18s ease',
-                            borderRadius: 2,
-                          }}
-                        >
-                          {opt.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+          <div style={{ marginTop: 48, maxWidth: 720, marginInline: 'auto', animation: 'fadeIn .3s ease' }}>
+
+            {/* Barra de progreso */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+                  {String(current + 1).padStart(2, '0')} / {questions.length}
+                </span>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.12em' }}>
+                  {current} respondidas
+                </span>
+              </div>
+              <div style={{ height: 2, background: 'var(--border)', position: 'relative' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${(current / questions.length) * 100}%`,
+                  background: 'var(--accent)',
+                  transition: 'width .3s ease',
+                }} />
+              </div>
             </div>
 
-            <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+            {/* Pregunta actual */}
+            <div key={q.id} style={{ animation: 'fadeIn .25s ease' }}>
+              <p style={{ fontSize: 18, lineHeight: 1.65, color: 'var(--text-primary)', marginBottom: 24, fontWeight: 500 }}>
+                {q.text}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {q.options.map((opt) => {
+                  const isSelected = answers[q.id] === opt.score;
+                  return (
+                    <button
+                      key={opt.label}
+                      onClick={() => handleSelect(opt.score)}
+                      style={{
+                        textAlign: 'left',
+                        padding: '13px 18px',
+                        fontSize: 14,
+                        fontFamily: 'var(--sans)',
+                        background: isSelected ? 'rgba(201,169,110,0.12)' : 'rgba(255,255,255,0.03)',
+                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                        color: isSelected ? 'var(--accent)' : 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        transition: 'all .18s ease',
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                      }}
+                    >
+                      <span style={{
+                        width: 16, height: 16, borderRadius: '50%', flexShrink: 0,
+                        border: `1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                        background: isSelected ? 'var(--accent)' : 'transparent',
+                        transition: 'all .18s ease',
+                      }} />
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Navegación */}
+            <div style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 12 }}>
+              {current > 0 && (
+                <button
+                  onClick={handleBack}
+                  style={{
+                    padding: '12px 20px',
+                    fontFamily: 'var(--mono)',
+                    fontSize: 10,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ← Anterior
+                </button>
+              )}
               <button
-                onClick={() => { if (allAnswered) setSubmitted(true); }}
-                disabled={!allAnswered}
+                onClick={handleNext}
+                disabled={!hasAnswer}
                 style={{
-                  padding: '14px 36px',
+                  padding: '13px 32px',
                   fontFamily: 'var(--mono)',
                   fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  background: allAnswered ? 'var(--accent)' : 'var(--border)',
-                  color: allAnswered ? '#0A0A0A' : 'var(--text-secondary)',
-                  border: 'none',
-                  cursor: allAnswered ? 'pointer' : 'not-allowed',
+                  background: hasAnswer ? 'var(--accent)' : 'transparent',
+                  border: hasAnswer ? 'none' : '1px solid var(--border)',
+                  color: hasAnswer ? '#0A0A0A' : 'var(--text-secondary)',
+                  cursor: hasAnswer ? 'pointer' : 'not-allowed',
                   transition: 'all .2s ease',
                 }}
               >
-                Ver diagnóstico →
+                {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
               </button>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-secondary)' }}>
-                {answered}/{questions.length} respondidas
-              </span>
             </div>
           </div>
         )}
@@ -379,7 +431,7 @@ export default function S07bRescueAssessment() {
                 Solicitar evaluación detallada →
               </a>
               <button
-                onClick={() => { setSubmitted(false); setStarted(false); setAnswers({}); }}
+                onClick={handleReset}
                 style={{
                   background: 'transparent',
                   border: '1px solid var(--border)',
