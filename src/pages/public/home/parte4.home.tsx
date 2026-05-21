@@ -373,7 +373,7 @@ function FeatureCard({ feature, index, visible }: { feature: (typeof features)[n
         <Icon name={feature.icon} className="h-4 w-4" />
       </div>
       <span className="mt-9 inline-flex bg-accent-soft px-2 py-1 font-technical text-[8px] font-black uppercase tracking-[0.18em] text-accent">{feature.id}</span>
-      <h3 className="mt-5 font-technical text-[11px] font-black uppercase leading-5 tracking-[0.18em] text-text-primary">{feature.title}</h3>
+      <p className="mt-5 font-technical text-[11px] font-black uppercase leading-5 tracking-[0.18em] text-text-primary">{feature.title}</p>
       <p className="mt-3 text-sm leading-6 text-text-secondary">{feature.body}</p>
     </article>
   );
@@ -566,8 +566,8 @@ export default function ErpCostCalculatorSection() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg-base to-transparent" />
 
       <div className="relative z-10 mx-auto max-w-[1240px]">
-        <div className="grid border border-border bg-bg-base/62 backdrop-blur-sm lg:grid-cols-[1.06fr_0.94fr]">
-          <div className={`relative min-h-[430px] overflow-hidden border-b border-border p-7 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-10 lg:border-b-0 lg:border-r lg:p-12 ${isInView ? "translate-y-0 opacity-100 blur-0" : "translate-y-10 opacity-0 blur-sm"}`}>
+        <div className="grid lg:grid-cols-[1.06fr_0.94fr]">
+          <div className={`relative min-h-[430px] overflow-hidden border-b border-border/40 p-7 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-10 lg:border-b-0 lg:border-r lg:border-border/40 lg:p-12 ${isInView ? "translate-y-0 opacity-100 blur-0" : "translate-y-10 opacity-0 blur-sm"}`}>
             <div className="relative z-10 flex h-full flex-col justify-center">
               <div className="label inline-flex w-fit items-center gap-2 border border-accent/25 bg-accent-soft px-4 py-2">
                 <TextScramble as="span" trigger={isInView} speed={0.02} duration={0.55}>Lead Magnet · ERP TCO</TextScramble>
