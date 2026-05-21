@@ -9,6 +9,7 @@ Pagina revisada: app publica actual en `src/pages/public/home/home.tsx`, rutas e
 - `[x]` Ya esta visible o representado en la pagina actual.
 - `[~]` Existe parcialmente, como maqueta, link, modal, copy o UI sin funcionalidad final.
 - `[ ]` Falta en la pagina actual.
+- `*` **Seccion/herramienta secundaria u opcional**. No va en el Home para evitar saturarlo. Se accede como pagina independiente desde el Footer.
 
 Todo lo que aparece en el brief cuenta como requerido para cobertura, aunque el brief diga "opcional", "idea radical", "si decides incluirlo", "V1.5", "futuro" o "jugada".
 
@@ -99,21 +100,21 @@ Todo lo que aparece en el brief cuenta como requerido para cobertura, aunque el 
 
 ## 7. Ideas radicales / opcionales del brief
 
-- [~] Idea radical 1: The Doctrine Generator. Solo hay link futuro en footer.
-- [ ] Ruta `/doctrina/generator`.
-- [ ] Flujo de 6 preguntas.
-- [ ] Captura de nombre, correo corporativo, empresa y cargo.
-- [ ] PDF "Clausulas Recomendadas para tu Proximo Contrato Oracle".
-- [ ] PDF con 8-12 clausulas, explicacion, disclaimer, branding y CTA.
-- [ ] Generacion inteligente V1.5 con IA/API.
-- [ ] Idea radical 3: The Apply Reverse. Falta ruta/contenido.
-- [ ] Ruta `/rechazados`.
-- [ ] Registro anonimizado de proyectos rechazados.
-- [ ] Razones de rechazo y resumen YTD.
-- [~] Version suavizada posterior: "Proyectos que evaluamos en 2026" / "Criterios aplicados en evaluacion". Existe criterios, pero no pagina/bloque publico con estadisticas.
-- [~] Idea radical 4: The Audit Trail Visible. Concepto de evidencias existe en casos, falta ruta.
-- [ ] Ruta tipo `/casos/ape-plazas/audit-trail`.
-- [ ] Timeline publico: go-live, cierre validado, cierre contable, verificable bajo NDA.
+- [~] * Idea radical 1: The Doctrine Generator. Solo hay link futuro en footer.
+- [ ] * Ruta `/doctrina/generator`.
+- [ ] * Flujo de 6 preguntas.
+- [ ] * Captura de nombre, correo corporativo, empresa y cargo.
+- [ ] * PDF "Clausulas Recomendadas para tu Proximo Contrato Oracle".
+- [ ] * PDF con 8-12 clausulas, explicacion, disclaimer, branding y CTA.
+- [ ] * Generacion inteligente V1.5 con IA/API.
+- [ ] * Idea radical 3: The Apply Reverse. Falta ruta/contenido.
+- [ ] * Ruta `/rechazados`.
+- [ ] * Registro anonimizado de proyectos rechazados.
+- [ ] * Razones de rechazo y resumen YTD.
+- [~] * Version suavizada posterior: "Proyectos que evaluamos en 2026" / "Criterios aplicados en evaluacion". Existe criterios, pero no pagina/bloque publico con estadisticas.
+- [~] * Idea radical 4: The Audit Trail Visible. Concepto de evidencias existe en casos, falta ruta.
+- [ ] * Ruta tipo `/casos/ape-plazas/audit-trail`.
+- [ ] * Timeline publico: go-live, cierre validado, cierre contable, verificable bajo NDA.
 - [x] Idea radical 5: The Wait List. Existe en `S15Founder`.
 - [x] Wait List con numero visible.
 - [x] Capacidad maxima de 12 proyectos.
@@ -183,8 +184,8 @@ Todo lo que aparece en el brief cuenta como requerido para cobertura, aunque el 
 
 - [~] FABRIC AI Consultor de Migracion Oracle. Chat existe, pero falta asistente especializado real para 3 escenarios.
 - [~] Diagnostico de Proyecto Oracle Fallido. Existe rescue assessment, pero falta form exacto de 8 preguntas y entrega en 5 dias.
-- [~] Comparativo Economico de Migracion como PDF educativo, no calculadora magica. Existe calculadora TCO; falta PDF educativo con escenarios, rangos, breakeven, variables y metodologia.
-- [ ] FABRIC Migration Roadmap. Falta wizard de 12 preguntas y PDF 30-60-90-180 dias.
+- [~] * Comparativo Economico de Migracion como PDF educativo, no calculadora magica. Existe calculadora TCO; falta PDF educativo con escenarios, rangos, breakeven, variables y metodologia.
+- [ ] * FABRIC Migration Roadmap. Falta wizard de 12 preguntas y PDF 30-60-90-180 dias.
 - [~] Proyectos evaluados en 2026 / criterios aplicados. Parcial en criterios, falta estadistica publica.
 - [x] FSO Engine explicado como Fabric Solution Object. FABRIC OS menciona FSOs.
 - [~] Lista de 5-8 FSOs disponibles con que resuelve, tiempo y costo aproximado. Existe parcialmente; falta costo/tiempo por FSO.
@@ -224,15 +225,15 @@ Todo lo que aparece en el brief cuenta como requerido para cobertura, aunque el 
 
 ## 18. Correccion 3: comparativos economicos
 
-- [x] Herramienta 1: ERP TCO Comparator. Existe.
-- [~] ERP TCO con output de 5/10 años, reduccion de costo, breakeven y CTA. Parcial.
-- [~] ERP TCO con solicitud de analisis con datos reales. Parcial.
-- [ ] ERP TCO con carga opcional de facturas/reportes/contratos.
-- [ ] ERP TCO con aceptacion NDA formal.
-- [ ] Entrega en 7-10 dias de TCO personalizado con datos reales.
-- [x] Herramienta 2: Cloud Cost Comparator. Existe `#cloud-tco`.
-- [~] Cloud Cost Comparator con datos AWS/GCP/Azure y comparativo OCI. Parcial.
-- [~] Cloud Cost Comparator con reporte real y CTA. Parcial.
+- [x] * Herramienta 1: ERP TCO Comparator. Existe.
+- [~] * ERP TCO con output de 5/10 años, reduccion de costo, breakeven y CTA. Parcial.
+- [~] * ERP TCO con solicitud de analisis con datos reales. Parcial.
+- [ ] * ERP TCO con carga opcional de facturas/reportes/contratos.
+- [ ] * ERP TCO con aceptacion NDA formal.
+- [ ] * Entrega en 7-10 dias de TCO personalizado con datos reales.
+- [x] * Herramienta 2: Cloud Cost Comparator. Existe `#cloud-tco`.
+- [~] * Cloud Cost Comparator con datos AWS/GCP/Azure y comparativo OCI. Parcial.
+- [~] * Cloud Cost Comparator con reporte real y CTA. Parcial.
 
 ## 19. Lead generation adicional, 7 ideas finales
 
@@ -242,18 +243,18 @@ Todo lo que aparece en el brief cuenta como requerido para cobertura, aunque el 
 - [x] Lead Magnet 2: FABRIC Benchmark Index. Existe en investigacion.
 - [~] Benchmark Index con gating por correo corporativo. Falta descarga real/gating.
 - [ ] Benchmark Index como evento anual/prensa/LinkedIn. Falta.
-- [ ] Lead Magnet 3: RFP Template para Oracle. Solo link futuro; falta PDF.
-- [ ] RFP Template con 47 preguntas, criterios, clausulas, alertas y scorecard.
-- [ ] Lead Magnet 4: Oracle Readiness Score. Solo link futuro; falta wizard.
-- [ ] Readiness Score con 15 preguntas, score 0-100 y recomendaciones.
+- [ ] * Lead Magnet 3: RFP Template para Oracle. Solo link futuro; falta PDF.
+- [ ] * RFP Template con 47 preguntas, criterios, clausulas, alertas y scorecard.
+- [ ] * Lead Magnet 4: Oracle Readiness Score. Solo link futuro; falta wizard.
+- [ ] * Readiness Score con 15 preguntas, score 0-100 y recomendaciones.
 - [x] Lead Magnet 5: FABRIC Office Hours. Existe `S11OfficeHours`.
 - [~] Office Hours con Calendly publico real. Falta.
 - [~] Office Hours con criterios visibles y 4 slots/mes. UI parcial; falta integracion.
-- [ ] Lead Magnet 6: Post-Mortem Privado. Solo link futuro en footer; falta pagina/form/oferta.
-- [ ] Post-Mortem con 2 dias de inmersion, analisis tecnico/funcional/operativo, causas raiz, plan y reporte ejecutivo.
-- [ ] Precio Post-Mortem USD 25,000 visible o definido. Falta.
-- [ ] Lead Magnet 7: Confidential Roundtable. Solo link futuro en footer; falta pagina/form/oferta.
-- [ ] Roundtable trimestral, 8-12 CFO/CTO, cena privada, NDA, moderada por Julio. Falta.
+- [ ] * Lead Magnet 6: Post-Mortem Privado. Solo link futuro en footer; falta pagina/form/oferta.
+- [ ] * Post-Mortem con 2 dias de inmersion, analisis tecnico/funcional/operativo, causas raiz, plan y reporte ejecutivo.
+- [ ] * Precio Post-Mortem USD 25,000 visible o definido. Falta.
+- [ ] * Lead Magnet 7: Confidential Roundtable. Solo link futuro en footer; falta pagina/form/oferta.
+- [ ] * Roundtable trimestral, 8-12 CFO/CTO, cena privada, NDA, moderada por Julio. Falta.
 
 ## 20. Footer, navegacion, legal y admin
 
