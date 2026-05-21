@@ -207,7 +207,7 @@ export default function Parte1HomeSplineAI() {
   }, []);
 
   return (
-    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#0A0A0A] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
+    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-16 text-[#F5F5F5] md:px-12 lg:pb-20 lg:pt-12">
       <style>{`
         @keyframes fabricStar {
           0%, 100% { opacity: 0; transform: translateY(0) scale(.85); }

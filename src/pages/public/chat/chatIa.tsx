@@ -226,7 +226,7 @@ export default function ChatIa() {
               {/* FIX 2: Botón que hace auto-focus a la terminal en lugar de recargar */}
               <button 
                 onClick={handleFocusChat}
-                className="group inline-flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/10 px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all hover:bg-[#C9A96E] hover:text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]"
+                className="group inline-flex items-center justify-center gap-3 border border-[#C9A96E] bg-transparent px-6 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all hover:bg-[#C9A96E] hover:text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]"
               >
                 Diagnóstico Interactivo <ArrowIcon />
               </button>
