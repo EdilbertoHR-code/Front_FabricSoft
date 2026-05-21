@@ -196,7 +196,7 @@ export default function Parte2Home() {
   const [sectionRef, isInView] = useInViewOnce<HTMLElement>();
 
   return (
-    <section ref={sectionRef} className="relative w-full overflow-hidden bg-bg-base py-7 text-text-primary md:py-9">
+    <section ref={sectionRef} className="pre-dossier-section p2-dossier-aligned relative w-full overflow-hidden bg-bg-base py-7 text-text-primary md:py-9">
       <style>{`
         @keyframes p2-soft-pulse {
           0%, 100% { opacity: .12; transform: scale(1); }

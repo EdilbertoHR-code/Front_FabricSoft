@@ -38,7 +38,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-fabric-base text-fabric-text/90 border-t border-fabric-border pt-24 pb-12 font-sans">
+    <footer className="fabric-footer bg-fabric-base text-fabric-text/90 border-t border-fabric-border pt-24 pb-12 font-sans">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         
         {/* GRID PRINCIPAL */}
@@ -64,7 +64,7 @@ export default function Footer() {
             </div>
 
             {/* MAPA A TODO COLOR */}
-            <div className="w-full h-36 rounded-lg border border-fabric-gold/20 hover:border-fabric-gold/50 shadow-[0_0_30px_-10px_rgba(212,175,55,0.15)] hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.3)] transition-all duration-500 overflow-hidden mb-10">
+            <div className="fabric-map-frame w-full h-36 rounded-lg border border-fabric-gold/20 hover:border-fabric-gold/50 shadow-[0_0_30px_-10px_rgba(212,175,55,0.15)] hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.3)] transition-all duration-500 overflow-hidden mb-10">
               <iframe
                 title="Sede FABRIC"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3763.535492476564!2d-99.1630132!3d19.3888361!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff0c2b2a1a11%3A0x6b1b1b1b1b1b1b1b!2sEnrique%20R%C3%A9bsamen%20415%2C%20Narvarte%20Poniente%2C%20Benito%20Ju%C3%A1rez%2C%2003020%20Ciudad%20de%20M%C3%A9xico%2C%20CDMX!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx"
