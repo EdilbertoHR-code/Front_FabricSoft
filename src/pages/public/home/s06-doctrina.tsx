@@ -94,7 +94,7 @@ const clauses = [
 // =========================================================================
 // COMPONENTE PRINCIPAL
 // =========================================================================
-export default function Parte6Home() {
+export default function S06Doctrina() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.2);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

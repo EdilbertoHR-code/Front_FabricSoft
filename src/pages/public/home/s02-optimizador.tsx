@@ -192,7 +192,7 @@ function SmallMetricCard({ metric, active, index }: { metric: MetricItem; active
   );
 }
 
-export default function Parte2Home() {
+export default function S02Optimizador() {
   const [sectionRef, isInView] = useInViewOnce<HTMLElement>();
 
   return (

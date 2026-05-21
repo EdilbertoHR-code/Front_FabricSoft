@@ -1,36 +1,37 @@
-import Parte1Home from '../home/parte1.home';
-import Parte2Home from '../home/Parte2.home';
-import Parte3Home from '../home/parte3.home';
-import Parte4Home from '../home/parte4.home';
-import Parte5Home from './parte5.home';
-import Parte6Home from './parte6.home';
+import S01Hero from './s01-hero';
+import S02Optimizador from './s02-optimizador';
+import S03TcoCalculator from './s03-tco-calculator';
+import S04TcoWaitlist from './s04-tco-waitlist';
+import S05AnalisisFallas from './s05-analisis-fallas';
+import S06Doctrina from './s06-doctrina';
 import SectionNavigator from '../../../components/SectionNavigator';
 import ChatIa from '../chat/chatIa';
-import S07Casos from '../home/s07-casos';
-import S07bRescueAssessment from '../home/s07b-rescue-assessment';
-import S08Industrias from '../home/s08-industrias';
-import S09FabricOS from '../home/s09-fabric-os';
-import S10Lifecycle from '../home/s10-lifecycle';
-import S11OfficeHours from '../home/s11-office-hours';
-import S12Referencias from '../home/s12-referencias';
-import CriteriosEvaluacion from '../home/criterios-evaluacion';
-import S13Transparencia from '../home/s13-transparencia';
-import S14Investigacion from '../home/s14-investigacion';
-import S15Founder from '../home/s15-founder';
+import S07Casos from './s07-casos';
+import S07bRescueAssessment from './s07b-rescue-assessment';
+import S08Industrias from './s08-industrias';
+import S09FabricOS from './s09-fabric-os';
+import S10Lifecycle from './s10-lifecycle';
+import S11OfficeHours from './s11-office-hours';
+import S12Referencias from './s12-referencias';
+import S12bCriterios from './s12b-criterios';
+import S13Transparencia from './s13-transparencia';
+import S14Investigacion from './s14-investigacion';
+import S15Founder from './s15-founder';
 import InteractionManager from '../../../components/InteractionManager';
-import Parte8Home from './parte8.home';
+import S06bFixedPrice from './s06b-fixed-price';
+
 export default function Home() {
   return (
     <div className="w-full flex flex-col">
       <SectionNavigator />
-      <Parte1Home />
-      <Parte2Home />
-      <Parte3Home />
-      <Parte4Home />
+      <S01Hero />
+      <S02Optimizador />
+      <S03TcoCalculator />
+      <S04TcoWaitlist />
       <ChatIa />
-      <Parte5Home />
-      <Parte6Home />
-      <Parte8Home />
+      <S05AnalisisFallas />
+      <S06Doctrina />
+      <S06bFixedPrice />
       <S07Casos />
       <S07bRescueAssessment />
       <S08Industrias />
@@ -38,7 +39,7 @@ export default function Home() {
       <S10Lifecycle />
       <S11OfficeHours />
       <S12Referencias />
-      <CriteriosEvaluacion />
+      <S12bCriterios />
       <S13Transparencia />
       <S14Investigacion />
       <S15Founder />

@@ -445,3 +445,14 @@
 /* Chat scenario buttons */
 .chat-scenario-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 
+/* fabric-footer overrides to ensure all nav items (links and buttons) render with identical typography */
+.fabric-footer ul a,
+.fabric-footer ul button {
+  font-family: var(--sans) !important;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  line-height: 1.5 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+

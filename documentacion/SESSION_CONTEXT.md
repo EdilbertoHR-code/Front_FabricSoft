@@ -1,5 +1,5 @@
 # SESSION CONTEXT — FabriSoft Frontend
-Actualizado: 2026-05-21 · Sesión 4 (Ajustes de Diseño Responsivo e Integración Visual)
+Actualizado: 2026-05-21 · Sesión 5 (Estandarización y Renombrado de Componentes del Home)
 
 ---
 
@@ -131,15 +131,15 @@ fabricsoft/ (frontend/)
 | 01. Hero / Manifiesto | 🟢 Hecho (parcial) | Quitar partículas y typewriters para asegurar "quietud". |
 | --. Tesis/Puente | 🔴 Faltante | Crear bloque exacto del 73% de fallas. |
 | 02. Optimizador OCI | 🔴 Faltante | Crear bloque de 3 pasos (ahora es solo CTA). |
-| 03. Doctrina (Preview) | 🟢 Hecho | `parte6.home.tsx` / `DoctrinaModal.tsx`. |
+| 03. Doctrina (Preview) | 🟢 Hecho | `s06-doctrina.tsx` / `DoctrinaModal.tsx`. |
 | 04. Caso Ancla | 🟢 Hecho | APE Plazas existe en `s07-casos.tsx`. |
-| 05. Industrias Focales | 🟢 Hecho | `S08Industrias`. |
-| 06. FABRIC OS | 🟢 Hecho | `S09FabricOS`. |
-| 07. Lifecycle | 🟢 Hecho | `S10Lifecycle`. |
+| 05. Industrias Focales | 🟢 Hecho | `s08-industrias.tsx`. |
+| 06. FABRIC OS | 🟢 Hecho | `s09-fabric-os.tsx`. |
+| 07. Lifecycle | 🟢 Hecho | `s10-lifecycle.tsx`. |
 | 08. Referencias Disponibles | 🔴 Faltante | Crear sección para invitar a hablar bajo NDA. |
-| 09. Transparencia | 🟢 Hecho | `S13Transparencia`. Validar que solo muestre datos reales. |
-| 10. Investigación | 🟢 Hecho | `S14Investigacion`. |
-| 11. Founder + Wait List | 🟢 Hecho | `S15Founder` y Criterios Evaluados. |
+| 09. Transparencia | 🟢 Hecho | `s13-transparencia.tsx`. Validar que solo muestre datos reales. |
+| 10. Investigación | 🟢 Hecho | `s14-investigacion.tsx`. |
+| 11. Founder + Wait List | 🟢 Hecho | `s15-founder.tsx` y Criterios Evaluados. |
 | 12. Footer | 🟢 Hecho | `footerPublic.tsx`. Faltan los links a las nuevas páginas. |
 
 ### Footer (Las 14 páginas independientes/herramientas)
@@ -212,22 +212,28 @@ fabricsoft/ (frontend/)
 
 ---
 
-## 12. Logros de la Sesión Actual (Sesión 4)
+## 12. Logros de la Sesión Actual (Sesión 5)
 
+* **Estandarización y Renombrado de Componentes del Home**:
+  * Se renombraron todos los archivos del Home en [home](file:///c:/Users/esteb/Documents/FabriSoft/src/pages/public/home/) a una nomenclatura uniforme en formato `sXX-name.tsx` (usando `git mv` para conservar el historial).
+  * Se actualizaron los nombres de las funciones exportadas dentro de cada archivo (`S01Hero`, `S02Optimizador`, `S03TcoCalculator`, `S04TcoWaitlist`, `S05AnalisisFallas`, `S06Doctrina`, `S06bFixedPrice`, `S12bCriterios`) para coincidir con sus archivos.
+  * Se actualizaron todas las importaciones y la estructura de renderizado en [home.tsx](file:///c:/Users/esteb/Documents/FabriSoft/src/pages/public/home/home.tsx).
+  * Se eliminó el archivo vacío redundante `CloudTcoWaitlistSection.tsx`.
 * **Diseño Responsivo Completo**: Se ajustó todo el maquetado CSS en [maquetado-dossier.css](file:///c:/Users/esteb/Documents/FabriSoft/src/maquetado-dossier.css) para resoluciones desde 320px hasta PC.
-  * Tránsito de navegación (menú hamburguesa y navegador lateral) coordinado al breakpoint estándar `lg` (1024px).
-  * Rediseño y refactorización adaptiva de la cuadrícula de `FABRIC OS`, `CountdownBanner`, y la tabla de `Admission calendar` (formato 2x2 en móviles).
-  * Adaptación flexible de las filas de Referencias a través de `.refs-meta-group`.
-  * Conversión de paddings hardcodeados a clases adaptativas (`.rescue-result-card`).
 * **Verificación de Compilación**: Proyecto compilado de forma limpia (`npm run build`).
 
 ## 13. Próxima Sesión — Por Donde Continuar
 
-**Prioridad 1: Ajustar los Contenidos Restantes del Home**
-1. Remover animaciones (partículas, typewriter, efectos excesivos) del Hero para garantizar la "quietud" requerida por el Brief2.
-2. Maquetar el Bloque Tesis/Puente y la Sección Optimizador OCI (Diagrama de 3 pasos).
+**Prioridad 1: Ajustar los Contenidos Restantes del Hero (`s01-hero.tsx`)**
+1. Remover animaciones y efectos excesivos: partículas (`BackgroundParticles`), carrusel mecanografiado (`TypewriterCarousel`), y desactivar animaciones complejas del globo terrestre (`PremiumGlobe`).
+2. Ajustar textos del Hero: badge superior a "ORACLE CRITICAL ENGINEERING" en color champán (`#C9A96E`), título principal, y añadir el párrafo con la promesa de acompañamiento hasta el primer cierre contable.
+3. Apuntar el CTA secundario a `/#diagnostico`.
 
-**Prioridad 2: Construir el Ecosistema del Footer**
+**Prioridad 2: Maquetar el Bloque Tesis/Puente y la Sección Optimizador OCI**
+1. Maquetar el Bloque Tesis/Puente (bloque del 73% de fallas).
+2. Crear e integrar el bloque del Optimizador OCI (Diagrama de 3 pasos) en `s02-optimizador.tsx`.
+
+**Prioridad 3: Construir el Ecosistema del Footer**
 1. Enrutar `footerPublic.tsx` hacia las 14 páginas satélite.
 2. Comenzar la maquetación de los Wizards (TCO Comparator, Readiness Score, Doctrine Generator).
 3. Mover/Adaptar el componente `ChatIa` hacia su ruta dedicada `/herramientas/ai-diagnostic`.

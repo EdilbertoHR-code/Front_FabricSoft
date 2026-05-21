@@ -378,7 +378,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 // =========================================================================
 // COMPONENTE PRINCIPAL
 // =========================================================================
-export default function Parte5Home() {
+export default function S05AnalisisFallas() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.2);
   const { ref: previewRef, isInView: previewInView } = useInView(0.2);
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -198,7 +198,7 @@ function PremiumGlobe() {
   );
 }
 
-export default function Parte1HomeSplineAI() {
+export default function S01Hero() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

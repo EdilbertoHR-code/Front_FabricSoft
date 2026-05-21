@@ -165,7 +165,7 @@ function WaitlistModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 }
 
 // --- COMPONENTE PRINCIPAL ---
-export default function CloudTcoWaitlistSection() {
+export default function S04TcoWaitlist() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.2);
   const { ref: previewRef, isInView: previewInView } = useInView(0.2);
   

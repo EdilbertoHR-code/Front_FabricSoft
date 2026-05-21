@@ -60,7 +60,7 @@ const footerLinks: Record<string, FooterLink[]> = {
 
 function FooterNavItem({ link }: { link: FooterLink }) {
   const className =
-    'text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-center gap-2 group text-left';
+    'text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-center gap-2 group text-left bg-transparent border-0 p-0 m-0 cursor-pointer font-sans leading-normal outline-none';
   const content = (
     <>
       <span className="transform group-hover:translate-x-1 transition-transform duration-300">
@@ -170,9 +170,9 @@ export default function Footer() {
 
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/40">
           <div className="flex gap-4">
-            <button className="hover:text-[#F5F5F5] transition-colors duration-300">EN</button>
+            <button className="hover:text-[#F5F5F5] transition-colors duration-300 bg-transparent border-0 p-0 m-0 cursor-pointer font-mono text-[11px] leading-none">EN</button>
             <span className="text-[#C9A96E]/50">|</span>
-            <button className="text-[#F5F5F5] font-bold">ES</button>
+            <button className="text-[#F5F5F5] font-bold bg-transparent border-0 p-0 m-0 cursor-pointer font-mono text-[11px] leading-none">ES</button>
           </div>
 
           <p>© {currentYear} FABRIC SOFT MEXICO SA DE CV</p>

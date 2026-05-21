@@ -461,7 +461,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
 }
 
 // ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
-export default function ErpCostCalculatorSection() {
+export default function S03TcoCalculator() {
   const [open, setOpen] = useState(false);
   const handleOpen = useCallback(() => setOpen(true), []);
 

@@ -17,7 +17,7 @@ const rejections = [
 
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
 
-export default function CriteriosEvaluacion() {
+export default function S12bCriterios() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
     <section ref={ref} id="criterios" className={`demo-section s07 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>

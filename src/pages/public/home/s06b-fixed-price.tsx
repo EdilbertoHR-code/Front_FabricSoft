@@ -244,7 +244,7 @@ class Star {
 // =========================================================================
 // 2. COMPONENTE REACT PRINCIPAL
 // =========================================================================
-export default function Parte8Home() {
+export default function S06bFixedPrice() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<AnimationController | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
