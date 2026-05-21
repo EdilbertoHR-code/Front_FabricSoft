@@ -30,19 +30,14 @@ export default function SectionNavigator() {
     let ticking = false;
 
     const updateActiveSection = () => {
-      const viewportAnchor = window.innerHeight * 0.38;
+      const scrollPosition = window.scrollY + 180;
       let nextSection = sections[0].id;
-      let shortestDistance = Number.POSITIVE_INFINITY;
 
       sections.forEach((section) => {
         const element = document.getElementById(section.id);
         if (!element) return;
 
-        const rect = element.getBoundingClientRect();
-        const distance = Math.abs(rect.top - viewportAnchor);
-
-        if (distance < shortestDistance) {
-          shortestDistance = distance;
+        if (element.offsetTop <= scrollPosition) {
           nextSection = section.id;
         }
       });
