@@ -6,22 +6,23 @@ type SectionItem = {
   number: string;
 };
 
+// ─── SECCIONES SINCRONIZADAS CON EL MENÚ PRINCIPAL ───
 const sections: SectionItem[] = [
-  { id: "inicio",      label: "Hero",         number: "01" },
-  { id: "tco",         label: "ERP TCO",      number: "02" },
-  { id: "cloud-tco",   label: "Cloud TCO",    number: "03" },
-  { id: "diagnostico", label: "Diagnóstico",  number: "04" },
-  { id: "doctrina",    label: "Doctrina",     number: "05" },
-  { id: "fabric-ai",   label: "FABRIC AI",    number: "06" },
-  { id: "s07",         label: "Casos",        number: "07" },
-  { id: "s08",         label: "Industrias",   number: "08" },
-  { id: "s09",         label: "FABRIC OS",    number: "09" },
-  { id: "s10",         label: "Lifecycle",    number: "10" },
-  { id: "s11",         label: "Office Hours", number: "11" },
-  { id: "s12",         label: "Referencias",  number: "12" },
-  { id: "s13",         label: "Transparencia",number: "13" },
-  { id: "s14",         label: "Investigación",number: "14" },
-  { id: "s15",         label: "Contacto",     number: "15" },
+  { id: "inicio",      label: "Hero",          number: "01" },
+  { id: "tco",         label: "ERP TCO",       number: "02" },
+  { id: "cloud-tco",   label: "Cloud TCO",     number: "03" },
+  { id: "diagnostico", label: "Diagnóstico",   number: "04" },
+  { id: "doctrina",    label: "Doctrina",      number: "05" },
+  { id: "fabric-ai",   label: "FABRIC AI",     number: "06" },
+  { id: "s07",         label: "Casos",         number: "07" },
+  { id: "s08",         label: "Industrias",    number: "08" },
+  { id: "s09",         label: "FABRIC OS",     number: "09" },
+  { id: "s10",         label: "Lifecycle",     number: "10" },
+  { id: "s11",         label: "Office Hours",  number: "11" },
+  { id: "s12",         label: "Referencias",   number: "12" },
+  { id: "s13",         label: "Transparencia", number: "13" },
+  { id: "s14",         label: "Investigación", number: "14" },
+  { id: "s15",         label: "Contacto",      number: "15" },
 ];
 
 export default function SectionNavigator() {
@@ -42,7 +43,6 @@ export default function SectionNavigator() {
           const mostVisible = visibleEntries.reduce((prev, current) =>
             current.intersectionRatio > prev.intersectionRatio ? current : prev
           );
-
           setActiveSection(mostVisible.target.id);
         }
       },
@@ -53,15 +53,12 @@ export default function SectionNavigator() {
     );
 
     elements.forEach((element) => observer.observe(element));
-
     return () => observer.disconnect();
   }, []);
 
   const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
-
     if (!section) return;
-
     section.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -69,88 +66,71 @@ export default function SectionNavigator() {
   };
 
   return (
-    <aside className="fixed right-2 lg:right-4 top-1/2 z-50 hidden -translate-y-1/2 lg:block 2xl:right-8">
-      <nav className="relative flex flex-col items-end">
+    <aside className="fixed right-4 lg:right-6 top-1/2 z-50 hidden -translate-y-1/2 xl:block pointer-events-none">
+      <nav className="relative flex flex-col items-center gap-4 py-6 pointer-events-auto">
         
-        {/* Línea vertical central */}
-        <div className="absolute right-[11.5px] top-0 h-full w-px bg-gradient-to-b from-transparent via-[var(--border-strong)] to-transparent opacity-60" />
+        {/* Línea vertical central matemática */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] -translate-x-1/2 bg-gradient-to-b from-transparent via-[#2A2A2A] to-transparent opacity-80" />
 
-        <div className="relative z-10 flex flex-col items-end gap-6">
-          {sections.map((section) => {
-            const isActive = activeSection === section.id;
+        {sections.map((section) => {
+          const isActive = activeSection === section.id;
 
-            return (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => scrollToSection(section.id)}
-                className="group relative flex items-center justify-end p-1"
-                aria-label={`Ir a ${section.label}`}
+          return (
+            <div key={section.id} className="relative group flex items-center justify-center w-6 h-6">
+              
+              {/* Tooltip Holográfico (Solo visible en hover) */}
+              <div 
+                className={`
+                  absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-3
+                  opacity-0 translate-x-2 pointer-events-none transition-all duration-300 ease-out
+                  group-hover:opacity-100 group-hover:translate-x-0
+                `}
               >
-                
-                {/* Tooltip Lateral: Oculto por defecto, visible SOLO en hover */}
-                <span
-                  className={`
-                    pointer-events-none absolute right-10 top-1/2 flex min-w-[140px] -translate-y-1/2 flex-col items-end rounded-md border
-                    px-4 py-2.5 opacity-0 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-                    translate-x-4 group-hover:translate-x-0 group-hover:opacity-100
-                    ${
-                      isActive
-                        ? "border-[var(--accent)]/30 bg-[var(--bg-panel)]/90 shadow-lg shadow-[var(--accent)]/5"
-                        : "border-[var(--border-strong)] bg-[var(--bg-panel)]/50 group-hover:border-[var(--accent)]/50 group-hover:bg-[var(--bg-panel)]/80"
-                    }
-                  `}
-                >
-                  <span
-                    className={`
-                      block font-technical text-[9px] font-bold uppercase tracking-[0.2em] transition-colors duration-300
-                      ${isActive ? "text-[var(--accent)]" : "text-[var(--text-tertiary)] group-hover:text-[var(--accent)]"}
-                    `}
-                  >
+                <div className="bg-[#0A0A0A]/90 backdrop-blur-md border border-[#2A2A2A] px-3 py-2 rounded-sm flex flex-col items-end whitespace-nowrap shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                  <span className="font-mono text-[8px] text-[#C9A96E] font-bold tracking-[0.2em] uppercase leading-none mb-1.5">
                     {section.number}
                   </span>
-
-                  <span
-                    className={`
-                      mt-0.5 block whitespace-nowrap font-display text-[15px] transition-colors duration-300
-                      ${isActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"}
-                    `}
-                  >
+                  <span className="font-sans text-[11px] text-[#F5F5F5] leading-none">
                     {section.label}
                   </span>
-                </span>
+                </div>
+                {/* Línea conectora del tooltip al punto */}
+                <div className="w-4 h-[1px] bg-[#2A2A2A]" />
+              </div>
 
-                {/* Indicador Circular (El Punto) */}
-                <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-base)]">
-                  {/* Anillo exterior */}
-                  <span
-                    className={`
-                      absolute inset-0 rounded-full border transition-all duration-500
-                      ${
-                        isActive
-                          ? "scale-100 border-[var(--accent)] opacity-100 shadow-[0_0_12px_rgba(201,169,110,0.4)]"
-                          : "scale-75 border-[var(--border-strong)] opacity-40 group-hover:scale-100 group-hover:border-[var(--accent)] group-hover:opacity-100"
-                      }
-                    `}
-                  />
-                  
-                  {/* Punto central interior */}
-                  <span
-                    className={`
-                      rounded-full transition-all duration-500
-                      ${
-                        isActive
-                          ? "h-2 w-2 scale-100 bg-[var(--accent)]"
-                          : "h-1.5 w-1.5 scale-100 bg-[var(--text-tertiary)] group-hover:scale-125 group-hover:bg-[var(--accent)]"
-                      }
-                    `}
-                  />
-                </span>
-
+              {/* Área interactiva del botón */}
+              <button
+                type="button"
+                onClick={() => scrollToSection(section.id)}
+                className="relative z-10 flex items-center justify-center w-full h-full outline-none"
+                aria-label={`Ir a ${section.label}`}
+              >
+                {/* Anillo exterior (Glowing ring) */}
+                <span
+                  className={`
+                    absolute inset-0 rounded-full border transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+                    ${isActive 
+                      ? "border-[#C9A96E]/40 scale-100 shadow-[0_0_10px_rgba(201,169,110,0.2)]" 
+                      : "border-transparent scale-50 group-hover:border-[#555] group-hover:scale-75"
+                    }
+                  `}
+                />
+                
+                {/* Punto central */}
+                <span
+                  className={`
+                    rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+                    ${isActive 
+                      ? "w-1.5 h-1.5 bg-[#C9A96E] shadow-[0_0_8px_rgba(201,169,110,0.8)]" 
+                      : "w-1 h-1 bg-[#444] group-hover:w-1.5 group-hover:h-1.5 group-hover:bg-[#C9A96E]"
+                    }
+                  `}
+                />
               </button>
-            );
-          })}
-        </div>
+
+            </div>
+          );
+        })}
       </nav>
     </aside>
   );
