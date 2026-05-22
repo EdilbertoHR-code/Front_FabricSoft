@@ -216,7 +216,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
               <button 
                 onClick={() => setStep(1)}
-                className="w-full group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/5 px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] shadow-[0_0_20px_rgba(201,169,110,0.1)] rounded-sm"
+                className="btn-primary w-full"
               >
                 Iniciar Escaneo Técnico
                 <ArrowIcon />
@@ -336,7 +336,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                   </div>
                 )}
 
-                <button type="submit" disabled={isProcessing} className="mt-4 w-full group flex items-center justify-center gap-3 bg-[#C9A96E] rounded-sm px-8 py-4.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#0A0A0A] transition-all duration-300 hover:bg-[#B8914A] shadow-[0_0_20px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)] disabled:opacity-50 disabled:cursor-wait">
+                <button type="submit" disabled={isProcessing} className="btn-primary mt-4 w-full disabled:opacity-50 disabled:cursor-wait">
                   {isProcessing ? "Cifrando y Enviando..." : "Enviar a Ingeniería Crítica"}
                   {!isProcessing && <ArrowIcon />}
                 </button>
@@ -435,7 +435,7 @@ export default function Parte5Home() {
             <div className="flex flex-col items-start gap-4">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/5 px-8 py-4 rounded-sm font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] shadow-[0_0_20px_rgba(201,169,110,0.1)] hover:shadow-[0_0_30px_rgba(201,169,110,0.3)]"
+                className="btn-primary"
               >
                 Auditar Implementación
                 <ArrowIcon />

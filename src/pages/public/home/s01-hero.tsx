@@ -298,21 +298,12 @@ export default function S01Hero() {
               mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
             }`}
           >
-            <Link
-              to="/contacto"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#C9A96E] bg-[#C9A96E]/10 px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#C9A96E] transition-all duration-300 hover:-translate-y-1 hover:bg-[#C9A96E] hover:text-[#0A0A0A] hover:shadow-[0_0_28px_rgba(201,169,110,0.25)]"
-            >
-              <span className="relative z-10">Iniciar conversación</span>
-              <span className="relative z-10 ml-3">→</span>
+            <Link to="/aplicar" className="btn-primary min-w-[250px]">
+              Iniciar conversación <span className="text-[#C9A96E]">→</span>
             </Link>
 
-            <Link
-              to="/herramientas/erp-tco"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
-            >
-              <span className="absolute left-0 top-0 h-full w-[2px] bg-[#C9A96E] opacity-0 transition-opacity duration-300 hover:opacity-100" />
-              <span className="relative z-10">Auditoría OCI gratuita</span>
-              <span className="relative z-10 ml-3 text-[#C9A96E]">→</span>
+            <Link to="/#tco" className="btn-primary min-w-[250px]">
+              Auditoría OCI gratuita <span className="text-[#C9A96E]">→</span>
             </Link>
           </div>
         </div>

@@ -226,14 +226,7 @@ function Btn({ children, onClick, disabled = false, className = "" }: {
   return (
     <button
       type="button" onClick={onClick} disabled={disabled}
-      className={`group inline-flex items-center justify-center gap-3
-        border border-[#C9A96E] bg-[#C9A96E]/5
-        px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.15em]
-        text-[#C9A96E] transition-all duration-300
-        hover:bg-[#C9A96E] hover:text-[#0A0A0A]
-        disabled:opacity-40 disabled:cursor-not-allowed
-        shadow-[0_0_20px_-5px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)]
-        rounded-sm ${className}`}
+      className={`btn-primary disabled:opacity-40 disabled:cursor-not-allowed ${className}`}
     >
       {children}
     </button>

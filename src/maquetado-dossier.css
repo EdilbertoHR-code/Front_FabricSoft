@@ -60,23 +60,45 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 /* ── Buttons / CTAs ─────────────────────────────────────────── */
 
 .btn-primary, .btn-secondary {
-  display: inline-block;
-  padding: 18px 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  padding: 16px 32px;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-weight: 500;
+  letter-spacing: 0.24em;
+  font-weight: 900;
   transition: all 0.3s ease;
   cursor: pointer;
-  border: 1px solid;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-primary);
 }
 
-.btn-primary { background: var(--accent); color: var(--bg-base); border-color: var(--accent); }
-.btn-primary:hover { background: transparent; color: var(--accent); }
+.btn-primary::before, .btn-secondary::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 2px; height: 100%;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-.btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border-strong); }
-.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary:hover, .btn-secondary:hover {
+  border-color: var(--accent);
+  background: rgba(201, 169, 110, 0.045);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btn-primary:hover::before, .btn-secondary:hover::before {
+  opacity: 1;
+}
 
 .cta {
   display: inline-flex;

@@ -138,7 +138,7 @@ export default function S06Doctrina() {
 
             <Link
               to="/doctrina/generator"
-              className="group flex items-center justify-center gap-3 bg-[#C9A96E] text-[#0A0A0A] px-8 py-4.5 rounded-sm font-mono text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-[#B8914A] shadow-[0_0_30px_rgba(201,169,110,0.2)] hover:shadow-[0_0_40px_rgba(201,169,110,0.4)] w-fit"
+              className="btn-primary"
             >
               Generador de doctrina
               <ArrowIcon />
