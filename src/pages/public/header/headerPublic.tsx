@@ -148,7 +148,7 @@ export default function Header() {
         {/* HEADER LATERAL */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
           <div className="flex items-center">
-            <img src={logoImg} alt="FABRIC" className="h-8 w-auto object-contain opacity-90" style={{ transform: 'scale(3.5)', transformOrigin: 'left center' }} />
+            <img src={logoImg} alt="FABRIC" className="h-8 w-auto object-contain opacity-90" style={{ transform: 'scale(4.2)', transformOrigin: 'left center' }} />
           </div>
           <button onClick={() => setMobileOpen(false)} aria-label="Cerrar menú" className="text-[#F5F5F5]/40 hover:text-[#C9A96E] p-2 -mr-2 rounded-full transition-all duration-500 hover:rotate-90 active:scale-90">
             <svg className="w-6 h-6 stroke-[1.2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
