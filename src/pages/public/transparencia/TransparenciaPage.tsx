@@ -32,7 +32,7 @@ const compromisos = [
 
 export default function TransparenciaPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
+    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
         <BackButton />
       </div>
