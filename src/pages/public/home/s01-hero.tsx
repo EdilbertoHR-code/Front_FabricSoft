@@ -302,7 +302,7 @@ export default function S01Hero() {
               Iniciar conversación <span className="text-[#C9A96E]">→</span>
             </Link>
 
-            <Link to="/#tco" className="btn-primary min-w-[250px]">
+            <Link to="/#diagnostico" className="btn-primary min-w-[250px]">
               Auditoría OCI gratuita <span className="text-[#C9A96E]">→</span>
             </Link>
           </div>
