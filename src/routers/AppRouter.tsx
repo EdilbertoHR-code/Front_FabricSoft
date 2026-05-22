@@ -40,7 +40,7 @@ function ScrollToTop() {
       const target = document.getElementById(id);
       if (!target) return false;
 
-      const headerOffset = 118;
+      const headerOffset = 16;
       const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
       window.scrollTo({ top, behavior: 'smooth' });
       return true;

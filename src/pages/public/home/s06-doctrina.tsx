@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { DoctrinaModal } from "./DoctrinaModal";
 
 // --- HOOK DE ANIMACIÓN ---
@@ -180,13 +181,13 @@ export default function S06Doctrina() {
 
         {/* CTA INFERIOR */}
         <div className="mt-20 pt-10 border-t border-[#111] flex justify-center">
-         <button 
-        onClick={() => setIsModalOpen(true)}
-        className="group flex items-center justify-center gap-3 bg-[#C9A96E] text-[#0A0A0A] px-10 py-5 rounded-md font-mono text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-[#B8914A]"
-      >
-        Leer doctrina completa
-        <ArrowIcon />
-      </button>
+         <Link
+          to="/doctrina/generator"
+          className="group flex items-center justify-center gap-3 bg-[#C9A96E] text-[#0A0A0A] px-10 py-5 rounded-md font-mono text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-[#B8914A]"
+        >
+          Generador de doctrina
+          <ArrowIcon />
+        </Link>
         </div>
 
       </div>

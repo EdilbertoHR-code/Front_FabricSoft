@@ -79,7 +79,7 @@ export default function SectionNavigator() {
     setActiveSection(id);
     navigate({ pathname: "/", hash: `#${id}` }, { replace: false });
 
-    const top = section.getBoundingClientRect().top + window.scrollY - 118;
+    const top = section.getBoundingClientRect().top + window.scrollY - 16;
     window.scrollTo({ top, behavior: "smooth" });
   };
 

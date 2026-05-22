@@ -19,7 +19,7 @@ const NAV = [
   { name: 'Aplicar →',          href: '/aplicar',       sectionId: '', page: true },
 ];
 
-const HEADER_SCROLL_OFFSET = 118;
+const HEADER_SCROLL_OFFSET = 16;
 
 function scrollToSection(sectionId: string) {
   window.setTimeout(() => {

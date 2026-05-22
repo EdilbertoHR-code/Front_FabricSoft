@@ -8,7 +8,6 @@ import S06Doctrina from './s06-doctrina';
 import SectionNavigator from '../../../components/SectionNavigator';
 import ChatIa from '../chat/chatIa';
 import S07Casos from './s07-casos';
-import Parte7Home from './parte7.home';
 import S07bRescueAssessment from './s07b-rescue-assessment';
 import S08Industrias from './s08-industrias';
 import S09FabricOS from './s09-fabric-os';
@@ -19,7 +18,6 @@ import S12bCriterios from './s12b-criterios';
 import S13Transparencia from './s13-transparencia';
 import S14Investigacion from './s14-investigacion';
 import S15Founder from './s15-founder';
-import InteractionManager from '../../../components/InteractionManager';
 import S06bFixedPrice from './s06b-fixed-price';
 
 export default function Home() {
@@ -36,7 +34,6 @@ export default function Home() {
       <S06Doctrina />
       <S06bFixedPrice />
       <S07Casos />
-      <Parte7Home />
       <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />
@@ -47,7 +44,6 @@ export default function Home() {
       <S13Transparencia />
       <S14Investigacion />
       <S15Founder />
-      <InteractionManager />
     </div>
   );
 }
