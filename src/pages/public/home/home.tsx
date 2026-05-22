@@ -1,6 +1,6 @@
 import S01Hero from './s01-hero';
 import S02bPuente from './s02b-puente';
-import S02Optimizador from './s02-optimizador';
+import S02OptimizadorOCI from './s02-optimizador-oci';
 import S03TcoCalculator from './s03-tco-calculator';
 import S04TcoWaitlist from './s04-tco-waitlist';
 import S05AnalisisFallas from './s05-analisis-fallas';
@@ -26,7 +26,7 @@ export default function Home() {
       <SectionNavigator />
       <S01Hero />
       <S02bPuente />
-      <S02Optimizador />
+      <S02OptimizadorOCI />
       <S03TcoCalculator />
       <S04TcoWaitlist />
       <ChatIa />
