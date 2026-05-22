@@ -46,18 +46,18 @@ function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
 // PREGUNTAS DEL DIAGNÓSTICO
 // =========================================================================
 const QUESTIONS = [
-  { id: 1, text: "¿Cuál es tu tiempo de cierre contable actual en Fusion?", options: ["< 5 días (Saludable)", "5-10 días (Alerta)", "> 10 días (Crítico)", "Aún es 100% manual"] },
-  { id: 2, text: "¿Cuántos reportes manuales paralelos (Excel) requiere la dirección?", options: ["0-3 reportes", "4-10 reportes", "Más de 10 reportes", "Toda la operación es en Excel"] },
-  { id: 3, text: "¿Cuál es el nivel de adopción real de los usuarios clave?", options: ["Alto (>80%)", "Medio (50-80%)", "Bajo (<50%)", "Rechazo total al sistema"] },
-  { id: 4, text: "¿Cuántas incidencias críticas (P1/P2) tienen abiertas actualmente?", options: ["Ninguna", "1 a 5", "6 a 15", "Más de 15"] },
-  { id: 5, text: "¿Cuánto tiempo ha pasado desde la salida a producción (go-live)?", options: ["Aún no salimos", "Menos de 3 meses", "3 a 6 meses", "Más de 6 meses"] },
-  { id: 6, text: "¿Cuál es el estado de la relación con tu implementador anterior?", options: ["Excelente", "Tensa pero operativa", "Finalizada / Rota", "En litigio / Legal"] },
-  { id: 7, text: "¿Cuál es el nivel de involucramiento (patrocinio) del nivel C-Level?", options: ["Involucrado activamente", "Delega pero monitorea", "Desconectado del proyecto", "Exige resultados sin involucrarse"] },
-  { id: 8, text: "¿Qué porcentaje del presupuesto original se ha consumido?", options: ["< 80%", "80-100%", "Con sobrecostos (100-150%)", "Sobrecostos extremos (>150%)"] },
-  { id: 9, text: "¿Con qué frecuencia fallan las integraciones con sistemas satélite?", options: ["Rara vez", "Mensualmente", "Semanalmente", "Diario / Requiere reproceso"] },
-  { id: 10, text: "¿Cómo evalúas la calidad y limpieza de los datos maestros (Master Data)?", options: ["Confiable", "Requiere ajustes menores", "Duplicados frecuentes", "Caos total / Inconfiable"] },
-  { id: 11, text: "¿Qué tanto se personalizó (customizó) el sistema fuera del estándar?", options: ["100% estándar", "Personalizaciones leves", "Altamente personalizado", "Prácticamente hecho a la medida"] },
-  { id: 12, text: "¿Cuál es el mayor impacto actual en el negocio por culpa del ERP?", options: ["Ninguno crítico", "Retraso en decisiones", "Pérdidas financieras directas", "Riesgo de compliance / multas"] }
+  { id: 1,  text: "¿Hace cuánto está implementado tu Oracle Fusion?",                          options: ["Menos de 3 meses", "3–6 meses", "6–12 meses", "Más de 1 año"] },
+  { id: 2,  text: "¿Cuántos días toma tu cierre contable mensual actualmente?",                options: ["Menos de 5 días", "5–10 días", "10–15 días", "Más de 15 días"] },
+  { id: 3,  text: "¿Cuántos reportes ejecutivos se generan FUERA del ERP actualmente?",        options: ["0", "1–3", "4–7", "Más de 7"] },
+  { id: 4,  text: "¿Cuál es el % aproximado de usuarios clave que realmente usan el sistema?", options: [">90%", "70–90%", "50–70%", "<50%"] },
+  { id: 5,  text: "¿Cuántas incidencias críticas tienes abiertas?",                            options: ["0", "1–3", "4–7", "Más de 7"] },
+  { id: 6,  text: "¿Cuál es el estado de la consultora que implementó?",                       options: ["Sigue activa", "Soporte limitado", "No responde", "No aplica"] },
+  { id: 7,  text: "¿Tienes patrocinio ejecutivo activo del proyecto?",                         options: ["CFO + CTO", "CFO o CTO", "Solo IT", "Sin patrocinio"] },
+  { id: 8,  text: "¿Cuál es el módulo con más problemas?",                                     options: ["Financials", "Procurement", "SCM / HCM", "Reporting"] },
+  { id: 9,  text: "¿En qué industria opera tu empresa?",                                       options: ["Servicios Financieros", "Inmobiliario", "Logística", "Otro"] },
+  { id: 10, text: "¿Cuál es el revenue anual aproximado de tu empresa?",                       options: ["< USD 50M", "USD 50–250M", "USD 250–500M", "> USD 500M"] },
+  { id: 11, text: "¿En qué plazo deseas remediar la situación?",                               options: ["Inmediato (< 3 meses)", "Corto (3–6 meses)", "Medio (6–12 meses)", "No definido"] },
+  { id: 12, text: "Datos de contacto para enviarte el diagnóstico",                            options: [] }
 ];
 
 // =========================================================================
@@ -110,7 +110,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     
     // Pausa dramática para mostrar la selección en dorado antes de avanzar
     setTimeout(() => {
-      setStep(prev => prev + 1);
+      setStep(prev => prev === 11 ? 13 : prev + 1);
     }, 650);
   };
 
@@ -140,7 +140,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     }, 1500);
   };
 
-  const progressPercentage = step > 0 && step <= 12 ? (step / 12) * 100 : 0;
+  const progressPercentage = step > 0 && step <= 11 ? (step / 12) * 100 : step === 13 ? 100 : 0;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
@@ -178,7 +178,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         </div>
 
         {/* Barra de Progreso */}
-        {step > 0 && step <= 12 && (
+        {step > 0 && step <= 13 && (
           <div className="w-full h-[2px] bg-[#1A1A1A]">
             <div 
               className="h-full bg-gradient-to-r from-[#C9A96E]/50 to-[#C9A96E] transition-all duration-700 ease-out"
@@ -224,11 +224,11 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
-          {/* ================= PASOS 1-12 ================= */}
-          {step > 0 && step <= 12 && (
+          {/* ================= PASOS 1-11 ================= */}
+          {step > 0 && step <= 11 && (
             <div key={`question-${step}`} className="animate-step h-full flex flex-col justify-center">
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F5F5F5]/40 mb-4 flex items-center gap-2">
-                <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 12
+                <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 11
               </span>
               
               <h3 className="font-serif text-2xl md:text-[32px] text-[#F5F5F5] leading-[1.3] mb-10">

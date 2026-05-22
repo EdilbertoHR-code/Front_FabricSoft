@@ -8,7 +8,6 @@ import S06Doctrina from './s06-doctrina';
 import SectionNavigator from '../../../components/SectionNavigator';
 import ChatIa from '../chat/chatIa';
 import S07Casos from './s07-casos';
-import S07bRescueAssessment from './s07b-rescue-assessment';
 import S08Industrias from './s08-industrias';
 import S09FabricOS from './s09-fabric-os';
 import S10Lifecycle from './s10-lifecycle';
@@ -34,7 +33,6 @@ export default function Home() {
       <S06Doctrina />
       <S06bFixedPrice />
       <S07Casos />
-      <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />
       <S10Lifecycle />
