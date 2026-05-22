@@ -1,5 +1,6 @@
 import S01Hero from './s01-hero';
 import S02bPuente from './s02b-puente';
+import RescueCounter from './s02-optimizador';
 import S02OptimizadorOCI from './s02-optimizador-oci';
 import S03TcoCalculator from './s03-tco-calculator';
 import S04TcoWaitlist from './s04-tco-waitlist';
@@ -24,6 +25,7 @@ export default function Home() {
     <div className="w-full flex flex-col">
       <SectionNavigator />
       <S01Hero />
+      <RescueCounter />
       <S02bPuente />
       <S02OptimizadorOCI />
       <S03TcoCalculator />
