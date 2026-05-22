@@ -65,7 +65,7 @@ export default function S14Investigacion() {
             <h3>El Estado de las Implementaciones Oracle Fusion en <span className="text-[#C9A96E]">México y LATAM 2026</span></h3>
             <p>Reporte anual. Tasa de fracaso real del mercado, razones más comunes, best practices para CFO/CTO en RFP de Oracle. Lanzamiento Q4 2026: registro abierto para early access.</p>
           </div>
-          <a href="#aplicar" data-interaction="paper" className="btn-secondary">Reservar lugar →</a>
+          <button data-interaction="benchmark" className="btn-secondary">Reservar early access →</button>
         </div>
       </div>
     </section>
