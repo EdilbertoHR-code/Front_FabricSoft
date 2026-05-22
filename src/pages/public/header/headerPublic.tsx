@@ -3,19 +3,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoImg from '../../../assets/logo/logo.png';
 
 const NAV = [
-  { name: 'Hero', href: '/#inicio', sectionId: 'inicio' },
-  { name: 'FABRIC AI', href: '/#fabric-ai', sectionId: 'fabric-ai' },
-  { name: 'Diagnóstico', href: '/#diagnostico', sectionId: 'diagnostico' },
-  { name: 'Doctrina', href: '/#doctrina', sectionId: 'doctrina' },
-  { name: 'Casos', href: '/#s07', sectionId: 's07' },
-  { name: 'Industrias', href: '/#s08', sectionId: 's08' },
-  { name: 'FABRIC OS', href: '/#s09', sectionId: 's09' },
-  { name: 'Lifecycle', href: '/#s10', sectionId: 's10' },
-  { name: 'Referencias', href: '/#s12', sectionId: 's12' },
-  { name: 'Criterios', href: '/#criterios', sectionId: 'criterios' },
-  { name: 'Transparencia', href: '/#s13', sectionId: 's13' },
-  { name: 'Investigación', href: '/#s14', sectionId: 's14' },
-  { name: 'Aplicar', href: '/#s15', sectionId: 's15' },
+  { name: 'Hero',          href: '/#inicio',      sectionId: 'inicio' },
+  { name: 'Doctrina',      href: '/#doctrina',     sectionId: 'doctrina' },
+  { name: 'Casos',         href: '/#s07',          sectionId: 's07' },
+  { name: 'Industrias',    href: '/#s08',          sectionId: 's08' },
+  { name: 'FABRIC OS',     href: '/#s09',          sectionId: 's09' },
+  { name: 'Lifecycle',     href: '/#s10',          sectionId: 's10' },
+  { name: 'Referencias',   href: '/#s12',          sectionId: 's12' },
+  { name: 'Investigación', href: '/#s14',          sectionId: 's14' },
+  { name: 'Transparencia', href: '/transparencia', sectionId: '', page: true },
+  { name: 'Aplicar',       href: '/aplicar',       sectionId: '', page: true },
 ];
 
 const HEADER_SCROLL_OFFSET = 118;
@@ -160,10 +157,12 @@ export default function Header() {
         {/* LINKS DE NAVEGACION */}
         <nav className="flex-1 flex flex-col justify-start px-10 py-10 gap-2 overflow-y-auto">
           {NAV.map((item, i) => {
-            const isActive = location.pathname === '/' && location.hash === `#${item.sectionId}`;
+            const isActive = item.page
+              ? location.pathname === item.href
+              : location.pathname === '/' && location.hash === `#${item.sectionId}`;
             return (
               <Link key={item.name} to={item.href}
-                onClick={(event) => handleSectionNavigation(event, item.sectionId)}
+                onClick={item.page ? () => setMobileOpen(false) : (event) => handleSectionNavigation(event, item.sectionId)}
                 style={{ transitionDelay: mobileOpen ? `${i * 35}ms` : '0ms' }}
                 className={`
                   group relative flex items-center w-full py-2.5
