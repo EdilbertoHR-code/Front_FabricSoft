@@ -50,7 +50,7 @@ export default function S12Referencias() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: 48 }}>
-          <a href="#aplicar" data-interaction="reference" className="btn-secondary">Iniciar evaluación →</a>
+          <button data-interaction="reference" className="btn-secondary">Iniciar evaluación →</button>
         </div>
       </div>
     </section>
