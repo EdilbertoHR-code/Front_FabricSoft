@@ -91,21 +91,20 @@ export default function Header() {
           <Link
             to="/"
             className={`
-              flex items-center gap-3 group shrink-0
+              flex items-center gap-4 group shrink-0
               transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
               ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}
             `}
             style={{ transitionDelay: '60ms' }}
           >
-            <div className="relative overflow-hidden rounded border border-[#2A2A2A] h-8 w-8 shrink-0 group-hover:border-[#C9A96E]/60 group-hover:shadow-[0_0_15px_1px_rgba(201,169,110,0.2)] transition-all duration-500">
-              <img src={logoImg} alt="FABRIC" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-600" />
+            <div className="shrink-0 h-10 w-10 border border-[#353535] group-hover:border-[#C9A96E]/50 transition-colors duration-500 overflow-hidden">
+              <img src={logoImg} alt="FABRIC" className="w-full h-full object-contain" />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-serif font-bold tracking-[0.14em] uppercase text-[18px] text-[#F5F5F5] group-hover:text-[#C9A96E] transition-colors duration-500">
+            <div className="flex flex-col leading-none gap-[5px]">
+              <span className="font-serif font-semibold tracking-[0.18em] uppercase text-[17px] text-[#F5F5F5] group-hover:text-[#C9A96E] transition-colors duration-500">
                 FABRIC
               </span>
-              <span className="hidden md:block font-mono tracking-[0.22em] uppercase mt-[3px] text-[7px] text-[#C9A96E]/40 group-hover:text-[#C9A96E]/80 transition-colors duration-500">
+              <span className="hidden md:block font-mono tracking-[0.24em] uppercase text-[8px] text-[#5A5A5A] group-hover:text-[#C9A96E]/60 transition-colors duration-500">
                 Oracle Critical Engineering
               </span>
             </div>
@@ -154,10 +153,10 @@ export default function Header() {
         {/* HEADER LATERAL */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 overflow-hidden rounded border border-[#2A2A2A]">
-              <img src={logoImg} alt="FABRIC" className="w-full h-full object-cover" />
+            <div className="h-8 w-8 overflow-hidden border border-[#353535]">
+              <img src={logoImg} alt="FABRIC" className="w-full h-full object-contain" />
             </div>
-            <span className="font-serif font-bold text-sm tracking-[0.2em] uppercase text-[#F5F5F5]">FABRIC</span>
+            <span className="font-serif font-semibold text-sm tracking-[0.2em] uppercase text-[#F5F5F5]">FABRIC</span>
           </div>
           <button onClick={() => setMobileOpen(false)} aria-label="Cerrar menú" className="text-[#F5F5F5]/40 hover:text-[#C9A96E] p-2 -mr-2 rounded-full transition-all duration-500 hover:rotate-90 active:scale-90">
             <svg className="w-6 h-6 stroke-[1.2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
