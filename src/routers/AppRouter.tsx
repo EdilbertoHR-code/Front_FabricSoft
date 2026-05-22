@@ -6,6 +6,14 @@ import Home from '../pages/public/home/home';
 import CasoPage from '../pages/public/casos/CasoPage';
 import AplicarPage from '../pages/public/aplicar/AplicarPage';
 import TransparenciaPage from '../pages/public/transparencia/TransparenciaPage';
+import GeneratorPage from '../pages/public/doctrina/GeneratorPage';
+import RechazadosPage from '../pages/public/rechazados/RechazadosPage';
+import AuditTrailPage from '../pages/public/casos/AuditTrailPage';
+import PostMortemPage from '../pages/public/postmortem/PostMortemPage';
+import RoundtablePage from '../pages/public/roundtable/RoundtablePage';
+import TerminosPage from '../pages/public/legal/TerminosPage';
+import PrivacidadPage from '../pages/public/legal/PrivacidadPage';
+import DoctrinaNoAlineacionPage from '../pages/public/legal/DoctrinaNoAlineacionPage';
 import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminLeads from '../pages/admin/AdminLeads';
@@ -69,6 +77,28 @@ export const AppRouter = () => {
 
         {/* Transparencia */}
         <Route path="transparencia" element={<TransparenciaPage />} />
+
+        {/* Doctrine Generator */}
+        <Route path="doctrina/generator" element={<GeneratorPage />} />
+
+        {/* Doctrina de no alineación */}
+        <Route path="doctrina/no-alineacion" element={<DoctrinaNoAlineacionPage />} />
+
+        {/* Proyectos evaluados / rechazados */}
+        <Route path="rechazados" element={<RechazadosPage />} />
+
+        {/* Audit Trail por caso */}
+        <Route path="casos/:slug/audit-trail" element={<AuditTrailPage />} />
+
+        {/* Post-Mortem Privado */}
+        <Route path="post-mortem" element={<PostMortemPage />} />
+
+        {/* Confidential Roundtable */}
+        <Route path="roundtable" element={<RoundtablePage />} />
+
+        {/* Legal */}
+        <Route path="terminos" element={<TerminosPage />} />
+        <Route path="privacidad" element={<PrivacidadPage />} />
            {/* <Route path="/sobre-nosotros" element={< SobreNosotros/>} />
              <Route path="/servicios" element={< ServiciosAdministrados/>} />
           

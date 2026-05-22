@@ -29,8 +29,8 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Rescue Assessment',  path: '/#rescue-assessment' },
     { label: 'Referencias',        path: '/#s12' },
     { label: 'Criterios de admisión', path: '/#criterios' },
-    { label: 'Audit Trail APE Plazas', isFuture: true },
-    { label: 'Proyectos evaluados 2026', isFuture: true },
+    { label: 'Audit Trail APE Plazas', path: '/casos/ape-plazas/audit-trail' },
+    { label: 'Proyectos evaluados 2026', path: '/rechazados' },
   ],
   // Herramientas interactivas
   herramientas: [
@@ -38,7 +38,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Auditoría OCI gratuita', path: '/#diagnostico' },
     { label: 'ERP TCO Comparator',    path: '/#tco' },
     { label: 'Cloud Cost Comparator', path: '/#cloud-tco' },
-    { label: 'Doctrine Generator',    isFuture: true },
+    { label: 'Doctrine Generator',    path: '/doctrina/generator' },
     { label: 'Migration Roadmap',     isFuture: true },
     { label: 'Readiness Score',       isFuture: true },
     { label: 'RFP Template Oracle',   isFuture: true },
@@ -48,8 +48,8 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Aplicar / Wait List',      path: '/aplicar' },
     { label: 'Founder · Wait List',      path: '/#s15' },
     { label: 'Office Hours con Julio',   path: '/#s11' },
-    { label: 'Post-Mortem Privado',      isFuture: true },
-    { label: 'Confidential Roundtable',  isFuture: true },
+    { label: 'Post-Mortem Privado',      path: '/post-mortem' },
+    { label: 'Confidential Roundtable',  path: '/roundtable' },
     { label: 'Research Letters',         isFuture: true },
   ],
   // Investigación y recursos
@@ -60,9 +60,9 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Paper 03 — Primer ciclo crítico', isFuture: true },
     { label: 'Benchmark Index 2026',    isFuture: true },
     { label: 'Transparencia',           path: '/transparencia' },
-    { label: 'Términos de uso',         isFuture: true },
-    { label: 'Privacidad',              isFuture: true },
-    { label: 'Doctrina de no alineación', isFuture: true },
+    { label: 'Términos de uso',           path: '/terminos' },
+    { label: 'Privacidad',               path: '/privacidad' },
+    { label: 'Doctrina de no alineación', path: '/doctrina/no-alineacion' },
   ],
 };
 
