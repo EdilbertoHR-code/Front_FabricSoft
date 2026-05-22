@@ -1,4 +1,5 @@
 import S01Hero from './s01-hero';
+import S02bPuente from './s02b-puente';
 import S02Optimizador from './s02-optimizador';
 import S03TcoCalculator from './s03-tco-calculator';
 import S04TcoWaitlist from './s04-tco-waitlist';
@@ -7,6 +8,7 @@ import S06Doctrina from './s06-doctrina';
 import SectionNavigator from '../../../components/SectionNavigator';
 import ChatIa from '../chat/chatIa';
 import S07Casos from './s07-casos';
+import Parte7Home from './parte7.home';
 import S07bRescueAssessment from './s07b-rescue-assessment';
 import S08Industrias from './s08-industrias';
 import S09FabricOS from './s09-fabric-os';
@@ -25,6 +27,7 @@ export default function Home() {
     <div className="w-full flex flex-col">
       <SectionNavigator />
       <S01Hero />
+      <S02bPuente />
       <S02Optimizador />
       <S03TcoCalculator />
       <S04TcoWaitlist />
@@ -33,6 +36,7 @@ export default function Home() {
       <S06Doctrina />
       <S06bFixedPrice />
       <S07Casos />
+      <Parte7Home />
       <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />

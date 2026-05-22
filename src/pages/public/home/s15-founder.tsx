@@ -66,7 +66,20 @@ export default function S15Founder() {
         </div>
 
         <div className="founder-grid" style={{ gridTemplateColumns: "1fr", maxWidth: 920, marginInline: "auto" }}>
-          <div className="julio-bio-block">
+          <div className="julio-bio-block" style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: "48px", alignItems: "start" }}>
+            <img
+              src="/julio_alvarez.jpeg"
+              alt="Julio Álvarez — Founder FABRIC"
+              style={{
+                width: "100%",
+                aspectRatio: "3/4",
+                objectFit: "cover",
+                objectPosition: "center top",
+                filter: "grayscale(20%)",
+                border: "1px solid var(--border)",
+              }}
+            />
+            <div>
             <div className="julio-name">Julio Álvarez</div>
             <div className="julio-title">Founder · FABRIC</div>
             <p className="julio-bio">
@@ -89,6 +102,7 @@ export default function S15Founder() {
                 <div className="num">15+</div>
                 <div className="lbl">Certificaciones vigentes</div>
               </div>
+            </div>
             </div>
           </div>
         </div>
