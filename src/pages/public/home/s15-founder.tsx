@@ -27,7 +27,6 @@ function CountdownBanner({ isoDate }: { isoDate: string }) {
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     <div className="countdown-banner">
-      <span className="countdown-emoji">⏳</span>
       <span className="countdown-label">Cierre Q3 2026:</span>
       <span className="countdown-time">
         {pad(days)}d {pad(hours)}h {pad(minutes)}m {pad(seconds)}s

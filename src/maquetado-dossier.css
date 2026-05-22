@@ -2984,9 +2984,6 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   margin-bottom: 32px;
   letter-spacing: 0.05em;
 }
-.countdown-emoji {
-  font-size: 14px;
-}
 .countdown-label {
   color: var(--text-secondary);
   text-transform: uppercase;
