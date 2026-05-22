@@ -70,14 +70,18 @@ export default function S12bCriterios() {
           </div>
         </div>
 
+        {/* BACKEND TODO: estos números deben venir de DB en tiempo real.
+            proyectosAceptados: store.capacidad.activos (máx 12 según brief)
+            solicitudesEvaluadas: total de aplicaciones recibidas en el año
+            El FOMO es real solo si los números son reales — no hardcodear. */}
         <div className="acceptance-banner">
           <div className="acceptance-stat">
-            <div className="num">02</div>
-            <div className="lbl">Proyectos aceptados · 2026</div>
+            <div className="num">—</div>
+            <div className="lbl">Proyectos activos · 2026</div>
           </div>
           <div className="acceptance-divider"></div>
           <div className="acceptance-stat">
-            <div className="num">47</div>
+            <div className="num">—</div>
             <div className="lbl">Solicitudes evaluadas</div>
           </div>
           <div className="acceptance-divider"></div>
