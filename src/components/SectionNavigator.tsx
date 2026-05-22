@@ -7,21 +7,25 @@ type SectionItem = {
   number: string;
 };
 
-// 13 puntos de navegación — secciones principales del home
 const sections: SectionItem[] = [
-  { id: "inicio",      label: "Hero",               number: "01" }, // s01
-  { id: "tco",         label: "TCO Comparator",     number: "02" }, // s03+s04
-  { id: "fabric-ai",   label: "FABRIC AI",          number: "03" }, // chatIa
-  { id: "diagnostico", label: "Diagnóstico",         number: "04" }, // s05+s07b
-  { id: "doctrina",    label: "Doctrina",            number: "05" }, // s06+s06b
-  { id: "s07",         label: "Casos",              number: "06" }, // s07+s12
-  { id: "s08",         label: "Industrias",         number: "07" }, // s08
-  { id: "s09",         label: "FABRIC OS",          number: "08" }, // s09
-  { id: "s10",         label: "Lifecycle",          number: "09" }, // s10
-  { id: "s11",         label: "Office Hours",       number: "10" }, // s11
-  { id: "s14",         label: "Investigación",      number: "11" }, // s14
-  { id: "s13",         label: "Transparencia",      number: "12" }, // s13
-  { id: "s15",         label: "Founder · Wait List",number: "13" }, // s15
+  { id: "inicio",      label: "Hero",               number: "01" },
+  { id: "optimizador", label: "Rescue Counter",     number: "02" },
+  { id: "puente",      label: "Puente / Tesis",     number: "03" },
+  { id: "tco",         label: "ERP TCO",            number: "04" },
+  { id: "fabric-ai",   label: "FABRIC AI",          number: "05" },
+  { id: "diagnostico", label: "Rescue Assessment",  number: "06" },
+  { id: "doctrina",    label: "Doctrina",            number: "07" },
+  { id: "fixed-price", label: "The Guarantee",      number: "08" },
+  { id: "s07",         label: "Casos",              number: "09" },
+  { id: "s08",         label: "Industrias",         number: "10" },
+  { id: "s09",         label: "FABRIC OS",          number: "11" },
+  { id: "s10",         label: "Lifecycle",          number: "12" },
+  { id: "s11",         label: "Office Hours",       number: "13" },
+  { id: "s12",         label: "Referencias",        number: "14" },
+  { id: "criterios",   label: "Criterios",          number: "15" },
+  { id: "s13",         label: "Transparencia",      number: "16" },
+  { id: "s14",         label: "Investigación",      number: "17" },
+  { id: "s15",         label: "Founder · Wait List",number: "18" },
 ];
 
 export default function SectionNavigator() {
