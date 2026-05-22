@@ -85,7 +85,7 @@ export default function S12bCriterios() {
             <div className="lbl">Solicitudes evaluadas</div>
           </div>
           <div className="acceptance-divider"></div>
-          <div className="acceptance-quote">"Nuestra selectividad protege la calidad operativa para los clientes que sí aceptamos."</div>
+          <div className="acceptance-quote">Nuestra selectividad protege la calidad operativa para los clientes que sí aceptamos.</div>
         </div>
       </div>
     </section>

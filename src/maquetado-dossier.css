@@ -2523,20 +2523,42 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 .acceptance-banner {
   max-width: 900px;
   margin: 80px auto 0;
-  padding: 32px 40px;
+  padding: 48px 56px;
   border: 1px solid var(--border);
-  background: var(--bg-panel);
+  border-top: 2px solid var(--accent);
+  background: transparent;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 0;
   align-items: center;
 }
 
-.acceptance-stat { text-align: center; }
-.acceptance-stat .num { font-family: var(--serif); font-size: 48px; color: var(--accent); line-height: 1; font-weight: 400; }
-.acceptance-stat .lbl { font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; }
-.acceptance-divider { width: 1px; height: 56px; background: var(--border); }
-.acceptance-quote { font-family: var(--serif); font-size: 17px; font-style: italic; color: var(--text-primary); line-height: 1.5; max-width: 360px; }
+.acceptance-stat { text-align: center; padding: 0 32px; }
+.acceptance-stat .num {
+  font-family: var(--mono);
+  font-size: 40px;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.acceptance-stat .lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+.acceptance-divider { width: 1px; height: 48px; background: var(--border); }
+.acceptance-quote {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 0 32px;
+  border-left: 1px solid var(--border);
+}
 
 /* TRANSPARENCIA (S13) */
 
@@ -3283,7 +3305,9 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .criterios-list { padding: 16px 16px; }
   .transparency-grid { grid-template-columns: 1fr; }
   .research-grid { grid-template-columns: 1fr; }
-  .acceptance-banner { grid-template-columns: 1fr; gap: 24px; }
+  .acceptance-banner { grid-template-columns: 1fr; gap: 24px; padding: 32px 24px; }
+  .acceptance-quote { border-left: none; border-top: 1px solid var(--border); padding: 24px 0 0; }
+  .acceptance-stat { padding: 0; text-align: left; }
   .acceptance-divider { display: none; }
   .research-banner { grid-template-columns: 1fr; gap: 24px; }
   .waitlist-head { grid-template-columns: 1fr; }
