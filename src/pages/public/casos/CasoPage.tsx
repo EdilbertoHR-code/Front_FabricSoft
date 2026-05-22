@@ -230,8 +230,8 @@ export default function CasoPage() {
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>{doc.meta}</div>
                       </div>
                       <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', flexShrink: 0 }}>{doc.size}</span>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, padding: '4px 10px', border: `1px solid ${doc.locked ? 'var(--border-strong)' : 'rgba(201,169,110,0.4)'}`, color: doc.locked ? 'var(--text-tertiary)' : 'var(--accent)', flexShrink: 0 }}>
-                        {doc.locked ? '🔒 NDA' : '↓ Descargar'}
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, padding: '4px 10px', border: `1px solid ${doc.locked ? 'var(--border-strong)' : 'rgba(201,169,110,0.4)'}`, color: doc.locked ? 'var(--text-tertiary)' : 'var(--accent)', flexShrink: 0, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        {doc.locked ? 'Bajo NDA' : '↓ Descargar'}
                       </span>
                     </div>
                   ))}
