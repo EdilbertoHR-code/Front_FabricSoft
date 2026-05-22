@@ -1,4 +1,9 @@
 
+// BACKEND TODO: Este array debe venir de CMS/DB.
+// Lógica de rotación: cada N semanas (configurable desde admin) se activa un subconjunto
+// diferente de referencias para generar escasez real — no todos los ejecutivos están
+// disponibles al mismo tiempo. El campo `langs` indica los idiomas en que cada ejecutivo
+// puede sostener la conversación (ES / EN); mostrarlo genera expectativa correcta al prospecto.
 const references = [
   ["01", "CFO de operadora de centros comerciales", "México · USD 100M+ revenue · Multi-plaza", "Inmobiliario", ["ES"] as string[]],
   ["02", "CTO de institución financiera", "México · USD 300M+ revenue · Regulada", "Serv. Financieros", ["ES", "EN"]],
