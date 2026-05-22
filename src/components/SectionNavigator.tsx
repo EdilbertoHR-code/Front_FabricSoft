@@ -7,21 +7,25 @@ type SectionItem = {
   number: string;
 };
 
-// Secciones obligatorias del Brief2. Los recursos opcionales viven en el footer.
+// Orden real del home.tsx — sincronizado con los IDs de cada sección
 const sections: SectionItem[] = [
-  { id: "inicio", label: "Hero", number: "01" },
-  { id: "fabric-ai", label: "FABRIC AI", number: "02" },
-  { id: "diagnostico", label: "Diagnóstico", number: "03" },
-  { id: "doctrina", label: "Doctrina", number: "04" },
-  { id: "s07", label: "Casos", number: "05" },
-  { id: "s08", label: "Industrias", number: "06" },
-  { id: "s09", label: "FABRIC OS", number: "07" },
-  { id: "s10", label: "Lifecycle", number: "08" },
-  { id: "s12", label: "Referencias", number: "09" },
-  { id: "criterios", label: "Criterios", number: "10" },
-  { id: "s13", label: "Transparencia", number: "11" },
-  { id: "s14", label: "Investigación", number: "12" },
-  { id: "s15", label: "Aplicar", number: "13" },
+  { id: "inicio",            label: "Hero",               number: "01" },
+  { id: "optimizador",       label: "Optimizador OCI",    number: "02" },
+  { id: "tco",               label: "TCO Comparator",     number: "03" },
+  { id: "fabric-ai",         label: "FABRIC AI",          number: "04" },
+  { id: "diagnostico",       label: "Análisis de Fallas", number: "05" },
+  { id: "doctrina",          label: "Doctrina",           number: "06" },
+  { id: "s07",               label: "Casos",              number: "07" },
+  { id: "rescue-assessment", label: "Rescue Assessment",  number: "08" },
+  { id: "s08",               label: "Industrias",         number: "09" },
+  { id: "s09",               label: "FABRIC OS",          number: "10" },
+  { id: "s10",               label: "Lifecycle",          number: "11" },
+  { id: "s11",               label: "Office Hours",       number: "12" },
+  { id: "s12",               label: "Referencias",        number: "13" },
+  { id: "criterios",         label: "Criterios",          number: "14" },
+  { id: "s13",               label: "Transparencia",      number: "15" },
+  { id: "s14",               label: "Investigación",      number: "16" },
+  { id: "s15",               label: "Wait List",          number: "17" },
 ];
 
 export default function SectionNavigator() {

@@ -4,7 +4,7 @@ import logoImg from '../../../assets/logo/logo.png';
 
 const NAV = [
   { name: 'Hero',              href: '/#inicio',           sectionId: 'inicio' },
-  { name: 'Optimizador OCI',   href: '/#cloud-tco',        sectionId: 'cloud-tco' },
+  { name: 'Optimizador OCI',   href: '/#optimizador',      sectionId: 'optimizador' },
   { name: 'FABRIC AI',         href: '/#fabric-ai',        sectionId: 'fabric-ai' },
   { name: 'TCO Comparator',    href: '/#tco',              sectionId: 'tco' },
   { name: 'Análisis de Fallas',href: '/#diagnostico',      sectionId: 'diagnostico' },
