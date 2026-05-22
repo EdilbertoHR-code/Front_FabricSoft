@@ -1,7 +1,10 @@
+import BackButton from '../../../components/BackButton';
 export default function DoctrinaNoAlineacionPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
-
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Doctrina · FABRIC</div>

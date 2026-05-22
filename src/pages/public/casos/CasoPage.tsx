@@ -1,4 +1,5 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import BackButton from '../../../components/BackButton';
 
 interface TimelineItem { date: string; event: string; meta: string; }
 interface CaseBlock {
@@ -140,6 +141,9 @@ export default function CasoPage() {
   return (
     <>
       <main style={{ background: 'var(--bg-base)', minHeight: '100vh', paddingTop: 80 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+          <BackButton />
+        </div>
 
         {/* Hero */}
         <section style={{ borderBottom: '1px solid var(--border)', padding: '96px 0 64px' }}>

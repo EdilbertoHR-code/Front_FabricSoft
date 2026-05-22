@@ -1,3 +1,4 @@
+import BackButton from '../../../components/BackButton';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -395,7 +396,9 @@ export default function AplicarPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
-
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       {/* Header de la página */}
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 48, marginBottom: 64, textAlign: 'center' }}>
         <div className="label" style={{ marginBottom: 20 }}>Wait List · FABRIC</div>

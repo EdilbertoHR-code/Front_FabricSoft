@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import BackButton from '../../../components/BackButton';
 
 const CASOS: Record<string, { nombre: string; hitos: { fecha: string; titulo: string; descripcion: string; verificable: boolean; pdfLabel?: string }[] }> = {
   'ape-plazas': {
@@ -34,6 +35,9 @@ export default function AuditTrailPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
 
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>

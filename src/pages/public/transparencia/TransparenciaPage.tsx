@@ -1,3 +1,4 @@
+import BackButton from '../../../components/BackButton';
 import { Link } from 'react-router-dom';
 
 // BACKEND TODO: los campos con valor null deben conectarse a DB cuando haya
@@ -32,7 +33,9 @@ const compromisos = [
 export default function TransparenciaPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
-
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       {/* Header */}
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64, marginBottom: 0 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
