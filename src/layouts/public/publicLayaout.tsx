@@ -1,12 +1,8 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Header from '../../pages/public/header/headerPublic';
 import Footer from '../../pages/public/footer/footerPublic';
 
-const HOME_ONLY = ['/'];
-
 export default function PublicLayout() {
-  const { pathname } = useLocation();
-  const showFooter = HOME_ONLY.includes(pathname);
 
   return (
     <div className="relative min-h-screen bg-fabric-base text-fabric-text font-sans selection:bg-fabric-gold selection:text-black">
@@ -20,7 +16,7 @@ export default function PublicLayout() {
         <main className="flex flex-col w-full">
           <Outlet />
         </main>
-        {showFooter && <Footer />}
+        <Footer />
       </div>
     </div>
   );

@@ -19,9 +19,6 @@ export default function RFPTemplatePage() {
           </div>
         </div>
       </div>
-      <div style={{ maxWidth: 760, margin: '80px auto', padding: '0 56px', fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 2 }}>
-        © 2026 FABRIC SOFT MEXICO SA DE CV
-      </div>
     </div>
   );
 }
