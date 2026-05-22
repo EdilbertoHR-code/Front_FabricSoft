@@ -18,7 +18,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Industrias',     path: '/#s08' },
     { label: 'FABRIC OS',      path: '/#s09' },
     { label: 'Lifecycle',      path: '/#s10' },
-    { label: 'Transparencia',  path: '/transparencia' },
+    { label: 'Transparencia',  path: '/#s13' },
     { label: 'Aplicar',        path: '/aplicar' },
   ],
   // Casos, evidencias y referencias
