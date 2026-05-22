@@ -31,8 +31,8 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Apply Reverse *',          path: '/rechazados' },
   ],
   herramientas: [
-    { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
-    { label: 'Optimizador OCI',          path: '/aplicar' },
+    { label: 'FABRIC AI Diagnostic',     path: '/#diagnostico' },
+    { label: 'Optimizador OCI',          path: '/#diagnostico' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
     { label: 'Doctrine Generator *',     path: '/doctrina/generator' },
@@ -122,9 +122,6 @@ export default function Footer() {
               <p>Ciudad de México · México</p>
               <a href="mailto:contacto@fabricsoft.com.mx" className="block text-[#C9A96E] hover:text-[#C9A96E]/80 transition-colors duration-300">
                 contacto@fabricsoft.com.mx
-              </a>
-              <a href="mailto:julio@fabricsoft.com.mx" className="block text-[#C9A96E] hover:text-[#C9A96E]/80 transition-colors duration-300">
-                julio@fabricsoft.com.mx
               </a>
             </div>
 
