@@ -28,6 +28,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
     { label: 'Rescue Assessment',        path: '/#rescue-assessment' },
+    { label: 'Apply Reverse *',          path: '/rechazados' },
   ],
   herramientas: [
     { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
@@ -41,7 +42,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Benchmark Index *',        path: '/benchmark' },
   ],
   engagement: [
-    { label: 'Aplicar / Wait List',      path: '/aplicar' },
+    { label: 'Aplicar',                  path: '/aplicar' },
     { label: 'Founder · Wait List',      path: '/#s15' },
     { label: 'Office Hours',             path: '/#s11' },
     { label: 'Post-Mortem Privado *',    path: '/post-mortem' },
