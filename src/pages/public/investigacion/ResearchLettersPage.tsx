@@ -8,10 +8,10 @@ export default function ResearchLettersPage() {
             Research Letters.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Membresía editorial cerrada.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.
+            Cartas ejecutivas para CFO, CIO y CTO evaluando rescates, migraciones y gobierno Oracle. Cupo cerrado, distribución privada y acceso solo con correo corporativo.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Próximamente Q3-Q4 2026
+            Membresía cerrada · Solicitud calificada
           </div>
         </div>
       </div>

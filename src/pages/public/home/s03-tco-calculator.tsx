@@ -1,174 +1,154 @@
-import {
-  useEffect, useMemo, useRef, useState,
-  memo, useCallback,
-  type ReactNode,
-} from "react";
-// FÍJATE AQUÍ: Ya solo importamos 'toast', quitamos 'Toaster' porque ya lo tienes en main.tsx
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
-// ─── TYPES ────────────────────────────────────────────────────────────────────
-type CurrentSystem = "SAP S/4 HANA" | "Oracle EBS" | "JD Edwards" | "PeopleSoft" | "Microsoft Dynamics";
-type IconName = "shield" | "scan" | "chart" | "cloud" | "calculator";
+type ErpSystem =
+  | "SAP S/4 HANA"
+  | "SAP ECC"
+  | "Oracle EBS R12"
+  | "Oracle JD Edwards"
+  | "Oracle PeopleSoft"
+  | "Microsoft Dynamics 365"
+  | "NetSuite"
+  | "Otro / Greenfield";
+
+type TransactionVolume = "<10K" | "10K-100K" | "100K-1M" | ">1M";
+type Industry = "Servicios financieros" | "Inmobiliario / Centros comerciales" | "Logistica / Distribucion / Transporte" | "Otra";
+
 type FormState = {
-  currentSystem: CurrentSystem;
+  erp: ErpSystem;
   users: number;
-  currentYearOne: number;
-  oracleYearOne: number;
-  migrationCost: number;
-  manualReports: number;
-  closingDays: number;
-  adoptionRate: number;
+  licenseCost: number;
+  infraCost: number;
+  supportCost: number;
+  monthlyTransactions: TransactionVolume;
+  industry: Industry;
+  company: string;
+  role: string;
+  email: string;
+  ndaAccepted: boolean;
 };
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const SYSTEMS: CurrentSystem[] = [
-  "SAP S/4 HANA", "Oracle EBS", "JD Edwards", "PeopleSoft", "Microsoft Dynamics"
+type Benchmark = {
+  savings: number;
+  breakeven: number;
+};
+
+const ERPS: ErpSystem[] = [
+  "SAP S/4 HANA",
+  "SAP ECC",
+  "Oracle EBS R12",
+  "Oracle JD Edwards",
+  "Oracle PeopleSoft",
+  "Microsoft Dynamics 365",
+  "NetSuite",
+  "Otro / Greenfield",
 ];
 
+const TRANSACTION_VOLUMES: TransactionVolume[] = ["<10K", "10K-100K", "100K-1M", ">1M"];
+
+const INDUSTRIES: Industry[] = [
+  "Servicios financieros",
+  "Inmobiliario / Centros comerciales",
+  "Logistica / Distribucion / Transporte",
+  "Otra",
+];
+
+const BENCHMARKS: Record<ErpSystem, Benchmark> = {
+  "SAP S/4 HANA": { savings: 0.3, breakeven: 18 },
+  "SAP ECC": { savings: 0.35, breakeven: 16 },
+  "Oracle EBS R12": { savings: 0.25, breakeven: 14 },
+  "Oracle JD Edwards": { savings: 0.2, breakeven: 12 },
+  "Oracle PeopleSoft": { savings: 0.22, breakeven: 14 },
+  "Microsoft Dynamics 365": { savings: 0.28, breakeven: 18 },
+  "NetSuite": { savings: 0.15, breakeven: 20 },
+  "Otro / Greenfield": { savings: 0.3, breakeven: 18 },
+};
+
 const DEFAULT_FORM: FormState = {
-  currentSystem: "SAP S/4 HANA",
+  erp: "SAP S/4 HANA",
   users: 150,
-  currentYearOne: 485000,
-  oracleYearOne: 310000,
-  migrationCost: 372000,
-  manualReports: 12,
-  closingDays: 15,
-  adoptionRate: 72,
+  licenseCost: 260000,
+  infraCost: 90000,
+  supportCost: 135000,
+  monthlyTransactions: "100K-1M",
+  industry: "Inmobiliario / Centros comerciales",
+  company: "",
+  role: "",
+  email: "",
+  ndaAccepted: false,
 };
 
 const FEATURES = [
-  { id: "01", title: "Costo Total",        text: "Análisis de costo total a 5 y 10 años.",         icon: "chart"  as IconName },
-  { id: "02", title: "Punto de Equilibrio", text: "Breakeven de migración estimado.",                icon: "scan"   as IconName },
-  { id: "03", title: "Proyección Exacta",   text: "ROI proyectado con benchmarks Oracle.",           icon: "cloud"  as IconName },
-  { id: "04", title: "Privacidad",          text: "Opción de análisis detallado con datos reales.",  icon: "shield" as IconName },
+  { id: "01", title: "ERP actual", text: "SAP, EBS, JDE, PeopleSoft, Dynamics, NetSuite u otro escenario." },
+  { id: "02", title: "Costos base", text: "Licencias, infraestructura y soporte anual como base del TCO." },
+  { id: "03", title: "Benchmark Oracle", text: "Reduccion estimada por plataforma y breakeven de migracion." },
+  { id: "04", title: "Lead premium", text: "CTA para analisis personalizado con datos reales y NDA." },
 ];
 
-// ─── FORMATTERS ───────────────────────────────────────────────────────────────
-const fmt   = (v: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
-const fmtCo = (v: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 }).format(v);
-const clamp = (v: number, min = 0, max = Infinity) =>
-  isNaN(v) ? min : Math.min(Math.max(v, min), max);
+const fmt = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
 
-// ─── HOOKS ────────────────────────────────────────────────────────────────────
-function useInView<T extends HTMLElement>(threshold = 0.2) {
-  const ref = useRef<T | null>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const obs = new IntersectionObserver(
-      ([e]) => setVisible(e.isIntersecting),
-      { threshold }
-    );
-    obs.observe(node);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return [ref, visible] as const;
+const fmtCompact = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 }).format(value);
+
+const clamp = (value: number, min = 0, max = Number.POSITIVE_INFINITY) => {
+  if (Number.isNaN(value)) return min;
+  return Math.min(Math.max(value, min), max);
+};
+
+function calculateTCO(data: FormState) {
+  const totalAnnualCost = data.licenseCost + data.infraCost + data.supportCost;
+  const benchmark = BENCHMARKS[data.erp];
+  const annualSavings = totalAnnualCost * benchmark.savings;
+  const oracleAnnualCost = totalAnnualCost - annualSavings;
+
+  return {
+    totalAnnualCost,
+    oracleAnnualCost,
+    currentTCO1y: totalAnnualCost,
+    currentTCO3y: totalAnnualCost * 3,
+    currentTCO5y: totalAnnualCost * 5,
+    currentTCO10y: totalAnnualCost * 10,
+    oracleTCO1y: oracleAnnualCost,
+    oracleTCO3y: oracleAnnualCost * 3,
+    oracleTCO5y: oracleAnnualCost * 5,
+    oracleTCO10y: oracleAnnualCost * 10,
+    savings5y: annualSavings * 5,
+    savings10y: annualSavings * 10,
+    breakeven: benchmark.breakeven,
+    percentReduction: benchmark.savings * 100,
+  };
 }
 
-function useTco(form: FormState) {
-  return useMemo(() => {
-    const base      = Math.max(form.currentYearOne - form.oracleYearOne, 0);
-    const reports   = form.manualReports * 3500;
-    const closing   = Math.max(form.closingDays - 10, 0) * 6200;
-    const adoption  = form.adoptionRate < 70 ? (70 - form.adoptionRate) * form.users * 38 : 0;
-    const annual    = base + reports + closing + adoption;
-    const five      = annual * 5;
-    const ten       = annual * 10 * 1.532;
-    const breakeven = annual > 0 ? Math.ceil((form.migrationCost / annual) * 12) : 0;
-    const roi5      = form.migrationCost > 0 ? Math.round(((five - form.migrationCost) / form.migrationCost) * 100) : 0;
-    const currTco5  = form.currentYearOne * 5 + reports * 5 + closing * 5 + adoption * 5;
-    const oracleTco5 = form.oracleYearOne * 5 + form.migrationCost;
-    return { annual, five, ten, breakeven, roi5, currTco5, oracleTco5 };
-  }, [form]);
-}
-
-/** Animated number counter hook */
-function useCountUp(end: number, duration = 600, start = true) {
-  const [current, setCurrent] = useState(0);
-  const raf = useRef<number>(0);
-
-  useEffect(() => {
-    if (!start || end === 0) {
-      setCurrent(end);
-      return;
-    }
-    let startTimestamp: number | null = null;
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setCurrent(Math.round(progress * end));
-      if (progress < 1) {
-        raf.current = requestAnimationFrame(step);
-      }
-    };
-    raf.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf.current);
-  }, [end, duration, start]);
-
-  return current;
-}
-
-// ─── TOAST ────────────────────────────────────────────────────────────────────
 const toastBase = {
   style: {
-    background: "#0A0A0A", borderRadius: "4px",
+    background: "#0A0A0A",
+    borderRadius: "4px",
     fontFamily: "'JetBrains Mono', monospace",
-    fontSize: "11px", fontWeight: 700,
-    letterSpacing: "0.12em", textTransform: "uppercase" as const,
+    fontSize: "11px",
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase" as const,
     padding: "14px 18px",
   },
 };
-const toastOk  = (msg: string) => {
+
+function toastOk(message: string) {
   toast.dismiss();
-  toast.success(msg, {
+  toast.success(message, {
     ...toastBase,
     style: { ...toastBase.style, border: "1px solid #C9A96E", color: "#C9A96E" },
-    icon: null
+    icon: null,
   });
-};
-const toastErr = (msg: string) => {
-  toast.dismiss();
-  toast.error(msg, {
-    ...toastBase,
-    style: { ...toastBase.style, border: "1px solid #b85450", color: "#b85450" },
-    icon: null
-  });
-};
+}
 
-// ─── ICONS ────────────────────────────────────────────────────────────────────
-function Icon({ name, className = "h-5 w-5" }: { name: IconName; className?: string }) {
-  const s = "1.5";
-  if (name === "calculator") return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="5" y="3" width="14" height="18" stroke="currentColor" strokeWidth={s} />
-      <path d="M8 7H16M8 11H8.01M12 11H12.01M16 11H16.01M8 15H8.01M12 15H12.01M16 15H16.01" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
-    </svg>
-  );
-  if (name === "shield") return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 3L20 6.5V11.5C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11.5V6.5L12 3Z" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
-      <path d="M9 12L11 14L15 9" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
-    </svg>
-  );
-  if (name === "scan") return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 8V6C4 4.9 4.9 4 6 4H8M16 4H18C19.1 4 20 4.9 20 6V8M20 16V18C20 19.1 19.1 20 18 20H16M8 20H6C4.9 20 4 19.1 4 18V16" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
-      <path d="M7 12H17" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
-    </svg>
-  );
-  if (name === "cloud") return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M6.5 17.5H18C20.2 17.5 22 15.7 22 13.5C22 11.3 20.2 9.5 18 9.5C17.6 6.5 15.1 4 12 4C9.2 4 6.8 5.9 6.1 8.5C3.8 8.9 2 10.9 2 13.25C2 15.6 3.9 17.5 6.5 17.5Z" stroke="currentColor" strokeWidth={s} strokeLinecap="square" strokeLinejoin="miter" />
-    </svg>
-  );
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M4 19H20M7 16V10M12 16V6M17 16V12" stroke="currentColor" strokeWidth={s} strokeLinecap="square" />
-    </svg>
-  );
+function toastErr(message: string) {
+  toast.dismiss();
+  toast.error(message, {
+    ...toastBase,
+    style: { ...toastBase.style, border: "1px solid #B85450", color: "#B85450" },
+    icon: null,
+  });
 }
 
 function ArrowIcon() {
@@ -187,454 +167,399 @@ function CloseIcon() {
   );
 }
 
-// ─── TEXT SCRAMBLE ────────────────────────────────────────────────────────────
-
-// ─── SHARED PRIMITIVES ────────────────────────────────────────────────────────
 function Btn({ children, onClick, disabled = false, className = "" }: {
-  children: ReactNode; onClick: () => void; disabled?: boolean; className?: string;
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  className?: string;
 }) {
   return (
-    <button
-      type="button" onClick={onClick} disabled={disabled}
-      className={`btn-primary disabled:opacity-40 disabled:cursor-not-allowed ${className}`}
-    >
+    <button type="button" onClick={onClick} disabled={disabled} className={`btn-primary disabled:cursor-not-allowed disabled:opacity-40 ${className}`}>
       {children}
     </button>
   );
 }
 
-function ScrollReveal({ children, up = true, delay = 0 }: {
-  children: ReactNode; up?: boolean; delay?: number;
-}) {
-  const [ref, visible] = useInView<HTMLDivElement>(0.2);
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 will-change-transform ${
-        visible ? "translate-y-0 opacity-100" : up ? "translate-y-10 opacity-0" : "-translate-y-10 opacity-0"
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
+const inputBase =
+  "w-full bg-[#0A0A0A] px-4 py-3.5 font-mono text-sm text-[#F5F5F5] outline-none border border-[#2A2A2A] transition-all duration-200 focus:border-[#C9A96E]/60 focus:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm";
+
+function FieldLabel({ children }: { children: ReactNode }) {
+  return <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-[#888]">{children}</span>;
 }
 
-// ─── FORM INPUTS ──────────────────────────────────────────────────────────────
-const inputBase =
-  "flex items-center bg-[#0A0A0A] px-4 py-3.5 border border-[#2A2A2A] transition-all duration-200 focus-within:border-[#C9A96E]/60 focus-within:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm";
-
-const NumberInput = memo(function NumberInput({ label, value, onChange, prefix, suffix }: {
-  label: string; value: number; onChange: (v: number) => void; prefix?: string; suffix?: string;
+function NumberInput({ label, value, onChange, min = 0, max, prefix, suffix }: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+  prefix?: string;
+  suffix?: string;
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-[#888]">{label}</span>
-      <div className={inputBase}>
-        {prefix && <span className="mr-2 font-mono text-[#888]">{prefix}</span>}
+      <FieldLabel>{label}</FieldLabel>
+      <div className="flex items-center border border-[#2A2A2A] bg-[#0A0A0A] px-4 py-3.5 transition-all duration-200 focus-within:border-[#C9A96E]/60 focus-within:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm">
+        {prefix && <span className="mr-2 font-mono text-sm text-[#888]">{prefix}</span>}
         <input
-          type="number" min={0} value={value}
-          onChange={(e) => onChange(clamp(Number(e.target.value)))}
-          className="w-full bg-transparent font-mono text-sm text-[#F5F5F5] outline-none placeholder:text-[#444]"
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(event) => onChange(clamp(Number(event.target.value), min, max))}
+          className="w-full bg-transparent font-mono text-sm text-[#F5F5F5] outline-none"
         />
         {suffix && <span className="ml-2 font-mono text-xs text-[#888]">{suffix}</span>}
       </div>
     </label>
   );
-});
+}
 
-const SelectInput = memo(function SelectInput({ value, onChange }: {
-  value: CurrentSystem; onChange: (v: CurrentSystem) => void;
+function SelectInput<T extends string>({ label, value, options, onChange }: {
+  label: string;
+  value: T;
+  options: readonly T[];
+  onChange: (value: T) => void;
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-[#888]">Sistema Actual</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value as CurrentSystem)}
-        className="w-full cursor-pointer appearance-none bg-[#0A0A0A] px-4 py-3.5 font-mono text-sm text-[#F5F5F5] outline-none border border-[#2A2A2A] transition-all duration-200 focus:border-[#C9A96E]/60 focus:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm"
-      >
-        {SYSTEMS.map((s) => <option key={s} value={s} className="bg-[#0A0A0A]">{s}</option>)}
+      <FieldLabel>{label}</FieldLabel>
+      <select value={value} onChange={(event) => onChange(event.target.value as T)} className={`${inputBase} cursor-pointer appearance-none`}>
+        {options.map((option) => (
+          <option key={option} value={option} className="bg-[#0A0A0A]">
+            {option}
+          </option>
+        ))}
       </select>
     </label>
   );
-});
+}
 
-// ─── RESULT CHART ─────────────────────────────────────────────────────────────
-const ResultChart = memo(function ResultChart({ currTco5, oracleTco5, five, show }: {
-  currTco5: number; oracleTco5: number; five: number; show: boolean;
+function TextInput({ label, value, onChange, placeholder, type = "text" }: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: "text" | "email";
 }) {
-  const max = Math.max(currTco5, oracleTco5, five, 1);
-  const bars = [
-    { label: "TCO Actual (5 Años)",  value: currTco5,   color: "bg-[#444]" },
-    { label: "TCO Nuevo (5 Años)",   value: oracleTco5, color: "bg-[#D4AF37]" },
-    { label: "Ahorro Neto Estimado", value: five,       color: "bg-[#C9A96E]" },
-  ];
   return (
-    <div className="bg-[#0A0A0A] p-6 border border-[#1A1A1A] rounded-sm">
-      <p className="font-mono text-[10px] uppercase tracking-[0.15em] mb-6 text-[#C9A96E]">Análisis Financiero</p>
+    <label className="block">
+      <FieldLabel>{label}</FieldLabel>
+      <input
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        className={`${inputBase} placeholder:text-[#444]`}
+      />
+    </label>
+  );
+}
+
+function MetricBox({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className={`${accent ? "border-[#C9A96E]/40 bg-[#C9A96E] text-black" : "border-[#1A1A1A] bg-[#111111] text-[#F5F5F5]"} border p-5 rounded-sm`}>
+      <p className={`mb-2 font-mono text-[9px] uppercase tracking-[0.15em] ${accent ? "text-black/70" : "text-[#888]"}`}>{label}</p>
+      <p className="font-mono text-lg">{value}</p>
+    </div>
+  );
+}
+
+function ComparisonTable({ tco }: { tco: ReturnType<typeof calculateTCO> }) {
+  const rows = [
+    { period: "Año 1", current: tco.currentTCO1y, oracle: tco.oracleTCO1y },
+    { period: "Año 3", current: tco.currentTCO3y, oracle: tco.oracleTCO3y },
+    { period: "Año 5", current: tco.currentTCO5y, oracle: tco.oracleTCO5y },
+    { period: "Año 10", current: tco.currentTCO10y, oracle: tco.oracleTCO10y },
+  ];
+
+  return (
+    <div className="overflow-hidden border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm">
+      <div className="grid grid-cols-[0.8fr_1fr_1fr] border-b border-[#1A1A1A] bg-[#111111] px-4 py-3 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">
+        <span>Periodo</span>
+        <span>Situacion actual</span>
+        <span>Oracle Fusion</span>
+      </div>
+      {rows.map((row) => (
+        <div key={row.period} className="grid grid-cols-[0.8fr_1fr_1fr] border-b border-[#1A1A1A] px-4 py-4 last:border-0">
+          <span className="font-mono text-xs text-[#888]">{row.period}</span>
+          <span className="font-mono text-sm text-[#F5F5F5]">{fmt(row.current)}</span>
+          <span className="font-mono text-sm text-[#C9A96E]">{fmt(row.oracle)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SavingsChart({ currentTCO10y, oracleTCO10y }: { currentTCO10y: number; oracleTCO10y: number }) {
+  const max = Math.max(currentTCO10y, oracleTCO10y, 1);
+  const bars = [
+    { label: "Actual 10 años", value: currentTCO10y, color: "bg-[#444]" },
+    { label: "Oracle 10 años", value: oracleTCO10y, color: "bg-[#C9A96E]" },
+  ];
+
+  return (
+    <div className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+      <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Grafico simple de ahorro acumulado</p>
       <div className="space-y-5">
-        {bars.map((b, i) => (
-          <div key={b.label}>
+        {bars.map((bar) => (
+          <div key={bar.label}>
             <div className="mb-2 flex items-center justify-between">
-              <span className="font-sans text-xs text-[#888]">{b.label}</span>
-              <span className="font-mono text-sm text-[#F5F5F5]">{fmtCo(b.value)}</span>
+              <span className="font-sans text-xs text-[#888]">{bar.label}</span>
+              <span className="font-mono text-sm text-[#F5F5F5]">{fmtCompact(bar.value)}</span>
             </div>
-            <div className="h-1.5 w-full overflow-hidden bg-[#161616] rounded-full">
-              <div
-                className={`h-full ${b.color} transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] rounded-full ${
-                  show ? "opacity-100" : "opacity-0"
-                }`}
-                style={{
-                  width: show ? `${(b.value / max) * 100}%` : "0%",
-                  transitionDelay: `${i * 120}ms`,
-                }}
-              />
+            <div className="h-1.5 w-full bg-[#161616] rounded-full">
+              <div className={`h-full ${bar.color} rounded-full`} style={{ width: `${(bar.value / max) * 100}%` }} />
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-});
+}
 
-// ─── FEATURE CARD ─────────────────────────────────────────────────────────────
-const FeatureCard = memo(function FeatureCard({ feature, index }: {
-  feature: (typeof FEATURES)[number]; index: number;
-}) {
-  const [ref, visible] = useInView<HTMLElement>(0.15);
-  return (
-    <article
-      ref={ref}
-      className={`bg-[#0A0A0A] border border-[#1A1A1A] group relative flex flex-col p-6 transition-all duration-700
-        hover:border-[#C9A96E]/40 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(201,169,110,0.08)] rounded-sm
-        ${visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
-      style={{ transitionDelay: `${index * 100 + 150}ms` }}
-    >
-      <div className="mb-5 flex h-10 w-10 items-center justify-center bg-[#050505] text-[#C9A96E] border border-[#2A2A2A] transition-colors group-hover:bg-[#C9A96E]/10 rounded-sm">
-        <Icon name={feature.icon} className="h-4 w-4" />
-      </div>
-      <h3 className="font-serif text-lg text-[#F5F5F5] mb-2">{feature.title}</h3>
-      <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>
-    </article>
-  );
-});
-
-// ─── PREVIEW ROW ──────────────────────────────────────────────────────────────
-const PreviewRow = memo(function PreviewRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-[#1A1A1A] pb-3 last:border-0 last:pb-0">
-      <span className="font-sans text-[13px] text-[#888]">{label}</span>
-      <span className="font-mono text-sm text-[#F5F5F5]">{value}</span>
-    </div>
-  );
-});
-
-// ─── LEAD PREVIEW CARD ────────────────────────────────────────────────────────
-const LeadPreviewCard = memo(function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
+function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
+  const preview = calculateTCO(DEFAULT_FORM);
   const rows = [
-    { label: "Sistema actual", value: "SAP S/4 HANA" },
-    { label: "Usuarios",       value: "150"          },
-    { label: "Año 1 actual",   value: "$485,000"     },
-    { label: "Año 1 Oracle",   value: "$310,000"     },
-    { label: "Ahorro 5 años",  value: "$1,240,000"   },
-    { label: "Breakeven",      value: "18 meses"     },
+    { label: "ERP actual", value: DEFAULT_FORM.erp },
+    { label: "Usuarios", value: String(DEFAULT_FORM.users) },
+    { label: "Costo anual actual", value: fmt(DEFAULT_FORM.licenseCost + DEFAULT_FORM.infraCost + DEFAULT_FORM.supportCost) },
+    { label: "Reduccion estimada", value: `${preview.percentReduction}%` },
+    { label: "Ahorro 5 años", value: fmt(preview.savings5y) },
+    { label: "Breakeven", value: `${preview.breakeven} meses` },
   ];
+
   return (
-    <article className="relative w-full max-w-[460px] bg-[#0A0A0A] p-8 border border-[#2A2A2A] shadow-[0_25px_60px_rgba(0,0,0,0.6)] md:p-10 rounded-xl transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(201,169,110,0.1)]">
-      <div className="mb-8 flex items-center justify-between border-b border-[#1A1A1A] pb-6">
-        <div>
-          <div className="mb-2 flex items-center gap-2">
-            <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
-            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Live Preview</p>
-          </div>
-          <p className="font-serif text-2xl text-[#F5F5F5]">Modelo Financiero <span className="text-[#C9A96E]">TCO</span></p>
+    <article className="relative w-full max-w-[460px] border border-[#2A2A2A] bg-[#0A0A0A] p-8 shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(201,169,110,0.1)] md:p-10 rounded-sm">
+      <div className="mb-8 border-b border-[#1A1A1A] pb-6">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Ejemplo estimado</p>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center bg-[#111111] text-[#C9A96E] border border-[#2A2A2A] rounded-sm">
-          <Icon name="calculator" />
-        </div>
+        <p className="font-serif text-2xl text-[#F5F5F5]">ERP TCO <span className="text-[#C9A96E]">Comparator</span></p>
       </div>
       <div className="space-y-4">
-        {rows.map((r) => <PreviewRow key={r.label} label={r.label} value={r.value} />)}
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-center justify-between border-b border-[#1A1A1A] pb-3 last:border-0 last:pb-0">
+            <span className="font-sans text-[13px] text-[#888]">{row.label}</span>
+            <span className="text-right font-mono text-sm text-[#F5F5F5]">{row.value}</span>
+          </div>
+        ))}
       </div>
-      <div
+      <button
+        type="button"
         onClick={onOpen}
-        className="group mt-8 cursor-pointer bg-[#C9A96E]/5 p-6 border border-[#C9A96E]/20 transition-all duration-300 hover:bg-[#C9A96E] rounded-sm"
+        className="group mt-8 w-full border border-[#C9A96E]/20 bg-[#C9A96E]/5 p-6 text-left transition-all duration-300 hover:bg-[#C9A96E] rounded-sm"
       >
-        <p className="font-mono text-[10px] uppercase tracking-[0.15em] mb-2 text-[#C9A96E] transition-colors duration-300 group-hover:text-black">
-          Ahorro 10 años
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] transition-colors duration-300 group-hover:text-black">
+          Ahorro 10 años estimado
         </p>
         <p className="font-serif text-4xl text-[#F5F5F5] transition-colors duration-300 group-hover:text-black">
-          $3.8M
+          {fmtCompact(preview.savings10y)}
         </p>
-      </div>
+      </button>
     </article>
   );
-});
+}
 
-// ─── CALCULATOR MODAL ─────────────────────────────────────────────────────────
 function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
-  const [hasResult, setResult] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const tco = useTco(form);
+  const [hasUserEdited, setHasUserEdited] = useState(false);
+  const tco = useMemo(() => calculateTCO(form), [form]);
 
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
-  const update = useCallback(<K extends keyof FormState>(key: K, val: FormState[K]) => {
-    setForm((f) => ({ ...f, [key]: val }));
-    setResult(false);
+  const update = useCallback(<K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setHasUserEdited(true);
+    setForm((current) => ({ ...current, [key]: value }));
   }, []);
 
-  const calculate = useCallback(() => {
-    if (busy) return;
-    if (!form.users || !form.currentYearOne || !form.oracleYearOne || !form.migrationCost) {
-      toastErr("Completa los campos obligatorios");
+  const requestAnalysis = useCallback(() => {
+    const publicEmail = /(gmail|hotmail|outlook|yahoo)\./i.test(form.email);
+
+    if (!form.company.trim() || !form.role.trim() || !form.email.trim()) {
+      toastErr("Completa empresa, cargo y email");
       return;
     }
-    setBusy(true);
-    setResult(true);
-    toastOk("Análisis TCO generado");
-    setTimeout(() => setBusy(false), 500);
-  }, [form, busy]);
 
-  // Animated counters (triggered when hasResult becomes true)
-  const fiveCount = useCountUp(tco.five, 800, hasResult);
-  const tenCount  = useCountUp(tco.ten, 1000, hasResult);
-  const beCount   = useCountUp(tco.breakeven, 400, hasResult);
-  const roiCount  = useCountUp(tco.roi5, 500, hasResult);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) || publicEmail) {
+      toastErr("Usa un email corporativo");
+      return;
+    }
+
+    if (!form.ndaAccepted) {
+      toastErr("Acepta NDA para continuar");
+      return;
+    }
+
+    toastOk("Solicitud de TCO recibida");
+  }, [form]);
 
   if (!open) return null;
 
   return (
-    <>
-      <style>{`
-        .fabric-modal-scroll {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(201, 169, 110, 0.65) transparent;
-        }
-        .fabric-modal-scroll::-webkit-scrollbar {
-          width: 8px;
-        }
-        .fabric-modal-scroll::-webkit-scrollbar-track {
-          background: transparent;
-          margin: 16px 0;
-        }
-        .fabric-modal-scroll::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, rgba(201, 169, 110, 0.85), rgba(201, 169, 110, 0.35));
-          border-radius: 999px;
-          border: 2px solid rgba(5, 5, 5, 0.95);
-        }
-        .fabric-modal-scroll::-webkit-scrollbar-thumb:hover {
-          background: rgba(201, 169, 110, 0.95);
-        }
-        .fabric-modal-scroll::-webkit-scrollbar-corner {
-          background: transparent;
-        }
-      `}</style>
+    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl">
+      <div className="h-full overflow-y-auto overscroll-contain px-4 py-6 md:px-6 md:py-10">
+        <div className="relative mx-auto w-full max-w-[1160px] overflow-hidden border border-[#2A2A2A] bg-[#050505]/95 shadow-[0_0_80px_rgba(0,0,0,0.9),0_0_20px_rgba(201,169,110,0.1)] rounded-sm">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center border border-[#2A2A2A] bg-[#050505]/80 text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:bg-[#C9A96E]/10 hover:text-[#C9A96E] rounded-sm"
+            aria-label="Cerrar calculadora"
+          >
+            <CloseIcon />
+          </button>
 
-      {/* Backdrop */}
-      <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl animate-[fadeIn_0.3s_ease-out]">
-        <div className="fabric-modal-scroll h-full overflow-y-auto overscroll-contain px-4 py-6 md:px-6 md:py-10">
-          <div className="relative mx-auto w-full max-w-[1100px] bg-[#050505]/95 border border-[#2A2A2A] shadow-[0_0_80px_rgba(0,0,0,0.9),0_0_20px_rgba(201,169,110,0.1)] rounded-2xl overflow-hidden">
-            
-            {/* Close button */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="group absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center bg-[#050505]/80 border border-[#2A2A2A] text-[#888] backdrop-blur-md transition-all duration-300 hover:border-[#C9A96E] hover:text-[#C9A96E] hover:bg-[#C9A96E]/10 rounded-sm"
-            >
-              <CloseIcon />
-            </button>
-
-            <div className="grid lg:grid-cols-[1fr_1.1fr]">
-              {/* Form Column */}
-              <div className="p-8 md:p-12 lg:border-r border-[#1A1A1A]">
-                <div className="mb-8">
-                  <div className="mb-5 inline-flex items-center bg-[#C9A96E]/10 px-3 py-1 border border-[#C9A96E]/30 rounded-sm">
-                    <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                      Calculadora Ejecutiva
-                    </span>
-                  </div>
-                  <h3 className="font-serif text-3xl md:text-4xl text-[#F5F5F5]">
-                    Configura tu escenario
-                  </h3>
-                  <p className="mt-3 font-sans text-sm text-[#888] leading-relaxed">
-                    Introduce los parámetros de tu infraestructura actual para proyectar el ahorro.
-                  </p>
+          <div className="grid lg:grid-cols-[0.95fr_1.15fr]">
+            <div className="p-8 md:p-12 lg:border-r lg:border-[#1A1A1A]">
+              <div className="mb-8">
+                <div className="mb-5 inline-flex border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 rounded-sm">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">
+                    8 preguntas · resultado inmediato
+                  </span>
                 </div>
+                <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">Configura tu TCO actual</h3>
+                <p className="mt-3 font-sans text-sm leading-relaxed text-[#888]">
+                  Captura costos anuales aproximados. El comparativo usa benchmarks por plataforma para estimar el equivalente Oracle Fusion Cloud.
+                </p>
+              </div>
 
+              <div className="grid gap-5 sm:grid-cols-2">
+                <SelectInput label="ERP actual" value={form.erp} options={ERPS} onChange={(value) => update("erp", value)} />
+                <NumberInput label="Usuarios totales" value={form.users} min={10} max={5000} onChange={(value) => update("users", value)} />
+                <NumberInput label="Licencias anuales" value={form.licenseCost} min={10000} max={5000000} prefix="$" onChange={(value) => update("licenseCost", value)} />
+                <NumberInput label="Infraestructura anual" value={form.infraCost} min={0} max={2000000} prefix="$" onChange={(value) => update("infraCost", value)} />
+                <NumberInput label="Soporte / consultoria anual" value={form.supportCost} min={0} max={3000000} prefix="$" onChange={(value) => update("supportCost", value)} />
+                <SelectInput label="Transacciones mensuales" value={form.monthlyTransactions} options={TRANSACTION_VOLUMES} onChange={(value) => update("monthlyTransactions", value)} />
+                <div className="sm:col-span-2">
+                  <SelectInput label="Industria" value={form.industry} options={INDUSTRIES} onChange={(value) => update("industry", value)} />
+                </div>
+              </div>
+
+              <div className="mt-10 border-t border-[#1A1A1A] pt-8">
+                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Analisis con datos reales</p>
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <SelectInput value={form.currentSystem} onChange={(v) => update("currentSystem", v)} />
-                  <NumberInput label="Usuarios Totales" value={form.users} onChange={(v) => update("users", v)} />
-                  <NumberInput label="Costo Anual Actual" value={form.currentYearOne} onChange={(v) => update("currentYearOne", v)} prefix="$" />
-                  <NumberInput label="Costo Anual Nuevo" value={form.oracleYearOne} onChange={(v) => update("oracleYearOne", v)} prefix="$" />
-                  <NumberInput label="Inversión Migración" value={form.migrationCost} onChange={(v) => update("migrationCost", v)} prefix="$" />
-                  <NumberInput label="Reportes Manuales/Mes" value={form.manualReports} onChange={(v) => update("manualReports", v)} />
-                  <NumberInput label="Días Cierre Contable" value={form.closingDays} onChange={(v) => update("closingDays", v)} suffix="días" />
-                  <NumberInput label="Adopción Estimada" value={form.adoptionRate} onChange={(v) => update("adoptionRate", v)} suffix="%" />
+                  <TextInput label="Empresa" value={form.company} placeholder="Empresa" onChange={(value) => update("company", value)} />
+                  <TextInput label="Cargo" value={form.role} placeholder="CFO / CIO / CTO" onChange={(value) => update("role", value)} />
+                  <div className="sm:col-span-2">
+                    <TextInput label="Email corporativo" type="email" value={form.email} placeholder="nombre@empresa.com" onChange={(value) => update("email", value)} />
+                  </div>
                 </div>
-
-                <div className="mt-10">
-                  <Btn onClick={calculate} disabled={busy} className="w-full">
-                    {busy ? "Procesando..." : "Generar Proyección"}
+                <label className="mt-5 flex items-start gap-3 font-sans text-xs leading-relaxed text-[#888]">
+                  <input
+                    type="checkbox"
+                    checked={form.ndaAccepted}
+                    onChange={(event) => update("ndaAccepted", event.target.checked)}
+                    className="mt-1 h-4 w-4 accent-[#C9A96E]"
+                  />
+                  Acepto que FABRIC contacte a mi empresa para preparar un TCO Comparator personalizado bajo NDA. El cargado de facturas, reportes de licencias o contratos se solicita en el siguiente paso.
+                </label>
+                <div className="mt-8">
+                  <Btn onClick={requestAnalysis} className="w-full">
+                    Solicitar analisis con mis datos reales
                     <ArrowIcon />
                   </Btn>
                 </div>
               </div>
+            </div>
 
-              {/* Results Column */}
-              <div className="bg-[#0A0A0A] p-8 md:p-12">
-                {!hasResult ? (
-                  <div className="flex h-full min-h-[400px] flex-col items-center justify-center text-center">
-                    <div className="mb-6 flex h-16 w-16 items-center justify-center bg-[#111111] text-[#666] border border-[#2A2A2A] rounded-full">
-                      <Icon name="calculator" className="h-8 w-8" />
-                    </div>
-                    <h4 className="font-serif text-2xl text-[#F5F5F5]">Esperando parámetros</h4>
-                    <p className="mt-3 max-w-[280px] font-sans text-[13px] text-[#888] leading-relaxed">
-                      Completa la información para generar el dashboard de{" "}
-                      <span className="text-[#C9A96E]">TCO</span> y{" "}
-                      <span className="text-[#C9A96E]">ROI</span>.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex h-full flex-col justify-center animate-[fadeIn_0.5s_ease-out]">
-                    <div className="mb-8 grid gap-4 sm:grid-cols-2">
-                      {/* Ahorro 5 años */}
-                      <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm animate-[fadeInUp_0.5s_ease-out]">
-                        <p className="font-mono text-[9px] uppercase tracking-[0.15em] mb-2 text-[#888]">Ahorro 5 Años</p>
-                        <p className="font-mono text-xl text-[#C9A96E]">
-                          {fmt(fiveCount)}
-                        </p>
-                      </div>
+            <div className="bg-[#0A0A0A] p-8 md:p-12">
+              <div className="mb-8">
+                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
+                  {hasUserEdited ? "TCO comparativo estimado" : "Ejemplo estimado"}
+                </p>
+                <h4 className="font-serif text-2xl text-[#F5F5F5]">
+                  {hasUserEdited
+                    ? `${form.erp}, ${form.users.toLocaleString("en-US")} usuarios`
+                    : "Completa tus datos para ver tu TCO comparativo"}
+                </h4>
+              </div>
 
-                      {/* Ahorro 10 años */}
-                      <div className="bg-[#C9A96E] p-6 rounded-sm shadow-[0_0_25px_rgba(201,169,110,0.3)] animate-[fadeInUp_0.5s_ease-out_0.1s]">
-                        <p className="font-mono text-[9px] uppercase tracking-[0.15em] mb-2 text-black">Ahorro 10 Años</p>
-                        <p className="font-mono text-xl font-bold text-black">
-                          {fmtCo(tenCount)}
-                        </p>
-                      </div>
+              <div className="mb-6 grid gap-4 sm:grid-cols-2">
+                <MetricBox label="Ahorro 5 años" value={fmt(tco.savings5y)} />
+                <MetricBox label="Ahorro 10 años" value={fmtCompact(tco.savings10y)} accent />
+                <MetricBox label="Reduccion total" value={`${Math.round(tco.percentReduction)}%`} />
+                <MetricBox label="Breakeven migracion" value={`${tco.breakeven} meses`} />
+              </div>
 
-                      {/* Breakeven */}
-                      <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm animate-[fadeInUp_0.5s_ease-out_0.15s]">
-                        <p className="font-mono text-[9px] uppercase tracking-[0.15em] mb-2 text-[#888]">Breakeven</p>
-                        <p className="font-mono text-lg text-[#C9A96E]">
-                          {beCount} <span className="text-[#888] text-sm">Meses</span>
-                        </p>
-                      </div>
+              <div className="space-y-6">
+                <ComparisonTable tco={tco} />
+                <SavingsChart currentTCO10y={tco.currentTCO10y} oracleTCO10y={tco.oracleTCO10y} />
+              </div>
 
-                      {/* ROI */}
-                      <div className="bg-[#111111] p-6 border border-[#1A1A1A] rounded-sm animate-[fadeInUp_0.5s_ease-out_0.2s]">
-                        <p className="font-mono text-[9px] uppercase tracking-[0.15em] mb-2 text-[#888]">ROI 5 Años</p>
-                        <p className="font-mono text-lg text-[#C9A96E]">
-                          {roiCount}%
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Chart with animated bars */}
-                    <ResultChart
-                      currTco5={tco.currTco5}
-                      oracleTco5={tco.oracleTco5}
-                      five={tco.five}
-                      show={hasResult}
-                    />
-                  </div>
-                )}
+              <div className="mt-8 border-t border-[#1A1A1A] pt-6 font-sans text-xs leading-relaxed text-[#888]">
+                Estos numeros son estimaciones basadas en benchmarks de Oracle y proyectos similares. Para analisis con tus datos reales, FABRIC prepara un TCO Comparator personalizado en 7-10 dias con analisis tecnico de migracion, plazo y costo estimado.
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-// ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
 export default function S03TcoCalculator() {
   const [open, setOpen] = useState(false);
-  const handleOpen = useCallback(() => setOpen(true), []);
 
   return (
     <section id="tco" className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
-      {/* 🛑 ELIMINÉ EL <Toaster /> AQUÍ PORQUE YA ESTÁ EN MAIN.TSX 🛑 */}
-
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute left-0 right-0 top-0 -z-10 m-auto h-[400px] w-[400px] bg-[#C9A96E] opacity-[0.05] blur-[120px]" />
 
       <div className="relative z-10 mx-auto max-w-[1300px]">
         <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] lg:gap-20">
-          {/* Left Content */}
           <div className="relative flex flex-col justify-center">
-            <ScrollReveal delay={0}>
-              <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 rounded-sm backdrop-blur-sm">
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                  Lead Magnet · TCO Analysis
-                </span>
-              </div>
-            </ScrollReveal>
+            <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 rounded-sm">
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
+                Lead Magnet · ERP TCO Comparator
+              </span>
+            </div>
 
-           <ScrollReveal delay={100}>
-  <h2 className="font-serif text-[38px] leading-[1.1] tracking-[-0.04em] text-[#F5F5F5] md:text-[52px] lg:text-[60px]">
-    ¿Cuánto te está costando realmente tu ERP actual?
-  </h2>
-</ScrollReveal>
+            <h2 className="font-serif text-[38px] leading-[1.1] tracking-[-0.04em] text-[#F5F5F5] md:text-[52px] lg:text-[60px]">
+              ¿Cuánto te está costando realmente tu ERP actual?
+            </h2>
 
-            <ScrollReveal delay={200}>
-              <p className="mt-8 max-w-2xl font-sans text-base md:text-lg leading-relaxed text-[#888]">
-                Comparativo TCO{" "}
-                <span className="text-[#F5F5F5] font-semibold">Oracle Fusion</span> vs tu SAP, EBS, JD Edwards, PeopleSoft o Microsoft Dynamics.
+            <p className="mt-8 max-w-2xl font-sans text-base leading-relaxed text-[#888] md:text-lg">
+              Comparativo Oracle Fusion vs tu situacion actual. Selecciona tu ERP, captura costos anuales aproximados y visualiza TCO estimado a 1, 3, 5 y 10 años.
+            </p>
+
+            <div className="mt-12 flex flex-col items-start gap-6">
+              <Btn onClick={() => setOpen(true)}>
+                Calcular TCO
+                <ArrowIcon />
+              </Btn>
+              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]/70">
+                8 preguntas · benchmarks por ERP · CTA con datos reales
               </p>
-            </ScrollReveal>
+            </div>
 
-            <ScrollReveal delay={300}>
-              <div className="mt-12 flex flex-col items-start gap-6">
-                <Btn onClick={handleOpen}>
-                  Calcular Ahorro
-                  <ArrowIcon />
-                </Btn>
-                <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]/70">
-                  8 preguntas · Resultado inmediato en pantalla
-                </p>
-              </div>
-            </ScrollReveal>
-
-            {/* Mobile features */}
             <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:hidden">
-              {FEATURES.map((f, i) => (
-                <FeatureCard key={f.id} feature={f} index={i} />
+              {FEATURES.map((feature) => (
+                <article key={feature.id} className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+                  <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">{feature.id}</p>
+                  <h3 className="mb-2 font-serif text-lg text-[#F5F5F5]">{feature.title}</h3>
+                  <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>
+                </article>
               ))}
             </div>
           </div>
 
-          {/* Right Preview (desktop) */}
           <div className="relative hidden flex-col justify-center lg:flex">
             <div className="absolute left-1/2 top-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[100px]" />
-            <ScrollReveal up={false} delay={200}>
-              <LeadPreviewCard onOpen={handleOpen} />
-            </ScrollReveal>
+            <LeadPreviewCard onOpen={() => setOpen(true)} />
           </div>
         </div>
 
-        {/* Desktop features */}
         <div className="mt-24 hidden grid-cols-1 gap-6 sm:grid-cols-2 lg:grid lg:grid-cols-4">
-          {FEATURES.map((f, i) => (
-            <FeatureCard key={f.id} feature={f} index={i} />
+          {FEATURES.map((feature) => (
+            <article key={feature.id} className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 transition-all duration-300 hover:border-[#C9A96E]/40 rounded-sm">
+              <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">{feature.id}</p>
+              <h3 className="mb-2 font-serif text-lg text-[#F5F5F5]">{feature.title}</h3>
+              <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>
+            </article>
           ))}
         </div>
 
-        {/* Mobile preview card */}
         <div className="mt-16 flex justify-center lg:hidden">
-          <ScrollReveal delay={400}>
-            <LeadPreviewCard onOpen={handleOpen} />
-          </ScrollReveal>
+          <LeadPreviewCard onOpen={() => setOpen(true)} />
         </div>
       </div>
 

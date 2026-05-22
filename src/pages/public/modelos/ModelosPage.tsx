@@ -8,10 +8,10 @@ export default function ModelosPage() {
             Modelos de<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>compromiso.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.
+            Tres formas de trabajar con FABRIC: rescate de implementación crítica, migración controlada desde legacy y acompañamiento ejecutivo para primer ciclo crítico. La admisión es limitada.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Próximamente Q3-Q4 2026
+            Acceso por evaluación · Capacidad limitada
           </div>
         </div>
       </div>

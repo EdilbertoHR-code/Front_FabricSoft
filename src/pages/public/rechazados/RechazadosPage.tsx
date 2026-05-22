@@ -3,7 +3,7 @@ export default function RechazadosPage() {
     { id: 'E-2026-01', industria: 'Servicios Financieros', razon: 'Presupuesto insuficiente para doctrina de primer ciclo crítico', trimestre: 'Q1 2026', modulos: 'Fusion Financials · HCM' },
     { id: 'E-2026-02', industria: 'Logística / Distribución', razon: 'Plazo irreal: cliente exigía go-live en 8 semanas sin fase de diseño', trimestre: 'Q1 2026', modulos: 'SCM · WMS' },
     { id: 'E-2026-03', industria: 'Inmobiliario', razon: 'Patrocinio ejecutivo insuficiente: sin CFO ni CTO activos en el programa', trimestre: 'Q2 2026', modulos: 'Fusion Financials · EPM' },
-    { id: 'E-2026-04', industria: 'Servicios Financieros', razon: 'Lorem ipsum dolor sit amet, criterio de evaluación pendiente de definición', trimestre: 'Q2 2026', modulos: 'Oracle EBS Upgrade' },
+    { id: 'E-2026-04', industria: 'Servicios Financieros', razon: 'Alcance de upgrade sin sponsor ejecutivo ni ventana operativa realista', trimestre: 'Q2 2026', modulos: 'Oracle EBS Upgrade' },
   ];
 
   return (

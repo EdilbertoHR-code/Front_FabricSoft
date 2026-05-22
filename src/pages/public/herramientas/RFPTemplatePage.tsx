@@ -8,10 +8,10 @@ export default function RFPTemplatePage() {
             RFP Template Oracle.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>47 preguntas obligatorias.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.
+            Plantilla para presionar a cualquier partner Oracle con preguntas sobre seniors reales, primer ciclo crítico, datos, integraciones y responsabilidad post go-live.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Próximamente Q3-Q4 2026
+            Descarga calificada · Correo corporativo
           </div>
         </div>
       </div>

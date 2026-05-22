@@ -43,7 +43,7 @@ export default function TransparenciaPage() {
             </div>
             <div>
               <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-                En FABRIC no publicamos proyecciones ni tasas de éxito inventadas. Publicamos los números de nuestros proyectos reales, con metodología documentada y fecha de actualización.
+                En FABRIC no publicamos proyecciones comerciales como si fueran resultados. Publicamos números de proyectos reales, con metodología documentada y fecha de actualización.
               </p>
               <div style={{ marginTop: 24, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
                 Última actualización · Mayo 2026 · Universo · 2 proyectos bajo doctrina formal

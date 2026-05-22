@@ -1,14 +1,21 @@
 import { useParams } from 'react-router-dom';
 
-const CASOS: Record<string, { nombre: string; hitos: { fecha: string; titulo: string; descripcion: string; verificable: boolean }[] }> = {
+const CASOS: Record<string, { nombre: string; hitos: { fecha: string; titulo: string; descripcion: string; verificable: boolean; pdfLabel?: string }[] }> = {
   'ape-plazas': {
     nombre: 'APE Plazas',
     hitos: [
-      { fecha: 'Ene 2026', titulo: 'SOW firmado bajo doctrina FABRIC', descripcion: 'Contrato Fixed-Price con cláusula de entrega en primer ciclo crítico. Lorem ipsum dolor sit amet, criterio contractual pendiente de detalle.', verificable: true },
-      { fecha: 'Feb 2026', titulo: 'Fase de diseño completada', descripcion: 'Arquitectura financiera multi-entidad validada. Chart of accounts aprobado por CFO. Lorem ipsum dolor sit amet.', verificable: false },
-      { fecha: '06 Abr 2026', titulo: 'Go-live Oracle Fusion Cloud', descripcion: 'Módulos Financials, Procurement y EPM en producción. Lorem ipsum dolor sit amet, detalle de go-live pendiente de validación.', verificable: true },
-      { fecha: 'Abr 2026', titulo: 'Primer cierre contable en producción', descripcion: 'Cierre contable de abril ejecutado sin incidencias con acompañamiento FABRIC. Cero reportes manuales paralelos. Este es el momento en que consideramos el proyecto entregado.', verificable: true },
-      { fecha: 'May 2026', titulo: 'Transición formal completada', descripcion: 'Acta de transición firmada. Documentación viva entregada. Lorem ipsum dolor sit amet, detalles bajo NDA.', verificable: false },
+      { fecha: '06 Abr 2026', titulo: 'Go-live Oracle Fusion Cloud', descripcion: 'Hito de salida a producción con evidencia respaldatoria disponible bajo NDA mutuo.', verificable: true, pdfLabel: 'Acta de go-live' },
+      { fecha: 'Abr 2026', titulo: 'Primer cierre contable en producción', descripcion: 'Primer ciclo crítico operado en producción con acompañamiento FABRIC.', verificable: true, pdfLabel: 'Reporte FABRIC' },
+      { fecha: 'Abr 2026', titulo: 'Cierre ejecutado sin incidencias', descripcion: 'La documentación de soporte se revisa únicamente con prospectos calificados bajo NDA.', verificable: true, pdfLabel: 'Acta de transición' },
+      { fecha: 'May 2026', titulo: 'Dossier ejecutivo privado', descripcion: 'Resumen formal del caso preparado para conversaciones calificadas con CFO, CIO y CTO.', verificable: false },
+    ],
+  },
+  'aplazo': {
+    nombre: 'Aplazo',
+    hitos: [
+      { fecha: 'Reservado', titulo: 'Referencia privada de rescate', descripcion: 'Caso disponible únicamente en conversación calificada por confidencialidad operativa.', verificable: false },
+      { fecha: 'Reservado', titulo: 'Métricas de rescate bajo NDA', descripcion: 'Los indicadores del rescate se comparten solo con organizaciones que atraviesan una situación comparable.', verificable: false },
+      { fecha: 'Reservado', titulo: 'Evidencia bajo NDA', descripcion: 'Los documentos respaldatorios no tienen descarga pública. El acceso requiere admisión previa.', verificable: false },
     ],
   },
 };
@@ -79,6 +86,27 @@ export default function AuditTrailPage() {
                 <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                   {hito.descripcion}
                 </p>
+                {hito.pdfLabel && (
+                  <a
+                    href={`mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20${encodeURIComponent(caso.nombre)}%20-%20${encodeURIComponent(hito.pdfLabel)}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      marginTop: 16,
+                      border: '1px solid rgba(201,169,110,0.38)',
+                      padding: '9px 12px',
+                      color: 'var(--accent)',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 10,
+                      letterSpacing: '0.14em',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Solicitar PDF bajo NDA · {hito.pdfLabel}
+                  </a>
+                )}
               </div>
             ))}
           </div>

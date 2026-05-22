@@ -9,17 +9,17 @@ export default function TerminosPage() {
             Términos de uso.
           </h1>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Última actualización · Pendiente · Contenido en preparación
+            Última actualización · Mayo 2026 · Versión pública
           </div>
         </div>
       </div>
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '80px 56px' }}>
         {[
-          { titulo: '1. Lorem ipsum — Pendiente', cuerpo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Contenido pendiente de redacción por área legal de FABRIC SOFT MEXICO SA DE CV.' },
-          { titulo: '2. Lorem ipsum — Pendiente', cuerpo: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Contenido pendiente de revisión y validación legal.' },
-          { titulo: '3. Lorem ipsum — Pendiente', cuerpo: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Contenido pendiente.' },
-          { titulo: '4. Responsabilidad', cuerpo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido de responsabilidad y limitaciones pendiente de definición por área legal.' },
+          { titulo: '1. Uso del sitio', cuerpo: 'Este sitio presenta información institucional, metodológica y comercial sobre servicios de Oracle Critical Engineering ofrecidos por FABRIC SOFT MEXICO SA DE CV.' },
+          { titulo: '2. Información no vinculante', cuerpo: 'Los contenidos publicados no constituyen una propuesta contractual, garantía de resultado ni asesoría técnica, financiera o legal. Cada iniciativa requiere evaluación específica y alcance por escrito.' },
+          { titulo: '3. Acceso a materiales privados', cuerpo: 'Casos, papers, documentos operativos y evidencia de proyecto pueden requerir correo corporativo, validación de perfil y NDA mutuo antes de compartirse.' },
+          { titulo: '4. Propiedad intelectual', cuerpo: 'La doctrina, textos, modelos, herramientas, diagramas, frameworks y materiales de FABRIC son propiedad de FABRIC SOFT MEXICO SA DE CV o se usan bajo autorización correspondiente.' },
           { titulo: '5. Contacto legal', cuerpo: 'Para consultas relacionadas con estos términos: contacto@fabricsoft.com.mx · FABRIC SOFT MEXICO SA DE CV · Ciudad de México, México.' },
         ].map((s, i) => (
           <div key={i} style={{ paddingBottom: 48, marginBottom: 48, borderBottom: '1px solid var(--border)' }}>

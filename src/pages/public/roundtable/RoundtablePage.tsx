@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
 const formato = [
-  { num: '01', titulo: 'Cena privada en hotel premium', descripcion: 'Lorem ipsum dolor sit amet, locación y formato exacto pendiente de definición por Julio.' },
-  { num: '02', titulo: '8–12 CFO / CTO participantes', descripcion: 'Lorem ipsum dolor sit amet, criterios de selección de participantes pendientes de especificación.' },
+  { num: '01', titulo: 'Cena privada en hotel premium', descripcion: 'Formato cerrado, sin cámaras y con lugar confirmado únicamente a participantes aceptados.' },
+  { num: '02', titulo: '8–12 CFO / CTO participantes', descripcion: 'Mesa reducida para líderes con iniciativas Oracle activas, retos de cierre, migración o rescate en curso.' },
   { num: '03', titulo: 'Sin pitch de FABRIC', descripcion: 'El objetivo es generar conversación ejecutiva real entre pares, no presentar servicios. FABRIC modera, no vende.' },
-  { num: '04', titulo: 'NDA mutuo entre participantes', descripcion: 'Lorem ipsum dolor sit amet, formato del NDA y alcance pendiente de validación legal.' },
-  { num: '05', titulo: 'Moderada por Julio Álvarez', descripcion: 'Lorem ipsum dolor sit amet, agenda y dinámica de moderación pendiente de definición.' },
+  { num: '04', titulo: 'NDA mutuo entre participantes', descripcion: 'La conversación se mantiene privada para permitir discusión franca sobre fallas, riesgos y decisiones ejecutivas.' },
+  { num: '05', titulo: 'Moderada por Julio Álvarez', descripcion: 'Agenda breve, preguntas difíciles y conversación entre pares. Sin panel decorativo ni contenido patrocinado.' },
 ];
 
 export default function RoundtablePage() {
@@ -40,7 +40,7 @@ export default function RoundtablePage() {
           {[
             { num: 'Trimestral', label: 'Frecuencia' },
             { num: '8–12', label: 'CFO / CTO por edición' },
-            { num: 'CDMX', label: 'Ciudad · por definir' },
+            { num: 'CDMX', label: 'Ubicación privada' },
           ].map((s, i) => (
             <div key={i} style={{ borderRight: i < 2 ? '1px solid var(--border)' : 'none', paddingRight: i < 2 ? 48 : 0, paddingLeft: i > 0 ? 48 : 0 }}>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 48, fontWeight: 300, color: 'var(--accent)', lineHeight: 1, marginBottom: 8 }}>{s.num}</div>
@@ -82,7 +82,7 @@ export default function RoundtablePage() {
               El acceso es por invitación directa o solicitud calificada. Los criterios de participación aplican: empresa con iniciativa Oracle activa, cargo CFO / CTO / CIO, empresa USD 50M+.
             </p>
             <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 24 }}>
-              Formulario de solicitud · Próximamente
+              Solicitud sujeta a admisión
             </p>
             <Link
               to="/aplicar"

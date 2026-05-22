@@ -8,10 +8,10 @@ export default function MigrationRoadmapPage() {
             Migration Roadmap.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Wizard 12 preguntas.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.
+            Diagnóstico ejecutivo para estimar ruta, riesgos y fases de migración desde SAP, EBS, JDE o PeopleSoft hacia Oracle Cloud.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Próximamente Q3-Q4 2026
+            Acceso temprano · Lista privada
           </div>
         </div>
       </div>

@@ -53,12 +53,84 @@ const QUESTIONS = [
   { id: 5,  text: "¿Cuántas incidencias críticas tienes abiertas?",                            options: ["0", "1–3", "4–7", "Más de 7"] },
   { id: 6,  text: "¿Cuál es el estado de la consultora que implementó?",                       options: ["Sigue activa", "Soporte limitado", "No responde", "No aplica"] },
   { id: 7,  text: "¿Tienes patrocinio ejecutivo activo del proyecto?",                         options: ["CFO + CTO", "CFO o CTO", "Solo IT", "Sin patrocinio"] },
-  { id: 8,  text: "¿Cuál es el módulo con más problemas?",                                     options: ["Financials", "Procurement", "SCM / HCM", "Reporting"] },
+  { id: 8,  text: "¿Cuál es el módulo con más problemas?",                                     options: ["Financials", "Procurement", "SCM", "HCM", "Reporting"] },
   { id: 9,  text: "¿En qué industria opera tu empresa?",                                       options: ["Servicios Financieros", "Inmobiliario", "Logística", "Otro"] },
   { id: 10, text: "¿Cuál es el revenue anual aproximado de tu empresa?",                       options: ["< USD 50M", "USD 50–250M", "USD 250–500M", "> USD 500M"] },
   { id: 11, text: "¿En qué plazo deseas remediar la situación?",                               options: ["Inmediato (< 3 meses)", "Corto (3–6 meses)", "Medio (6–12 meses)", "No definido"] },
-  { id: 12, text: "Datos de contacto para enviarte el diagnóstico",                            options: [] }
 ];
+
+function answerScore(questionId: number, answer: string) {
+  const question = QUESTIONS.find((item) => item.id === questionId);
+  if (!question) return 0;
+  const index = question.options.indexOf(answer);
+
+  if (questionId === 8 || questionId === 9) return 0;
+  if (questionId === 10) return index === 0 ? 0 : 1;
+  return Math.max(index, 0);
+}
+
+function getDiagnosticResult(answers: Record<number, string>) {
+  const total = Object.entries(answers).reduce((sum, [questionId, answer]) => sum + answerScore(Number(questionId), answer), 0);
+  const closing = answers[2];
+  const reports = answers[3];
+  const adoption = answers[4];
+  const incidents = answers[5];
+  const consultant = answers[6];
+
+  const patterns = [
+    (reports === "4–7" || reports === "Más de 7") && "Reportes manuales paralelos",
+    (closing === "10–15 días" || closing === "Más de 15 días") && "Cierre contable >10 días",
+    (adoption === "50–70%" || adoption === "<50%") && "Baja adopción de usuarios clave",
+    (incidents === "4–7" || incidents === "Más de 7") && "Incidencias críticas abiertas",
+    (consultant === "Soporte limitado" || consultant === "No responde") && "Riesgo por consultora anterior",
+  ].filter(Boolean) as string[];
+
+  if (total >= 20) {
+    return {
+      level: "CRÍTICO",
+      tone: "#B85450",
+      description: "Tu implementación presenta señales de crisis operativa activa.",
+      action: "Rescate FABRIC prioritario en 6-10 semanas.",
+      investment: "USD 200K-500K",
+      roi: "6-9 meses",
+      pattern: patterns.length ? patterns.join(" + ") : "Riesgo operativo acumulado",
+    };
+  }
+
+  if (total >= 13) {
+    return {
+      level: "ALTO",
+      tone: "#B85450",
+      description: "Tu implementación presenta señales de abandono post go-live.",
+      action: "Rescate FABRIC en 8-12 semanas.",
+      investment: "USD 150K-300K",
+      roi: "6-9 meses",
+      pattern: patterns.length ? patterns.join(" + ") : "Fricción operativa post go-live",
+    };
+  }
+
+  if (total >= 7) {
+    return {
+      level: "MEDIO",
+      tone: "#C9A96E",
+      description: "Tu implementación muestra fricción operativa que puede escalar en el siguiente cierre.",
+      action: "Diagnóstico técnico senior en las próximas 4 semanas.",
+      investment: "Por definir tras evaluación",
+      roi: "Variable según alcance",
+      pattern: patterns.length ? patterns.join(" + ") : "Señales tempranas de fricción",
+    };
+  }
+
+  return {
+    level: "BAJO",
+    tone: "#8A8A8A",
+    description: "Tu implementación no muestra señales críticas de rescate inmediato.",
+    action: "Optimización puntual o revisión de estabilidad.",
+    investment: "No aplica a rescate urgente",
+    roi: "No aplica",
+    pattern: patterns.length ? patterns.join(" + ") : "Operación aparentemente estable",
+  };
+}
 
 // =========================================================================
 // MODAL INTERACTIVO DE DIAGNÓSTICO (WIZARD PREMIUM)
@@ -80,6 +152,13 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   const [authorized, setAuthorized] = useState(false);
   const [formError, setFormError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [contact, setContact] = useState({
+    name: "",
+    role: "",
+    email: "",
+    company: "",
+    phone: "",
+  });
 
   useEffect(() => {
     if (!isOpen) {
@@ -92,6 +171,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         setAuthorized(false);
         setFormError("");
         setIsProcessing(false);
+        setContact({ name: "", role: "", email: "", company: "", phone: "" });
       }, 300);
     }
   }, [isOpen]);
@@ -110,7 +190,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     
     // Pausa dramática para mostrar la selección en dorado antes de avanzar
     setTimeout(() => {
-      setStep(prev => prev === 11 ? 13 : prev + 1);
+      setStep(prev => prev === 11 ? 12 : prev + 1);
     }, 650);
   };
 
@@ -119,6 +199,24 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     setFormError("");
 
     if (honeypot.length > 0) return; // Trampa anti-bot silenciosa
+
+    const publicEmail = /(gmail|hotmail|outlook|yahoo)\./i.test(contact.email);
+    const cLevelRole = /(cfo|cio|cto|ceo|director|vp|presidente|finanzas|tecnolog)/i.test(contact.role);
+
+    if (!contact.name.trim() || !contact.role.trim() || !contact.company.trim() || !contact.email.trim()) {
+      setFormError("Completa nombre, cargo, empresa y email corporativo.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) || publicEmail) {
+      setFormError("Usa un email corporativo. No se aceptan dominios públicos.");
+      return;
+    }
+
+    if (!cLevelRole) {
+      setFormError("El diagnóstico está reservado para CFO, CIO, CTO, CEO o dirección ejecutiva equivalente.");
+      return;
+    }
 
     if (Number(captchaAnswer) !== captcha.answer) {
       setFormError("La validación de seguridad no coincide. Inténtalo de nuevo.");
@@ -140,7 +238,8 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     }, 1500);
   };
 
-  const progressPercentage = step > 0 && step <= 11 ? (step / 12) * 100 : step === 13 ? 100 : 0;
+  const diagnostic = getDiagnosticResult(answers);
+  const progressPercentage = step > 0 && step <= 11 ? (step / 12) * 100 : step === 12 || step === 13 ? 100 : 0;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
@@ -224,11 +323,11 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
-          {/* ================= PASOS 1-11 ================= */}
+          {/* ================= PASOS 1-11: DIAGNOSTICO OPERATIVO ================= */}
           {step > 0 && step <= 11 && (
             <div key={`question-${step}`} className="animate-step h-full flex flex-col justify-center">
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F5F5F5]/40 mb-4 flex items-center gap-2">
-                <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 11
+                <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 12
               </span>
               
               <h3 className="font-serif text-2xl md:text-[32px] text-[#F5F5F5] leading-[1.3] mb-10">
@@ -270,15 +369,58 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
+          {/* ================= PASO 12: OUTPUT INMEDIATO ================= */}
+          {step === 12 && (
+            <div key="step-12" className="animate-step">
+              <div className="mb-8">
+                <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
+                  Resultado inmediato
+                </span>
+                <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl tracking-tight mb-4">
+                  Nivel de severidad: <span style={{ color: diagnostic.tone }}>{diagnostic.level}</span>
+                </h3>
+                <p className="font-sans text-base text-[#F5F5F5]/65 leading-relaxed">
+                  {diagnostic.description}
+                </p>
+              </div>
+
+              <div className="border border-[#2A2A2A] bg-[#111]/60 rounded-sm overflow-hidden">
+                <div className="p-5 border-b border-[#2A2A2A]">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E] mb-2">Patrón detectado</p>
+                  <p className="font-serif text-2xl text-[#F5F5F5] leading-tight">{diagnostic.pattern}</p>
+                </div>
+                <div className="grid gap-px bg-[#2A2A2A] sm:grid-cols-3">
+                  <div className="bg-[#111] p-5">
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Acción recomendada</p>
+                    <p className="font-sans text-sm text-[#F5F5F5]/80">{diagnostic.action}</p>
+                  </div>
+                  <div className="bg-[#111] p-5">
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Inversión típica</p>
+                    <p className="font-sans text-sm text-[#C9A96E]">{diagnostic.investment}</p>
+                  </div>
+                  <div className="bg-[#111] p-5">
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">ROI esperado</p>
+                    <p className="font-sans text-sm text-[#F5F5F5]/80">{diagnostic.roi}</p>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={() => setStep(13)} className="btn-primary mt-8 w-full">
+                Solicitar evaluación detallada
+                <ArrowIcon />
+              </button>
+            </div>
+          )}
+
           {/* ================= PASO 13: FORMULARIO ================= */}
           {step === 13 && (
             <div key="step-13" className="animate-step">
               <div className="mb-8">
                 <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
-                  Evaluación Finalizada
+                  Pregunta 12 de 12
                 </span>
                 <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl tracking-tight mb-4">
-                  Validación de Expediente
+                  Datos de contacto para la evaluación detallada
                 </h3>
                 
                 {/* Mensaje de Exclusividad */}
@@ -295,24 +437,29 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre directivo</span>
-                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.name} onChange={(e) => setContact(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Cargo (Ej. CFO / CIO)</span>
-                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.role} onChange={(e) => setContact(prev => ({ ...prev, role: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Correo corporativo oficial</span>
-                    <input required type="email" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="email" value={contact.email} onChange={(e) => setContact(prev => ({ ...prev, email: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre de la Empresa</span>
-                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.company} onChange={(e) => setContact(prev => ({ ...prev, company: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                 </div>
+
+                <label className="block">
+                  <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Teléfono (opcional)</span>
+                  <input type="tel" value={contact.phone} onChange={(e) => setContact(prev => ({ ...prev, phone: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                </label>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_140px] sm:items-end bg-[#111]/30 p-4 border border-[#2A2A2A] rounded-sm">
                   <div>
@@ -331,7 +478,6 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
                 {formError && (
                   <div className="animate-step border border-[#B85450] bg-[#B85450]/10 p-4 rounded-sm flex items-center gap-3">
-                    <span className="text-[#B85450]">⚠️</span>
                     <p className="text-xs text-[#E7A09D] font-mono">{formError}</p>
                   </div>
                 )}

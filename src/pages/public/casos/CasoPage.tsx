@@ -10,106 +10,121 @@ interface CaseBlock {
   timeline?: TimelineItem[];
 }
 
-const caseStudies: Record<string, { tag: string; client: string; title: string; deck: string; meta: {label:string;value:string;sub:string}[]; blocks: CaseBlock[]; results: {label:string;before?:string;after?:string;value?:string}[]; pow: {icon:string;title:string;meta:string;size:string;locked:boolean}[] }> = {
+const cargoOptions = ['CFO', 'CIO', 'CTO', 'Director Transformación', 'CEO', 'Otro'];
+
+const caseStudies: Record<string, {
+  tag: string;
+  client: string;
+  title: string;
+  deck: string;
+  meta: {label:string;value:string;sub:string}[];
+  blocks: CaseBlock[];
+  results: {label:string;before?:string;after?:string;value?:string}[];
+  pow: {icon:string;title:string;meta:string;size:string;locked:boolean}[];
+  pdfAccess: { enabled: boolean; title: string; body: string; cta: string; };
+}> = {
   'ape-plazas': {
     tag: "Caso Ancla · Abril 2026 · Verificable bajo NDA",
     client: "APE Plazas",
     title: "Implementación Oracle Fusion Cloud en APE Plazas.",
-    deck: "Un operador de centros comerciales con presencia multi-plaza en México. Go-live en fecha planeada. Primer cierre contable sin incidencias. Transición a soporte en firma.",
+    deck: "Implementación Oracle Fusion Cloud para operador multi-plaza en México. Go-live el 06 abril 2026 y primer cierre contable de producción en abril 2026, operando con acompañamiento FABRIC.",
     meta: [
       { label: "Industria", value: "Inmobiliario", sub: "Centros comerciales · MX" },
-      { label: "Revenue range", value: "USD 100M+", sub: "Multi-plaza operativo" },
-      { label: "Duración total", value: "14 semanas", sub: "Diagnose → Stabilize" },
-      { label: "Estado actual", value: "En producción", sub: "Soporte L1/L2 · Acta firmada" },
+      { label: "Go-live", value: "06 abril 2026", sub: "Hito verificable" },
+      { label: "Primer cierre", value: "Abril 2026", sub: "Producción" },
+      { label: "Estado", value: "Operando", sub: "Con acompañamiento FABRIC" },
     ],
     blocks: [
       {
         eyebrow: "01 · Contexto",
-        title: "Un operador multi-plaza que necesitaba consolidar la operación financiera.",
+        title: "Caso ancla de implementación Oracle Fusion Cloud.",
         body: [
-          "APE Plazas opera múltiples centros comerciales bajo entidades legales independientes. Hasta abril 2026, cada plaza tenía su propia versión de cierre contable con reportes parciales reconciliados manualmente en Excel.",
-          "La meta del proyecto: una sola fuente de verdad financiera, consolidación multi-entidad nativa, y cierre contable mensual reducido de 12-15 días a menos de 5. Sin Oracle Fusion Cloud, esa meta no era alcanzable en menos de 18 meses.",
+          "APE Plazas representa una operación inmobiliaria multi-plaza donde el primer ciclo crítico importaba más que una ceremonia de go-live.",
+          "El proyecto avanzó a producción el 06 abril 2026 y operó su primer cierre contable de producción en abril 2026 con acompañamiento FABRIC.",
         ],
       },
       {
         eyebrow: "02 · Aproximación",
-        title: "Doctrina FABRIC aplicada desde el SOW.",
+        title: "Doctrina FABRIC aplicada al primer ciclo crítico.",
         body: [
-          "El SOW se cerró con las cinco cláusulas doctrinales explícitas: entrega en primer cierre contable operado, solo seniors, fixed-price por fase, cero reportes manuales post go-live, y transición formal.",
-          "Sobre FABRIC OS aplicamos FSO-01 (Rapid GL Close) y FSO-02 (Multi-Entity Retail Ops). Ambos fueron validados en APE Plazas y hoy forman parte del catálogo de capacidades reusables.",
+          "La promesa diferenciadora del sitio es que FABRIC no considera entregado el proyecto en go-live, sino cuando el primer ciclo crítico opera en producción.",
+          "SOW, actas y evidencia operativa se entregan únicamente en conversaciones calificadas bajo NDA mutuo.",
         ],
-        quote: "El SOW que firmó FABRIC fue distinto desde la primera lectura. Tenía cláusulas que nuestros abogados nunca habían visto en una consultora Oracle.",
-        quoteAttr: "— CIO · APE Plazas · enero 2026",
+        quote: "El cierre contable de abril se ejecutó sin incidencias con acompañamiento FABRIC. Ese es el momento en el que consideramos el proyecto entregado.",
+        quoteAttr: "— Doctrina FABRIC · Primer ciclo crítico",
       },
       {
         eyebrow: "03 · Ejecución · Timeline",
-        title: "Catorce semanas, cinco hitos documentados.",
+        title: "Hitos públicos verificables.",
         timeline: [
-          { date: "06 ENE 2026", event: "Diagnose firmado", meta: "Auditado" },
-          { date: "29 ENE 2026", event: "Blueprint técnico aprobado", meta: "Firmado" },
-          { date: "10 MAR 2026", event: "Deploy completo", meta: "Documentado" },
-          { date: "06 ABR 2026", event: "Go-live ejecutado en fecha", meta: "+0 días" },
-          { date: "04 MAY 2026", event: "Primer cierre contable operado", meta: "Punto entrega" },
+          { date: "06 ABR 2026", event: "Go-live Oracle Fusion Cloud", meta: "Evidencia bajo NDA" },
+          { date: "ABR 2026", event: "Primer cierre contable producción", meta: "Evidencia bajo NDA" },
+          { date: "MAY 2026", event: "Transición operativa documentada", meta: "Acceso controlado" },
         ],
       },
     ],
     results: [
-      { label: "Cierre contable", before: "12d", after: "5d" },
-      { label: "Incidencias críticas post go-live", value: "0" },
-      { label: "Adopción usuarios clave", value: "93%" },
-      { label: "Reportes manuales eliminados", value: "7 de 7" },
+      { label: "Go-live", value: "06 abril 2026" },
+      { label: "Primer cierre contable", value: "Abril 2026" },
+      { label: "Estado", value: "Producción" },
+      { label: "Evidencia", value: "Bajo NDA" },
     ],
     pow: [
-      { icon: "SOW",   title: "SOW Fixed-Price firmado",            meta: "28 pp · ES · Cláusulas doctrinales · dic 2025", size: "2.4 MB", locked: true },
-      { icon: "ACTA",  title: "Acta de primer cierre contable",     meta: "6 pp · Firmada por CFO + CTO + FABRIC · may 2026", size: "820 KB", locked: true },
-      { icon: "KPI",   title: "Tablero KPI · primer ciclo crítico", meta: "Dashboard ejecutivo · Auditado externamente", size: "1.1 MB", locked: true },
-      { icon: "TRANS", title: "Plan de transición a soporte",       meta: "Documentación viva · 142 pp · En firma", size: "4.2 MB", locked: true },
-      { icon: "PR",    title: "Comunicado público de go-live",      meta: "2 pp · ES · Aprobado por APE Plazas · 25 may", size: "340 KB", locked: false },
+      { icon: "NDA",   title: "Evidencia de go-live",               meta: "PDF disponible bajo NDA tras admisión", size: "Bajo NDA", locked: true },
+      { icon: "NDA",   title: "Evidencia de primer cierre contable", meta: "PDF disponible bajo NDA tras admisión", size: "Bajo NDA", locked: true },
+      { icon: "PAPER", title: "Paper formal de caso",               meta: "Dossier ejecutivo para conversaciones calificadas", size: "4-6 págs.", locked: true },
     ],
+    pdfAccess: {
+      enabled: true,
+      title: "Solicitar PDF bajo NDA.",
+      body: "El dossier de APE Plazas y la evidencia respaldatoria se comparten solo con prospectos calificados bajo NDA mutuo.",
+      cta: "Solicitar acceso"
+    },
   },
   'aplazo': {
-    tag: "Caso Ancla · Q1 2026 · Verificable bajo NDA",
+    tag: "Referencia Reservada · Acceso bajo NDA",
     client: "Aplazo",
-    title: "Rescate Oracle Fusion para fintech regulada con operación crítica.",
-    deck: "El proyecto llegó a FABRIC con señales de abandono post go-live: reportes manuales, cierre contable extendido y adopción limitada. El objetivo fue estabilizar operación, cumplimiento y cierre.",
+    title: "Rescate Oracle Fusion en Aplazo.",
+    deck: "Referencia privada en servicios financieros. Por confidencialidad, los detalles operativos, métricas y evidencia se comparten únicamente en conversaciones calificadas bajo NDA mutuo.",
     meta: [
-      { label: "Industria", value: "Fintech", sub: "Crédito al consumo · MX" },
-      { label: "Revenue range", value: "USD 80M+", sub: "Regulada CNBV" },
-      { label: "Duración total", value: "10 semanas", sub: "Diagnose → Stabilize" },
-      { label: "Estado actual", value: "Estabilizado", sub: "Compliance operativo · CNBV" },
+      { label: "Industria", value: "Fintech", sub: "Servicios financieros" },
+      { label: "Tipo", value: "Rescate", sub: "Oracle Fusion" },
+      { label: "Métricas", value: "Bajo NDA", sub: "Prospectos calificados" },
+      { label: "Evidencia", value: "Restringida", sub: "Acceso controlado" },
     ],
     blocks: [
       {
         eyebrow: "01 · Contexto",
-        title: "Una implementación Oracle abandonada post go-live.",
+        title: "Rescate Oracle en entorno fintech.",
         body: [
-          "Aplazo llegó a FABRIC con 7 meses post go-live y una operación que no había logrado su primer cierre contable limpio. Reportes manuales paralelos al ERP, adopción del 42% y 12 incidencias críticas abiertas.",
-          "El riesgo: incumplimiento regulatorio CNBV en el ciclo de cierre de Q4 2025. El plazo para estabilizar era de 10 semanas antes del siguiente ciclo.",
+          "El caso pertenece a una conversación de rescate Oracle Fusion en servicios financieros, donde la confidencialidad operativa es parte del valor.",
+          "FABRIC no publica métricas sensibles, fechas internas ni documentos de cliente en abierto. El acceso se reserva a CFO, CIO y CTO evaluando una intervención real.",
         ],
       },
       {
         eyebrow: "02 · Aproximación",
-        title: "Priorización quirúrgica: cierre primero, adopción segundo.",
+        title: "Evidencia reservada para prospectos calificados.",
         body: [
-          "FABRIC aplicó FSO-03 (Fintech Controls Pack, versión beta) y redirigió el equipo senior a los tres módulos críticos: GL, AR y Compliance CNBV.",
-          "La doctrina D-04 (cero reportes manuales post go-live) se aplicó con timeline de 8 semanas para eliminar los 12 reportes paralelos identificados en el diagnóstico.",
+          "Los rescates de misión crítica rara vez pueden exponerse en público sin comprometer información operacional.",
+          "Por eso esta referencia funciona como puerta de acceso: si tu organización califica, el equipo comparte el contexto verificable bajo NDA mutuo.",
         ],
-        quote: "FABRIC tomó una implementación abandonada y la convirtió en plataforma operativa estable en 10 semanas. Sin renegociaciones.",
-        quoteAttr: "— CFO Controller · Aplazo · feb 2026",
       },
     ],
     results: [
-      { label: "Tiempo de cierre", before: "18d", after: "6d" },
-      { label: "Adopción de usuarios", value: "95%" },
-      { label: "Reportes manuales eliminados", value: "5 de 12" },
-      { label: "Compliance CNBV", value: "Operativo" },
+      { label: "Tipo", value: "Rescate" },
+      { label: "Industria", value: "Fintech" },
+      { label: "Métricas", value: "Bajo NDA" },
+      { label: "Evidencia", value: "Restringida" },
     ],
     pow: [
-      { icon: "DIAG",  title: "Diagnóstico inicial documentado",    meta: "Post go-live assessment · 22 pp", size: "1.8 MB", locked: true },
-      { icon: "COMP",  title: "Comparativo de cierre contable",     meta: "Antes/después con evidencia Fusion", size: "640 KB", locked: true },
-      { icon: "INV",   title: "Inventario de reportes manuales",    meta: "12 reportes → 7 eliminados · Auditado", size: "480 KB", locked: true },
-      { icon: "CTRL",  title: "Evidencia controles regulatorios",   meta: "CNBV compliance · Q1 2026 · Firmado", size: "920 KB", locked: true },
+      { icon: "NDA",  title: "Documentos de rescate", meta: "Disponibles solo para prospectos calificados", size: "Bajo NDA", locked: true },
     ],
+    pdfAccess: {
+      enabled: false,
+      title: "Acceso reservado.",
+      body: "La evidencia de esta referencia no se entrega por descarga pública. Se revisa en conversaciones privadas con organizaciones calificadas.",
+      cta: "Bajo NDA"
+    },
   },
 };
 
@@ -184,26 +199,30 @@ export default function CasoPage() {
         ))}
 
         {/* Results */}
-        <section style={{ borderBottom: '1px solid var(--border)', padding: '80px 0', background: 'var(--bg-panel)' }}>
+        <section className="case-results-section">
           <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: 'clamp(120px,20vw,240px) 1fr', gap: '64px', alignItems: 'start' }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.25em', textTransform: 'uppercase', paddingTop: 8, position: 'sticky', top: 100 }}>04 · Resultados verificables</div>
-              <div>
-                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 40, lineHeight: 1.15 }}>Métricas <span style={{ color: 'var(--accent)' }}>medibles y auditadas.</span></h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+            <div className="case-results-layout">
+              <div className="case-section-label">04 · Resultados verificables</div>
+              <div className="case-results-content">
+                <div className="case-results-heading">
+                  <h2>Métricas <span>medibles y auditadas.</span></h2>
+                  <p>Publicamos solo lo verificable. La evidencia completa se comparte bajo NDA mutuo.</p>
+                </div>
+
+                <div className="case-results-grid">
                   {c.results.map((r, ri) => (
-                    <div key={ri} style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', padding: '28px 24px' }}>
-                      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>{r.label}</div>
+                    <article key={ri} className="case-result-card">
+                      <div className="case-result-label">{r.label}</div>
                       {r.before ? (
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                          <span style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--text-tertiary)', textDecoration: 'line-through' }}>{r.before}</span>
-                          <span style={{ color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 13 }}>→</span>
-                          <span style={{ fontFamily: 'var(--serif)', fontSize: 48, color: 'var(--accent)', lineHeight: 1 }}>{r.after}</span>
+                        <div className="case-result-value case-result-delta">
+                          <span>{r.before}</span>
+                          <span aria-hidden="true">→</span>
+                          <strong>{r.after}</strong>
                         </div>
                       ) : (
-                        <span style={{ fontFamily: 'var(--serif)', fontSize: 48, color: 'var(--accent)', lineHeight: 1 }}>{r.value}</span>
+                        <div className="case-result-value">{r.value}</div>
                       )}
-                    </div>
+                    </article>
                   ))}
                 </div>
               </div>
@@ -221,11 +240,11 @@ export default function CasoPage() {
                 <p style={{ color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>Cada documento está disponible bajo NDA tras evaluación post-admisión.</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 40 }}>
                   {c.pow.map((doc) => (
-                    <div key={doc.icon} className="pow-item" style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', border: '1px solid var(--border)', cursor: 'pointer', transition: 'border-color 200ms' }}
+                    <div key={doc.title} className="pow-item" style={{ display: 'grid', gridTemplateColumns: '40px minmax(0,1fr) auto auto', alignItems: 'center', gap: 16, padding: '16px 20px', border: '1px solid var(--border)', cursor: 'pointer', transition: 'border-color 200ms', minWidth: 0 }}
                       onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent)')}
                       onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
                       <div style={{ width: 40, height: 48, border: '1px solid rgba(201,169,110,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', flexShrink: 0 }}>{doc.icon}</div>
-                      <div style={{ flex: 1 }}>
+                      <div style={{ minWidth: 0 }}>
                         <div style={{ fontFamily: 'var(--serif)', fontSize: 16, marginBottom: 2 }}>{doc.title}</div>
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>{doc.meta}</div>
                       </div>
@@ -235,6 +254,37 @@ export default function CasoPage() {
                       </span>
                     </div>
                   ))}
+                </div>
+                <div className="nda-request-panel">
+                  <div>
+                    <div className="nda-request-kicker">Acceso controlado</div>
+                    <h3>{c.pdfAccess.title}</h3>
+                    <p>{c.pdfAccess.body}</p>
+                  </div>
+                  <form
+                    className="nda-request-form"
+                    action="mailto:julio@fabricsoft.com.mx"
+                    method="post"
+                    encType="text/plain"
+                  >
+                    <input name="empresa" placeholder="Empresa" disabled={!c.pdfAccess.enabled} required />
+                    <input name="email" type="email" placeholder="Email corporativo" disabled={!c.pdfAccess.enabled} required />
+                    <div className="nda-role-field">
+                      <div className="nda-role-title">Selecciona cargo</div>
+                      <div className="nda-role-group" aria-label="Cargo">
+                        {cargoOptions.map((cargo) => (
+                          <label key={cargo} className="nda-role-option">
+                            <input type="radio" name="cargo" value={cargo} disabled={!c.pdfAccess.enabled} required />
+                            <span>{cargo}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="nda-request-note">El acceso se formaliza bajo NDA mutuo antes de compartir evidencia.</div>
+                    <button type="submit" disabled={!c.pdfAccess.enabled}>
+                      {c.pdfAccess.cta}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>

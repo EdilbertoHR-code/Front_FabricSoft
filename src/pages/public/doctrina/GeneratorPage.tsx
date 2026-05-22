@@ -36,14 +36,17 @@ export default function GeneratorPage() {
           <div style={{ position: 'absolute', top: 0, left: 0, width: '16%', height: '100%', background: 'var(--accent)' }} />
         </div>
 
-        {/* Pregunta placeholder */}
         <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.4, marginBottom: 48 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. ¿Qué tipo de iniciativa Oracle estás evaluando?
+          ¿Qué tipo de iniciativa Oracle estás evaluando?
         </h2>
 
-        {/* Opciones placeholder */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 64 }}>
-          {['Opción lorem ipsum A', 'Opción lorem ipsum B', 'Opción lorem ipsum C', 'Opción lorem ipsum D'].map((opt, i) => (
+          {[
+            'Rescate post go-live',
+            'Implementación nueva de Oracle Fusion',
+            'Migración desde SAP, EBS, JDE o PeopleSoft',
+            'Renegociación de SOW o contrato con partner'
+          ].map((opt, i) => (
             <button
               key={i}
               style={{

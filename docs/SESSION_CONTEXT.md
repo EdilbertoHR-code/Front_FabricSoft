@@ -237,3 +237,31 @@ fabricsoft/ (frontend/)
 1. Enrutar `footerPublic.tsx` hacia las 14 páginas satélite.
 2. Comenzar la maquetación de los Wizards (TCO Comparator, Readiness Score, Doctrine Generator).
 3. Mover/Adaptar el componente `ChatIa` hacia su ruta dedicada `/herramientas/ai-diagnostic`.
+
+---
+
+## 14. Actualización de Sesión — Casos y PDFs bajo NDA
+
+- Brief2 tiene prioridad sobre brief1 para la sección de casos.
+- Regla editorial activa: no inventar métricas, fechas, quotes, documentos ni resultados. Si el brief no lo contiene o no está autorizado por CEO/cliente, debe mostrarse como pendiente.
+- `s07-casos.tsx` queda como sección boutique/dossier, no como tabla: métricas en bloques editoriales, CTAs apilados y sin columnas que desborden.
+- APE Plazas puede mostrar los datos específicos de Brief2:
+  - Go-live planeado: 06 abril 2026.
+  - Go-live ejecutado: 06 abril 2026.
+  - Primer cierre planeado: abril 2026.
+  - Primer cierre ejecutado: 30 abril 2026.
+  - Acta de transición: en firma mayo 2026.
+- APE Plazas puede ofrecer `Solicitar PDF bajo NDA`, porque Brief2 menciona paper formal 4-6 páginas y evidencias PDF bajo NDA, sujeto a autorización de cliente y validación legal.
+- Aplazo permanece como caso real mencionado por Brief2, pero sin métricas, PDF, quote, fechas ni evidencia descargable hasta validación explícita del CEO y autorización del cliente.
+- El audit trail puede mostrar solicitudes de PDF bajo NDA para APE Plazas: acta de go-live, reporte FABRIC y acta de transición. No debe habilitar descarga pública directa.
+
+## 15. Actualización de Sesión — Revisión Editorial Home
+
+- Se revisó la sección S09 FABRIC OS contra Brief2.
+- El bloque principal de FABRIC OS está alineado con Brief2: cuatro capas expandibles (Doctrina de entrega, FSOs paquetizados, Frameworks aplicados, Agentes IA propios).
+- Se ajustó el encabezado del catálogo FSO en `s09-fabric-os.tsx` para usar lenguaje más fiel a Brief2:
+  - De `Catálogo FSO · Pipeline privado 2026` a `FSO Engine · Soluciones paquetizadas`.
+  - De `Seis soluciones nombradas. Cada una, validable.` a `IP nombrada y reutilizable. Cada FSO, validable.`
+- Motivo: Brief2 define FSO Engine como el conjunto de Fabric Solution Objects, soluciones paquetizadas reutilizables e IP nombrada/vendible.
+- Se corrigió el CTA `Explorar FABRIC OS completo` para apuntar al bloque público `#fso-engine` dentro de la misma sección, en lugar de enviar a `#aplicar`.
+- Motivo: FABRIC OS es contenido público en Home; el CTA del brief debe explorar el sistema, no iniciar admisión.
