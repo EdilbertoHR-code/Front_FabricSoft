@@ -4,36 +4,31 @@ const layers: {
   num: string;
   name: string;
   desc: string;
-  meta: React.ReactNode;
-  detail: string;
+  detail: React.ReactNode;
 }[] = [
   {
     num: "04",
-    name: "Agentes IA",
-    desc: "Conciliation Copilot · Anomaly Detector · CFO Assistant · Document Intelligence",
-    meta: <><span>v2.4 · Operativo</span><br /><strong>4 agentes activos</strong></>,
-    detail: "Cuatro agentes propios en producción: Conciliation Copilot (conciliación bancaria con precisión 95%+), Anomaly Detector (detección de partidas anormales pre-cierre), CFO Assistant (consultas en lenguaje natural sobre data Fusion) y Document Intelligence (generación automatizada de notas contables). Cada agente opera dentro del tenant del cliente — los datos nunca salen de su nube.",
+    name: "Agentes IA propios",
+    desc: "Capacidad técnica diferencial propia.",
+    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
   },
   {
     num: "03",
-    name: "Frameworks",
-    desc: "Metodologías aplicadas en cada proyecto · Gobierno · Control de cambios · Riesgos",
-    meta: <><span>Aplicado en 100%</span><br /><strong>Stack 2026</strong></>,
-    detail: "Tres frameworks propios aplicados en cada engagement: FABRIC Governance Framework (gobierno de proyecto con comité semanal obligatorio), Zero-Trust Change Control (control de cambios con trazabilidad completa en OCI) y Risk Stabilization Matrix (identificación y mitigación de riesgos en fase STABILIZE). Documentados y transferidos al cliente al cierre.",
+    name: "Frameworks aplicados",
+    desc: "Metodologías propias aplicadas en proyecto.",
+    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
   },
   {
     num: "02",
-    name: "FSOs · Fabric Solution Objects",
-    desc: "Soluciones paquetizadas reutilizables · Documentadas · Validadas · Vendibles en Oracle Marketplace",
-    meta: <><span>6 catalogados</span><br /><strong>Catálogo abierto</strong></>,
-    detail: "FSO-01 Rapid GL Close (cierre contable 10-15 días → 3-5 días, validado APE Plazas), FSO-02 Multi-Entity Retail Ops (operación multi-plaza, validado APE Plazas), FSO-03 Fintech Controls Pack (compliance CNBV/CONDUSEF, aplicado Aplazo), FSO-04 Legacy Migration Engine (SAP/EBS/JDE/PS, en desarrollo), FSO-05 Logistics Multi-CD (diseño Q3 2026), FSO-06 DR & Business Continuity (diseño Q4 2026). Cada FSO es IP nombrada y contractualizable.",
+    name: "FSOs paquetizados",
+    desc: "Soluciones paquetizadas reutilizables.",
+    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
   },
   {
     num: "01",
-    name: "Doctrina",
-    desc: "Cinco compromisos contractuales · La base operativa de cada engagement",
-    meta: <><span>Cláusula contractual</span><br /><strong>Vigente desde 2026</strong></>,
-    detail: "Cinco compromisos que van en cada SOW: (1) Entrega en primer ciclo crítico — no en go-live, (2) Solo seniors, cero juniors facturables — mínimo 8 años Oracle, (3) Fixed-Price por fase — si nos atrasamos por nuestra causa, no facturamos semanas adicionales, (4) Cero reportes manuales post go-live — se resuelve sin costo hasta eliminación, (5) Transición formal con documentación viva — acta firmada por todos los stakeholders. Validados con caso APE Plazas, abril 2026.",
+    name: "Doctrina de entrega",
+    desc: "Cómo trabajamos. Contractualizable.",
+    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
   },
 ];
 
@@ -76,17 +71,7 @@ export default function S09FabricOS() {
                   <div className="os-layer-name">{layer.name}</div>
                   <div className="os-layer-desc">{layer.desc}</div>
                   {isOpen && (
-                    <div
-                      style={{
-                        marginTop: 14,
-                        fontSize: 13,
-                        lineHeight: 1.75,
-                        color: 'var(--text-secondary)',
-                        borderTop: '1px solid var(--border)',
-                        paddingTop: 14,
-                        animation: 'fadeIn .22s ease',
-                      }}
-                    >
+                    <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 14, animation: 'fadeIn .22s ease', fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)' }}>
                       {layer.detail}
                     </div>
                   )}
@@ -95,7 +80,6 @@ export default function S09FabricOS() {
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
                     {isOpen ? '▲ Cerrar' : '▼ Ver más'}
                   </span>
-                  {layer.meta}
                 </div>
               </div>
             );

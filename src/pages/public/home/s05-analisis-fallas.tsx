@@ -34,16 +34,35 @@ function ArrowIcon() {
   );
 }
 
-function CheckIcon() {
+function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
+    <svg className={className} viewBox="0 0 24 24" fill="none">
       <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-// --- MODAL DE DIAGNÓSTICO CON HONEYPOT (Anti-Spam) ---
-// --- MODAL DE DIAGNÓSTICO CON HONEYPOT + CAPTCHA ---
+// =========================================================================
+// PREGUNTAS DEL DIAGNÓSTICO
+// =========================================================================
+const QUESTIONS = [
+  { id: 1, text: "¿Cuál es tu tiempo de cierre contable actual en Fusion?", options: ["< 5 días (Saludable)", "5-10 días (Alerta)", "> 10 días (Crítico)", "Aún es 100% manual"] },
+  { id: 2, text: "¿Cuántos reportes manuales paralelos (Excel) requiere la dirección?", options: ["0-3 reportes", "4-10 reportes", "Más de 10 reportes", "Toda la operación es en Excel"] },
+  { id: 3, text: "¿Cuál es el nivel de adopción real de los usuarios clave?", options: ["Alto (>80%)", "Medio (50-80%)", "Bajo (<50%)", "Rechazo total al sistema"] },
+  { id: 4, text: "¿Cuántas incidencias críticas (P1/P2) tienen abiertas actualmente?", options: ["Ninguna", "1 a 5", "6 a 15", "Más de 15"] },
+  { id: 5, text: "¿Cuánto tiempo ha pasado desde la salida a producción (go-live)?", options: ["Aún no salimos", "Menos de 3 meses", "3 a 6 meses", "Más de 6 meses"] },
+  { id: 6, text: "¿Cuál es el estado de la relación con tu implementador anterior?", options: ["Excelente", "Tensa pero operativa", "Finalizada / Rota", "En litigio / Legal"] },
+  { id: 7, text: "¿Cuál es el nivel de involucramiento (patrocinio) del nivel C-Level?", options: ["Involucrado activamente", "Delega pero monitorea", "Desconectado del proyecto", "Exige resultados sin involucrarse"] },
+  { id: 8, text: "¿Qué porcentaje del presupuesto original se ha consumido?", options: ["< 80%", "80-100%", "Con sobrecostos (100-150%)", "Sobrecostos extremos (>150%)"] },
+  { id: 9, text: "¿Con qué frecuencia fallan las integraciones con sistemas satélite?", options: ["Rara vez", "Mensualmente", "Semanalmente", "Diario / Requiere reproceso"] },
+  { id: 10, text: "¿Cómo evalúas la calidad y limpieza de los datos maestros (Master Data)?", options: ["Confiable", "Requiere ajustes menores", "Duplicados frecuentes", "Caos total / Inconfiable"] },
+  { id: 11, text: "¿Qué tanto se personalizó (customizó) el sistema fuera del estándar?", options: ["100% estándar", "Personalizaciones leves", "Altamente personalizado", "Prácticamente hecho a la medida"] },
+  { id: 12, text: "¿Cuál es el mayor impacto actual en el negocio por culpa del ERP?", options: ["Ninguno crítico", "Retraso en decisiones", "Pérdidas financieras directas", "Riesgo de compliance / multas"] }
+];
+
+// =========================================================================
+// MODAL INTERACTIVO DE DIAGNÓSTICO (WIZARD PREMIUM)
+// =========================================================================
 function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const createCaptcha = () => {
     const a = Math.floor(Math.random() * 8) + 3;
@@ -51,21 +70,29 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     return { a, b, answer: a + b };
   };
 
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState(0); 
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  
+  // Datos del formulario
   const [honeypot, setHoneypot] = useState("");
   const [captcha, setCaptcha] = useState(createCaptcha);
   const [captchaAnswer, setCaptchaAnswer] = useState("");
   const [authorized, setAuthorized] = useState(false);
   const [formError, setFormError] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
-      setSubmitted(false);
-      setHoneypot("");
-      setCaptcha(createCaptcha());
-      setCaptchaAnswer("");
-      setAuthorized(false);
-      setFormError("");
+      setTimeout(() => {
+        setStep(0);
+        setAnswers({});
+        setHoneypot("");
+        setCaptcha(createCaptcha());
+        setCaptchaAnswer("");
+        setAuthorized(false);
+        setFormError("");
+        setIsProcessing(false);
+      }, 300);
     }
   }, [isOpen]);
 
@@ -76,309 +103,285 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     setCaptchaAnswer("");
   };
 
+  // Lógica de Selección Premium
+  const handleAnswerSelect = (questionId: number, answer: string) => {
+    if (answers[questionId]) return; // Evita doble clic
+    setAnswers(prev => ({ ...prev, [questionId]: answer }));
+    
+    // Pausa dramática para mostrar la selección en dorado antes de avanzar
+    setTimeout(() => {
+      setStep(prev => prev + 1);
+    }, 650);
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setFormError("");
 
-    if (honeypot.length > 0) {
-      console.log("Bot detectado y bloqueado.");
-      return;
-    }
+    if (honeypot.length > 0) return; // Trampa anti-bot silenciosa
 
     if (Number(captchaAnswer) !== captcha.answer) {
-      setFormError("La validación anti-bot no coincide. Inténtalo nuevamente.");
+      setFormError("La validación de seguridad no coincide. Inténtalo de nuevo.");
       refreshCaptcha();
       return;
     }
 
     if (!authorized) {
-      setFormError("Debes aceptar que FABRIC revise la información enviada.");
+      setFormError("Requerimos tu autorización explícita para auditar estos datos.");
       return;
     }
 
-    setSubmitted(true);
+    setIsProcessing(true);
+    
+    // Simulación de envío a backend
+    setTimeout(() => {
+      setIsProcessing(false);
+      setStep(14); 
+    }, 1500);
   };
 
+  const progressPercentage = step > 0 && step <= 12 ? (step / 12) * 100 : 0;
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 px-4 py-6 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
-      <div className="relative max-h-[92vh] w-full max-w-[680px] overflow-y-auto bg-[#0A0A0A] border border-[#2A2A2A] shadow-[0_0_50px_rgba(0,0,0,0.8)] p-8 sm:p-10 rounded-xl">
-        <div className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-[#C9A96E] opacity-[0.05] blur-[80px]" />
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
+      
+      <style>{`
+        @keyframes slideInFade {
+          0% { opacity: 0; transform: translateX(20px) scale(0.98); }
+          100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        .animate-step {
+          animation: slideInFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
 
-        <button
-          onClick={onClose}
-          className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center bg-[#111] text-[#F5F5F5]/60 border border-[#2A2A2A] rounded-full transition-all duration-300 hover:scale-110 hover:text-[#C9A96E] hover:border-[#C9A96E]/50 z-50"
-          aria-label="Cerrar modal"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+      <div className="relative flex flex-col w-full max-w-[700px] min-h-[550px] max-h-[90vh] overflow-hidden bg-[#0A0A0A] border border-[#2A2A2A] shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-xl">
+        
+        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[#C9A96E] opacity-[0.03] blur-[100px]" />
 
-        {!submitted ? (
-          <div className="relative z-10 animate-[slideUp_0.4s_ease-out]">
-            <div className="mb-8">
-              <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-full">
-                Acceso selectivo · Evaluación inicial
-              </span>
-
-              <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl tracking-tight">
-                Solicitar revisión FABRIC
-              </h3>
-
-              <p className="mt-2 font-sans text-sm text-[#F5F5F5]/60">
-                Comparte tus datos corporativos para crear un expediente inicial. Nuestro equipo técnico revisará si el caso encaja con la especialidad, capacidad y estándares de entrega de FABRIC.
-              </p>
-
-              <p className="mt-4 border-l border-[#C9A96E]/60 bg-[#C9A96E]/5 px-4 py-3 font-sans text-xs leading-6 text-[#F5F5F5]/55">
-                No todos los proyectos pasan a revisión ejecutiva. Priorizamos escenarios donde podemos aportar valor medible, operar con equipo senior y proteger la calidad de entrega.
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Honeypot anti-spam */}
-              <input
-                type="text"
-                name="company_website_url_check"
-                className="opacity-0 absolute -z-10 w-0 h-0"
-                tabIndex={-1}
-                autoComplete="off"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-              />
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Nombre completo
-                  </span>
-                  <input
-                    required
-                    type="text"
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Cargo / rol
-                  </span>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Ej. CFO, Director TI"
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  />
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Correo corporativo
-                  </span>
-                  <input
-                    required
-                    type="email"
-                    placeholder="nombre@empresa.com"
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Teléfono
-                  </span>
-                  <input
-                    type="tel"
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  />
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                  Empresa
-                </span>
-                <input
-                  required
-                  type="text"
-                  className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                />
-              </label>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Tipo de proyecto
-                  </span>
-                  <select
-                    required
-                    defaultValue=""
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  >
-                    <option value="" disabled>
-                      Seleccionar
-                    </option>
-                    <option value="rescate-fusion">Rescate Oracle Fusion</option>
-                    <option value="sap-ebs-fusion">Migración SAP/EBS a Fusion</option>
-                    <option value="greenfield-oracle">Greenfield Oracle</option>
-                    <option value="cloud-oci">Cloud / OCI</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Urgencia del caso
-                  </span>
-                  <select
-                    required
-                    defaultValue=""
-                    className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                  >
-                    <option value="" disabled>
-                      Seleccionar
-                    </option>
-                    <option value="critico">Crítico · Operación detenida</option>
-                    <option value="alto">Alto · Cierre/reportes afectados</option>
-                    <option value="medio">Medio · Planeación de migración</option>
-                    <option value="exploratorio">Exploratorio</option>
-                  </select>
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                  Describe brevemente el escenario
-                </span>
-                <textarea
-                  required
-                  rows={4}
-                  placeholder="Ej. Tenemos cierre contable manual, reportes fuera del ERP, baja adopción o incidencias críticas..."
-                  className="w-full resize-none bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm leading-6 text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                />
-              </label>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_160px] sm:items-end">
-                <div className="rounded-md border border-[#2A2A2A] bg-[#111]/80 px-4 py-3">
-                  <span className="block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">
-                    Validación anti-bot
-                  </span>
-                  <p className="mt-2 text-sm text-[#F5F5F5]/65">
-                    Resuelve:{" "}
-                    <span className="font-mono font-bold text-[#C9A96E]">
-                      {captcha.a} + {captcha.b}
-                    </span>
-                  </p>
-                </div>
-
-                <input
-                  required
-                  type="number"
-                  inputMode="numeric"
-                  value={captchaAnswer}
-                  onChange={(e) => setCaptchaAnswer(e.target.value)}
-                  placeholder="Respuesta"
-                  className="w-full bg-[#111] border border-[#2A2A2A] rounded-md px-4 py-3 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:bg-black transition-all"
-                />
-              </div>
-
-              <label className="flex items-start gap-3 rounded-md border border-[#2A2A2A] bg-[#111]/60 px-4 py-3">
-                <input
-                  required
-                  type="checkbox"
-                  checked={authorized}
-                  onChange={(e) => setAuthorized(e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-[#C9A96E]"
-                />
-
-                <span className="text-xs leading-6 text-[#F5F5F5]/55">
-                  Acepto que FABRIC revise la información enviada para determinar si el caso califica para una evaluación ejecutiva.
-                </span>
-              </label>
-
-              {formError ? (
-                <p className="rounded-md border border-[#B85450]/40 bg-[#B85450]/10 px-4 py-3 text-xs leading-6 text-[#E7A09D]">
-                  {formError}
-                </p>
-              ) : null}
-
-              <button
-                type="submit"
-                className="mt-6 w-full group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E] rounded-md px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#0A0A0A] transition-all duration-300 hover:bg-[#B8914A] shadow-[0_0_20px_rgba(201,169,110,0.3)] hover:shadow-[0_0_30px_rgba(201,169,110,0.5)] active:scale-[0.98]"
-              >
-                Solicitar evaluación ejecutiva
-                <ArrowIcon />
-              </button>
-            </form>
+        {/* Header del Modal */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]/60 bg-[#050505]">
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C9A96E]"></span>
+            </span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">
+              Terminal de Diagnóstico FABRIC
+            </span>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center animate-[slideUp_0.4s_ease-out] relative z-10">
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#C9A96E]/10 border border-[#C9A96E] text-[#C9A96E] shadow-[0_0_30px_rgba(201,169,110,0.3)] animate-[pulse_2s_ease-in-out_infinite]">
-              <CheckIcon />
-            </div>
+          <button onClick={onClose} className="p-2 text-[#888] hover:text-[#C9A96E] transition-colors rounded-full hover:bg-white/5">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-            <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">
-              Expediente recibido
-            </h3>
-
-            <p className="mt-4 font-sans text-base text-[#F5F5F5]/60 max-w-md">
-              Gracias. Tu solicitud entrará a revisión inicial por el equipo técnico de FABRIC.
-            </p>
-
-            <p className="mt-4 font-sans text-sm leading-7 text-[#F5F5F5]/55 max-w-md">
-              Validaremos empresa, contexto Oracle, urgencia operativa, patrocinio ejecutivo y posibilidad real de impacto. Si el caso califica, recibirás una respuesta al correo corporativo registrado con los siguientes pasos.
-            </p>
-
-            <div className="mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-md border border-[#2A2A2A] bg-[#111] px-4 py-3">
-                <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#C9A96E]">
-                  01
-                </p>
-                <p className="mt-2 text-xs leading-5 text-[#F5F5F5]/55">
-                  Filtro ejecutivo
-                </p>
-              </div>
-
-              <div className="rounded-md border border-[#2A2A2A] bg-[#111] px-4 py-3">
-                <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#C9A96E]">
-                  02
-                </p>
-                <p className="mt-2 text-xs leading-5 text-[#F5F5F5]/55">
-                  Revisión técnica
-                </p>
-              </div>
-
-              <div className="rounded-md border border-[#2A2A2A] bg-[#111] px-4 py-3">
-                <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#C9A96E]">
-                  03
-                </p>
-                <p className="mt-2 text-xs leading-5 text-[#F5F5F5]/55">
-                  Respuesta por correo
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-5 border border-[#C9A96E]/25 bg-[#C9A96E]/5 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[#C9A96E]">
-              FABRIC abre capacidad solo para proyectos donde puede sostener calidad senior.
-            </p>
-
-            <button
-              onClick={onClose}
-              className="mt-10 border-b border-[#C9A96E]/50 font-mono text-[11px] uppercase tracking-[0.2em] text-[#C9A96E] pb-1 hover:text-[#F5F5F5] hover:border-[#F5F5F5] transition-colors duration-300"
-            >
-              Cerrar portal
-            </button>
+        {/* Barra de Progreso */}
+        {step > 0 && step <= 12 && (
+          <div className="w-full h-[2px] bg-[#1A1A1A]">
+            <div 
+              className="h-full bg-gradient-to-r from-[#C9A96E]/50 to-[#C9A96E] transition-all duration-700 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
           </div>
         )}
+
+        <div className="flex-1 overflow-y-auto p-8 sm:p-12 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#2A2A2A]">
+          
+          {/* ================= PASO 0 ================= */}
+          {step === 0 && (
+            <div className="animate-step h-full flex flex-col justify-center">
+              <h3 className="font-serif text-3xl md:text-4xl text-[#F5F5F5] mb-4">
+                Auditoría Ejecutiva de Riesgo
+              </h3>
+              <p className="font-sans text-base text-[#F5F5F5]/60 mb-10 leading-relaxed max-w-[500px]">
+                Identificaremos si tu implementación Oracle califica para un protocolo de rescate. El proceso toma 5 minutos y requiere total transparencia corporativa.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+                <div className="border border-[#2A2A2A] bg-[#111]/50 p-5 rounded-md text-center">
+                  <span className="block text-[#C9A96E] font-serif text-2xl mb-1">12</span>
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/50">Preguntas</span>
+                </div>
+                <div className="border border-[#2A2A2A] bg-[#111]/50 p-5 rounded-md text-center">
+                  <span className="block text-[#C9A96E] font-serif text-2xl mb-1">5m</span>
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/50">Tiempo Est.</span>
+                </div>
+                <div className="border border-[#2A2A2A] bg-[#111]/50 p-5 rounded-md text-center">
+                  <span className="block text-[#C9A96E] font-serif text-2xl mb-1">100%</span>
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/50">Confidencial</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setStep(1)}
+                className="w-full group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/5 px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] shadow-[0_0_20px_rgba(201,169,110,0.1)] rounded-sm"
+              >
+                Iniciar Escaneo Técnico
+                <ArrowIcon />
+              </button>
+            </div>
+          )}
+
+          {/* ================= PASOS 1-12 ================= */}
+          {step > 0 && step <= 12 && (
+            <div key={`question-${step}`} className="animate-step h-full flex flex-col justify-center">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F5F5F5]/40 mb-4 flex items-center gap-2">
+                <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 12
+              </span>
+              
+              <h3 className="font-serif text-2xl md:text-[32px] text-[#F5F5F5] leading-[1.3] mb-10">
+                {QUESTIONS[step - 1].text}
+              </h3>
+              
+              <div className="grid grid-cols-1 gap-3">
+                {QUESTIONS[step - 1].options.map((opt, idx) => {
+                  const isSelected = answers[QUESTIONS[step - 1].id] === opt;
+                  
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleAnswerSelect(QUESTIONS[step - 1].id, opt)}
+                      disabled={!!answers[QUESTIONS[step - 1].id]} // Deshabilita tras seleccionar
+                      className={`relative w-full text-left p-5 md:p-6 border rounded-sm transition-all duration-400 font-sans text-sm md:text-base leading-relaxed flex items-center justify-between group overflow-hidden
+                        ${isSelected 
+                          ? 'border-[#C9A96E] bg-[#C9A96E]/10 text-[#C9A96E] shadow-[0_0_25px_rgba(201,169,110,0.15)] scale-[1.02]' 
+                          : 'border-[#2A2A2A] bg-[#111]/50 text-[#F5F5F5]/70 hover:border-[#C9A96E]/50 hover:bg-[#1A1A1A] hover:text-[#F5F5F5]'
+                        }
+                      `}
+                    >
+                      <span className="relative z-10 pr-6">{opt}</span>
+                      
+                      {/* Círculo indicador / Check dorado */}
+                      <div className={`relative z-10 shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300
+                        ${isSelected ? 'border-[#C9A96E] bg-[#C9A96E] text-[#0A0A0A]' : 'border-[#444] group-hover:border-[#C9A96E]/50'}`}>
+                        {isSelected && <CheckIcon className="w-3 h-3" />}
+                      </div>
+
+                      {/* Resplandor interno de selección */}
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C9A96E]/5 to-transparent animate-[wave_1.5s_ease-in-out_infinite]" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ================= PASO 13: FORMULARIO ================= */}
+          {step === 13 && (
+            <div key="step-13" className="animate-step">
+              <div className="mb-8">
+                <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
+                  Evaluación Finalizada
+                </span>
+                <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl tracking-tight mb-4">
+                  Validación de Expediente
+                </h3>
+                
+                {/* Mensaje de Exclusividad */}
+                <div className="border-l-2 border-[#C9A96E] bg-gradient-to-r from-[#C9A96E]/10 to-transparent p-4 mb-6">
+                  <p className="font-sans text-sm text-[#F5F5F5]/80 leading-relaxed">
+                    FABRIC no acepta todos los proyectos de rescate. El equipo de <span className="font-bold text-[#C9A96E]">Ingeniería Crítica</span> auditará la veracidad de estos datos para determinar la viabilidad operativa y financiera del caso.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <input type="text" name="hp_field" className="opacity-0 absolute -z-10 w-0 h-0" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e)=>setHoneypot(e.target.value)} />
+
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre directivo</span>
+                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Cargo (Ej. CFO / CIO)</span>
+                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Correo corporativo oficial</span>
+                    <input required type="email" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre de la Empresa</span>
+                    <input required type="text" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_140px] sm:items-end bg-[#111]/30 p-4 border border-[#2A2A2A] rounded-sm">
+                  <div>
+                    <span className="block font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">Protocolo Anti-Bot</span>
+                    <p className="mt-1 text-sm text-[#F5F5F5]/65">Autenticación requerida: <span className="font-mono font-bold text-[#F5F5F5]">{captcha.a} + {captcha.b}</span></p>
+                  </div>
+                  <input required type="number" inputMode="numeric" value={captchaAnswer} onChange={(e) => setCaptchaAnswer(e.target.value)} placeholder="Suma" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3 text-center text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] transition-all" />
+                </div>
+
+                <label className="flex items-start gap-4 p-2 cursor-pointer group">
+                  <input required type="checkbox" checked={authorized} onChange={(e) => setAuthorized(e.target.checked)} className="mt-1 h-4 w-4 accent-[#C9A96E]" />
+                  <span className="text-xs leading-5 text-[#F5F5F5]/60 group-hover:text-[#F5F5F5]/90 transition-colors">
+                    Autorizo formalmente a FABRIC SOFT MEXICO SA DE CV a procesar estos datos bajo estricto acuerdo de confidencialidad (NDA implícito) para emitir un veredicto técnico.
+                  </span>
+                </label>
+
+                {formError && (
+                  <div className="animate-step border border-[#B85450] bg-[#B85450]/10 p-4 rounded-sm flex items-center gap-3">
+                    <span className="text-[#B85450]">⚠️</span>
+                    <p className="text-xs text-[#E7A09D] font-mono">{formError}</p>
+                  </div>
+                )}
+
+                <button type="submit" disabled={isProcessing} className="mt-4 w-full group flex items-center justify-center gap-3 bg-[#C9A96E] rounded-sm px-8 py-4.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#0A0A0A] transition-all duration-300 hover:bg-[#B8914A] shadow-[0_0_20px_rgba(201,169,110,0.2)] hover:shadow-[0_0_30px_rgba(201,169,110,0.4)] disabled:opacity-50 disabled:cursor-wait">
+                  {isProcessing ? "Cifrando y Enviando..." : "Enviar a Ingeniería Crítica"}
+                  {!isProcessing && <ArrowIcon />}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* ================= PASO 14: ÉXITO ================= */}
+          {step === 14 && (
+            <div key="step-14" className="animate-step h-full flex flex-col items-center justify-center text-center">
+              <div className="mb-8 relative flex h-24 w-24 items-center justify-center rounded-full border border-[#C9A96E] bg-[#C9A96E]/10 text-[#C9A96E] shadow-[0_0_40px_rgba(201,169,110,0.2)]">
+                <div className="absolute inset-0 rounded-full border border-[#C9A96E] animate-[ping_2s_ease-out_infinite] opacity-30" />
+                <CheckIcon className="w-8 h-8" />
+              </div>
+              
+              <h3 className="font-serif text-3xl md:text-4xl text-[#F5F5F5] mb-4">
+                Expediente Cifrado y Recibido
+              </h3>
+              
+              <p className="font-sans text-base leading-relaxed text-[#F5F5F5]/60 max-w-lg mb-4">
+                La data ha sido transferida de manera segura. Nuestro comité técnico está realizando el análisis cruzado de tus 12 métricas operativas.
+              </p>
+              
+              <div className="inline-block border border-[#2A2A2A] bg-[#111]/50 px-6 py-3 rounded-sm mb-10">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-[#C9A96E]">
+                  Resolución estimada: Máx. 5 Días Hábiles
+                </p>
+              </div>
+
+              <button onClick={onClose} className="border-b border-[#2A2A2A] font-mono text-[11px] uppercase tracking-[0.2em] text-[#888] pb-1 hover:text-[#C9A96E] hover:border-[#C9A96E] transition-colors duration-300">
+                Cerrar Terminal
+              </button>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );
 }
+
 // =========================================================================
-// COMPONENTE PRINCIPAL
+// COMPONENTE PRINCIPAL (La Landing Section)
 // =========================================================================
-export default function S05AnalisisFallas() {
+export default function Parte5Home() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.2);
   const { ref: previewRef, isInView: previewInView } = useInView(0.2);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -393,23 +396,16 @@ export default function S05AnalisisFallas() {
   return (
     <section id="diagnostico" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
       
-      {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
-      <div className="pointer-events-none absolute right-0 top-1/2 -z-10 h-[500px] w-[500px] -translate-y-1/2 translate-x-1/4 bg-[#C9A96E] opacity-[0.04] blur-[150px]" />
+      <div className="pointer-events-none absolute right-0 top-1/2 -z-10 h-[600px] w-[600px] -translate-y-1/2 translate-x-1/4 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
 
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-12">
         <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] lg:items-center xl:gap-20">
           
-          {/* =========================================
-              LEFT: COPYWRITING & CTA
-              ========================================= */}
+          {/* ================= LEFT: COPYWRITING ================= */}
           <div ref={headerRef} className={`relative flex flex-col justify-center transition-all duration-1000 ${headerInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
             
-            <div className="mb-6 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-1.5 rounded-full backdrop-blur-sm">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C9A96E]"></span>
-              </span>
+            <div className="mb-6 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-1.5 rounded-sm backdrop-blur-sm">
               <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E]">
                 Lead Magnet · Rescue Diagnostic
               </span>
@@ -439,26 +435,22 @@ export default function S05AnalisisFallas() {
             <div className="flex flex-col items-start gap-4">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/10 px-8 py-4 rounded-md font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] shadow-[0_0_20px_rgba(201,169,110,0.1)] hover:shadow-[0_0_30px_rgba(201,169,110,0.3)] active:scale-[0.98]"
+                className="group flex items-center justify-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/5 px-8 py-4 rounded-sm font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] shadow-[0_0_20px_rgba(201,169,110,0.1)] hover:shadow-[0_0_30px_rgba(201,169,110,0.3)]"
               >
-                Iniciar diagnóstico
+                Auditar Implementación
                 <ArrowIcon />
               </button>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-[#F5F5F5]/40 ml-2">
-                12 preguntas · 5 minutos · Resultado en 5 días hábiles
+              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#F5F5F5]/30 ml-1">
+                12 preguntas · 5 minutos · Resolución en 5 días
               </p>
             </div>
           </div>
 
-          {/* =========================================
-              RIGHT: LIVE PREVIEW DASHBOARD
-              ========================================= */}
+          {/* ================= RIGHT: LIVE PREVIEW ================= */}
           <div ref={previewRef} className={`relative flex-col justify-center lg:flex transition-all duration-1000 delay-300 ${previewInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
-            
-            <div className="relative border border-[#2A2A2A] bg-[#0A0A0A] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.6)] md:p-8 rounded-xl">
+            <div className="relative border border-[#2A2A2A] bg-[#0A0A0A] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.8)] md:p-8 rounded-xl hover:border-[#C9A96E]/30 transition-colors duration-500">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
 
-              {/* Header Card */}
               <div className="mb-6 flex items-center justify-between border-b border-[#2A2A2A]/60 pb-4">
                 <div className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E] animate-pulse" />
@@ -469,38 +461,34 @@ export default function S05AnalisisFallas() {
                 <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-[#F5F5F5]/40">Diagnostic_Report.pdf</span>
               </div>
 
-              <div className="border border-[#2A2A2A] bg-[#111] rounded-lg overflow-hidden">
-                
-                {/* Severidad Alert */}
-                <div className="bg-red-950/20 border-b border-red-900/30 px-6 py-4 flex items-center justify-between">
+              <div className="border border-[#2A2A2A] bg-[#111] rounded-sm overflow-hidden">
+                <div className="bg-red-950/20 border-b border-[#B85450]/30 px-6 py-4 flex items-center justify-between">
                   <span className="font-mono text-[10px] uppercase tracking-widest text-[#F5F5F5]/60">Nivel de Severidad</span>
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                    <span className="font-mono text-[11px] font-bold tracking-widest text-red-400">ALTO</span>
+                    <span className="h-2 w-2 rounded-full bg-[#B85450] animate-pulse" />
+                    <span className="font-mono text-[11px] font-bold tracking-widest text-[#E7A09D]">ALTO</span>
                   </div>
                 </div>
 
-                {/* Metrics Grid */}
                 <div className="grid grid-cols-2 gap-px bg-[#2A2A2A]">
-                  <div className="bg-[#111] p-5">
+                  <div className="bg-[#111] p-5 hover:bg-[#161616] transition-colors">
                     <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Cierre Contable</p>
-                    <p className="font-serif text-2xl text-red-400">&gt;15 días</p>
+                    <p className="font-serif text-2xl text-[#E7A09D]">&gt;15 días</p>
                   </div>
-                  <div className="bg-[#111] p-5">
+                  <div className="bg-[#111] p-5 hover:bg-[#161616] transition-colors">
                     <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Reportes Manuales</p>
                     <p className="font-serif text-2xl text-[#F5F5F5]">12 activos</p>
                   </div>
-                  <div className="bg-[#111] p-5">
+                  <div className="bg-[#111] p-5 hover:bg-[#161616] transition-colors">
                     <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Adopción Usuarios</p>
-                    <p className="font-serif text-2xl text-red-400">42%</p>
+                    <p className="font-serif text-2xl text-[#E7A09D]">42%</p>
                   </div>
-                  <div className="bg-[#111] p-5">
+                  <div className="bg-[#111] p-5 hover:bg-[#161616] transition-colors">
                     <p className="font-mono text-[9px] uppercase tracking-widest text-[#F5F5F5]/40 mb-2">Incidencias Críticas</p>
                     <p className="font-serif text-2xl text-[#F5F5F5]">7 abiertas</p>
                   </div>
                 </div>
 
-                {/* Footer Insight */}
                 <div className="p-6 bg-gradient-to-br from-[#111] to-[#C9A96E]/5 border-t border-[#2A2A2A]">
                   <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E] mb-3">Patrón Detectado</p>
                   <p className="font-serif text-2xl md:text-3xl text-[#F5F5F5] mb-6">Abandono post go-live</p>

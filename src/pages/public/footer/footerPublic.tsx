@@ -18,7 +18,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'FABRIC OS',         path: '/#s09' },
     { label: 'Transparencia',     path: '/transparencia' },
     { label: 'Investigación',     path: '/#s14' },
-    { label: 'Modelos *',         isFuture: true },
+    { label: 'Modelos *',         path: '/modelos' },
     { label: 'Aplicar',           path: '/aplicar' },
   ],
   casos: [
@@ -35,10 +35,10 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
     { label: 'Doctrine Generator *',     path: '/doctrina/generator' },
-    { label: 'Migration Roadmap *',      isFuture: true },
-    { label: 'Readiness Score *',        isFuture: true },
-    { label: 'RFP Template *',           isFuture: true },
-    { label: 'Benchmark Index *',        isFuture: true },
+    { label: 'Migration Roadmap *',      path: '/roadmap' },
+    { label: 'Readiness Score *',        path: '/readiness' },
+    { label: 'RFP Template *',           path: '/rfp-template' },
+    { label: 'Benchmark Index *',        path: '/benchmark' },
   ],
   engagement: [
     { label: 'Aplicar / Wait List',      path: '/aplicar' },
@@ -46,12 +46,12 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Office Hours',             path: '/#s11' },
     { label: 'Post-Mortem Privado *',    path: '/post-mortem' },
     { label: 'Confidential Roundtable *', path: '/roundtable' },
-    { label: 'Research Letters *',       isFuture: true },
+    { label: 'Research Letters *',        path: '/research-letters' },
   ],
   recursos: [
-    { label: 'Paper 01 — Go-live failures *',       isFuture: true },
-    { label: 'Paper 02 — IA en Fusion *',            isFuture: true },
-    { label: 'Paper 03 — Primer ciclo crítico *',    isFuture: true },
+    { label: 'Paper 01 — Go-live failures *',         path: '/investigacion/paper/01' },
+    { label: 'Paper 02 — IA en Fusion *',             path: '/investigacion/paper/02' },
+    { label: 'Paper 03 — Primer ciclo crítico *',     path: '/investigacion/paper/03' },
   ],
 };
 

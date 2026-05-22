@@ -14,6 +14,13 @@ import RoundtablePage from '../pages/public/roundtable/RoundtablePage';
 import TerminosPage from '../pages/public/legal/TerminosPage';
 import PrivacidadPage from '../pages/public/legal/PrivacidadPage';
 import DoctrinaNoAlineacionPage from '../pages/public/legal/DoctrinaNoAlineacionPage';
+import ModelosPage from '../pages/public/modelos/ModelosPage';
+import MigrationRoadmapPage from '../pages/public/herramientas/MigrationRoadmapPage';
+import ReadinessScorePage from '../pages/public/herramientas/ReadinessScorePage';
+import RFPTemplatePage from '../pages/public/herramientas/RFPTemplatePage';
+import BenchmarkIndexPage from '../pages/public/herramientas/BenchmarkIndexPage';
+import ResearchLettersPage from '../pages/public/investigacion/ResearchLettersPage';
+import PaperPage from '../pages/public/investigacion/PaperPage';
 import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminLeads from '../pages/admin/AdminLeads';
@@ -99,6 +106,19 @@ export const AppRouter = () => {
         {/* Legal */}
         <Route path="terminos" element={<TerminosPage />} />
         <Route path="privacidad" element={<PrivacidadPage />} />
+
+        {/* Modelos de compromiso */}
+        <Route path="modelos" element={<ModelosPage />} />
+
+        {/* Herramientas */}
+        <Route path="roadmap" element={<MigrationRoadmapPage />} />
+        <Route path="readiness" element={<ReadinessScorePage />} />
+        <Route path="rfp-template" element={<RFPTemplatePage />} />
+        <Route path="benchmark" element={<BenchmarkIndexPage />} />
+
+        {/* Investigación */}
+        <Route path="research-letters" element={<ResearchLettersPage />} />
+        <Route path="investigacion/paper/:num" element={<PaperPage />} />
            {/* <Route path="/sobre-nosotros" element={< SobreNosotros/>} />
              <Route path="/servicios" element={< ServiciosAdministrados/>} />
           
