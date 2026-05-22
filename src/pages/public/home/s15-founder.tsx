@@ -151,7 +151,7 @@ export default function S15Founder() {
           </div>
 
           <div style={{ marginTop: 40, display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
-            <a href="#aplicar" data-interaction="waitlist" className="btn-primary">Solicitar lugar en lista →</a>
+            <a href="/aplicar" className="btn-primary">Solicitar lugar en lista →</a>
             <span className="nda-seal">Aplicación bajo NDA</span>
           </div>
         </div>
