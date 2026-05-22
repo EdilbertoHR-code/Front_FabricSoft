@@ -312,7 +312,7 @@ export default function S06bFixedPrice() {
   }, [dimensions]);
 
   return (
-    <section ref={containerRef} className="parte8-section relative w-full bg-[#050505] overflow-hidden flex items-center justify-center border-t border-[#111] py-20 md:py-32">
+    <section id="fixed-price" ref={containerRef} className="parte8-section relative w-full bg-[#050505] overflow-hidden flex items-center justify-center border-t border-[#111] py-20 md:py-32">
       
       {/* 1. ANIMACIÓN DE FONDO (CANVAS NATIVO) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-60">

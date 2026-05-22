@@ -7,25 +7,27 @@ type SectionItem = {
   number: string;
 };
 
-// Orden real del home.tsx — sincronizado con los IDs de cada sección
+// Orden real de home.tsx — cada ID verificado contra el archivo fuente
 const sections: SectionItem[] = [
-  { id: "inicio",            label: "Hero",               number: "01" },
-  { id: "optimizador",       label: "Optimizador OCI",    number: "02" },
-  { id: "tco",               label: "TCO Comparator",     number: "03" },
-  { id: "fabric-ai",         label: "FABRIC AI",          number: "04" },
-  { id: "diagnostico",       label: "Análisis de Fallas", number: "05" },
-  { id: "doctrina",          label: "Doctrina",           number: "06" },
-  { id: "s07",               label: "Casos",              number: "07" },
-  { id: "rescue-assessment", label: "Rescue Assessment",  number: "08" },
-  { id: "s08",               label: "Industrias",         number: "09" },
-  { id: "s09",               label: "FABRIC OS",          number: "10" },
-  { id: "s10",               label: "Lifecycle",          number: "11" },
-  { id: "s11",               label: "Office Hours",       number: "12" },
-  { id: "s12",               label: "Referencias",        number: "13" },
-  { id: "criterios",         label: "Criterios",          number: "14" },
-  { id: "s13",               label: "Transparencia",      number: "15" },
-  { id: "s14",               label: "Investigación",      number: "16" },
-  { id: "s15",               label: "Wait List",          number: "17" },
+  { id: "inicio",            label: "Hero",               number: "01" }, // s01-hero
+  { id: "optimizador",       label: "Optimizador OCI",    number: "02" }, // s02-optimizador
+  { id: "tco",               label: "TCO Comparator",     number: "03" }, // s03-tco-calculator
+  { id: "cloud-tco",         label: "TCO Waitlist",       number: "04" }, // s04-tco-waitlist
+  { id: "fabric-ai",         label: "FABRIC AI",          number: "05" }, // chatIa
+  { id: "diagnostico",       label: "Análisis de Fallas", number: "06" }, // s05-analisis-fallas
+  { id: "doctrina",          label: "Doctrina",           number: "07" }, // s06-doctrina
+  { id: "fixed-price",       label: "Fixed-Price",        number: "08" }, // s06b-fixed-price
+  { id: "s07",               label: "Casos",              number: "09" }, // s07-casos
+  { id: "rescue-assessment", label: "Rescue Assessment",  number: "10" }, // s07b-rescue-assessment
+  { id: "s08",               label: "Industrias",         number: "11" }, // s08-industrias
+  { id: "s09",               label: "FABRIC OS",          number: "12" }, // s09-fabric-os
+  { id: "s10",               label: "Lifecycle",          number: "13" }, // s10-lifecycle
+  { id: "s11",               label: "Office Hours",       number: "14" }, // s11-office-hours
+  { id: "s12",               label: "Referencias",        number: "15" }, // s12-referencias
+  { id: "criterios",         label: "Criterios",          number: "16" }, // s12b-criterios
+  { id: "s13",               label: "Transparencia",      number: "17" }, // s13-transparencia
+  { id: "s14",               label: "Investigación",      number: "18" }, // s14-investigacion
+  { id: "s15",               label: "Wait List",          number: "19" }, // s15-founder
 ];
 
 export default function SectionNavigator() {
