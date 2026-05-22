@@ -1,5 +1,4 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
-import InteractionManager from '../../../components/InteractionManager';
 
 interface TimelineItem { date: string; event: string; meta: string; }
 interface CaseBlock {
@@ -237,21 +236,12 @@ export default function CasoPage() {
                     </div>
                   ))}
                 </div>
-                <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                  <button data-interaction="reference" style={{ padding: '14px 28px', background: 'var(--accent)', color: 'var(--bg-base)', border: 'none', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer' }}>
-                    Hablar con CFO de {c.client} →
-                  </button>
-                  <button data-interaction="waitlist" style={{ padding: '14px 28px', background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text-secondary)', fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer' }}>
-                    Iniciar diagnóstico similar →
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </section>
 
       </main>
-      <InteractionManager />
     </>
   );
 }
