@@ -4,7 +4,7 @@ import { useFabric } from '../../store/FabricContext';
 import type { OfficeHoursSlot } from '../../store/fabricStore';
 
 export default function AdminOfficeHours() {
-  const { store, reservarSlot, confirmarSlot, liberarSlot } = useFabric();
+  const { store, confirmarSlot, liberarSlot } = useFabric();
   const slots = store.officeHours;
 
   const [selected, setSelected] = useState<OfficeHoursSlot | null>(null);

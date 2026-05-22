@@ -200,14 +200,6 @@ function Step2({ data, onChange, onNext, onBack }: { data: FormData; onChange: (
   const [emailError, setEmailError] = useState('');
   const valid = data.empresa.trim().length >= 2 && data.email.trim().includes('@') && !emailError;
 
-  const handleEmailBlur = () => {
-    if (!data.email) return;
-    if (isPublicEmail(data.email)) {
-      setEmailError('FABRIC trabaja con organizaciones. Usa tu correo corporativo.');
-    } else {
-      setEmailError('');
-    }
-  };
 
   const handleNext = () => {
     if (isPublicEmail(data.email)) {

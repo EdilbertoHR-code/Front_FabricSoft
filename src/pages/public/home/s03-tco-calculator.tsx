@@ -1,7 +1,7 @@
 import {
   useEffect, useMemo, useRef, useState,
   memo, useCallback,
-  type ElementType, type ReactNode,
+  type ReactNode,
 } from "react";
 // FÍJATE AQUÍ: Ya solo importamos 'toast', quitamos 'Toaster' porque ya lo tienes en main.tsx
 import { toast } from "sonner";
@@ -24,7 +24,6 @@ type FormState = {
 const SYSTEMS: CurrentSystem[] = [
   "SAP S/4 HANA", "Oracle EBS", "JD Edwards", "PeopleSoft", "Microsoft Dynamics"
 ];
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 const DEFAULT_FORM: FormState = {
   currentSystem: "SAP S/4 HANA",
@@ -189,35 +188,6 @@ function CloseIcon() {
 }
 
 // ─── TEXT SCRAMBLE ────────────────────────────────────────────────────────────
-function TextScramble({
-  children, as: Tag = "span", className,
-  trigger = true, duration = 0.8, speed = 0.03,
-  chars = SCRAMBLE_CHARS, onComplete,
-}: {
-  children: string; as?: ElementType; className?: string;
-  trigger?: boolean; duration?: number; speed?: number;
-  chars?: string; onComplete?: () => void;
-}) {
-  const [text, setText] = useState(typeof children === 'string' ? children : '');
-  const [busy, setBusy] = useState(false);
-  useEffect(() => { if (typeof children === 'string') setText(children); }, [children]);
-  useEffect(() => {
-    if (!trigger || busy || typeof children !== 'string') return;
-    setBusy(true);
-    const steps = Math.max(1, Math.floor(duration / speed));
-    let step = 0;
-    const id = window.setInterval(() => {
-      const p = step / steps;
-      setText(children.split("").map((c, i) =>
-        c === " " ? " " : p * children.length > i ? c : chars[Math.floor(Math.random() * chars.length)]
-      ).join(""));
-      if (++step > steps) { clearInterval(id); setText(children); setBusy(false); onComplete?.(); }
-    }, speed * 1000);
-    return () => clearInterval(id);
-  }, [chars, children, duration, busy, onComplete, speed, trigger]);
-  if (typeof children !== 'string') return <Tag className={className}>{children}</Tag>;
-  return <Tag className={className}>{text}</Tag>;
-}
 
 // ─── SHARED PRIMITIVES ────────────────────────────────────────────────────────
 function Btn({ children, onClick, disabled = false, className = "" }: {
