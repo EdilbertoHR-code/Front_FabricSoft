@@ -100,7 +100,7 @@ export default function Header() {
             <img
               src={logoImg}
               alt="FABRIC"
-              className="h-14 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              className="h-28 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
             />
           </Link>
 
