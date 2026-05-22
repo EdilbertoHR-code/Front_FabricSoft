@@ -20,8 +20,9 @@ const NAV = [
   { name: 'Referencias',       href: '/#s12',               sectionId: 's12' },
   { name: 'Criterios',         href: '/#criterios',         sectionId: 'criterios' },
   { name: 'Investigación',     href: '/#s14',               sectionId: 's14' },
+  { name: 'Founder · Wait List',href: '/#s15',             sectionId: 's15' },
   { name: 'Transparencia',     href: '/transparencia',      sectionId: '', page: true },
-  { name: 'Aplicar',           href: '/aplicar',            sectionId: '', page: true },
+  { name: 'Aplicar →',         href: '/aplicar',            sectionId: '', page: true },
 ];
 
 const HEADER_SCROLL_OFFSET = 118;

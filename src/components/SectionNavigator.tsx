@@ -27,7 +27,7 @@ const sections: SectionItem[] = [
   { id: "criterios",         label: "Criterios",          number: "16" }, // s12b-criterios
   { id: "s13",               label: "Transparencia",      number: "17" }, // s13-transparencia
   { id: "s14",               label: "Investigación",      number: "18" }, // s14-investigacion
-  { id: "s15",               label: "Wait List",          number: "19" }, // s15-founder
+  { id: "s15",               label: "Founder · Wait List", number: "19" }, // s15-founder
 ];
 
 export default function SectionNavigator() {
