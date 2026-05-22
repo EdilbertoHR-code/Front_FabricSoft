@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 
+// BACKEND TODO: los campos con valor null deben conectarse a DB cuando haya
+// universo estadístico suficiente (10+ proyectos, Q4 2026 según brief).
 const metricas = [
-  { id: '01', label: 'Proyectos entregados en primer ciclo crítico', valor: '2', unidad: 'de 2 proyectos', metodologia: 'Conteo de proyectos con acta de primer ciclo firmada' },
-  { id: '02', label: 'Proyectos dentro de presupuesto Fixed-Price',  valor: '100%', unidad: 'de proyectos', metodologia: 'Ningún proyecto ha generado semanas adicionales facturables por causa FABRIC' },
-  { id: '03', label: 'Incidencias críticas post go-live resueltas',   valor: '0',   unidad: 'abiertas',    metodologia: 'Incidencias bloqueantes sin resolver al cierre del primer ciclo' },
-  { id: '04', label: 'Plantilla 100% senior Oracle',                  valor: '100%', unidad: 'del equipo', metodologia: 'Mínimo 8 años de experiencia Oracle por consultor. Verificable.' },
-  { id: '05', label: 'Tiempo de respuesta a incidencias críticas',    valor: '< 4h', unidad: 'promedio',   metodologia: 'Tiempo desde reporte hasta asignación de senior en proyectos activos' },
+  { id: '01', label: 'Go-live APE Plazas en fecha contractual',      valor: '✓',    unidad: 'Verificable', metodologia: 'Go-live planeado 06 abril 2026 · Ejecutado 06 abril 2026 · Verificable bajo NDA' },
+  { id: '02', label: 'Primer cierre contable APE Plazas',            valor: '✓',    unidad: 'Verificable', metodologia: 'Cierre planeado abril 2026 · Ejecutado 30 abril 2026 · Acta en firma mayo 2026' },
+  { id: '03', label: 'Sin incidencias críticas post go-live',        valor: '✓',    unidad: 'APE Plazas',  metodologia: 'Cero incidencias bloqueantes al cierre del primer ciclo · Verificable bajo NDA' },
+  { id: '04', label: 'Experiencia Oracle promedio del equipo',       valor: '15+',  unidad: 'años',        metodologia: 'Promedio de años de experiencia Oracle por consultor senior facturable' },
+  { id: '05', label: 'Plantilla senior Oracle',                      valor: '100%', unidad: 'del equipo',  metodologia: 'Cero juniors facturables · Condición contractual en cada SOW · Verificable' },
+  { id: '06', label: 'Certificaciones Oracle vigentes',              valor: '100%', unidad: 'del equipo',  metodologia: 'Certificaciones activas verificables por consultor facturable' },
 ];
 
 const compromisos = [
