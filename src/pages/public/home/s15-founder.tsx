@@ -278,20 +278,6 @@ export default function S15Founder() {
           </div>
         </div>
 
-        <div className="founder-line">
-          <div className="founder-line-label">Founder Line · Acceso Directo</div>
-          <p className="founder-line-text">
-            Si tu organización considera una iniciativa Oracle mayor a USD 1M,{' '}
-            <span className="text-[#C9A96E]">Julio Álvarez recibe estas conversaciones directamente.</span>
-          </p>
-          <a className="founder-line-email" href="mailto:julio@fabricsoft.com.mx">
-            <span>julio@fabricsoft.com.mx</span>
-            <span className="copy-hint">Click para copiar</span>
-          </a>
-          <div className="founder-line-note">
-            Respuesta personal en menos de 24 horas hábiles · Conversación bajo NDA mutuo
-          </div>
-        </div>
       </div>
     </section>
   );
