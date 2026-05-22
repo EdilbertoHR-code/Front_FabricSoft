@@ -27,11 +27,11 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Aplazo',                   path: '/casos/aplazo' },
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
-    { label: 'Rescue Assessment',        path: '/#diagnostico' },
+    { label: 'Rescue Assessment',        path: '/#fabric-ai' },
     { label: 'Apply Reverse *',          path: '/rechazados' },
   ],
   herramientas: [
-    { label: 'FABRIC AI Diagnostic',     path: '/#diagnostico' },
+    { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
     { label: 'Optimizador OCI',          path: '/#diagnostico' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },

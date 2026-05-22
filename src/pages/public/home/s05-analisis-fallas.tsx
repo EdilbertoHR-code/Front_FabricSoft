@@ -540,7 +540,7 @@ export default function Parte5Home() {
   ];
 
   return (
-    <section id="diagnostico" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
+    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
       
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute right-0 top-1/2 -z-10 h-[600px] w-[600px] -translate-y-1/2 translate-x-1/4 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
