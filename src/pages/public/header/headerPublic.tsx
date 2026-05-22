@@ -101,6 +101,7 @@ export default function Header() {
               src={logoImg}
               alt="FABRIC"
               className="h-10 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ transform: 'scale(1.8)', transformOrigin: 'left center' }}
             />
           </Link>
 
