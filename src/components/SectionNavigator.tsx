@@ -7,27 +7,21 @@ type SectionItem = {
   number: string;
 };
 
-// Orden real de home.tsx — cada ID verificado contra el archivo fuente
+// 13 puntos de navegación — secciones principales del home
 const sections: SectionItem[] = [
-  { id: "inicio",            label: "Hero",               number: "01" }, // s01-hero
-  { id: "optimizador",       label: "Optimizador OCI",    number: "02" }, // s02-optimizador
-  { id: "tco",               label: "TCO Comparator",     number: "03" }, // s03-tco-calculator
-  { id: "cloud-tco",         label: "TCO Waitlist",       number: "04" }, // s04-tco-waitlist
-  { id: "fabric-ai",         label: "FABRIC AI",          number: "05" }, // chatIa
-  { id: "diagnostico",       label: "Análisis de Fallas", number: "06" }, // s05-analisis-fallas
-  { id: "doctrina",          label: "Doctrina",           number: "07" }, // s06-doctrina
-  { id: "fixed-price",       label: "Fixed-Price",        number: "08" }, // s06b-fixed-price
-  { id: "s07",               label: "Casos",              number: "09" }, // s07-casos
-  { id: "rescue-assessment", label: "Rescue Assessment",  number: "10" }, // s07b-rescue-assessment
-  { id: "s08",               label: "Industrias",         number: "11" }, // s08-industrias
-  { id: "s09",               label: "FABRIC OS",          number: "12" }, // s09-fabric-os
-  { id: "s10",               label: "Lifecycle",          number: "13" }, // s10-lifecycle
-  { id: "s11",               label: "Office Hours",       number: "14" }, // s11-office-hours
-  { id: "s12",               label: "Referencias",        number: "15" }, // s12-referencias
-  { id: "criterios",         label: "Criterios",          number: "16" }, // s12b-criterios
-  { id: "s13",               label: "Transparencia",      number: "17" }, // s13-transparencia
-  { id: "s14",               label: "Investigación",      number: "18" }, // s14-investigacion
-  { id: "s15",               label: "Founder · Wait List", number: "19" }, // s15-founder
+  { id: "inicio",      label: "Hero",               number: "01" }, // s01
+  { id: "tco",         label: "TCO Comparator",     number: "02" }, // s03+s04
+  { id: "fabric-ai",   label: "FABRIC AI",          number: "03" }, // chatIa
+  { id: "diagnostico", label: "Diagnóstico",         number: "04" }, // s05+s07b
+  { id: "doctrina",    label: "Doctrina",            number: "05" }, // s06+s06b
+  { id: "s07",         label: "Casos",              number: "06" }, // s07+s12
+  { id: "s08",         label: "Industrias",         number: "07" }, // s08
+  { id: "s09",         label: "FABRIC OS",          number: "08" }, // s09
+  { id: "s10",         label: "Lifecycle",          number: "09" }, // s10
+  { id: "s11",         label: "Office Hours",       number: "10" }, // s11
+  { id: "s14",         label: "Investigación",      number: "11" }, // s14
+  { id: "s13",         label: "Transparencia",      number: "12" }, // s13
+  { id: "s15",         label: "Founder · Wait List",number: "13" }, // s15
 ];
 
 export default function SectionNavigator() {
