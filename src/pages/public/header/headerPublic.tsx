@@ -81,7 +81,7 @@ export default function Header() {
           fixed top-0 left-0 right-0 z-50
           flex justify-center px-6 md:px-12
           transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${scrolled ? 'bg-[#0A0A0A]/90 backdrop-blur-xl border-b border-[#2A2A2A] shadow-md h-16' : 'bg-transparent border-b border-transparent h-20'}
+          ${scrolled ? 'bg-[#0A0A0A]/90 backdrop-blur-xl border-b border-[#2A2A2A] shadow-md py-3' : 'bg-transparent border-b border-transparent py-5'}
           ${mounted  ? 'opacity-100' : 'opacity-0'}
         `}
       >
@@ -100,7 +100,7 @@ export default function Header() {
             <img
               src={logoImg}
               alt="FABRIC"
-              className="h-12 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              className="h-28 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
             />
           </Link>
 
