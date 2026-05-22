@@ -39,7 +39,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'RFP Template', isFuture: true },
   ],
   engagement: [
-    { label: 'Aplicar / Wait List', path: '/#s15' },
+    { label: 'Aplicar / Wait List', path: '/aplicar' },
     { label: 'Office Hours', path: '/#s11' },
     { label: 'Criterios', path: '/#criterios' },
     { label: 'Modelos de compromiso', path: '/#s10' },
@@ -48,7 +48,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Research Letters', isFuture: true },
   ],
   recursos: [
-    { label: 'Transparencia', path: '/#s13' },
+    { label: 'Transparencia', path: '/transparencia' },
     { label: 'Metodología pública', isFuture: true },
     { label: 'Investigación', path: '/#s14' },
     { label: 'Benchmark Index', path: '/#s14' },
