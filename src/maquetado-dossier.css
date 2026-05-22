@@ -2304,13 +2304,22 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 .founder-manifesto::before {
   content: '"';
   font-family: var(--serif);
-  font-size: 200px;
+  font-size: 160px;
   color: var(--accent);
   line-height: 1;
   position: absolute;
-  top: -40px; left: 50%;
+  top: 60px; left: 50%;
   transform: translateX(-50%);
-  opacity: 0.18;
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.founder-manifesto .label,
+.founder-manifesto blockquote,
+.founder-manifesto cite {
+  position: relative;
+  z-index: 1;
 }
 
 .founder-manifesto blockquote {
