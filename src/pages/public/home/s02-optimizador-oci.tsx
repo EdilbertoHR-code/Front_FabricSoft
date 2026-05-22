@@ -65,9 +65,9 @@ export default function S02OptimizadorOCI() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
               <a
                 href="/aplicar"
-                className="btn-primary"
+                className="cta"
               >
-                Solicitar auditoría →
+                Solicitar auditoría <span className="cta-arrow">→</span>
               </a>
               <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
                 Confidencialidad bajo NDA · Reporte sin compromiso
