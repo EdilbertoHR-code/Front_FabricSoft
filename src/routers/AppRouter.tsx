@@ -4,6 +4,8 @@ import { SignIn, SignUp } from '@clerk/clerk-react';
 import PublicLayout from '../layouts/public/publicLayaout';
 import Home from '../pages/public/home/home';
 import CasoPage from '../pages/public/casos/CasoPage';
+import AplicarPage from '../pages/public/aplicar/AplicarPage';
+import TransparenciaPage from '../pages/public/transparencia/TransparenciaPage';
 import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminLeads from '../pages/admin/AdminLeads';
@@ -61,6 +63,12 @@ export const AppRouter = () => {
 
         {/* Casos de éxito */}
         <Route path="casos/:slug" element={<CasoPage />} />
+
+        {/* Aplicar / Wait List */}
+        <Route path="aplicar" element={<AplicarPage />} />
+
+        {/* Transparencia */}
+        <Route path="transparencia" element={<TransparenciaPage />} />
            {/* <Route path="/sobre-nosotros" element={< SobreNosotros/>} />
              <Route path="/servicios" element={< ServiciosAdministrados/>} />
           
