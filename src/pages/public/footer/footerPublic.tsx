@@ -123,6 +123,9 @@ export default function Footer() {
               <a href="mailto:contacto@fabricsoft.com.mx" className="block text-[#C9A96E] hover:text-[#C9A96E]/80 transition-colors duration-300">
                 contacto@fabricsoft.com.mx
               </a>
+              <a href="mailto:julio@fabricsoft.com.mx" className="block text-[#C9A96E] hover:text-[#C9A96E]/80 transition-colors duration-300">
+                julio@fabricsoft.com.mx
+              </a>
             </div>
 
             <div className="flex items-center gap-6 mb-10">
