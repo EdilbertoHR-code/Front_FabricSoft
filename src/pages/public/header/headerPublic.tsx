@@ -118,11 +118,13 @@ export default function Header() {
             <Link
               to="/#diagnostico"
               onClick={(event) => handleSectionNavigation(event, 'diagnostico')}
-              className="hidden sm:inline-flex items-center gap-1.5 relative overflow-hidden group bg-[#C9A96E] hover:bg-[#B8914A] text-[#0A0A0A] font-mono font-bold text-[10px] tracking-[0.2em] uppercase px-[16px] py-[8px] rounded-full transition-all duration-300 shadow-[0_0_20px_-8px_rgba(201,169,110,0.5)] hover:shadow-[0_0_30px_-4px_rgba(201,169,110,0.7)] hover:scale-[1.03] active:scale-[0.98]"
+              className="hidden sm:inline-flex items-center gap-2 relative group text-[#C9A96E] font-mono font-semibold text-[10px] tracking-[0.22em] uppercase px-0 py-2 transition-colors duration-300 hover:text-[#F5F5F5] active:scale-[0.98]"
             >
-              <span aria-hidden="true" className="absolute inset-0 -translate-x-full skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/28 to-transparent group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out pointer-events-none" />
-              <span className="relative">Iniciar conversación</span>
-              <span className="relative transition-transform duration-300 group-hover:translate-x-1">→</span>
+              <span className="relative">
+                Iniciar conversación
+                <span aria-hidden="true" className="absolute left-0 -bottom-1 h-px w-full bg-[#C9A96E] origin-right scale-x-100 transition-transform duration-300 ease-out group-hover:scale-x-0" />
+              </span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </Link>
 
             <button
