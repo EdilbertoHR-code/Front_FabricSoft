@@ -1,17 +1,20 @@
+import BackButton from '../../../components/BackButton';
 import { Link } from 'react-router-dom';
 
 const entregables = [
-  { num: '01', titulo: '2 días de inmersión', descripcion: 'Lorem ipsum dolor sit amet, detalle de formato de inmersión pendiente de definición por Julio.' },
-  { num: '02', titulo: 'Análisis técnico · funcional · operativo', descripcion: 'Lorem ipsum dolor sit amet, alcance exacto del análisis pendiente de especificación.' },
-  { num: '03', titulo: 'Diagnóstico de causas raíz', descripcion: 'Lorem ipsum dolor sit amet, metodología de diagnóstico pendiente de documentación.' },
-  { num: '04', titulo: 'Plan de remediación con costos', descripcion: 'Lorem ipsum dolor sit amet, estructura del plan pendiente de definición.' },
-  { num: '05', titulo: 'Reporte ejecutivo para junta directiva', descripcion: 'Lorem ipsum dolor sit amet, formato del reporte pendiente de validación.' },
+  { num: '01', titulo: '2 días de inmersión', descripcion: 'Sesiones cerradas con dirección, usuarios clave y responsables técnicos para reconstruir decisiones, riesgos y bloqueos.' },
+  { num: '02', titulo: 'Análisis técnico · funcional · operativo', descripcion: 'Revisión de arquitectura, procesos críticos, integraciones, datos, gobierno y responsabilidades reales del proyecto.' },
+  { num: '03', titulo: 'Diagnóstico de causas raíz', descripcion: 'Separación clara entre síntomas visibles, causas estructurales y decisiones que deben corregirse antes de invertir más.' },
+  { num: '04', titulo: 'Plan de remediación con costos', descripcion: 'Ruta ejecutable con fases, dependencias, inversión estimada y criterios para saber si el rescate vale la pena.' },
+  { num: '05', titulo: 'Reporte ejecutivo para junta directiva', descripcion: 'Documento sobrio para CFO, CIO, CTO y consejo: qué pasó, qué riesgo queda y qué decisión sigue.' },
 ];
 
 export default function PostMortemPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
-
+    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Servicio Premium · FABRIC</div>
@@ -82,7 +85,7 @@ export default function PostMortemPage() {
               El precio de USD 25,000 filtra prospectos serios y cubre la inmersión completa. El 80% de los post-mortems convierten en un proyecto de remediación de USD 200–500K.
             </p>
             <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 24 }}>
-              Formulario de solicitud · Próximamente
+              Solicitud sujeta a admisión
             </p>
             <Link
               to="/aplicar"

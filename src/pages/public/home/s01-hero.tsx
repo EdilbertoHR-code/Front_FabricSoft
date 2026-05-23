@@ -306,13 +306,8 @@ export default function S01Hero() {
               <span className="relative z-10 ml-3">→</span>
             </Link>
 
-            <Link
-              to="/herramientas/erp-tco"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
-            >
-              <span className="absolute left-0 top-0 h-full w-[2px] bg-[#C9A96E] opacity-0 transition-opacity duration-300 hover:opacity-100" />
-              <span className="relative z-10">Auditoría OCI gratuita</span>
-              <span className="relative z-10 ml-3 text-[#C9A96E]">→</span>
+            <Link to="/#fabric-ai" className="btn-primary min-w-[250px]">
+              Auditoría OCI gratuita <span className="text-[#C9A96E]">→</span>
             </Link>
           </div>
         </div>

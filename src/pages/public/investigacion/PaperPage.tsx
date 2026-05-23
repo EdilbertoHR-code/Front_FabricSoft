@@ -1,3 +1,4 @@
+import BackButton from '../../../components/BackButton';
 import { useParams, Navigate } from 'react-router-dom';
 
 const papers: Record<string, { num: string; titulo: string; subtitulo: string }> = {
@@ -25,7 +26,10 @@ export default function PaperPage() {
   if (!paper) return <Navigate to="/#s14" replace />;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
+    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Paper {paper.num} · FABRIC Research</div>
@@ -36,7 +40,7 @@ export default function PaperPage() {
             {paper.subtitulo}
           </div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente. El paper completo se entrega por email tras registro con correo corporativo.
+            Nota técnica para equipos ejecutivos que necesitan decidir con evidencia, no con promesas de implementación. El acceso completo requiere registro corporativo.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
             Descarga disponible con registro · Correo corporativo requerido
@@ -49,7 +53,7 @@ export default function PaperPage() {
             Solicitar descarga
           </div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: 24 }}>
-            Lorem ipsum dolor sit amet. Formulario de descarga pendiente de implementación. El PDF se entrega por email tras validar correo corporativo.
+            El PDF se entrega por email tras validar correo corporativo y contexto de iniciativa Oracle. No distribuimos research sensible en descarga pública.
           </p>
           <a href="/aplicar" style={{ display: 'inline-block', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg-base)', background: 'var(--accent)', padding: '14px 32px', textDecoration: 'none' }}>
             Solicitar acceso →

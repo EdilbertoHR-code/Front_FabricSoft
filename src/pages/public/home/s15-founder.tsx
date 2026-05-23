@@ -27,7 +27,6 @@ function CountdownBanner({ isoDate }: { isoDate: string }) {
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     <div className="countdown-banner">
-      <span className="countdown-emoji">⏳</span>
       <span className="countdown-label">Cierre Q3 2026:</span>
       <span className="countdown-time">
         {pad(days)}d {pad(hours)}h {pad(minutes)}m {pad(seconds)}s
@@ -65,44 +64,153 @@ export default function S15Founder() {
           <cite>— Julio Álvarez</cite>
         </div>
 
-        <div className="founder-grid" style={{ gridTemplateColumns: "1fr", maxWidth: 920, marginInline: "auto" }}>
-          <div className="julio-bio-block" style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: "48px", alignItems: "start" }}>
+        {/* ── Bloque Founder ── */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "340px 1fr",
+          gap: 80,
+          alignItems: "start",
+          maxWidth: 1080,
+          marginInline: "auto",
+          marginBottom: 80,
+        }}>
+
+          {/* Foto */}
+          <div style={{ position: "relative" }}>
+            {/* Línea decorativa izquierda */}
+            <div style={{
+              position: "absolute",
+              left: -24,
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: "linear-gradient(to bottom, transparent, var(--accent), transparent)",
+              opacity: 0.4,
+            }} />
             <img
               src="/julio_alvarez.jpeg"
               alt="Julio Álvarez — Founder FABRIC"
               style={{
                 width: "100%",
-                aspectRatio: "3/4",
+                aspectRatio: "4/5",
                 objectFit: "cover",
                 objectPosition: "center top",
-                filter: "grayscale(20%)",
-                border: "1px solid var(--border)",
+                filter: "grayscale(100%) contrast(1.05)",
+                display: "block",
               }}
             />
-            <div>
-            <div className="julio-name">Julio Álvarez</div>
-            <div className="julio-title">Founder · FABRIC</div>
-            <p className="julio-bio">
+            {/* Caption bajo la foto */}
+            <div style={{
+              marginTop: 16,
+              paddingTop: 16,
+              borderTop: "1px solid var(--border)",
+              fontFamily: "var(--mono)",
+              fontSize: 8,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "var(--text-tertiary)",
+              display: "flex",
+              justifyContent: "space-between",
+            }}>
+              <span>Ciudad de México · México</span>
+              <span>Founder · 2026</span>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div style={{ paddingTop: 8 }}>
+            {/* Eyebrow */}
+            <div style={{
+              fontFamily: "var(--mono)",
+              fontSize: 9,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--accent)",
+              marginBottom: 20,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}>
+              <span style={{ display: "inline-block", width: 24, height: 1, background: "var(--accent)" }} />
+              Founder · FABRIC
+            </div>
+
+            {/* Nombre */}
+            <div style={{
+              fontFamily: "var(--serif)",
+              fontSize: "clamp(48px, 5vw, 72px)",
+              fontWeight: 300,
+              color: "var(--text-primary)",
+              lineHeight: 1.0,
+              letterSpacing: "-0.02em",
+              marginBottom: 32,
+            }}>
+              Julio<br />Álvarez
+            </div>
+
+            {/* Bio */}
+            <p style={{
+              fontFamily: "var(--sans)",
+              fontSize: 16,
+              color: "var(--text-secondary)",
+              lineHeight: 1.85,
+              marginBottom: 28,
+              maxWidth: 480,
+            }}>
               20+ años en arquitectura Oracle, ERP empresarial y transformación de operaciones críticas. Liderando la firma de Oracle Critical Engineering en México con expansión hacia USA.
             </p>
-            <p className="julio-note">
-              Equipo senior bajo NDA hasta el primer engagement. Acceso a equipo directo se otorga tras admisión inicial.
-            </p>
 
-            <div className="julio-credentials">
-              <div className="cell">
-                <div className="num">20+</div>
-                <div className="lbl">Años Oracle</div>
-              </div>
-              <div className="cell">
-                <div className="num">100%</div>
-                <div className="lbl">Senior team</div>
-              </div>
-              <div className="cell">
-                <div className="num">15+</div>
-                <div className="lbl">Certificaciones vigentes</div>
-              </div>
+            {/* Nota NDA */}
+            <div style={{
+              borderLeft: "2px solid var(--accent)",
+              paddingLeft: 16,
+              marginBottom: 48,
+            }}>
+              <p style={{
+                fontFamily: "var(--sans)",
+                fontSize: 13,
+                fontStyle: "italic",
+                color: "var(--text-tertiary)",
+                lineHeight: 1.7,
+              }}>
+                Equipo senior bajo NDA hasta el primer engagement. Acceso a equipo directo se otorga tras admisión inicial.
+              </p>
             </div>
+
+            {/* Credenciales */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              borderTop: "1px solid var(--border)",
+            }}>
+              {[
+                { num: "20+", lbl: "Años Oracle" },
+                { num: "100%", lbl: "Senior team" },
+                { num: "15+", lbl: "Certificaciones vigentes" },
+              ].map((c, i) => (
+                <div key={i} style={{
+                  padding: "28px 0",
+                  borderRight: i < 2 ? "1px solid var(--border)" : "none",
+                  paddingRight: i < 2 ? 32 : 0,
+                  paddingLeft: i > 0 ? 32 : 0,
+                }}>
+                  <div style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: 40,
+                    fontWeight: 300,
+                    color: "var(--accent)",
+                    lineHeight: 1,
+                    marginBottom: 6,
+                  }}>{c.num}</div>
+                  <div style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: 8,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "var(--text-tertiary)",
+                  }}>{c.lbl}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -170,20 +278,6 @@ export default function S15Founder() {
           </div>
         </div>
 
-        <div className="founder-line">
-          <div className="founder-line-label">Founder Line · Acceso Directo</div>
-          <p className="founder-line-text">
-            Si tu organización considera una iniciativa Oracle mayor a USD 1M,{' '}
-            <span className="text-[#C9A96E]">Julio Álvarez recibe estas conversaciones directamente.</span>
-          </p>
-          <a className="founder-line-email" href="mailto:julio@fabricsoft.com.mx">
-            <span>julio@fabricsoft.com.mx</span>
-            <span className="copy-hint">Click para copiar</span>
-          </a>
-          <div className="founder-line-note">
-            Respuesta personal en menos de 24 horas hábiles · Conversación bajo NDA mutuo
-          </div>
-        </div>
       </div>
     </section>
   );

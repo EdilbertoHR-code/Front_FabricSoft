@@ -237,3 +237,86 @@ fabricsoft/ (frontend/)
 1. Enrutar `footerPublic.tsx` hacia las 14 páginas satélite.
 2. Comenzar la maquetación de los Wizards (TCO Comparator, Readiness Score, Doctrine Generator).
 3. Mover/Adaptar el componente `ChatIa` hacia su ruta dedicada `/herramientas/ai-diagnostic`.
+
+---
+
+## 14. Actualización de Sesión — Casos y PDFs bajo NDA
+
+- Brief2 tiene prioridad sobre brief1 para la sección de casos.
+- Regla editorial activa: no inventar métricas, fechas, quotes, documentos ni resultados. Si el brief no lo contiene o no está autorizado por CEO/cliente, debe mostrarse como pendiente.
+- `s07-casos.tsx` queda como sección boutique/dossier, no como tabla: métricas en bloques editoriales, CTAs apilados y sin columnas que desborden.
+- APE Plazas puede mostrar los datos específicos de Brief2:
+  - Go-live planeado: 06 abril 2026.
+  - Go-live ejecutado: 06 abril 2026.
+  - Primer cierre planeado: abril 2026.
+  - Primer cierre ejecutado: 30 abril 2026.
+  - Acta de transición: en firma mayo 2026.
+- APE Plazas puede ofrecer `Solicitar PDF bajo NDA`, porque Brief2 menciona paper formal 4-6 páginas y evidencias PDF bajo NDA, sujeto a autorización de cliente y validación legal.
+- Aplazo permanece como caso real mencionado por Brief2, pero sin métricas, PDF, quote, fechas ni evidencia descargable hasta validación explícita del CEO y autorización del cliente.
+- El audit trail puede mostrar solicitudes de PDF bajo NDA para APE Plazas: acta de go-live, reporte FABRIC y acta de transición. No debe habilitar descarga pública directa.
+
+## 16. Sesión 22 mayo 2026 — Auditoría completa de alineación con Brief2
+
+### Resumen de cambios
+Se auditaron y corrigieron todas las secciones del home contra Brief2 (prioridad) y brief1. Regla aplicada en toda la sesión: **jamás inventar métricas, números, quotes ni contenido no autorizado por el brief o el CEO**.
+
+### Cambios por sección
+- **S09 FABRIC OS**: Quitado CTA "Explorar FABRIC OS completo" — enlace circular sin destino.
+- **S11 Office Hours**: Botón "Reservar conversación" restaurado a modal `data-interaction="office-hours"` (InteractionManager). No navega a `/office-hours` hasta que exista el embed de Calendly.
+- **S12 Referencias**: Botón "Iniciar evaluación" ahora dispara modal `data-interaction="reference"`. Nota de rotación dinámica de ejecutivos agregada al código (BACKEND TODO).
+- **S12b Criterios**: Banner de métricas (`02` proyectos, `47` solicitudes) reemplazado por `—` hasta conectar DB. Diseño del banner mejorado.
+- **S13 Transparencia**: Sección home correcta. TransparenciaPage corregida — quitadas métricas inventadas (`< 4h`, `100% Fixed-Price`, conteo agregado). Solo se publican datos verificables de APE Plazas + métricas del equipo según Brief2.
+- **S14 Investigación**: Botón "Reservar lugar" del Benchmark Index ahora tiene modal boutique propio (`data-interaction="benchmark"`) con form de email corporativo gateado.
+- **S15 Founder**: Quitado emoji ⏳ del countdown (viola regla sin emojis). Quitado bloque "Founder Line" (no viene en el brief). Números del store vienen en tiempo real.
+- **Footer**: Corregidos links rotos. `FABRIC AI Diagnostic` → `/#fabric-ai`. `Optimizador OCI` → `/#diagnostico` → luego `/#fabric-ai`. Email `julio@fabricsoft.com.mx` restaurado.
+- **Hero**: CTA "Auditoría OCI gratuita" apunta a `/#fabric-ai` (s05 análisis de fallas).
+- **InteractionManager**: Montado en `home.tsx` — todos los modales ahora funcionan.
+- **SectionNavigator**: Corregido `id="diagnostico"` → `id="fabric-ai"`.
+
+### Limpieza de archivos no usados
+Eliminados: `parte1_edi_v1.bak.tsx`, `parte7.home.tsx`, `s02-optimizador-oci.tsx`, `s07b-rescue-assessment.tsx`, `RetroGrid.tsx`.
+
+### BackButton
+Componente `src/components/BackButton.tsx` creado y agregado a todas las páginas satélite. Usa `navigate(-1)` — regresa exactamente a la sección del home donde estaba el usuario.
+
+### Footer en páginas satélite
+Footer grande aparece en todas las páginas. Quitado copyright bar hardcodeado duplicado. Quitado `minHeight: 100vh` de páginas satélite (causaba espacio negro entre contenido y footer).
+
+### IDs disponibles en el home (mapa actualizado)
+| ID | Sección |
+|----|---------|
+| `inicio` | S01 Hero |
+| `optimizador` | S02 RescueCounter |
+| `puente` | S02b Puente |
+| `tco` | S03 TCO Calculator |
+| `cloud-tco` | S04 TCO Waitlist |
+| `fabric-ai` | S05 Análisis Fallas / AI Diagnostic |
+| `doctrina` | S06 Doctrina |
+| `fixed-price` | S06b Fixed Price |
+| `s07` | S07 Casos |
+| `s08` | S08 Industrias |
+| `s09` | S09 FABRIC OS |
+| `s10` | S10 Lifecycle |
+| `s11` | S11 Office Hours |
+| `s12` | S12 Referencias |
+| `criterios` | S12b Criterios |
+| `s13` | S13 Transparencia |
+| `s14` | S14 Investigación |
+| `s15` | S15 Founder + Waitlist |
+
+### Pendiente para siguiente sesión
+- Conectar números del store a DB real (proyectos activos, solicitudes evaluadas, lista de espera).
+- Implementar Calendly en `/office-hours` cuando llegue el backend.
+- Rotación dinámica de referencias ejecutivas (BACKEND TODO en s12-referencias.tsx).
+- Auditar secciones S01 Hero y S02 Optimizador contra brief (partículas, typewriter, párrafo 73%).
+
+## 15. Actualización de Sesión — Revisión Editorial Home
+
+- Se revisó la sección S09 FABRIC OS contra Brief2.
+- El bloque principal de FABRIC OS está alineado con Brief2: cuatro capas expandibles (Doctrina de entrega, FSOs paquetizados, Frameworks aplicados, Agentes IA propios).
+- Se ajustó el encabezado del catálogo FSO en `s09-fabric-os.tsx` para usar lenguaje más fiel a Brief2:
+  - De `Catálogo FSO · Pipeline privado 2026` a `FSO Engine · Soluciones paquetizadas`.
+  - De `Seis soluciones nombradas. Cada una, validable.` a `IP nombrada y reutilizable. Cada FSO, validable.`
+- Motivo: Brief2 define FSO Engine como el conjunto de Fabric Solution Objects, soluciones paquetizadas reutilizables e IP nombrada/vendible.
+- Se corrigió el CTA `Explorar FABRIC OS completo` para apuntar al bloque público `#fso-engine` dentro de la misma sección, en lugar de enviar a `#aplicar`.
+- Motivo: FABRIC OS es contenido público en Home; el CTA del brief debe explorar el sistema, no iniciar admisión.

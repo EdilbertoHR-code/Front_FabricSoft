@@ -7,7 +7,7 @@ type FooterLink = {
 };
 
 const showComingSoon = () => {
-  window.alert('Próximamente');
+  window.alert('Acceso privado. Solicita admisión para recibir disponibilidad.');
 };
 
 const footerLinks: Record<string, FooterLink[]> = {
@@ -27,12 +27,12 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Aplazo',                   path: '/casos/aplazo' },
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
-    { label: 'Rescue Assessment',        path: '/#diagnostico' },
+    { label: 'Rescue Assessment',        path: '/#fabric-ai' },
     { label: 'Apply Reverse *',          path: '/rechazados' },
   ],
   herramientas: [
     { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
-    { label: 'Optimizador OCI',          path: '/aplicar' },
+    { label: 'Optimizador OCI',          path: '/#fabric-ai' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
     { label: 'Doctrine Generator *',     path: '/doctrina/generator' },
@@ -145,7 +145,7 @@ export default function Footer() {
 
             <div className="pt-6 border-t border-[#2A2A2A]">
               <p className="text-xs text-[#F5F5F5]/40 flex items-center gap-2">
-                <span className="text-[#C9A96E]/60 animate-pulse">◆</span> Funcionalidad disponible Q3-Q4 2026
+                <span className="text-[#C9A96E]/60 animate-pulse">◆</span> Acceso selectivo · cupos limitados
               </p>
             </div>
           </div>

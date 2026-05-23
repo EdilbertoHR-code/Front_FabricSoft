@@ -1,37 +1,51 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
+
 import PublicLayout from '../layouts/public/publicLayaout';
-import Home from '../pages/public/home/home';
-import CasoPage from '../pages/public/casos/CasoPage';
-import AplicarPage from '../pages/public/aplicar/AplicarPage';
-import TransparenciaPage from '../pages/public/transparencia/TransparenciaPage';
-import GeneratorPage from '../pages/public/doctrina/GeneratorPage';
-import RechazadosPage from '../pages/public/rechazados/RechazadosPage';
-import AuditTrailPage from '../pages/public/casos/AuditTrailPage';
-import PostMortemPage from '../pages/public/postmortem/PostMortemPage';
-import RoundtablePage from '../pages/public/roundtable/RoundtablePage';
-import TerminosPage from '../pages/public/legal/TerminosPage';
-import PrivacidadPage from '../pages/public/legal/PrivacidadPage';
-import DoctrinaNoAlineacionPage from '../pages/public/legal/DoctrinaNoAlineacionPage';
-import ModelosPage from '../pages/public/modelos/ModelosPage';
-import MigrationRoadmapPage from '../pages/public/herramientas/MigrationRoadmapPage';
-import ReadinessScorePage from '../pages/public/herramientas/ReadinessScorePage';
-import RFPTemplatePage from '../pages/public/herramientas/RFPTemplatePage';
-import BenchmarkIndexPage from '../pages/public/herramientas/BenchmarkIndexPage';
-import ResearchLettersPage from '../pages/public/investigacion/ResearchLettersPage';
-import PaperPage from '../pages/public/investigacion/PaperPage';
-import AdminLogin from '../pages/admin/AdminLogin';
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import AdminLeads from '../pages/admin/AdminLeads';
-import AdminMetricas from '../pages/admin/AdminMetricas';
-import AdminCapacidad from '../pages/admin/AdminCapacidad';
-import AdminOfficeHours from '../pages/admin/AdminOfficeHours';
-import AdminLogs from '../pages/admin/AdminLogs';
-// import SobreNosotros from '../components/public/sobreNoostros/sobreNosotros';
-// import ServiciosAdministrados from '../components/public/serviciosAdministractivos/serviciosAdministrados';
-// import ProyectosBlog from '../components/public/proyectos/poryecto';
-// import Clientes from '../components/public/clientes/clientes';
+import { ProtectorRoles } from '../auth/ProtecteRoles';
+import { PublicRouteProtector } from '../auth/PublicProtecte';
+
+// Páginas Públicas
+const Home = lazy(() => import('../pages/public/home/home'));
+const CasoPage = lazy(() => import('../pages/public/casos/CasoPage'));
+const AplicarPage = lazy(() => import('../pages/public/aplicar/AplicarPage'));
+const TransparenciaPage = lazy(() => import('../pages/public/transparencia/TransparenciaPage'));
+const RechazadosPage = lazy(() => import('../pages/public/rechazados/RechazadosPage'));
+const AuditTrailPage = lazy(() => import('../pages/public/casos/AuditTrailPage'));
+const PostMortemPage = lazy(() => import('../pages/public/postmortem/PostMortemPage'));
+const RoundtablePage = lazy(() => import('../pages/public/roundtable/RoundtablePage'));
+const ModelosPage = lazy(() => import('../pages/public/modelos/ModelosPage'));
+
+// Páginas Legales
+const TerminosPage = lazy(() => import('../pages/public/legal/TerminosPage'));
+const PrivacidadPage = lazy(() => import('../pages/public/legal/PrivacidadPage'));
+const DoctrinaNoAlineacionPage = lazy(() => import('../pages/public/legal/DoctrinaNoAlineacionPage'));
+
+
+import { VerificarAcceso } from '../auth/VerificarAcceso';
+
+// Páginas de Herramientas
+const MigrationRoadmapPage = lazy(() => import('../pages/public/herramientas/MigrationRoadmapPage'));
+const ReadinessScorePage = lazy(() => import('../pages/public/herramientas/ReadinessScorePage'));
+const RFPTemplatePage = lazy(() => import('../pages/public/herramientas/RFPTemplatePage'));
+const BenchmarkIndexPage = lazy(() => import('../pages/public/herramientas/BenchmarkIndexPage'));
+
+// Páginas de Investigación
+const ResearchLettersPage = lazy(() => import('../pages/public/investigacion/ResearchLettersPage'));
+const PaperPage = lazy(() => import('../pages/public/investigacion/PaperPage'));
+
+// Páginas de Administración
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const AdminLeads = lazy(() => import('../pages/admin/AdminLeads'));
+const AdminMetricas = lazy(() => import('../pages/admin/AdminMetricas'));
+const AdminCapacidad = lazy(() => import('../pages/admin/AdminCapacidad'));
+const AdminOfficeHours = lazy(() => import('../pages/admin/AdminOfficeHours'));
+const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
+
+// =========================================================================
+// UTILIDADES Y COMPONENTES GLOBALES
+// =========================================================================
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -63,103 +77,122 @@ function ScrollToTop() {
   return null;
 }
 
+
+const GlobalLoader = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] font-sans">
+    <div className="relative mb-6 flex h-16 w-16 items-center justify-center">
+      <div className="absolute inset-0 rounded-full border border-[#2A2A2A]" />
+      <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-[#C9A96E]" />
+    </div>
+    <p className="text-[10px] font-mono font-bold text-[#C9A96E] uppercase tracking-[0.3em] animate-pulse">
+      Iniciando Terminal...
+    </p>
+  </div>
+);
+
+// =========================================================================
+// ENRUTADOR PRINCIPAL
+// =========================================================================
+
 export const AppRouter = () => {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-      {/* RUTAS PÚBLICAS
-        Todo lo que esté dentro de esta ruta principal tendrá el Header y Footer
-      */}
-      <Route path="/" element={<PublicLayout />}>
-        
-        {/* Página Principal (Home) */}
-        <Route index element={<Home />} />
-
-        {/* Casos de éxito */}
-        <Route path="casos/:slug" element={<CasoPage />} />
-
-        {/* Aplicar / Wait List */}
-        <Route path="aplicar" element={<AplicarPage />} />
-
-        {/* Transparencia */}
-        <Route path="transparencia" element={<TransparenciaPage />} />
-
-        {/* Doctrine Generator */}
-        <Route path="doctrina/generator" element={<GeneratorPage />} />
-
-        {/* Doctrina de no alineación */}
-        <Route path="doctrina/no-alineacion" element={<DoctrinaNoAlineacionPage />} />
-
-        {/* Proyectos evaluados / rechazados */}
-        <Route path="rechazados" element={<RechazadosPage />} />
-
-        {/* Audit Trail por caso */}
-        <Route path="casos/:slug/audit-trail" element={<AuditTrailPage />} />
-
-        {/* Post-Mortem Privado */}
-        <Route path="post-mortem" element={<PostMortemPage />} />
-
-        {/* Confidential Roundtable */}
-        <Route path="roundtable" element={<RoundtablePage />} />
-
-        {/* Legal */}
-        <Route path="terminos" element={<TerminosPage />} />
-        <Route path="privacidad" element={<PrivacidadPage />} />
-
-        {/* Modelos de compromiso */}
-        <Route path="modelos" element={<ModelosPage />} />
-
-        {/* Herramientas */}
-        <Route path="roadmap" element={<MigrationRoadmapPage />} />
-        <Route path="readiness" element={<ReadinessScorePage />} />
-        <Route path="rfp-template" element={<RFPTemplatePage />} />
-        <Route path="benchmark" element={<BenchmarkIndexPage />} />
-
-        {/* Investigación */}
-        <Route path="research-letters" element={<ResearchLettersPage />} />
-        <Route path="investigacion/paper/:num" element={<PaperPage />} />
-           {/* <Route path="/sobre-nosotros" element={< SobreNosotros/>} />
-             <Route path="/servicios" element={< ServiciosAdministrados/>} />
+      {/* El Suspense envuelve las rutas lazy para mostrar el Loader mientras se descargan */}
+      <Suspense fallback={<GlobalLoader />}>
+        <Routes>
           
-             {/* <Route path="/proyectos" element={<ProyectosBlog/>} /> */}
+          {/* =================================================================
+              RUTAS PÚBLICAS (Dentro del Layout Público) 
+              ================================================================= */}
+          <Route path="/" element={<PublicLayout />}>
+            <Route index element={<Home />} />
 
+            <Route path="/verificar-acceso" element={<VerificarAcceso />} />
+     
+            
+            {/* Casos y Engagements */}
+            <Route path="casos/:slug" element={<CasoPage />} />
+            <Route path="casos/:slug/audit-trail" element={<AuditTrailPage />} />
+            <Route path="aplicar" element={<AplicarPage />} />
+            <Route path="rechazados" element={<RechazadosPage />} />
+            <Route path="post-mortem" element={<PostMortemPage />} />
+            <Route path="roundtable" element={<RoundtablePage />} />
+            <Route path="modelos" element={<ModelosPage />} />
+            <Route path="transparencia" element={<TransparenciaPage />} />
 
-        {/* Pantallas de Autenticación de Clerk */}
-        <Route path="sign-in/*" element={
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <SignIn 
-              routing="path" 
-              path="/sign-in" 
-              signUpUrl="/sign-up" 
-            />
-          </div>
-        } />
-        
-        <Route path="sign-up/*" element={
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <SignUp 
-              routing="path" 
-              path="/sign-up" 
-              signInUrl="/sign-in" 
-            />
-          </div>
-        } />
+            {/* Legal */}
+            <Route path="terminos" element={<TerminosPage />} />
+            <Route path="privacidad" element={<PrivacidadPage />} />
+            <Route path="doctrina/no-alineacion" element={<DoctrinaNoAlineacionPage />} />
 
-      </Route>
+            {/* Herramientas (El Generador ya es Modal en el Home, pero dejamos las demás) */}
+            <Route path="roadmap" element={<MigrationRoadmapPage />} />
+            <Route path="readiness" element={<ReadinessScorePage />} />
+            <Route path="rfp-template" element={<RFPTemplatePage />} />
+            <Route path="benchmark" element={<BenchmarkIndexPage />} />
 
-      {/* RUTAS ADMIN — fuera del PublicLayout (sin header/footer público) */}
-      <Route path="/admin/login"         element={<AdminLogin />} />
-      <Route path="/admin"             element={<AdminDashboard />} />
-      <Route path="/admin/leads"       element={<AdminLeads />} />
-      <Route path="/admin/metricas"    element={<AdminMetricas />} />
-      <Route path="/admin/capacidad"   element={<AdminCapacidad />} />
-      <Route path="/admin/office-hours" element={<AdminOfficeHours />} />
-      <Route path="/admin/logs"        element={<AdminLogs />} />
+            {/* Investigación */}
+            <Route path="research-letters" element={<ResearchLettersPage />} />
+            <Route path="investigacion/paper/:num" element={<PaperPage />} />
+          </Route>
 
-      {/* REDIRECCIÓN POR DEFECTO: Si escriben una URL que no existe, los manda al Home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+          {/* =================================================================
+              RUTAS DE AUTENTICACIÓN (CLERK) - URLs Personalizadas
+              ================================================================= */}
+          <Route 
+            path="/acceso/*" 
+            element={
+              <PublicRouteProtector>
+                <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
+                  <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
+                  <div className="pointer-events-none absolute -top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
+                  <div className="relative z-10">
+                    <SignIn routing="path" path="/acceso" signUpUrl="/crear-cuenta" />
+                  </div>
+                </div>
+              </PublicRouteProtector>
+            } 
+          />
+
+          <Route 
+            path="/crear-cuenta/*" 
+            element={
+              <PublicRouteProtector>
+                <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
+                  <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
+                  <div className="pointer-events-none absolute -bottom-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
+                  <div className="relative z-10">
+                    <SignUp routing="path" path="/crear-cuenta" signInUrl="/acceso" />
+                  </div>
+                </div>
+              </PublicRouteProtector>
+            } 
+          />
+
+          {/* =================================================================
+              RUTAS DE ADMINISTRACIÓN (Protegidas por Roles de Clerk)
+              ================================================================= */}
+          <Route 
+            path="/admin/*" 
+            element={
+              <ProtectorRoles rolesPermitidos={['Admin']}>
+                <Routes>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="leads" element={<AdminLeads />} />
+                  <Route path="metricas" element={<AdminMetricas />} />
+                  <Route path="capacidad" element={<AdminCapacidad />} />
+                  <Route path="office-hours" element={<AdminOfficeHours />} />
+                  <Route path="logs" element={<AdminLogs />} />
+                </Routes>
+              </ProtectorRoles>
+            } 
+          />
+
+          {/* REDIRECCIÓN POR DEFECTO (404 a Home) */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </>
   );
 };

@@ -10,7 +10,7 @@ type SectionItem = {
 const sections: SectionItem[] = [
   { id: "inicio",      label: "Hero",               number: "01" }, // S01 + Rescue Counter + Puente
   { id: "tco",         label: "ERP TCO · AI",       number: "02" }, // S03 + S04 + ChatIa
-  { id: "diagnostico", label: "Rescue Assessment",  number: "03" }, // S05
+  { id: "fabric-ai",    label: "Rescue Assessment",  number: "03" }, // S05
   { id: "doctrina",    label: "Doctrina",            number: "04" }, // S06 + Fixed Price
   { id: "s07",         label: "Casos · Industrias", number: "05" }, // S07 + S08
   { id: "s09",         label: "FABRIC OS · Lifecycle", number: "06" }, // S09 + S10

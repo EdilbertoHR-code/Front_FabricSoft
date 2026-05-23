@@ -1,7 +1,10 @@
+import BackButton from '../../../components/BackButton';
 export default function PrivacidadPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
-
+    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+        <BackButton />
+      </div>
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Legal · FABRIC SOFT MEXICO SA DE CV</div>
@@ -9,18 +12,18 @@ export default function PrivacidadPage() {
             Aviso de privacidad.
           </h1>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Última actualización · Pendiente · Contenido en preparación
+            Última actualización · Mayo 2026 · Versión pública
           </div>
         </div>
       </div>
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '80px 56px' }}>
         {[
-          { titulo: '1. Responsable del tratamiento', cuerpo: 'FABRIC SOFT MEXICO SA DE CV, con domicilio en Ciudad de México, México, es responsable del tratamiento de sus datos personales. Contenido completo pendiente de redacción por área legal.' },
-          { titulo: '2. Datos personales recabados', cuerpo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Listado de datos recabados pendiente de definición: nombre, cargo, empresa, correo corporativo. Contenido pendiente de validación.' },
-          { titulo: '3. Finalidades del tratamiento', cuerpo: 'Ut enim ad minim veniam. Finalidades primarias y secundarias pendientes de redacción conforme a LFPDPPP.' },
-          { titulo: '4. Transferencias de datos', cuerpo: 'Lorem ipsum dolor sit amet. Política de transferencias pendiente de definición. FABRIC no vende ni transfiere datos a terceros para fines comerciales.' },
-          { titulo: '5. Derechos ARCO', cuerpo: 'Duis aute irure dolor. Para ejercer derechos de Acceso, Rectificación, Cancelación u Oposición: contacto@fabricsoft.com.mx · Plazo de respuesta: 20 días hábiles.' },
+          { titulo: '1. Responsable del tratamiento', cuerpo: 'FABRIC SOFT MEXICO SA DE CV, con domicilio en Ciudad de México, México, es responsable del tratamiento de los datos personales recabados a través de este sitio.' },
+          { titulo: '2. Datos personales recabados', cuerpo: 'Podemos solicitar nombre, cargo, empresa, correo corporativo, teléfono, industria, contexto del proyecto Oracle y datos necesarios para evaluar una solicitud calificada.' },
+          { titulo: '3. Finalidades del tratamiento', cuerpo: 'Usamos la información para responder solicitudes, evaluar admisión, coordinar sesiones privadas, compartir materiales bajo NDA y mantener comunicación profesional sobre servicios FABRIC.' },
+          { titulo: '4. Transferencias de datos', cuerpo: 'FABRIC no vende datos personales. La información puede compartirse únicamente con proveedores operativos necesarios para atender la solicitud o cuando exista obligación legal.' },
+          { titulo: '5. Derechos ARCO', cuerpo: 'Para ejercer derechos de Acceso, Rectificación, Cancelación u Oposición, escribe a contacto@fabricsoft.com.mx. Atenderemos la solicitud conforme a la legislación aplicable.' },
           { titulo: '6. Contacto', cuerpo: 'Consultas sobre privacidad: contacto@fabricsoft.com.mx · FABRIC SOFT MEXICO SA DE CV · Ciudad de México, México.' },
         ].map((s, i) => (
           <div key={i} style={{ paddingBottom: 48, marginBottom: 48, borderBottom: '1px solid var(--border)' }}>

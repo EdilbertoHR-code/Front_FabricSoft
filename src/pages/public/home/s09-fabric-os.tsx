@@ -10,25 +10,25 @@ const layers: {
     num: "04",
     name: "Agentes IA propios",
     desc: "Capacidad técnica diferencial propia.",
-    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
+    detail: <span>Agentes de diagnóstico, lectura contractual y priorización técnica entrenados sobre doctrina FABRIC. No sustituyen al senior: aceleran la primera hipótesis y reducen ruido en la evaluación.</span>,
   },
   {
     num: "03",
     name: "Frameworks aplicados",
     desc: "Metodologías propias aplicadas en proyecto.",
-    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
+    detail: <span>Playbooks de rescate, estabilización y migración diseñados para operar con hitos contractuales, evidencia de avance y toma de decisiones ejecutiva.</span>,
   },
   {
     num: "02",
     name: "FSOs paquetizados",
     desc: "Soluciones paquetizadas reutilizables.",
-    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
+    detail: <span>Soluciones reutilizables para cierres contables, operación multi-entidad, controles fintech y migraciones legacy. Cada FSO reduce tiempo de diseño y riesgo de ejecución.</span>,
   },
   {
     num: "01",
     name: "Doctrina de entrega",
     desc: "Cómo trabajamos. Contractualizable.",
-    detail: <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Contenido pendiente de especificación por Julio Álvarez.</span>,
+    detail: <span>La entrega se mide en operación real: primer ciclo crítico, evidencia documental, ownership senior y transición formal. Go-live no es el final del proyecto.</span>,
   },
 ];
 
@@ -86,11 +86,11 @@ export default function S09FabricOS() {
           })}
         </div>
 
-        <div className="fso-section">
+        <div id="fso-engine" className="fso-section">
           <div className="fso-section-header">
             <div>
-              <div className="label" style={{ marginBottom: 12 }}>Catálogo FSO · En construcción 2026</div>
-              <h3>Seis soluciones nombradas. <span className="text-[#C9A96E]">Cada una, validable.</span></h3>
+              <div className="label" style={{ marginBottom: 12 }}>FSO Engine · Soluciones paquetizadas</div>
+              <h3>IP nombrada y reutilizable. <span className="text-[#C9A96E]">Cada FSO, validable.</span></h3>
             </div>
             <div className="fso-legend">
               <span className="status-badge available">Available</span>
@@ -116,9 +116,7 @@ export default function S09FabricOS() {
             ))}
           </div>
 
-          <div style={{ textAlign: "center", marginTop: 64 }}>
-            <a href="#aplicar" data-interaction="fabric-os" className="cta">Explorar FABRIC OS completo <span className="cta-arrow">→</span></a>
-          </div>
+
         </div>
       </div>
     </section>

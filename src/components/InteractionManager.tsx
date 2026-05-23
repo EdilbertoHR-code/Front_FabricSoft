@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | null;
+type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | null;
 
 const powDocs = [
   { icon: "SOW",   title: "SOW Fixed-Price firmado",           meta: "28 pp · ES · Cláusulas doctrinales explícitas · dic 2025", size: "2.4 MB", access: "locked" },
@@ -389,6 +389,77 @@ export default function InteractionManager() {
                 Si califica, se enviará NDA mutuo.
               </div>
               <button onClick={close} style={{ marginTop: 24, padding: "10px 24px", background: "transparent", border: "1px solid var(--accent)", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}>Cerrar</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── BENCHMARK INDEX — early access ── */}
+      {active === "benchmark" && (
+        <div className="im-modal" style={{ background: "var(--bg-panel)", border: "1px solid var(--border-strong)", maxWidth: 600, width: "100%", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "24px 28px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, width: 2, height: 40, background: "var(--accent)" }} />
+            <div style={{ paddingLeft: 16 }}>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 6 }}>FABRIC Benchmark Index · Anual · Q4 2026</div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: 26 }}>Early access al <em style={{ color: "var(--accent)" }}>reporte.</em></div>
+            </div>
+            <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
+          </div>
+
+          <div style={{ padding: "24px 28px", flex: 1 }}>
+            <div style={{ padding: "16px 20px", border: "1px solid var(--border)", marginBottom: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+              {[
+                "% de implementaciones Oracle que fallan",
+                "Razones más comunes de fracaso",
+                "Tiempo promedio de cierre post go-live",
+                "Comparativo de consultoras (sin nombrar)",
+                "Best practices para CFO/CTO en RFP Oracle",
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", gap: 8, fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                  <span style={{ color: "var(--accent)", flexShrink: 0 }}>·</span>{item}
+                </div>
+              ))}
+            </div>
+
+            {!submitted ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {(["nombre", "empresa", "email"] as const).map((field) => (
+                  <div key={field}>
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>
+                      {field === "email" ? "Email corporativo" : field}
+                    </div>
+                    <input
+                      type={field === "email" ? "email" : "text"}
+                      value={formData[field]}
+                      onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+                ))}
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", lineHeight: 1.6, marginTop: 4 }}>
+                  Reporte gratuito. Acceso gateado por email corporativo — no gmail, hotmail, yahoo.
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "24px 0" }}>
+                <div style={{ fontFamily: "var(--serif)", fontSize: 42, color: "var(--accent)", marginBottom: 12 }}>✓</div>
+                <div style={{ fontFamily: "var(--serif)", fontSize: 22, marginBottom: 10 }}>Lugar <em>reservado.</em></div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                  Recibirás el reporte en {formData.email || "tu email"} al lanzamiento Q4 2026.<br />
+                  Solo correos corporativos verificados.
+                </div>
+              </div>
+            )}
+          </div>
+
+          {!submitted && (
+            <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setSubmitted(true)}
+                style={{ padding: "13px 28px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}
+              >
+                Reservar early access →
+              </button>
             </div>
           )}
         </div>

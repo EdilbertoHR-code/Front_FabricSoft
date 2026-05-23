@@ -43,7 +43,7 @@ export default function S11OfficeHours() {
             </div>
 
             <div className="s11-cta-desktop" style={{ marginTop: 32, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-              <a href="#aplicar" data-interaction="office-hours" className="btn-primary">Reservar conversación →</a>
+              <a href="#office-hours" data-interaction="office-hours" className="btn-primary">Reservar conversación →</a>
               <span className="nda-seal">Confidencial · NDA mutuo</span>
             </div>
           </div>
@@ -80,12 +80,13 @@ export default function S11OfficeHours() {
 
             {/* Mobile CTA inside calendar */}
             <a
-              href="#aplicar"
+              href="#office-hours"
               data-interaction="office-hours"
               className="s11-cta-mobile btn-primary"
               style={{ display: "block", textAlign: "center", marginTop: 16 }}
             >
               Reservar conversación →
+
             </a>
           </div>
         </div>

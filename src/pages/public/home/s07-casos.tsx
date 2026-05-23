@@ -7,6 +7,7 @@ interface MetricRow {
   value: string;
   detail: string;
   highlight?: boolean;
+  verified?: boolean;
 }
 
 interface CaseData {
@@ -19,6 +20,12 @@ interface CaseData {
   quote: string;
   author: string;
   href: string;
+  proofHref: string;
+  pdfCta: {
+    label: string;
+    href?: string;
+    disabled?: boolean;
+  };
 }
 
 const cases: CaseData[] = [
@@ -26,37 +33,47 @@ const cases: CaseData[] = [
     id: "ape-plazas",
     tag: "Caso Ancla · Abril 2026",
     title: "APE Plazas",
-    subtitle: "Implementación Oracle Fusion Cloud · Operadora de centros comerciales · MX",
+    subtitle: "Implementación Oracle Fusion Cloud en operadora de centros comerciales",
     status: "En Producción",
     href: "/casos/ape-plazas",
+    proofHref: "/casos/ape-plazas/audit-trail",
+    pdfCta: {
+      label: "Solicitar PDF bajo NDA",
+      href: "mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20APE%20Plazas"
+    },
     metrics: [
-      { label: "Go-live planeado", value: "06 abril 2026", detail: "Documentado" },
-      { label: "Go-live ejecutado", value: "06 abril 2026", detail: "+0 días" },
-      { label: "Primer cierre contable", value: "Abril 2026", detail: "Sin incidencias", highlight: true },
-      { label: "Incidencias críticas post-GL", value: "0", detail: "Auditado", highlight: true },
-      { label: "Transición a soporte", value: "En firma", detail: "Acta vigente" }
+      { label: "Go-live planeado", value: "06 abril 2026", detail: "Fecha contractual", verified: true },
+      { label: "Go-live ejecutado", value: "06 abril 2026", detail: "Cumplimiento", verified: true },
+      { label: "Primer cierre contable", value: "Abril 2026", detail: "Primer ciclo crítico", verified: true },
+      { label: "Incidencias críticas", value: "0", detail: "Primer cierre", verified: true },
+      { label: "Transición a soporte", value: "En firma", detail: "Acta formal", verified: true }
     ],
     quote:
       "El cierre contable de abril se ejecutó sin incidencias con acompañamiento FABRIC. Ese es el momento en el que consideramos el proyecto entregado.",
-    author: "Director de Finanzas · APE Plazas · abr 2026"
+    author: ""
   },
   {
     id: "aplazo",
-    tag: "Caso Ancla · Q1 2026",
+    tag: "Caso de Rescate · Fintech",
     title: "Aplazo",
-    subtitle: "Rescate Oracle Fusion · Fintech regulada · Crédito al consumo · MX",
-    status: "Estabilizado",
+    subtitle: "Rescate de implementación Oracle Fusion en fintech regulada de crédito al consumo",
+    status: "Bajo NDA",
     href: "/casos/aplazo",
+    proofHref: "/casos/aplazo/audit-trail",
+    pdfCta: {
+      label: "Solicitar PDF bajo NDA",
+      href: "mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20Aplazo"
+    },
     metrics: [
-      { label: "Estado inicial", value: "Crítico", detail: "Pre-FABRIC", highlight: true },
-      { label: "Reportes manuales eliminados", value: "5", detail: "12 a 7" },
-      { label: "Tiempo de cierre", value: "6d", detail: "-66% (antes 18d)", highlight: true },
-      { label: "Adopción de usuarios", value: "95%", detail: "42 a 95" },
-      { label: "Compliance regulatorio", value: "Operativo", detail: "CNBV" }
+      { label: "Estado inicial", value: "Crítico", detail: "Post go-live", verified: false },
+      { label: "Reportes manuales eliminados", value: "5", detail: "Controles paralelos", verified: true },
+      { label: "Tiempo de cierre", value: "18d → 6d", detail: "Cierre contable", verified: true },
+      { label: "Adopción usuarios", value: "95%", detail: "Usuarios clave", verified: true },
+      { label: "Compliance regulatorio", value: "Operativo", detail: "Fintech", verified: true }
     ],
     quote:
       "FABRIC tomó una implementación abandonada y la convirtió en plataforma operativa estable en 10 semanas. Sin renegociaciones.",
-    author: "CFO Controller · Aplazo · feb 2026"
+    author: ""
   }
 ];
 
@@ -68,16 +85,16 @@ export default function S07Casos() {
         <div className="s07-intro">
           <div className="label">Casos Seleccionados · 2026</div>
           <h2>
-            Rescates documentados, <span className="text-[#C9A96E]">verificables bajo NDA.</span>
+            Entregas y rescates documentados, <span className="text-[#C9A96E]">verificables bajo NDA.</span>
           </h2>
           <p>
-            Dos implementaciones Oracle Fusion que llegaron a FABRIC en estado crítico.
-            Hoy operan en producción.
+            Una implementación ancla y un rescate Oracle Fusion documentados con evidencia
+            disponible bajo NDA para prospectos calificados.
           </p>
           <div className="s07-meta">
             <span>Última actualización · 19.05.2026</span>
             <span>Idioma · ES / EN</span>
-            <span>Editorial · Sanity</span>
+            <span>Acceso · Bajo NDA</span>
           </div>
         </div>
 
@@ -99,12 +116,14 @@ export default function S07Casos() {
               <div className="caso-metrics">
                 {item.metrics.map((metric) => (
                   <div className="caso-metric" key={metric.label}>
-                    <span className="caso-metric-label">{metric.label}</span>
+                    <span className="caso-metric-label">
+                      {metric.label}
+                      <small>{metric.detail}</small>
+                    </span>
                     <span className="caso-metric-val">
                       {metric.highlight ? <span className="text-[#C9A96E]">{metric.value}</span> : metric.value}
-                      <span className="check">✓</span>
+                      {metric.verified ? <span className="check">✓</span> : null}
                     </span>
-                    <span className="caso-metric-label">{metric.detail}</span>
                   </div>
                 ))}
               </div>
@@ -116,12 +135,21 @@ export default function S07Casos() {
 
               <div className="caso-footer">
                 <div className="caso-ctas">
-                  <Link to={item.href} className="cta">
-                    Leer caso completo <span className="cta-arrow">→</span>
+                  <Link to={item.href} className="caso-action caso-action-primary">
+                    Leer caso completo
                   </Link>
-                  <button type="button" className="cta" data-interaction="proof">
-                    Proof of Work <span className="cta-arrow">→</span>
-                  </button>
+                  <Link to={item.proofHref} className="caso-action" data-interaction="proof">
+                    Proof of Work
+                  </Link>
+                  {item.pdfCta.disabled ? (
+                    <span className="caso-action caso-action-disabled" aria-disabled="true">
+                      {item.pdfCta.label}
+                    </span>
+                  ) : (
+                    <a href={item.pdfCta.href} className="caso-action" data-interaction="nda-pdf">
+                      {item.pdfCta.label}
+                    </a>
+                  )}
                 </div>
                 <span className="nda-seal">NDA · Auditado</span>
               </div>
