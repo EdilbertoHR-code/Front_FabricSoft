@@ -300,8 +300,8 @@ export default function S01Hero() {
           >
             <Link
               to="/contacto"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#C9A96E] bg-[#C9A96E]/10 px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#C9A96E] transition-all duration-300 hover:-translate-y-1 hover:bg-[#C9A96E] hover:text-[#0A0A0A] hover:shadow-[0_0_28px_rgba(201,169,110,0.25)]"
-            >
+          className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
+   >
               <span className="relative z-10">Iniciar conversación</span>
               <span className="relative z-10 ml-3">→</span>
             </Link>

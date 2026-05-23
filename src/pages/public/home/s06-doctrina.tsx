@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { DoctrinaModal } from "./DoctrinaModal";
+import { DoctrineGeneratorModal } from "./DoctrinaModal";
 
 // --- HOOK DE ANIMACIÓN ---
 function useInView(threshold = 0.15) {
@@ -14,7 +14,7 @@ function useInView(threshold = 0.15) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
-          observer.disconnect(); 
+          observer.disconnect();
         }
       },
       { threshold, rootMargin: "100px" }
@@ -47,8 +47,8 @@ function ShieldIcon() {
 function CheckCircleIcon() {
   return (
     <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M22 4L12 14.01l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22 4L12 14.01l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -97,24 +97,25 @@ const clauses = [
 // =========================================================================
 export default function S06Doctrina() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.1);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section id="doctrina" className="relative w-full bg-[#050505] py-24 md:py-32 border-t border-[#111]">
-      
+
       {/* --- FONDOS Y EFECTOS --- */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-[0.05]" />
       <div className="pointer-events-none absolute left-0 top-1/4 h-[600px] w-[600px] -translate-x-1/4 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
 
       {/* GRID ASIMÉTRICO (La magia del "Scrollytelling") */}
       <div className="relative z-10 mx-auto max-w-[1300px] px-6 md:px-12 flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
-        
+
         {/* =========================================================
             COLUMNA IZQUIERDA (Se queda pegada en la pantalla)
             ========================================================= */}
         <div className="lg:w-5/12 lg:sticky lg:top-32 flex flex-col">
           <div ref={headerRef} className={`transition-all duration-1000 ${headerInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
-            
+
             <div className="mb-6 inline-flex items-center gap-3 px-4 py-1.5 rounded-sm border border-[#C9A96E]/20 bg-[#C9A96E]/5 backdrop-blur-md">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
@@ -136,13 +137,17 @@ export default function S06Doctrina() {
               La industria del software empresarial está rota. Nosotros no vendemos horas-hombre, vendemos estabilidad operativa garantizada. Conoce nuestras cláusulas innegociables.
             </p>
 
-            <Link
-              to="/doctrina/generator"
-              className="group flex items-center justify-center gap-3 bg-[#C9A96E] text-[#0A0A0A] px-8 py-4.5 rounded-sm font-mono text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-[#B8914A] shadow-[0_0_30px_rgba(201,169,110,0.2)] hover:shadow-[0_0_40px_rgba(201,169,110,0.4)] w-fit"
+
+
+
+            <button
+              onClick={() => setIsGeneratorOpen(true)}
+              className="group flex w-fit items-center gap-3 border border-[#C9A96E] bg-[#C9A96E]/5 px-8 py-4 rounded-sm font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#0A0A0A] hover:shadow-[0_0_20px_rgba(201,169,110,0.3)]"
             >
               Generador de doctrina
               <ArrowIcon />
-            </Link>
+            </button>
+
           </div>
         </div>
 
@@ -150,7 +155,7 @@ export default function S06Doctrina() {
             COLUMNA DERECHA (El "Feed" que fluye al hacer scroll)
             ========================================================= */}
         <div className="lg:w-7/12 relative flex flex-col gap-8 pb-10">
-          
+
           {/* Línea conectora de la línea de tiempo */}
           <div className="absolute left-[38px] top-10 bottom-10 w-px bg-gradient-to-b from-transparent via-[#C9A96E]/30 to-transparent hidden sm:block" />
 
@@ -160,7 +165,7 @@ export default function S06Doctrina() {
             const isContractual = clause.type === "contractual";
 
             return (
-              <div 
+              <div
                 key={clause.id}
                 ref={ref}
                 className={`relative pl-0 sm:pl-24 transition-all duration-700 ease-out will-change-transform
@@ -178,16 +183,16 @@ export default function S06Doctrina() {
                   ${isInView ? 'border-[#C9A96E]/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'border-[#1A1A1A] shadow-none'}`}
                 >
                   <div className="flex flex-col gap-6">
-                    
+
                     {/* Header de tarjeta (Mobile number + Tag) */}
                     <div className="flex items-center justify-between">
                       <span className="sm:hidden font-mono text-2xl font-light text-[#C9A96E]">
                         {clause.id}
                       </span>
-                      
+
                       <div className={`inline-flex items-center gap-2 px-3 py-1.5 border rounded-sm font-mono text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300
-                        ${isContractual 
-                          ? 'border-[#C9A96E]/30 bg-[#C9A96E]/10 text-[#C9A96E]' 
+                        ${isContractual
+                          ? 'border-[#C9A96E]/30 bg-[#C9A96E]/10 text-[#C9A96E]'
                           : 'border-[#2A2A2A] bg-[#111] text-[#F5F5F5]/50'
                         }`}
                       >
@@ -215,7 +220,10 @@ export default function S06Doctrina() {
 
       </div>
 
-      <DoctrinaModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <DoctrineGeneratorModal
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+      />
     </section>
   );
 }
