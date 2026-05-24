@@ -1,4 +1,5 @@
-const Lead = require('../models/model.lead');
+const Lead        = require('../models/model.lead');
+const emailService = require('../services/email.service');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 const VALID_STATUSES = ['Nuevo', 'Aprobado', 'WaitList', 'Revisión', 'Rechazado'];
@@ -75,6 +76,14 @@ exports.solicitar = async (req, res) => {
       ipAddress:  req.ip || '',
       historial:  [{ fecha: nowLabel(), estado: status, autor: 'Sistema' }],
     });
+
+    // Fire & forget — no bloquea la respuesta al usuario
+    emailService.sendConfirmacionAplicar({
+      nombre:  lead.nombre,
+      empresa: lead.empresa,
+      email:   lead.email,
+      status:  lead.status,
+    }).catch(e => console.error('email.aplicar error:', e.message));
 
     res.status(201).json({ ok: true, data: lead });
   } catch (err) {
@@ -162,6 +171,12 @@ exports.solicitarWaitlist = async (req, res) => {
       historial: [{ fecha: nowLabel(), estado: 'WaitList', autor: 'Sistema' }],
     });
 
+    emailService.sendConfirmacionWaitlist({
+      nombre:  lead.nombre,
+      empresa: lead.empresa,
+      email:   lead.email,
+    }).catch(e => console.error('email.waitlist error:', e.message));
+
     res.status(201).json({ ok: true, data: lead });
   } catch (err) {
     console.error('leads.solicitarWaitlist error:', err);
@@ -188,6 +203,12 @@ exports.solicitarReferencia = async (req, res) => {
       ipAddress: req.ip || '',
       historial: [{ fecha: nowLabel(), estado: 'Nuevo', autor: 'Sistema' }],
     });
+
+    emailService.sendConfirmacionReferencia({
+      nombre:  lead.nombre,
+      empresa: lead.empresa,
+      email:   lead.email,
+    }).catch(e => console.error('email.referencia error:', e.message));
 
     res.status(201).json({ ok: true, data: lead });
   } catch (err) {
