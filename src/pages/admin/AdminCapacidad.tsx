@@ -1,20 +1,78 @@
 import AdminLayout from './AdminLayout';
-import { useFabric, useCapacidad } from '../../store/FabricContext';
-import { countSlots } from '../../store/fabricStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { adminApi } from '../../config/api';
 
-const SLOT_COLOR: Record<string, string> = {
-  activo:    '#C9A96E',
-  reservado: '#4a4a30',
-  libre:     '#1a1a1a',
+interface Slot { id: number; status: 'disponible' | 'activo' | 'reservado'; }
+interface WaitlistLead {
+  _id: string; nombre: string; cargo: string; empresa: string;
+  industria: string; score: number; createdAt: string;
+}
+
+const SLOT_BG: Record<string, string>     = { activo: '#C9A96E', reservado: '#4a4a30', disponible: '#1a1a1a' };
+const SLOT_BORDER: Record<string, string> = { activo: '#C9A96E', reservado: '#6b5a2c', disponible: '#252525' };
+const SLOT_TEXT: Record<string, string>   = { activo: '#060606', reservado: '#8A8A8A', disponible: '#5A5A5A' };
+const NEXT_STATUS: Record<string, Slot['status']> = {
+  disponible: 'activo',
+  activo:     'reservado',
+  reservado:  'disponible',
 };
 
-export default function AdminCapacidad() {
-  const { setAdmissionOpen, cycleSlot } = useFabric();
-  const { slots, waitlist, admissionOpen, admissionQuarters } = useCapacidad();
-  const [saved, setSaved] = useState(false);
+const ADMISSION_QUARTERS = [
+  { quarter: 'Q1 2026', status: 'closed',   description: '3 proyectos aceptados',      deadline: '○ Completo'       },
+  { quarter: 'Q2 2026', status: 'closed',   description: '2 proyectos aceptados',      deadline: '○ Completo'       },
+  { quarter: 'Q3 2026', status: 'open',     description: 'Evaluando aplicaciones',     deadline: 'Plazo · 30 julio' },
+  { quarter: 'Q4 2026', status: 'upcoming', description: 'Aplicaciones desde 01 sept', deadline: '○ Próximo'        },
+];
 
-  const { activos, reservados, libres } = countSlots(slots);
+export default function AdminCapacidad() {
+  const [slots, setSlots]                 = useState<Slot[]>([]);
+  const [waitlist, setWaitlist]           = useState<WaitlistLead[]>([]);
+  const [deadlineQ3, setDeadlineQ3]       = useState('');
+  const [deadlineDraft, setDeadlineDraft] = useState('');
+  const [loading, setLoading]             = useState(true);
+  const [savingDeadline, setSavingDeadline] = useState(false);
+  const [savedDeadline, setSavedDeadline]   = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      adminApi.get('/capacidad'),
+      adminApi.get('/leads/admin?status=WaitList'),
+    ]).then(([capRes, leadsRes]) => {
+      setSlots(capRes.data.data.slots ?? []);
+      const dl = capRes.data.data.deadlineQ3 ?? '';
+      setDeadlineQ3(dl);
+      setDeadlineDraft(dl);
+      setWaitlist(leadsRes.data.data ?? []);
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const cycleSlot = async (slot: Slot) => {
+    const next = NEXT_STATUS[slot.status];
+    setSlots(prev => prev.map(s => s.id === slot.id ? { ...s, status: next } : s));
+    try {
+      await adminApi.patch(`/capacidad/slot/${slot.id}`, { status: next });
+    } catch {
+      setSlots(prev => prev.map(s => s.id === slot.id ? { ...s, status: slot.status } : s));
+    }
+  };
+
+  const saveDeadline = async () => {
+    setSavingDeadline(true);
+    try {
+      await adminApi.put('/capacidad', { deadlineQ3: deadlineDraft });
+      setDeadlineQ3(deadlineDraft);
+      setSavedDeadline(true);
+      setTimeout(() => setSavedDeadline(false), 2000);
+    } catch { /* ignore */ }
+    finally { setSavingDeadline(false); }
+  };
+
+  const activos    = slots.filter(s => s.status === 'activo').length;
+  const reservados = slots.filter(s => s.status === 'reservado').length;
+  const libres     = slots.filter(s => s.status === 'disponible').length;
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
 
   return (
     <AdminLayout>
@@ -27,24 +85,11 @@ export default function AdminCapacidad() {
             Capacidad operativa
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+        {!loading && (
           <span style={{ fontSize: 10, color: '#5A5A5A' }}>
-            {activos} ocupados · {reservados} reservados · {libres} disponible
+            {activos} activos · {reservados} reservados · {libres} disponibles
           </span>
-          <button
-            onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000); }}
-            style={{
-              padding: '9px 22px',
-              background: saved ? 'rgba(74,222,128,0.1)' : '#C9A96E',
-              border: saved ? '1px solid #4ade80' : 'none',
-              color: saved ? '#4ade80' : '#060606',
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase',
-              cursor: 'pointer', fontFamily: 'inherit',
-            }}
-          >
-            {saved ? '✓ Guardado' : 'Guardar cambios'}
-          </button>
-        </div>
+        )}
       </div>
 
       <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -55,56 +100,47 @@ export default function AdminCapacidad() {
             Slots · capacidad Q3 2026
           </div>
           <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.14em', marginBottom: 24 }}>
-            Click en un slot para cambiar su estado (Activo → Reservado → Libre). Se sincroniza con S15 y Métricas automáticamente.
-          </div>
-          <div style={{ fontSize: 8, color: '#3A3A3A', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16 }}>
-            12 proyectos simultáneos · máximo
+            Click para rotar estado: Disponible → Activo → Reservado. Se sincroniza con S15.
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-            {slots.map((s, i) => (
+            {loading ? (
+              <div style={{ fontSize: 9, color: '#5A5A5A' }}>Cargando slots...</div>
+            ) : slots.map(s => (
               <div
-                key={i}
-                title={`Slot ${i + 1} · ${s}`}
-                onClick={() => cycleSlot(i)}
-                style={{
-                  width: 44, height: 44,
-                  background: SLOT_COLOR[s],
-                  border: `1px solid ${s === 'activo' ? '#C9A96E' : s === 'reservado' ? '#6b5a2c' : '#252525'}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, color: s === 'activo' ? '#060606' : '#5A5A5A',
-                  cursor: 'pointer', fontWeight: 700, transition: 'all .15s',
-                  userSelect: 'none',
-                }}
+                key={s.id}
+                title={`Slot ${s.id} · ${s.status}`}
+                onClick={() => cycleSlot(s)}
+                style={{ width: 44, height: 44, background: SLOT_BG[s.status], border: `1px solid ${SLOT_BORDER[s.status]}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: SLOT_TEXT[s.status], cursor: 'pointer', fontWeight: 700, transition: 'all .15s', userSelect: 'none' }}
               >
-                {i + 1}
+                {s.id}
               </div>
             ))}
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
-            {(['activo', 'reservado', 'libre'] as const).map(s => (
-              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 10, height: 10, background: SLOT_COLOR[s], border: `1px solid ${SLOT_COLOR[s]}` }} />
+            {(['activo', 'reservado', 'disponible'] as const).map(st => (
+              <div key={st} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 10, height: 10, background: SLOT_BG[st], border: `1px solid ${SLOT_BORDER[st]}` }} />
                 <span style={{ fontSize: 8, letterSpacing: '0.16em', color: '#5A5A5A', textTransform: 'uppercase' }}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)} · {slots.filter(x => x === s).length}
+                  {st.charAt(0).toUpperCase() + st.slice(1)} · {slots.filter(x => x.status === st).length}
                 </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Wait list + admisión */}
+        {/* Wait list + Admisión */}
         <div className="admin-cap-grid">
 
-          {/* Wait list */}
+          {/* Wait list real */}
           <div style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px' }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 20 }}>
-              Wait list · {waitlist.length} organizaciones
+              Wait list · {waitlist.length} leads en espera
             </div>
             <div className="admin-table-wrap">
-              <table style={{ borderCollapse: 'collapse' }}>
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                    {['#', 'Compañía', 'Industria', 'Score', 'Desde', ''].map(h => (
+                    {['Empresa', 'Contacto', 'Sector', 'Score', 'Desde'].map(h => (
                       <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 7, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
                         {h}
                       </th>
@@ -112,21 +148,28 @@ export default function AdminCapacidad() {
                   </tr>
                 </thead>
                 <tbody>
-                  {waitlist.map(w => (
-                    <tr key={w.rank} style={{ borderBottom: '1px solid #111' }}>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{w.rank}</td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.company}</div>
-                        <div style={{ fontSize: 9, color: '#5A5A5A' }}>{w.contact}</div>
+                  {waitlist.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '20px 12px', fontSize: 9, color: '#5A5A5A' }}>
+                        Sin leads en WaitList.
                       </td>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#8A8A8A' }}>{w.industry}</td>
+                    </tr>
+                  ) : waitlist.map(w => (
+                    <tr key={w._id} style={{ borderBottom: '1px solid #111' }}>
+                      <td style={{ padding: '10px 12px' }}>
+                        <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.empresa}</div>
+                      </td>
+                      <td style={{ padding: '10px 12px' }}>
+                        <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.nombre}</div>
+                        <div style={{ fontSize: 9, color: '#5A5A5A' }}>{w.cargo}</div>
+                      </td>
+                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#8A8A8A' }}>{w.industria}</td>
                       <td style={{ padding: '10px 12px' }}>
                         <span style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 16, fontStyle: 'italic', color: '#C9A96E' }}>
                           {w.score}
                         </span>
                       </td>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{w.since}</td>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#C9A96E', cursor: 'pointer' }}>Invitar →</td>
+                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{fmt(w.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -134,16 +177,13 @@ export default function AdminCapacidad() {
             </div>
           </div>
 
-          {/* Ciclo de admisión */}
+          {/* Ciclo de admisión + deadline editable */}
           <div style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase' }}>
               Ciclo de admisión 2026
             </div>
-            {admissionQuarters.map(q => (
-              <div
-                key={q.quarter}
-                style={{ borderLeft: `2px solid ${q.status === 'open' ? '#C9A96E' : '#252525'}`, paddingLeft: 14 }}
-              >
+            {ADMISSION_QUARTERS.map(q => (
+              <div key={q.quarter} style={{ borderLeft: `2px solid ${q.status === 'open' ? '#C9A96E' : '#252525'}`, paddingLeft: 14 }}>
                 <div style={{ fontSize: 10, color: q.status === 'open' ? '#F5F5F5' : '#5A5A5A', marginBottom: 4 }}>
                   {q.quarter}
                 </div>
@@ -155,21 +195,31 @@ export default function AdminCapacidad() {
                 </div>
               </div>
             ))}
+
             <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: 16 }}>
               <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 10 }}>
-                Admisión Q3 2026
+                Deadline Q3 (ISO · visible en countdown)
               </div>
+              <input
+                value={deadlineDraft}
+                onChange={e => setDeadlineDraft(e.target.value)}
+                placeholder="2026-07-30T23:59:59-06:00"
+                style={{ width: '100%', background: '#060606', border: '1px solid #252525', color: '#F5F5F5', fontFamily: 'inherit', fontSize: 10, padding: '8px 10px', outline: 'none', boxSizing: 'border-box', marginBottom: 8 }}
+              />
               <button
-                onClick={() => setAdmissionOpen(!admissionOpen)}
+                onClick={saveDeadline}
+                disabled={savingDeadline || deadlineDraft === deadlineQ3}
                 style={{
-                  width: '100%', padding: '10px', cursor: 'pointer', fontFamily: 'inherit',
-                  background: admissionOpen ? 'rgba(74,222,128,0.08)' : 'rgba(90,90,90,0.08)',
-                  border: `1px solid ${admissionOpen ? '#4ade80' : '#252525'}`,
-                  color: admissionOpen ? '#4ade80' : '#5A5A5A',
-                  fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase',
+                  width: '100%', padding: '10px', cursor: deadlineDraft === deadlineQ3 ? 'default' : 'pointer',
+                  fontFamily: 'inherit',
+                  background: savedDeadline ? 'rgba(74,222,128,0.08)' : deadlineDraft !== deadlineQ3 ? '#C9A96E' : 'rgba(90,90,90,0.08)',
+                  border: `1px solid ${savedDeadline ? '#4ade80' : deadlineDraft !== deadlineQ3 ? 'transparent' : '#252525'}`,
+                  color: savedDeadline ? '#4ade80' : deadlineDraft !== deadlineQ3 ? '#060606' : '#5A5A5A',
+                  fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700,
+                  opacity: savingDeadline ? 0.6 : 1,
                 }}
               >
-                {admissionOpen ? '● Abierta' : '○ Cerrada'}
+                {savedDeadline ? '✓ Guardado' : savingDeadline ? 'Guardando...' : 'Guardar deadline'}
               </button>
             </div>
           </div>

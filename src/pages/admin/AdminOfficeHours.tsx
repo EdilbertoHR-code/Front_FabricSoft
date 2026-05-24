@@ -1,32 +1,65 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
-import { useFabric } from '../../store/FabricContext';
-import type { OfficeHoursSlot } from '../../store/fabricStore';
+import { adminApi } from '../../config/api';
+
+interface Booking {
+  _id: string;
+  nombre: string;
+  empresa: string;
+  email: string;
+  dia: string;
+  slot: string;
+  status: 'pendiente' | 'confirmado' | 'cancelado';
+  notas?: string;
+  createdAt: string;
+}
+
+const STATUS_COLOR: Record<string, string> = {
+  pendiente:  '#C9A96E',
+  confirmado: '#4ade80',
+  cancelado:  '#B85450',
+};
+const STATUS_LABEL: Record<string, string> = {
+  pendiente:  'Pendiente',
+  confirmado: 'Confirmado',
+  cancelado:  'Cancelado',
+};
 
 export default function AdminOfficeHours() {
-  const { store, confirmarSlot, liberarSlot } = useFabric();
-  const slots = store.officeHours;
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [selected, setSelected] = useState<Booking | null>(null);
+  const [saving, setSaving]     = useState(false);
+  const [savedId, setSavedId]   = useState<string | null>(null);
 
-  const [selected, setSelected] = useState<OfficeHoursSlot | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  const ocupados   = slots.filter(s => !s.disponible).length;
-  const disponibles = slots.filter(s => s.disponible).length;
-  const confirmados = slots.filter(s => s.confirmado).length;
-
-  const handleLiberar = (id: string) => {
-    liberarSlot(id);
-    setSelected(null);
+  const fetchBookings = () => {
+    setLoading(true);
+    adminApi.get('/office-hours/admin')
+      .then(res => setBookings(res.data.data ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
 
-  const handleConfirmar = (id: string) => {
-    confirmarSlot(id);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-    // Actualiza el panel si está abierto
-    const updated = store.officeHours.find(s => s.id === id);
-    if (updated) setSelected({ ...updated, confirmado: true });
+  useEffect(() => { fetchBookings(); }, []);
+
+  const handleStatus = async (id: string, status: Booking['status']) => {
+    setSaving(true);
+    try {
+      await adminApi.patch(`/office-hours/admin/${id}/status`, { status });
+      setBookings(prev => prev.map(b => b._id === id ? { ...b, status } : b));
+      setSelected(prev => prev?._id === id ? { ...prev, status } : prev);
+      setSavedId(id);
+      setTimeout(() => setSavedId(null), 2000);
+    } catch { /* ignore */ }
+    finally { setSaving(false); }
   };
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: '2-digit' });
+
+  const pendiente  = bookings.filter(b => b.status === 'pendiente').length;
+  const confirmado = bookings.filter(b => b.status === 'confirmado').length;
+  const cancelado  = bookings.filter(b => b.status === 'cancelado').length;
 
   return (
     <AdminLayout>
@@ -39,111 +72,97 @@ export default function AdminOfficeHours() {
             Office Hours
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <span style={{ fontSize: 10, color: '#5A5A5A' }}>
-            {ocupados} ocupados · {disponibles} disponibles · {confirmados} confirmados
-          </span>
-          {saved && (
-            <span style={{ fontSize: 9, letterSpacing: '0.16em', color: '#4ade80', textTransform: 'uppercase' }}>
-              ✓ Confirmado
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Regla del brief */}
-      <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', background: 'rgba(201,169,110,0.04)' }}>
-        <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#C9A96E', textTransform: 'uppercase' }}>
-          ◆ 4 slots disponibles por mes · Sesiones de 30 min · Solo prospectos calificados
+        <span style={{ fontSize: 10, color: '#5A5A5A' }}>
+          {pendiente} pendiente · {confirmado} confirmado · {cancelado} cancelado
         </span>
       </div>
 
-      {/* Grid de slots */}
-      <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {slots.map(slot => (
-          <SlotRow
-            key={slot.id}
-            slot={slot}
-            onSelect={() => setSelected(slot)}
-            isSelected={selected?.id === slot.id}
-          />
-        ))}
+      <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', background: 'rgba(201,169,110,0.04)' }}>
+        <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#C9A96E', textTransform: 'uppercase' }}>
+          ◆ Sesiones 30 min · Solo prospectos calificados · Correo corporativo obligatorio
+        </span>
       </div>
 
-      {/* Panel de detalle */}
+      <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {loading ? (
+          <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.16em' }}>Cargando reservas...</div>
+        ) : bookings.length === 0 ? (
+          <div style={{ fontSize: 11, color: '#5A5A5A', padding: '40px 0' }}>Sin reservas registradas todavía.</div>
+        ) : (
+          bookings.map(b => (
+            <BookingRow
+              key={b._id}
+              booking={b}
+              isSelected={selected?._id === b._id}
+              justSaved={savedId === b._id}
+              onSelect={() => setSelected(b)}
+              fmt={fmt}
+            />
+          ))
+        )}
+      </div>
+
       {selected && (
         <div
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
           onClick={() => setSelected(null)}
         >
-          <div
-            className="admin-detail-panel"
-            onClick={e => e.stopPropagation()}
-          >
+          <div className="admin-detail-panel" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
               <div style={{ fontSize: 9, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase' }}>
-                Detalle del slot
+                Reserva · {fmt(selected.createdAt)}
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#5A5A5A', cursor: 'pointer', fontSize: 16 }}>
-                ×
-              </button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#5A5A5A', cursor: 'pointer', fontSize: 16 }}>×</button>
             </div>
 
-            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 22, color: '#F5F5F5', marginBottom: 4 }}>
-              {selected.fecha}
+            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 20, color: '#F5F5F5', marginBottom: 4 }}>
+              {selected.nombre}
+            </div>
+            <div style={{ fontSize: 11, color: '#8A8A8A', marginBottom: 20 }}>{selected.empresa}</div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 28 }}>
+              {([
+                ['Email',   selected.email],
+                ['Día',     selected.dia],
+                ['Horario', selected.slot],
+                ['Estado',  STATUS_LABEL[selected.status]],
+              ] as [string, string][]).map(([k, v]) => (
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', paddingBottom: 12 }}>
+                  <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
+                  <span style={{ fontSize: 11, color: k === 'Estado' ? STATUS_COLOR[selected.status] : '#F5F5F5' }}>{v}</span>
+                </div>
+              ))}
             </div>
 
-            {selected.disponible ? (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 9, letterSpacing: '0.14em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 12 }}>
-                  Slot disponible
-                </div>
-                <p style={{ fontSize: 11, color: '#8A8A8A', marginBottom: 20 }}>
-                  Este slot no tiene reserva. Se activa cuando un prospecto lo solicita desde el sitio.
-                </p>
-              </div>
-            ) : (
-              <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {[
-                  ['Solicitante', selected.reservadoPor ?? '—'],
-                  ['Empresa',    selected.empresa ?? '—'],
-                  ['Email',      selected.email ?? '—'],
-                  ['Estado',     selected.confirmado ? 'Confirmado' : 'Pendiente de confirmación'],
-                ].map(([k, v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', paddingBottom: 12 }}>
-                    <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
-                    <span style={{ fontSize: 11, color: v === 'Confirmado' ? '#4ade80' : '#F5F5F5' }}>{v}</span>
-                  </div>
-                ))}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
-                  {!selected.confirmado && (
-                    <button
-                      onClick={() => handleConfirmar(selected.id)}
-                      style={{
-                        padding: '12px', background: '#C9A96E', border: 'none',
-                        color: '#060606', fontSize: 9, fontWeight: 700,
-                        letterSpacing: '0.2em', textTransform: 'uppercase',
-                        cursor: 'pointer', fontFamily: 'inherit',
-                      }}
-                    >
-                      Confirmar sesión
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleLiberar(selected.id)}
-                    style={{
-                      padding: '12px', background: 'transparent',
-                      border: '1px solid #B85450', color: '#B85450',
-                      fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                    }}
-                  >
-                    Liberar slot
-                  </button>
-                </div>
-              </div>
-            )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {selected.status !== 'confirmado' && (
+                <button
+                  onClick={() => handleStatus(selected._id, 'confirmado')}
+                  disabled={saving}
+                  style={{ padding: '12px', background: '#C9A96E', border: 'none', color: '#060606', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
+                >
+                  {saving ? 'Guardando...' : 'Confirmar sesión'}
+                </button>
+              )}
+              {selected.status !== 'cancelado' && (
+                <button
+                  onClick={() => handleStatus(selected._id, 'cancelado')}
+                  disabled={saving}
+                  style={{ padding: '12px', background: 'transparent', border: '1px solid #B85450', color: '#B85450', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
+                >
+                  Cancelar reserva
+                </button>
+              )}
+              {selected.status === 'cancelado' && (
+                <button
+                  onClick={() => handleStatus(selected._id, 'pendiente')}
+                  disabled={saving}
+                  style={{ padding: '12px', background: 'transparent', border: '1px solid #252525', color: '#5A5A5A', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
+                >
+                  Restaurar a pendiente
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -151,69 +170,41 @@ export default function AdminOfficeHours() {
   );
 }
 
-function SlotRow({
-  slot,
-  onSelect,
-  isSelected,
+function BookingRow({
+  booking, isSelected, justSaved, onSelect, fmt,
 }: {
-  slot: OfficeHoursSlot;
-  onSelect: () => void;
+  booking: Booking;
   isSelected: boolean;
+  justSaved: boolean;
+  onSelect: () => void;
+  fmt: (iso: string) => string;
 }) {
-  const borderColor = isSelected
-    ? '#C9A96E'
-    : slot.confirmado
-      ? '#4ade8033'
-      : slot.disponible
-        ? '#1e1e1e'
-        : '#C9A96E33';
+  const borderColor = justSaved
+    ? '#4ade8055'
+    : isSelected
+      ? '#C9A96E'
+      : STATUS_COLOR[booking.status] + '33';
 
   return (
     <div
       onClick={onSelect}
-      style={{
-        background: '#0F0F0F',
-        border: `1px solid ${borderColor}`,
-        padding: '20px 28px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        cursor: 'pointer', transition: 'border-color .15s',
-      }}
-      onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLDivElement).style.borderColor = '#C9A96E55'; }}
-      onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLDivElement).style.borderColor = borderColor; }}
+      style={{ background: '#0F0F0F', border: `1px solid ${borderColor}`, padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'border-color .15s' }}
     >
-      {/* Fecha */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 20, flex: 1 }}>
-        <div>
-          <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 16, color: '#F5F5F5' }}>
-            {slot.fecha}
-          </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 28, flex: 1 }}>
+        <div style={{ minWidth: 120 }}>
+          <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 2 }}>{booking.dia}</div>
+          <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 15, color: '#F5F5F5' }}>{booking.slot}</div>
         </div>
-
-        {/* Info reserva */}
-        {!slot.disponible && (
-          <div style={{ display: 'flex', gap: 24 }}>
-            <div>
-              <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 2 }}>Solicitante</div>
-              <div style={{ fontSize: 11, color: '#F5F5F5' }}>{slot.reservadoPor}</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 2 }}>Empresa</div>
-              <div style={{ fontSize: 11, color: '#8A8A8A' }}>{slot.empresa}</div>
-            </div>
-          </div>
-        )}
+        <div>
+          <div style={{ fontSize: 11, color: '#F5F5F5' }}>{booking.nombre}</div>
+          <div style={{ fontSize: 9, color: '#8A8A8A' }}>{booking.empresa}</div>
+        </div>
       </div>
-
-      {/* Badge estado */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <span style={{
-          fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px',
-          border: `1px solid ${slot.confirmado ? '#4ade8044' : slot.disponible ? '#25252544' : '#C9A96E44'}`,
-          color: slot.confirmado ? '#4ade80' : slot.disponible ? '#5A5A5A' : '#C9A96E',
-          background: slot.confirmado ? '#4ade8010' : slot.disponible ? 'transparent' : '#C9A96E10',
-        }}>
-          {slot.confirmado ? 'Confirmado' : slot.disponible ? 'Disponible' : 'Reservado'}
+        <span style={{ fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px', border: `1px solid ${STATUS_COLOR[booking.status]}44`, color: STATUS_COLOR[booking.status], background: STATUS_COLOR[booking.status] + '10' }}>
+          {STATUS_LABEL[booking.status]}
         </span>
+        <span style={{ fontSize: 9, color: '#5A5A5A' }}>{fmt(booking.createdAt)}</span>
         <span style={{ fontSize: 10, color: '#3A3A3A' }}>Abrir →</span>
       </div>
     </div>
