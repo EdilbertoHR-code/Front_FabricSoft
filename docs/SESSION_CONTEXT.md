@@ -320,3 +320,93 @@ Footer grande aparece en todas las páginas. Quitado copyright bar hardcodeado d
 - Motivo: Brief2 define FSO Engine como el conjunto de Fabric Solution Objects, soluciones paquetizadas reutilizables e IP nombrada/vendible.
 - Se corrigió el CTA `Explorar FABRIC OS completo` para apuntar al bloque público `#fso-engine` dentro de la misma sección, en lugar de enviar a `#aplicar`.
 - Motivo: FABRIC OS es contenido público en Home; el CTA del brief debe explorar el sistema, no iniciar admisión.
+
+---
+
+## 17. Sesión 24 mayo 2026 — Backend s14 + Infraestructura API
+
+### Resumen de cambios
+
+Se auditó qué secciones del home capturan datos y cuáles necesitan backend. Se construyó el backend completo para **s14 Investigación (Papers)** con buenas prácticas. Se corrigieron errores de arranque del backend y se estableció la infraestructura base de API para el frontend.
+
+### Stack real confirmado (corrige SESSION_CONTEXT secciones 2 y 8)
+
+El proyecto **no usa Next.js**. El stack real es:
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Vite 6 + React 19 + TypeScript + Tailwind CSS v4 |
+| Routing | React Router v7 |
+| Auth (público) | Clerk |
+| Auth (admin) | sessionStorage + password + `x-admin-key` header |
+| Backend | Express.js en `Backend/` (puerto 4000) |
+| DB | MongoDB Atlas (Mongoose) |
+| Package manager | pnpm (workspaces) |
+
+### Infraestructura creada
+
+- **`Backend/.env`** — configurado con MONGO_URI, CLERK_*, ADMIN_API_KEY (`fabric_admin_2026`)
+- **`Backend/middleware/admin.middleware.js`** — valida header `x-admin-key` para rutas `/admin/*`
+- **`src/config/api.ts`** — corregido puerto fallback (8080→4000), agregado `adminApi` con header `x-admin-key`
+- **`.env.local`** (raíz, gitignored) — `VITE_API_URL` y `VITE_ADMIN_API_KEY`
+
+### Backend s14 Papers — archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `Backend/models/model.paperAccess.js` | Schema PaperAccess (paperId, email, cargo, empresa, ipAddress, status, emailSent) con índice anti-spam 24h |
+| `Backend/models/model.benchmarkAccess.js` | Schema BenchmarkAccess (nombre, empresa, email, status) con unique email |
+| `Backend/controllers/papers.controller.js` | `solicitar`, `benchmarkEarlyAccess`, `listarAccesos`, `listarBenchmark`, `actualizarStatus` |
+| `Backend/components/papers.component.js` | Router: POST /solicitar, POST /benchmark, GET+PATCH /admin/* |
+| `Backend/routers/app.routers.js` | Corregido bug: rutas se importaban pero nunca se montaban con `router.use()` |
+
+### Frontend s14 — cambios
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/InteractionManager.tsx` | Botones paper + benchmark ahora llaman API real. Loading state + error display |
+| `src/pages/admin/AdminPapers.tsx` | Página nueva: tabla papers con filtros + tabla benchmark early access. Acciones: marcar enviado / bloquear |
+| `src/pages/admin/AdminLayout.tsx` | Papers agregado al NAV |
+| `src/routers/AppRouter.tsx` | Ruta `/admin/papers` agregada con lazy import |
+
+### Estado backend por sección (s07–s15)
+
+| Sección | Captura datos | Estado backend | Pendiente |
+|---------|--------------|----------------|-----------|
+| **S07 Casos** | Email gate PDF bajo NDA (APE Plazas) | 🔴 Sin backend | `POST /api/leads/nda` — guardar solicitud PDF + validar email corporativo |
+| **S08 Industrias** | No | ✅ N/A | — |
+| **S09 FABRIC OS** | No (CTA apunta a #fso-engine interno) | ✅ N/A | — |
+| **S10 Lifecycle** | No | ✅ N/A | — |
+| **S11 Office Hours** | Modal gate C-level + USD 50M+ | 🔴 Sin backend | `POST /api/office-hours/book` — guardar booking + validar criterios + redirect Calendly |
+| **S12 Referencias** | Email gate "hablar bajo NDA" | 🔴 Sin backend | `POST /api/referencias/contacto` — capturar interés ejecutivo |
+| **S12b Criterios** | — (números `—` hardcodeados) | 🔴 Sin backend | `GET /api/stats` — proyectos activos, solicitudes evaluadas para el store |
+| **S13 Transparencia** | No (solo muestra datos) | ✅ N/A | — |
+| **S14 Investigación** | Papers gate + Benchmark early access | ✅ **Completado** | TODO: Resend para entrega automática de PDFs |
+| **S15 Founder / Waitlist** | Waitlist + capacidad slots | 🔴 Sin backend | `GET/PUT /api/capacidad` — persistir slots/waitlist en DB (actualmente in-memory en FabricContext) |
+
+### Pendiente para siguiente sesión
+
+**Prioridad 1 — /aplicar (leads críticos)**
+- `POST /api/leads` — guardar submissions del wizard de 5 pasos en MongoDB (actualmente `setSubmitted(true)` sin API call — datos se pierden)
+- `POST /api/leads/tco` — guardar submissions del Cloud TCO Modal
+- Modelo: Lead (empresa, revenue, stack, email, cargo, score calificación, origen)
+
+**Prioridad 2 — Capacidad y store (S15)**
+- `GET/PUT /api/capacidad` — persistir en DB los slots disponibles y lista de espera que hoy viven en FabricContext (in-memory)
+- `GET /api/stats` — endpoint para S12b (proyectos activos, solicitudes evaluadas)
+
+**Prioridad 3 — Office Hours (S11)**
+- `POST /api/office-hours/book` — gate: validar email corporativo + revenue ≥ USD 50M, si pasa → redirect Calendly
+- AdminOfficeHours (actualmente usa FabricContext in-memory) → conectar a DB
+
+**Prioridad 4 — S07 NDA PDF gate**
+- `POST /api/leads/nda` — email gate para PDF bajo NDA de APE Plazas
+
+**Prioridad 5 — Email delivery**
+- Integrar Resend en `papers.controller.js` (hay TODO en ~línea 55) para entrega automática de PDFs al cambiar status → `enviado`
+
+### Bugs / deuda técnica conocida
+
+- `AdminLeads`, `AdminOfficeHours`, `AdminMetricas`, `AdminCapacidad` — todos usan FabricContext (in-memory). Al reiniciar el server pierden datos. Necesitan endpoints reales.
+- `formData.nombre` se envía como `cargo` al endpoint de papers — la UI dice "nombre" pero el brief pide cargo. Revisar si se debe agregar campo separado o renombrar el label.
+- Backend `POST /api/leads` para el diagnóstico de 14 pasos (S05 Análisis de Fallas) también está sin implementar.
