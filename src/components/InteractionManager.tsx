@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { api } from "../config/api";
 
-type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | null;
+type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | "nda-pdf" | null;
 
 const powDocs = [
   { icon: "SOW",   title: "SOW Fixed-Price firmado",           meta: "28 pp · ES · Cláusulas doctrinales explícitas · dic 2025", size: "2.4 MB", access: "locked" },
@@ -33,18 +34,23 @@ export default function InteractionManager() {
   const [selectedPaper, setSelectedPaper] = useState(0);
   const [formData, setFormData] = useState({ nombre: "", empresa: "", email: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest("[data-interaction]") as HTMLElement | null;
       if (!target) return;
-      const type = target.getAttribute("data-interaction") as InteractionType;
-      if (type) {
-        e.preventDefault();
-        setActive(type);
-        setSubmitted(false);
-        setSelectedSlot(null);
-      }
+      let type = target.getAttribute("data-interaction") as InteractionType;
+      if (!type) return;
+      // nda-pdf redirige al modal de proof (mismo flujo de acceso NDA)
+      if (type === "nda-pdf") type = "proof";
+      e.preventDefault();
+      setActive(type);
+      setSubmitted(false);
+      setSelectedSlot(null);
+      setApiError("");
+      setLoading(false);
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
@@ -202,8 +208,37 @@ export default function InteractionManager() {
                               style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
                           </div>
                         ))}
-                        <button onClick={() => setSubmitted(true)} style={{ marginTop: 8, padding: "13px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>
-                          Confirmar reserva →
+                        {apiError && active === "office-hours" && (
+                          <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</span>
+                        )}
+                        <button
+                          disabled={loading}
+                          onClick={async () => {
+                            setApiError("");
+                            if (!formData.nombre || !formData.empresa || !formData.email) {
+                              setApiError("Completa todos los campos.");
+                              return;
+                            }
+                            setLoading(true);
+                            try {
+                              await api.post("/office-hours/book", {
+                                nombre:  formData.nombre,
+                                empresa: formData.empresa,
+                                email:   formData.email,
+                                dia:     days[selectedDay],
+                                slot:    selectedSlot,
+                              });
+                              setSubmitted(true);
+                            } catch (err: unknown) {
+                              const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                              setApiError(msg ?? "Error al confirmar. Intenta de nuevo.");
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                          style={{ marginTop: 8, padding: "13px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
+                        >
+                          {loading ? "Confirmando..." : "Confirmar reserva →"}
                         </button>
                         <button onClick={() => setSelectedSlot(null)} style={{ padding: "10px", background: "transparent", color: "var(--text-secondary)", border: "1px solid var(--border)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.1em" }}>
                           ← Cambiar horario
@@ -264,11 +299,40 @@ export default function InteractionManager() {
               </div>
             </div>
           </div>
-          <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end", flexDirection: "column", gap: 8 }}>
             {!submitted ? (
-              <button onClick={() => setSubmitted(true)} style={{ padding: "13px 28px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>
-                Iniciar evaluación →
-              </button>
+              <>
+                {apiError && active === "reference" && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</span>
+                )}
+                <button
+                  disabled={loading}
+                  onClick={async () => {
+                    setApiError("");
+                    if (!formData.nombre || !formData.empresa || !formData.email) {
+                      setApiError("Completa todos los campos.");
+                      return;
+                    }
+                    setLoading(true);
+                    try {
+                      await api.post("/leads/referencia", {
+                        nombre:  formData.nombre,
+                        empresa: formData.empresa,
+                        email:   formData.email,
+                      });
+                      setSubmitted(true);
+                    } catch (err: unknown) {
+                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                      setApiError(msg ?? "Error al enviar. Intenta de nuevo.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  style={{ alignSelf: "flex-end", padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
+                >
+                  {loading ? "Enviando..." : "Iniciar evaluación →"}
+                </button>
+              </>
             ) : (
               <div style={{ textAlign: "center", width: "100%" }}>
                 <div style={{ fontFamily: "var(--serif)", fontSize: 20, marginBottom: 8 }}>Solicitud <em style={{ color: "var(--accent)" }}>recibida.</em></div>
@@ -317,9 +381,38 @@ export default function InteractionManager() {
                   ))}
                 </div>
               </div>
-              <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
-                <button onClick={() => setSubmitted(true)} style={{ padding: "13px 28px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>
-                  Recibir paper →
+              <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                {apiError && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</span>
+                )}
+                <button
+                  disabled={loading}
+                  onClick={async () => {
+                    setApiError("");
+                    const paperId = `0${selectedPaper + 1}`;
+                    if (!formData.nombre || !formData.empresa || !formData.email) {
+                      setApiError("Completa todos los campos.");
+                      return;
+                    }
+                    setLoading(true);
+                    try {
+                      await api.post("/papers/solicitar", {
+                        paperId,
+                        cargo:   formData.nombre,
+                        empresa: formData.empresa,
+                        email:   formData.email,
+                      });
+                      setSubmitted(true);
+                    } catch (err: unknown) {
+                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                      setApiError(msg ?? "Error al enviar. Intenta de nuevo.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  style={{ marginLeft: "auto", padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
+                >
+                  {loading ? "Enviando..." : "Recibir paper →"}
                 </button>
               </div>
             </>
@@ -373,9 +466,37 @@ export default function InteractionManager() {
                 </div>
               </div>
               <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>Aplicación bajo NDA mutuo</span>
-                <button onClick={() => setSubmitted(true)} style={{ padding: "13px 28px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>
-                  Solicitar lugar →
+                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                  {apiError && active === "waitlist" ? (
+                    <span style={{ color: "#B85450" }}>{apiError}</span>
+                  ) : "Aplicación bajo NDA mutuo"}
+                </span>
+                <button
+                  disabled={loading}
+                  onClick={async () => {
+                    setApiError("");
+                    if (!formData.nombre || !formData.empresa || !formData.email) {
+                      setApiError("Completa todos los campos.");
+                      return;
+                    }
+                    setLoading(true);
+                    try {
+                      await api.post("/leads/waitlist", {
+                        nombre:  formData.nombre,
+                        empresa: formData.empresa,
+                        email:   formData.email,
+                      });
+                      setSubmitted(true);
+                    } catch (err: unknown) {
+                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                      setApiError(msg ?? "Error al enviar. Intenta de nuevo.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  style={{ padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
+                >
+                  {loading ? "Enviando..." : "Solicitar lugar →"}
                 </button>
               </div>
             </>
@@ -453,12 +574,36 @@ export default function InteractionManager() {
           </div>
 
           {!submitted && (
-            <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
+            <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+              {apiError && active === "benchmark" && (
+                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</span>
+              )}
               <button
-                onClick={() => setSubmitted(true)}
-                style={{ padding: "13px 28px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}
+                disabled={loading}
+                onClick={async () => {
+                  setApiError("");
+                  if (!formData.nombre || !formData.empresa || !formData.email) {
+                    setApiError("Completa todos los campos.");
+                    return;
+                  }
+                  setLoading(true);
+                  try {
+                    await api.post("/papers/benchmark", {
+                      nombre:  formData.nombre,
+                      empresa: formData.empresa,
+                      email:   formData.email,
+                    });
+                    setSubmitted(true);
+                  } catch (err: unknown) {
+                    const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                    setApiError(msg ?? "Error al registrar. Intenta de nuevo.");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                style={{ marginLeft: "auto", padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
               >
-                Reservar early access →
+                {loading ? "Registrando..." : "Reservar early access →"}
               </button>
             </div>
           )}

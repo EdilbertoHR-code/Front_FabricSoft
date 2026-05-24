@@ -10,10 +10,5 @@ router.get('/login',
 );
 
 
-router.post('/firebase-token', 
-  ClerkExpressRequireAuth(), 
-  authController.getFirebaseToken
-);
-
 
 module.exports = router;

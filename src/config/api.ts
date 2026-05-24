@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 const headersConfig: Record<string, string> = {
   'Content-Type': 'application/json',
@@ -16,7 +16,6 @@ export const api = axios.create({
   timeout: 30000, 
 });
 
-// Interceptor de respuesta (Este sí puede quedarse aquí porque no depende de Clerk)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -27,3 +26,13 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Instancia para rutas admin — incluye clave de autenticación
+export const adminApi = axios.create({
+  baseURL,
+  headers: {
+    ...headersConfig,
+    'x-admin-key': import.meta.env.VITE_ADMIN_API_KEY ?? '',
+  },
+  timeout: 30000,
+});

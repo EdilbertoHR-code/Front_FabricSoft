@@ -42,6 +42,7 @@ const AdminMetricas = lazy(() => import('../pages/admin/AdminMetricas'));
 const AdminCapacidad = lazy(() => import('../pages/admin/AdminCapacidad'));
 const AdminOfficeHours = lazy(() => import('../pages/admin/AdminOfficeHours'));
 const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
+const AdminPapers = lazy(() => import('../pages/admin/AdminPapers'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -183,6 +184,7 @@ export const AppRouter = () => {
                   <Route path="metricas" element={<AdminMetricas />} />
                   <Route path="capacidad" element={<AdminCapacidad />} />
                   <Route path="office-hours" element={<AdminOfficeHours />} />
+                  <Route path="papers" element={<AdminPapers />} />
                   <Route path="logs" element={<AdminLogs />} />
                 </Routes>
               </ProtectorRoles>

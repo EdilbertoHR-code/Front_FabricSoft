@@ -1,17 +1,23 @@
 const express = require('express');
 const router = express.Router();
 
-const authRoutes   = require('../components/auth.component');
-const papersRoutes = require('../components/papers.component');
-const leadsRoutes  = require('../components/leads.component');
+const authRoutes        = require('../components/auth.component');
+const papersRoutes      = require('../components/papers.component');
+const leadsRoutes       = require('../components/leads.component');
+const officeHoursRoutes = require('../components/officeHours.component');
+const capacidadRoutes   = require('../components/capacidad.component');
+const statsRoutes       = require('../components/stats.component');
 
 router.get('/', (req, res) => {
   res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
 });
 
-router.use('/auth',   authRoutes);
-router.use('/papers', papersRoutes);
-router.use('/leads',  leadsRoutes);
+router.use('/auth',         authRoutes);
+router.use('/papers',       papersRoutes);
+router.use('/leads',        leadsRoutes);
+router.use('/office-hours', officeHoursRoutes);
+router.use('/capacidad',    capacidadRoutes);
+router.use('/stats',        statsRoutes);
 
 
 

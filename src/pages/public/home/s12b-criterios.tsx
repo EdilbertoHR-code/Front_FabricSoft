@@ -16,9 +16,23 @@ const rejections = [
 ] as const;
 
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+import { useState, useEffect } from 'react';
+import { api } from '../../../config/api';
 
 export default function S12bCriterios() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
+  const [proyectosActivos, setProyectosActivos] = useState<number | null>(null);
+  const [solicitudesEvaluadas, setSolicitudesEvaluadas] = useState<number | null>(null);
+
+  useEffect(() => {
+    api.get('/stats')
+      .then(res => {
+        setProyectosActivos(res.data.data.proyectosActivos);
+        setSolicitudesEvaluadas(res.data.data.solicitudesEvaluadas);
+      })
+      .catch(() => { /* mantiene null → muestra — */ });
+  }, []);
+
   return (
     <section ref={ref} id="criterios" className={`demo-section s07 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
@@ -76,12 +90,12 @@ export default function S12bCriterios() {
             El FOMO es real solo si los números son reales — no hardcodear. */}
         <div className="acceptance-banner">
           <div className="acceptance-stat">
-            <div className="num">—</div>
+            <div className="num">{proyectosActivos !== null ? proyectosActivos : '—'}</div>
             <div className="lbl">Proyectos activos · 2026</div>
           </div>
           <div className="acceptance-divider"></div>
           <div className="acceptance-stat">
-            <div className="num">—</div>
+            <div className="num">{solicitudesEvaluadas !== null ? solicitudesEvaluadas : '—'}</div>
             <div className="lbl">Solicitudes evaluadas</div>
           </div>
           <div className="acceptance-divider"></div>

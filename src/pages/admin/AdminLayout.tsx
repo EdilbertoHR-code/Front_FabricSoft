@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 const NAV = [
   { path: '/admin',                label: 'Dashboard',   badge: null },
   { path: '/admin/leads',          label: 'Leads',       badge: '8'  },
+  { path: '/admin/papers',         label: 'Papers',      badge: null },
   { path: '/admin/capacidad',      label: 'Capacidad',   badge: null },
   { path: '/admin/office-hours',   label: 'Office Hours',badge: '4'  },
   { path: '/admin/metricas',       label: 'Métricas',    badge: null },

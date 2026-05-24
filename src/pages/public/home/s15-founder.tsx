@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
 import { useCapacidad, useMetrica } from '../../../store/FabricContext';
 import { countSlots } from '../../../store/fabricStore';
+import { api } from '../../../config/api';
 
 function useCountdown(isoDate: string) {
   const calc = () => {
@@ -39,14 +40,31 @@ function CountdownBanner({ isoDate }: { isoDate: string }) {
 export default function S15Founder() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
 
-  // Datos en vivo del store — los mismos que controla el admin
-  const { slots, waitlist, admissionQuarters, deadlineQ3 } = useCapacidad();
+  // Fallback: datos del store (in-memory)
+  const { slots: ctxSlots, waitlist, admissionQuarters, deadlineQ3: ctxDeadline } = useCapacidad();
   const metricaSlots    = useMetrica('slots');
   const metricaWaitlist = useMetrica('waitlist');
 
+  // Override desde API cuando esté disponible
+  const [apiSlots, setApiSlots]       = useState<Array<{id: number; status: string}> | null>(null);
+  const [apiDeadline, setApiDeadline] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.get('/capacidad')
+      .then(res => {
+        const d = res.data.data;
+        if (d.slots?.length) setApiSlots(d.slots);
+        if (d.deadlineQ3)    setApiDeadline(d.deadlineQ3);
+      })
+      .catch(() => {});
+  }, []);
+
+  const slots    = apiSlots ?? ctxSlots;
+  const deadlineQ3 = apiDeadline ?? ctxDeadline;
+
   const { activos, reservados } = countSlots(slots);
-  const proyectosActivos  = metricaSlots?.value    ?? activos;
-  const enListaEspera     = metricaWaitlist?.value  ?? waitlist.length;
+  const proyectosActivos = metricaSlots?.value   ?? activos;
+  const enListaEspera    = metricaWaitlist?.value ?? waitlist.length;
 
   // Próxima ventana abierta
   const proximaVentana = admissionQuarters.find(q => q.status === 'open')?.quarter ?? 'Q3 2026';
@@ -229,7 +247,7 @@ export default function S15Founder() {
               {slots.map((s, i) => (
                 <span
                   key={i}
-                  className={`slot${s === 'activo' ? ' filled' : s === 'reservado' ? ' reserved' : ''}`}
+                  className={`slot${s.status === 'activo' ? ' filled' : s.status === 'reservado' ? ' reserved' : ''}`}
                 />
               ))}
             </div>
