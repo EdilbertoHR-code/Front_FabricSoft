@@ -1,6 +1,7 @@
 import BackButton from '../../../components/BackButton';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../../../config/api';
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────
 
@@ -296,7 +297,11 @@ function Step4({ data, onChange, onNext, onBack }: { data: FormData; onChange: (
   );
 }
 
-function Step5({ data, onChange, onSubmit, onBack }: { data: FormData; onChange: (k: keyof FormData, v: string) => void; onSubmit: () => void; onBack: () => void }) {
+function Step5({ data, onChange, onSubmit, onBack, submitting, submitError }: {
+  data: FormData; onChange: (k: keyof FormData, v: string) => void;
+  onSubmit: () => void; onBack: () => void;
+  submitting?: boolean; submitError?: string;
+}) {
   return (
     <div style={{ animation: 'fadeIn .3s ease' }}>
       <StepLabel>Paso 5 de 5 — Plazo</StepLabel>
@@ -319,7 +324,12 @@ function Step5({ data, onChange, onSubmit, onBack }: { data: FormData; onChange:
           );
         })}
       </div>
-      <NavButtons onBack={onBack} onNext={onSubmit} nextLabel="Enviar solicitud →" disabled={!data.plazo} showBack />
+      {submitError && (
+        <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--danger)', letterSpacing: '0.15em', marginTop: 16 }}>
+          {submitError}
+        </p>
+      )}
+      <NavButtons onBack={onBack} onNext={onSubmit} nextLabel={submitting ? 'Enviando...' : 'Enviar solicitud →'} disabled={!data.plazo || submitting} showBack />
     </div>
   );
 }
@@ -389,10 +399,26 @@ export default function AplicarPage() {
   const [step, setStep] = useState<Step>(1);
   const [data, setData] = useState<FormData>(INITIAL);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const update = (k: keyof FormData, v: string) => setData(d => ({ ...d, [k]: v }));
   const next = () => setStep(s => Math.min(s + 1, 5) as Step);
   const back = () => setStep(s => Math.max(s - 1, 1) as Step);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await api.post('/leads/solicitar', data);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      setSubmitError(msg || 'Error al enviar la solicitud. Intenta de nuevo.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
@@ -421,7 +447,7 @@ export default function AplicarPage() {
               {step === 2 && <Step2 data={data} onChange={update} onNext={next} onBack={back} />}
               {step === 3 && <Step3 data={data} onChange={update} onNext={next} onBack={back} />}
               {step === 4 && <Step4 data={data} onChange={update} onNext={next} onBack={back} />}
-              {step === 5 && <Step5 data={data} onChange={update} onSubmit={() => setSubmitted(true)} onBack={back} />}
+              {step === 5 && <Step5 data={data} onChange={update} onSubmit={handleSubmit} onBack={back} submitting={submitting} submitError={submitError} />}
             </>
           ) : (
             <SuccessState data={data} />

@@ -1,7 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
-import { useFabric } from '../../store/FabricContext';
-import type { Lead, LeadStatus } from '../../store/fabricStore';
+import { adminApi } from '../../config/api';
+
+type LeadStatus = 'Nuevo' | 'Aprobado' | 'WaitList' | 'Revisión' | 'Rechazado';
+
+interface HistorialEntry {
+  fecha: string;
+  estado: string;
+  autor: string;
+}
+
+interface Lead {
+  _id: string;
+  nombre: string;
+  cargo: string;
+  empresa: string;
+  revenue: string;
+  email: string;
+  industria: string;
+  iniciativa: string;
+  plazo: string;
+  source: string;
+  score: number;
+  status: LeadStatus;
+  notas: string;
+  historial: HistorialEntry[];
+  queryChat?: string;
+  createdAt: string;
+}
 
 const STATUS_COLOR: Record<LeadStatus, string> = {
   Nuevo:     '#C9A96E',
@@ -12,20 +38,48 @@ const STATUS_COLOR: Record<LeadStatus, string> = {
 };
 
 const FILTERS: Array<LeadStatus | 'Todos'> = ['Todos', 'Nuevo', 'Revisión', 'Aprobado', 'WaitList', 'Rechazado'];
-const INDUSTRIES = ['Todas', 'Financiero', 'Inmobiliario', 'Logística'];
+const INDUSTRIES = ['Todas', 'financiero', 'inmobiliario', 'logistica'];
+const INDUSTRY_LABEL: Record<string, string> = {
+  financiero: 'Financiero',
+  inmobiliario: 'Inmobiliario',
+  logistica: 'Logística',
+};
+
+function fmt(iso: string) {
+  return new Date(iso).toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'short', year: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
 
 export default function AdminLeads() {
-  const { store, updateLeadStatus, updateLeadNotas } = useFabric();
-  const leads = store.leads;
-
-  const [filter, setFilter]     = useState<LeadStatus | 'Todos'>('Todos');
-  const [industry, setIndustry] = useState('Todas');
-  const [selected, setSelected] = useState<Lead | null>(null);
+  const [leads, setLeads]         = useState<Lead[]>([]);
+  const [total, setTotal]         = useState(0);
+  const [loading, setLoading]     = useState(true);
+  const [filter, setFilter]       = useState<LeadStatus | 'Todos'>('Todos');
+  const [industry, setIndustry]   = useState('Todas');
+  const [selected, setSelected]   = useState<Lead | null>(null);
   const [notasEdit, setNotasEdit] = useState('');
+  const [updating, setUpdating]   = useState<string | null>(null);
+
+  useEffect(() => { fetchLeads(); }, []);
+
+  async function fetchLeads() {
+    setLoading(true);
+    try {
+      const res = await adminApi.get('/leads/admin');
+      setLeads(res.data.data);
+      setTotal(res.data.total);
+    } catch {
+      console.error('Error cargando leads');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const visible = leads.filter(l => {
     const statusOk   = filter === 'Todos' || l.status === filter;
-    const industryOk = industry === 'Todas' || l.industry === industry;
+    const industryOk = industry === 'Todas' || l.industria === industry;
     return statusOk && industryOk;
   });
 
@@ -34,17 +88,34 @@ export default function AdminLeads() {
     setNotasEdit(lead.notas ?? '');
   };
 
-  const handleStatusChange = (id: string, status: LeadStatus) => {
-    updateLeadStatus(id, status);
-    // Refleja el cambio en el panel si está abierto
-    if (selected?.id === id) setSelected(prev => prev ? { ...prev, status } : null);
-  };
+  async function handleStatusChange(id: string, status: LeadStatus) {
+    setUpdating(id);
+    try {
+      const res = await adminApi.patch(`/leads/admin/${id}/status`, { status });
+      const updated: Lead = res.data.data;
+      setLeads(prev => prev.map(l => l._id === id ? updated : l));
+      if (selected?._id === id) setSelected(updated);
+    } catch {
+      console.error('Error actualizando status');
+    } finally {
+      setUpdating(null);
+    }
+  }
 
-  const handleSaveNotas = () => {
+  async function handleSaveNotas() {
     if (!selected) return;
-    updateLeadNotas(selected.id, notasEdit);
-    setSelected(prev => prev ? { ...prev, notas: notasEdit } : null);
-  };
+    setUpdating(selected._id);
+    try {
+      const res = await adminApi.patch(`/leads/admin/${selected._id}/notas`, { notas: notasEdit });
+      const updated: Lead = res.data.data;
+      setLeads(prev => prev.map(l => l._id === selected._id ? updated : l));
+      setSelected(updated);
+    } catch {
+      console.error('Error guardando notas');
+    } finally {
+      setUpdating(null);
+    }
+  }
 
   return (
     <AdminLayout>
@@ -55,17 +126,15 @@ export default function AdminLeads() {
             FABRIC · ADMIN · LEADS
           </div>
           <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Leads · {leads.length} en evaluación
+            Leads · {total} en evaluación
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <button style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}>
-            Exportar CSV
-          </button>
-          <button style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: '#C9A96E', border: 'none', color: '#060606', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}>
-            + Nuevo manual
-          </button>
-        </div>
+        <button
+          onClick={fetchLeads}
+          style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          Actualizar
+        </button>
       </div>
 
       {/* Filtros */}
@@ -93,15 +162,19 @@ export default function AdminLeads() {
             cursor: 'pointer', fontFamily: 'inherit',
             borderBottom: `1px solid ${industry === ind ? '#C9A96E' : 'transparent'}`,
           }}>
-            {ind}
+            {ind === 'Todas' ? 'Todas' : INDUSTRY_LABEL[ind]}
           </button>
         ))}
       </div>
 
       {/* Tabla */}
-      <div style={{ padding: '0 36px 36px' }}>
-        <div className="admin-table-wrap">
-          <table style={{ borderCollapse: 'collapse' }}>
+      <div style={{ padding: '0 36px 36px', overflowX: 'auto' }}>
+        {loading ? (
+          <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
+        ) : visible.length === 0 ? (
+          <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Sin leads con este filtro.</div>
+        ) : (
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
                 {['Fecha', 'Compañía', 'Cargo', 'Industria', 'Revenue', 'Iniciativa', 'Score', 'Fuente', 'Estado', ''].map(h => (
@@ -114,16 +187,16 @@ export default function AdminLeads() {
             <tbody>
               {visible.map(lead => (
                 <tr
-                  key={lead.id}
+                  key={lead._id}
                   style={{ borderBottom: '1px solid #111', cursor: 'pointer', transition: 'background .15s' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#0F0F0F')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   onClick={() => openDetail(lead)}
                 >
-                  <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A' }}>{lead.date}</td>
-                  <td style={{ padding: '13px 16px', fontSize: 11, color: '#F5F5F5', fontWeight: 500 }}>{lead.company}</td>
+                  <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A', whiteSpace: 'nowrap' }}>{fmt(lead.createdAt)}</td>
+                  <td style={{ padding: '13px 16px', fontSize: 11, color: '#F5F5F5', fontWeight: 500 }}>{lead.empresa}</td>
                   <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{lead.cargo}</td>
-                  <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{lead.industry}</td>
+                  <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{INDUSTRY_LABEL[lead.industria] ?? lead.industria}</td>
                   <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{lead.revenue}</td>
                   <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {lead.iniciativa}
@@ -149,7 +222,7 @@ export default function AdminLeads() {
               ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
 
       {/* Panel de detalle */}
@@ -158,13 +231,19 @@ export default function AdminLeads() {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
           onClick={() => setSelected(null)}
         >
-          <div className="admin-detail-panel" onClick={e => e.stopPropagation()} style={{ overflowY: 'auto' }}>
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: 380, height: '100vh', background: '#080808', borderLeft: '1px solid #1e1e1e',
+              padding: '28px 24px', overflowY: 'auto', fontFamily: 'var(--mono, "JetBrains Mono", monospace)',
+            }}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ fontSize: 9, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase' }}>Detalle del lead</div>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#5A5A5A', cursor: 'pointer', fontSize: 16 }}>×</button>
             </div>
 
-            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 24, color: '#F5F5F5', marginBottom: 4 }}>{selected.company}</div>
+            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 24, color: '#F5F5F5', marginBottom: 4 }}>{selected.empresa}</div>
             <div style={{ fontSize: 10, color: '#8A8A8A', marginBottom: 20 }}>{selected.nombre} · {selected.cargo}</div>
 
             {/* Score */}
@@ -175,15 +254,15 @@ export default function AdminLeads() {
 
             {/* Campos */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
-              {[
-                ['Industria',  selected.industry],
+              {([
+                ['Industria',  INDUSTRY_LABEL[selected.industria] ?? selected.industria],
                 ['Revenue',    selected.revenue],
                 ['Iniciativa', selected.iniciativa],
                 ['Plazo',      selected.plazo],
                 ['Email',      selected.email],
                 ['Fuente',     selected.source],
-                ['Fecha',      selected.date],
-              ].map(([k, v]) => (
+                ['Fecha',      fmt(selected.createdAt)],
+              ] as [string, string][]).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #141414', paddingBottom: 10 }}>
                   <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
                   <span style={{ fontSize: 11, color: '#F5F5F5', maxWidth: 200, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
@@ -205,8 +284,8 @@ export default function AdminLeads() {
                   <span style={{ fontSize: 8, color: '#3A3A3A', minWidth: 60 }}>{h.fecha}</span>
                   <span style={{
                     fontSize: 8, padding: '2px 8px',
-                    border: `1px solid ${STATUS_COLOR[h.estado]}33`,
-                    color: STATUS_COLOR[h.estado],
+                    border: `1px solid ${STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A'}33`,
+                    color: STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A',
                   }}>{h.estado}</span>
                   <span style={{ fontSize: 8, color: '#5A5A5A' }}>{h.autor}</span>
                 </div>
@@ -228,6 +307,7 @@ export default function AdminLeads() {
               />
               <button
                 onClick={handleSaveNotas}
+                disabled={updating === selected._id}
                 style={{ marginTop: 6, padding: '6px 14px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}
               >
                 Guardar notas
@@ -241,7 +321,8 @@ export default function AdminLeads() {
                 .map(s => (
                   <button
                     key={s}
-                    onClick={() => handleStatusChange(selected.id, s)}
+                    disabled={updating === selected._id}
+                    onClick={() => handleStatusChange(selected._id, s)}
                     style={{
                       padding: '10px', background: `${STATUS_COLOR[s]}15`,
                       border: `1px solid ${STATUS_COLOR[s]}44`,
@@ -255,7 +336,8 @@ export default function AdminLeads() {
                 ))}
               {selected.status !== 'Rechazado' && (
                 <button
-                  onClick={() => handleStatusChange(selected.id, 'Rechazado')}
+                  disabled={updating === selected._id}
+                  onClick={() => handleStatusChange(selected._id, 'Rechazado')}
                   style={{ padding: '10px', background: 'transparent', border: '1px solid #B85450', color: '#B85450', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}
                 >
                   Rechazar

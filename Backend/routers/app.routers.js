@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-const routes = {
-  auth: require('../components/auth.component'),
- 
-};
-
-
+const authRoutes   = require('../components/auth.component');
+const papersRoutes = require('../components/papers.component');
+const leadsRoutes  = require('../components/leads.component');
 
 router.get('/', (req, res) => {
-  res.send('✅ API FABRI SOFT: Funcionando correctamente.');
+  res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
 });
+
+router.use('/auth',   authRoutes);
+router.use('/papers', papersRoutes);
+router.use('/leads',  leadsRoutes);
 
 
 
