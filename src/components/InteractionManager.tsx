@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "../config/api";
 
 type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | "nda-pdf" | null;
@@ -11,21 +11,35 @@ const powDocs = [
   { icon: "PR",    title: "Comunicado público de go-live",     meta: "2 pp · ES · Aprobado por APE Plazas · 25 may 2026",        size: "340 KB", access: "public" },
 ];
 
-const slots = [
-  { time: "09:00", taken: false }, { time: "09:30", taken: true },
-  { time: "10:00", taken: false }, { time: "10:30", taken: true },
-  { time: "11:00", taken: false }, { time: "11:30", taken: false },
-  { time: "14:00", taken: true  }, { time: "14:30", taken: false },
-  { time: "15:00", taken: false }, { time: "16:00", taken: true  },
-];
-
-const days = ["LUN 02", "MAR 03", "MIÉ 04", "JUE 05", "VIE 06"];
+// days se genera dinámicamente en el componente
 
 const papers = [
   { num: "Paper 01", tag: "Research Note · Mercado", title: "Por qué fallan los go-live de Oracle Fusion", abstract: "Análisis de 47 implementaciones LATAM. Tres patrones recurrentes de fracaso, causas raíz documentadas, modelo alternativo de entrega.", meta: "8-10 pp · PDF ES · 15 min · May 2026" },
   { num: "Paper 02", tag: "Technical Framework · IA", title: "IA aplicada a cierre contable en Fusion Cloud", abstract: "Framework FABRIC con 4 capas operativas. Casos APE Plazas + Aplazo. Benchmarks de reducción de tiempo de cierre.", meta: "10-12 pp · PDF ES · 20 min · May 2026" },
   { num: "Paper 03", tag: "Doctrina Operativa · SOW", title: "Modelo de entrega en primer ciclo crítico", abstract: "Las 5 cláusulas doctrinales aplicadas. Redacción de RFP con criterios FABRIC. Validación post go-live documentada.", meta: "6-8 pp · PDF ES · 12 min · May 2026" },
 ];
+
+interface DaySlot { time: string; taken: boolean; }
+
+// Genera los próximos N días laborables a partir de hoy
+function getNextWorkDays(count: number): string[] {
+  const result: string[] = [];
+  const cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  while (result.length < count) {
+    cursor.setDate(cursor.getDate() + 1);
+    const dow = cursor.getDay();
+    if (dow !== 0 && dow !== 6) {
+      result.push(cursor.toISOString().split('T')[0]); // YYYY-MM-DD
+    }
+  }
+  return result;
+}
+
+function formatDayLabel(iso: string): string {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('es-MX', { weekday: 'short', day: '2-digit' }).toUpperCase();
+}
 
 export default function InteractionManager() {
   const [active, setActive] = useState<InteractionType>(null);
@@ -36,6 +50,30 @@ export default function InteractionManager() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+
+  const [days] = useState<string[]>(() => getNextWorkDays(5));
+  const [slots, setSlots] = useState<DaySlot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
+  const fetchSlots = useCallback(async (dateISO: string) => {
+    setSlotsLoading(true);
+    try {
+      const res = await api.get(`/office-hours/disponibilidad/dia?date=${dateISO}`);
+      setSlots(res.data.data ?? []);
+    } catch {
+      // Fallback: todos disponibles
+      setSlots(['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00']
+        .map(time => ({ time, taken: false })));
+    } finally {
+      setSlotsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (active === 'office-hours' && days[selectedDay]) {
+      fetchSlots(days[selectedDay]);
+    }
+  }, [active, selectedDay, days, fetchSlots]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -175,30 +213,38 @@ export default function InteractionManager() {
               {!selectedSlot ? (
                 <>
                   <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
-                    {days.map((d, i) => (
-                      <button key={d} className={`im-day-btn${selectedDay === i ? " active" : ""}`} onClick={() => setSelectedDay(i)}
+                    {days.map((iso, i) => (
+                      <button key={iso} className={`im-day-btn${selectedDay === i ? " active" : ""}`} onClick={() => setSelectedDay(i)}
                         style={{ padding: "8px 14px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: selectedDay === i ? "var(--accent)" : "var(--text-secondary)", cursor: "pointer", transition: "all 200ms", letterSpacing: "0.1em" }}>
-                        {d}
+                        {formatDayLabel(iso)}
                       </button>
                     ))}
                   </div>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12 }}>JULIO 2026 · CDMX</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
-                    {slots.map((slot) => (
-                      <button key={slot.time} disabled={slot.taken} onClick={() => setSelectedSlot(slot.time)}
-                        className={`im-slot-btn${selectedSlot === slot.time ? " selected" : ""}`}
-                        style={{ padding: "12px 8px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: slot.taken ? "var(--text-tertiary)" : "var(--text-secondary)", cursor: slot.taken ? "not-allowed" : "pointer", textDecoration: slot.taken ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em" }}>
-                        {slot.time}
-                      </button>
-                    ))}
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12 }}>
+                    {days[selectedDay] ? new Date(days[selectedDay] + 'T12:00:00').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }).toUpperCase() : ''} · CDMX
                   </div>
+                  {slotsLoading ? (
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.14em", padding: "20px 0" }}>
+                      Consultando disponibilidad...
+                    </div>
+                  ) : (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+                      {slots.map((slot) => (
+                        <button key={slot.time} disabled={slot.taken} onClick={() => setSelectedSlot(slot.time)}
+                          className={`im-slot-btn${selectedSlot === slot.time ? " selected" : ""}`}
+                          style={{ padding: "12px 8px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: slot.taken ? "var(--text-tertiary)" : "var(--text-secondary)", cursor: slot.taken ? "not-allowed" : "pointer", textDecoration: slot.taken ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em" }}>
+                          {slot.time}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </>
               ) : (
                 <div>
                   {!submitted ? (
                     <>
                       <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", marginBottom: 16, textTransform: "uppercase" }}>
-                        Slot seleccionado · {days[selectedDay]} · {selectedSlot}
+                        Slot seleccionado · {formatDayLabel(days[selectedDay])} · {selectedSlot}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                         {(["nombre", "empresa", "email"] as const).map((field) => (
@@ -225,7 +271,7 @@ export default function InteractionManager() {
                                 nombre:  formData.nombre,
                                 empresa: formData.empresa,
                                 email:   formData.email,
-                                dia:     days[selectedDay],
+                                dia:     days[selectedDay], // YYYY-MM-DD
                                 slot:    selectedSlot,
                               });
                               setSubmitted(true);

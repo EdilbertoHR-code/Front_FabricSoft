@@ -1,30 +1,89 @@
-
-const days = [
-  ["26", "muted"], ["27", "muted"], ["28", "muted"], ["29", "muted"], ["30", "muted"], ["31", "muted"], ["1", "active"],
-  ["2", "active"], ["3", "active"], ["4", "active"], ["5", "active"], ["12", "slot", "3/4"], ["13", "muted"], ["14", "muted"],
-  ["15", "active"], ["16", "active"], ["17", "active"], ["18", "active"], ["19", "slot full", "0/4"], ["20", "muted"], ["21", "muted"],
-  ["22", "active"], ["23", "active"], ["24", "active"], ["25", "active"], ["26", "slot", "1/4"], ["27", "muted"], ["28", "muted"],
-  ["29", "active"], ["30", "active today"], ["1", "muted"], ["2", "muted"], ["3", "slot", "4/4"], ["4", "muted"], ["5", "muted"]
-] as const;
-
+import { useState, useEffect } from 'react';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+import { api } from '../../../config/api';
+
+// { 'YYYY-MM-DD': availableCount }
+type MonthData = Record<string, number>;
+
+function buildCalendarGrid(year: number, month: number, monthData: MonthData) {
+  // Primer día del mes (weekday 0=Dom...6=Sab → ajustamos a 0=Lun)
+  const firstDow = new Date(year, month - 1, 1).getDay();
+  const offset   = (firstDow + 6) % 7; // cuántas celdas vacías al inicio (Lun=0)
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const today = new Date().toISOString().split('T')[0];
+
+  const cells: Array<{ day: number | null; dateStr: string | null; className: string; available: number }> = [];
+
+  // Celdas vacías del mes anterior
+  for (let i = 0; i < offset; i++) {
+    cells.push({ day: null, dateStr: null, className: 'muted', available: 0 });
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const dow = new Date(dateStr + 'T12:00:00').getDay(); // 0=Dom 6=Sab
+    const isWeekend = dow === 0 || dow === 6;
+    const isToday   = dateStr === today;
+    const available = monthData[dateStr] ?? 0;
+
+    let className = 'muted';
+    if (!isWeekend) {
+      if (available === 0) className = isToday ? 'active today' : 'active';
+      else                 className = `slot${available <= 1 ? ' critical' : ''}${isToday ? ' today' : ''}`;
+    }
+
+    cells.push({ day: d, dateStr, className, available });
+  }
+
+  // Completar hasta múltiplo de 7
+  while (cells.length % 7 !== 0) {
+    cells.push({ day: null, dateStr: null, className: 'muted', available: 0 });
+  }
+
+  return cells;
+}
+
+const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 export default function S11OfficeHours() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
+
+  const now = new Date();
+  const [year,  setYear]  = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [monthData, setMonthData] = useState<MonthData>({});
+  const [loadingCal, setLoadingCal] = useState(false);
+
+  useEffect(() => {
+    if (!isInView) return;
+    setLoadingCal(true);
+    api.get(`/office-hours/disponibilidad/mes?year=${year}&month=${month}`)
+      .then(res => setMonthData(res.data.data ?? {}))
+      .catch(() => setMonthData({}))
+      .finally(() => setLoadingCal(false));
+  }, [year, month, isInView]);
+
+  const prevMonth = () => {
+    if (month === 1) { setMonth(12); setYear(y => y - 1); }
+    else setMonth(m => m - 1);
+  };
+  const nextMonth = () => {
+    if (month === 12) { setMonth(1); setYear(y => y + 1); }
+    else setMonth(m => m + 1);
+  };
+  const goToday = () => { setYear(now.getFullYear()); setMonth(now.getMonth() + 1); };
+
+  const cells = buildCalendarGrid(year, month, monthData);
+
   return (
     <section ref={ref} id="s11" className={`demo-section s11 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="office-hours">
           <div className="office-hours-text">
             <div className="label">FABRIC Office Hours</div>
-            {/* Desktop heading */}
             <h2 className="s11-heading-desktop">Conversaciones directas con <span className="text-[#C9A96E]">el fundador.</span></h2>
-            {/* Mobile heading */}
             <h2 className="s11-heading-mobile">Con <span className="text-[#C9A96E]">el fundador.</span></h2>
-
-            {/* Desktop paragraph */}
             <p className="s11-para-desktop">Una vez al mes, Julio Álvarez recibe cuatro conversaciones de 30 minutos con CFO/CTO de empresas evaluando iniciativas Oracle.</p>
-            {/* Mobile paragraph */}
             <p className="s11-para-mobile" style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6 }}>4 slots al mes. 30 min. CFO / CTO con iniciativa Oracle activa.</p>
 
             <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--accent)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 16 }}>
@@ -50,35 +109,41 @@ export default function S11OfficeHours() {
 
           <div className="calendar">
             <div className="calendar-head">
-              <div className="calendar-month">Junio · 2026</div>
+              <div className="calendar-month" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                {MONTH_NAMES[month - 1]} · {year}
+                {loadingCal && <span style={{ fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.1em' }}>↻</span>}
+              </div>
               <div className="calendar-nav">
-                <span>←</span>
-                <span>Hoy</span>
-                <span>→</span>
+                <span style={{ cursor: 'pointer' }} onClick={prevMonth}>←</span>
+                <span style={{ cursor: 'pointer' }} onClick={goToday}>Hoy</span>
+                <span style={{ cursor: 'pointer' }} onClick={nextMonth}>→</span>
               </div>
             </div>
 
             <div className="calendar-grid">
-              {["L", "M", "X", "J", "V", "S", "D"].map((day) => <div className="cal-dow" key={day}>{day}</div>)}
-              {days.map(([day, className, slots], index) => (
+              {["L", "M", "X", "J", "V", "S", "D"].map((d) => (
+                <div className="cal-dow" key={d}>{d}</div>
+              ))}
+              {cells.map((cell, idx) => (
                 <div
-                  className={`cal-day ${className}`}
-                  data-slots={slots}
-                  data-interaction={className.includes("slot") && !className.includes("full") ? "office-hours" : undefined}
-                  key={`${day}-${index}`}
+                  key={idx}
+                  className={`cal-day ${cell.className}`}
+                  data-slots={cell.available > 0 ? `${cell.available}/10` : undefined}
+                  data-interaction={
+                    cell.available > 0 ? "office-hours" : undefined
+                  }
                 >
-                  {day}
+                  {cell.day ?? ''}
                 </div>
               ))}
             </div>
 
             <div className="calendar-legend">
               <span><span className="legend-swatch available"></span>Slot disponible</span>
-              <span><span className="legend-swatch full"></span>Lleno</span>
+              <span><span className="legend-swatch full"></span>Sin slots</span>
               <span><span className="legend-swatch today"></span>Hoy</span>
             </div>
 
-            {/* Mobile CTA inside calendar */}
             <a
               href="#office-hours"
               data-interaction="office-hours"
@@ -86,7 +151,6 @@ export default function S11OfficeHours() {
               style={{ display: "block", textAlign: "center", marginTop: 16 }}
             >
               Reservar conversación →
-
             </a>
           </div>
         </div>

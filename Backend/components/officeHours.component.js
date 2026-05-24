@@ -4,8 +4,10 @@ const officeHoursController = require('../controllers/officeHours.controller');
 const { requireAdminKey } = require('../middleware/admin.middleware');
 
 // Público
-router.post('/book',         officeHoursController.book);
-router.get('/slots-ocupados', officeHoursController.slotsOcupados);
+router.post('/book',                       officeHoursController.book);
+router.get('/slots-ocupados',              officeHoursController.slotsOcupados);
+router.get('/disponibilidad/mes',          officeHoursController.disponibilidadMes);
+router.get('/disponibilidad/dia',          officeHoursController.disponibilidadDia);
 
 // Admin
 router.get('/admin',               requireAdminKey, officeHoursController.listar);

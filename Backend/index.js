@@ -1,13 +1,11 @@
+require("dotenv").config(); // debe ser lo primero — antes de cualquier require que lea process.env
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 
-
 const appRoutes = require('./routers/app.routers.js');
-const authController = require('./controllers/auth.controller.js'); 
-
-dotenv.config();
+const authController = require('./controllers/auth.controller.js');
 
 const app = express();
 

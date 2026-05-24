@@ -1,4 +1,5 @@
-const Booking = require('../models/model.officeHoursBooking');
+const Booking         = require('../models/model.officeHoursBooking');
+const calendarService = require('../services/calendar.service');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 
@@ -71,6 +72,38 @@ exports.actualizarStatus = async (req, res) => {
   } catch (err) {
     console.error('officeHours.actualizarStatus error:', err);
     res.status(500).json({ error: 'Error actualizando status.' });
+  }
+};
+
+// GET /office-hours/disponibilidad/mes?year=2026&month=7
+exports.disponibilidadMes = async (req, res) => {
+  try {
+    const year  = parseInt(req.query.year)  || new Date().getFullYear();
+    const month = parseInt(req.query.month) || new Date().getMonth() + 1;
+
+    const data = await calendarService.getMonthAvailability(year, month);
+    res.json({ ok: true, data });
+  } catch (err) {
+    console.error('officeHours.disponibilidadMes error:', err.message);
+    // Devolver objeto vacío para no romper el frontend
+    res.json({ ok: true, data: {}, error: 'calendar_unavailable' });
+  }
+};
+
+// GET /office-hours/disponibilidad/dia?date=2026-07-05
+exports.disponibilidadDia = async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: 'Parámetro date requerido (YYYY-MM-DD).' });
+
+    const dbBookings = await Booking.find({ dia: date, status: { $ne: 'cancelado' } }, 'slot');
+    const dbTaken    = dbBookings.map(b => b.slot);
+
+    const slots = await calendarService.getDaySlots(date, dbTaken);
+    res.json({ ok: true, data: slots });
+  } catch (err) {
+    console.error('officeHours.disponibilidadDia error:', err.message);
+    res.json({ ok: true, data: [], error: 'calendar_unavailable' });
   }
 };
 

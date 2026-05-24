@@ -49,6 +49,11 @@ frontend/next-env.d.ts
 *.aux
 fLVl*
 
+# Google Cloud service account keys
+oval-botany*.json
+*-service-account*.json
+*serviceaccount*.json
+
 # Backups
 *.bak.tsx
 *.bak.ts
