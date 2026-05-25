@@ -715,3 +715,65 @@ Verificacion:
 GET /api/referencias -> 3 referencias visibles, publicLimit 3, totalDisponibles 5, rotationWeeks 1
 npm.cmd run build -> OK
 ```
+
+## 24. Sesión 24 mayo 2026 (cont.) — Papers PDF por email + Research Letters backend completo
+
+### Resumen
+
+Se completó el backend de S14 Papers (entrega automática de PDF por email), se construyó el backend completo de Research Letters con cupo configurable, y se aclaró el estado de AdminLogs.
+
+### Papers — PDF por email (Resend)
+
+PDFs se almacenan en `Backend/assets/papers/paper-XX.pdf` (nombrado exactamente así).
+
+| Archivo | Cambio |
+|---------|--------|
+| `Backend/services/email.service.js` | Agregado `templatePaperEntrega`, `PAPER_TITLES`, `exports.sendPaperEntrega` (lee PDF con `fs.readFileSync`, adjunta via Resend `attachments`). También `sendResearchLetterConfirmacion` y `sendResearchLetterBienvenida`. |
+| `Backend/controllers/papers.controller.js` | `actualizarStatus`: guard 409 si PDF no existe antes de guardar en DB. Al cambiar a `enviado` dispara `sendPaperEntrega` en fire-and-forget. |
+| `Backend/assets/papers/.gitkeep` | Directorio para PDFs. Convención: `paper-01.pdf`, `paper-02.pdf`, `paper-03.pdf`. |
+
+### Research Letters — backend completo
+
+Spec del brief: análisis quincenal para CFOs/CTOs, empresa ≥ USD 50M, cargo C-level/Director, iniciativa Oracle activa o planeada. Cupo configurable con toggle de desactivar.
+
+| Archivo | Descripción |
+|---------|-------------|
+| `Backend/models/model.researchLetterSuscriptor.js` | Schema suscriptor: email, nombre, empresa, cargo, revenueAprox, iniciativaOracle, industria, ipAddress, status (pendiente/aprobado/rechazado). |
+| `Backend/models/model.researchLetterConfig.js` | Singleton con `cupoActivo`, `cupoMaximo` (default 50), `admisionAbierta`. Método `getSingleton()`. |
+| `Backend/controllers/researchLetters.controller.js` | `solicitar` (gate email corporativo + admision + cupo + dedup), `listar`, `actualizarStatus`, `getConfig`, `actualizarConfig`. |
+| `Backend/components/researchLetters.component.js` | `POST /solicitar` (público), `GET/PUT /admin`, `GET/PUT /admin/config`, `PATCH /admin/:id/status` (todos protegidos con requireAdminKey excepto solicitar). |
+| `Backend/routers/app.routers.js` | Montada ruta `/research-letters`. |
+| `src/pages/admin/AdminResearchLetters.tsx` | Panel admin: toggle admisión abierta/cerrada, toggle cupo activo/sin límite, input cupo máximo, stats (total/aprobados/pendientes), filtros, tabla con acciones Aprobar/Pendiente/Rechazar. |
+| `src/pages/admin/AdminLayout.tsx` | Agregado nav `Research Letters`. |
+| `src/routers/AppRouter.tsx` | Agregada ruta `/admin/research-letters` con lazy import. |
+
+### Bug crítico resuelto — adminApi vs api
+
+`AdminResearchLetters.tsx` importaba `api` en vez de `adminApi` → requests sin header `x-admin-key` → middleware devolvía 401 → `catch` mostraba "Error cargando datos.".
+
+Regla: **todas las páginas admin deben usar `adminApi`** de `src/config/api.ts`, no `api`. `api` no tiene el header `x-admin-key`.
+
+### AdminLogs — estado actual
+
+**100% hardcodeado.** Datos estáticos en array `LOGS`. No existe backend (`/api/logs`), ni modelo, ni ningún controller escribe logs. Para hacerlo real se necesita:
+1. Modelo `Log` (timestamp, action, author, category, status)
+2. Cada controller llama `Log.create(...)` al mutar datos
+3. `GET /admin/logs` paginado
+4. Frontend lee API en vez del array estático
+
+Pendiente como tarea futura.
+
+### Estado consolidado por sección
+
+| Sección | Estado backend |
+|---------|---------------|
+| **S14 Papers** | ✅ **Completado** — solicitud + entrega PDF por email (Resend) |
+| **Research Letters** | ✅ **Completado** — registro + cupo configurable + aprobación con email bienvenida |
+| **AdminLogs** | 🔴 Hardcodeado — ningún controller escribe logs todavía |
+
+### Pendiente próxima sesión
+
+- Frontend de Research Letters (página pública `/research-letters` con form de registro)
+- AdminLogs: conectar a DB real
+- `POST /api/leads` — wizard de 5 pasos en `/aplicar` todavía no llama API (datos se pierden)
+- `GET /api/stats` — endpoint real para S12b store (proyectos activos, solicitudes evaluadas)
