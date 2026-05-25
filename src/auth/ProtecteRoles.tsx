@@ -1,11 +1,14 @@
-import { useUser } from '@clerk/clerk-react';
-import { Navigate } from 'react-router-dom';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import { Navigate, useLocation } from 'react-router-dom';
 
+
+const normalizarRol = (rol?: string) => (rol || '').toLowerCase();
 
 const obtenerRutaPorRol = (rol: string) => {
-  switch (rol) {
-    case 'Admin':
-      return '/Admin';
+  switch (normalizarRol(rol)) {
+    case 'admin':
+    case 'superadmin':
+      return '/admin';
     default:
       return '/';
   }
@@ -18,16 +21,26 @@ export const ProtectorRoles = ({
   children: React.ReactNode, 
   rolesPermitidos: string[] 
 }) => {
+  const { isSignedIn } = useAuth();
   const { user, isLoaded } = useUser();
+  const location = useLocation();
 
 
   if (!isLoaded) return <div className="flex justify-center p-10">Verificando gafete...</div>;
 
+  if (!isSignedIn) {
+    return <Navigate to="/acceso" state={{ from: location.pathname }} replace />;
+  }
  
-  const rolUsuario = (user?.publicMetadata?.rol as string) || 'cliente';
+  const rolUsuario = normalizarRol(
+    (user?.publicMetadata?.rol as string) ||
+    (user?.publicMetadata?.role as string) ||
+    'cliente'
+  );
+  const rolesNormalizados = rolesPermitidos.map(normalizarRol);
 
  
-  if (!rolesPermitidos.includes(rolUsuario)) {
+  if (!rolesNormalizados.includes(rolUsuario)) {
   
     const rutaCorrecta = obtenerRutaPorRol(rolUsuario);
     return <Navigate to={rutaCorrecta} replace />;

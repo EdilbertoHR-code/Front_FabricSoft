@@ -1,40 +1,125 @@
-const current: [string, string][] = [
-  ["Caso APE Plazas · métricas bajo NDA", "abr 2026"],
-  ["Equipo 100% senior, 15+ años promedio", "auditado"],
-  ["Certificaciones Oracle vigentes 100%", "vigente"],
-  ["Plantilla 100% senior por contrato", "SOW"],
-  ["Caso Aplazo · rescate documentado", "Q1 2026"]
-];
-
-const upcoming: [string, string][] = [
-  ["NPS clientes activos", "Oct 2026"],
-  ["Retención a 24 meses", "Nov 2026"],
-  ["Tiempo medio respuesta crítica", "Q4 2026"],
-  ["Cumplimiento Fixed-Price contractual", "Dic 2026"],
-  ["Tasa proyectos en primer ciclo", "Anual"]
-];
-
+import { useEffect, useState } from 'react';
+import { api } from '../../../config/api';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface Publicada {
+  id: string;
+  label: string;
+  periodo: string;
+}
+
+interface Proxima {
+  id: string;
+  label: string;
+  fechaObjetivo: string;
+}
+
+interface Compromiso {
+  id: string;
+  titulo: string;
+  cuerpo: string;
+}
+
+// ---------------------------------------------------------------------------
+// Fallback editorial — refleja el contenido hardcodeado original.
+// Se usa si la API no responde.
+// ---------------------------------------------------------------------------
+
+const FALLBACK_PUBLICADAS: Publicada[] = [
+  { id: '01', label: 'Caso APE Plazas · métricas bajo NDA',          periodo: 'abr 2026' },
+  { id: '02', label: 'Equipo 100% senior, 15+ años promedio',         periodo: 'auditado' },
+  { id: '03', label: 'Certificaciones Oracle vigentes',               periodo: 'vigente'  },
+  { id: '04', label: 'Plantilla 100% senior por contrato',            periodo: 'SOW'      },
+  { id: '05', label: 'Caso Aplazo · rescate documentado',             periodo: 'Q1 2026'  },
+];
+
+const FALLBACK_PROXIMAS: Proxima[] = [
+  { id: '01', label: 'NPS clientes activos',                  fechaObjetivo: 'Oct 2026' },
+  { id: '02', label: 'Retención a 24 meses',                  fechaObjetivo: 'Nov 2026' },
+  { id: '03', label: 'Tiempo medio respuesta crítica',         fechaObjetivo: 'Q4 2026'  },
+  { id: '04', label: 'Cumplimiento Fixed-Price contractual',   fechaObjetivo: 'Dic 2026' },
+  { id: '05', label: 'Tasa de proyectos completados en ciclo', fechaObjetivo: 'Anual'    },
+];
+
+const FALLBACK_COMPROMISO: Compromiso = {
+  id:     '01',
+  titulo: 'Nuestra promesa',
+  cuerpo: 'Cuando publiquemos métricas, serán reales, verificables y auditadas. Hasta entonces, no inventamos números para verse bien.',
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export default function S13Transparencia() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
+
+  const [publicadas, setPublicadas]     = useState<Publicada[]>(FALLBACK_PUBLICADAS);
+  const [proximas, setProximas]         = useState<Proxima[]>(FALLBACK_PROXIMAS);
+  const [compromiso, setCompromiso]     = useState<Compromiso>(FALLBACK_COMPROMISO);
+
+  useEffect(() => {
+    api.get('/transparencia')
+      .then(res => {
+        const d = res.data?.data;
+        if (!d) return;
+
+        if (Array.isArray(d.publicadas) && d.publicadas.length) {
+          setPublicadas(d.publicadas.map((p: { id: string; label: string; periodo: string }) => ({
+            id:     p.id,
+            label:  p.label,
+            periodo: p.periodo,
+          })));
+        }
+
+        if (Array.isArray(d.proximas) && d.proximas.length) {
+          setProximas(d.proximas.map((p: { id: string; label: string; fechaObjetivo: string }) => ({
+            id:            String(p.id),
+            label:         p.label,
+            fechaObjetivo: p.fechaObjetivo,
+          })));
+        }
+
+        if (Array.isArray(d.compromisos) && d.compromisos.length) {
+          const first = d.compromisos[0];
+          setCompromiso({ id: first.id, titulo: first.titulo, cuerpo: first.cuerpo });
+        }
+      })
+      .catch(() => {
+        // Fallback editorial ya está en el estado inicial — no hacer nada
+      });
+  }, []);
+
   return (
-    <section ref={ref} id="s13" className={`demo-section s13 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section
+      ref={ref}
+      id="s13"
+      className={`demo-section s13 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+    >
       <div className="container">
         <div className="s13-intro">
           <div className="label">Transparencia Honesta</div>
-          <h2>Lo que medimos hoy.<br />Lo que <span className="text-[#C9A96E]">publicaremos mañana.</span></h2>
+          <h2>
+            Lo que medimos hoy.<br />
+            Lo que <span className="text-[#C9A96E]">publicaremos mañana.</span>
+          </h2>
         </div>
 
         <div className="transparency-grid">
+
+          {/* Bloque 1 — Publicado ahora */}
           <div className="transparency-block">
             <div className="transparency-tag">Hoy · 2026</div>
             <div className="transparency-title">Lo que publicamos ahora</div>
             <ul className="transparency-list">
-              {current.map(([text, meta]) => (
-                <li key={text}>
-                  <span>{text}</span>
-                  <span className="meta verified">{meta}</span>
+              {publicadas.map(p => (
+                <li key={p.id}>
+                  <span>{p.label}</span>
+                  <span className="meta verified">{p.periodo}</span>
                 </li>
               ))}
             </ul>
@@ -44,14 +129,15 @@ export default function S13Transparencia() {
             </div>
           </div>
 
+          {/* Bloque 2 — Próximas publicaciones */}
           <div className="transparency-block">
             <div className="transparency-tag">Q4 · 2026</div>
             <div className="transparency-title">Próximas publicaciones</div>
             <ul className="transparency-list">
-              {upcoming.map(([text, meta]) => (
-                <li key={text}>
-                  <span>{text}</span>
-                  <span className="meta">{meta}</span>
+              {proximas.map(p => (
+                <li key={p.id}>
+                  <span>{p.label}</span>
+                  <span className="meta">{p.fechaObjetivo}</span>
                 </li>
               ))}
             </ul>
@@ -61,18 +147,20 @@ export default function S13Transparencia() {
             </div>
           </div>
 
+          {/* Bloque 3 — Compromiso */}
           <div className="transparency-block compromise">
             <div className="transparency-tag">Compromiso</div>
             <div className="transparency-title">Nuestra promesa</div>
-            <p className="transparency-quote">
-              Cuando publiquemos métricas, serán reales, verificables y auditadas. Hasta entonces, no inventamos números para verse bien.
-            </p>
-            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 16 }}>— Doctrina FABRIC</div>
+            <p className="transparency-quote">{compromiso.cuerpo}</p>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>
+              — Doctrina FABRIC
+            </div>
             <div className="methodology-note">
               <strong>Vinculación contractual</strong>
               Esta cláusula está en cada SOW que FABRIC firma. La transparencia es contractual, no editorial.
             </div>
           </div>
+
         </div>
       </div>
     </section>

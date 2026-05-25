@@ -46,7 +46,7 @@ export default function InteractionManager() {
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedPaper, setSelectedPaper] = useState(0);
-  const [formData, setFormData] = useState({ nombre: "", empresa: "", email: "" });
+  const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -167,12 +167,60 @@ export default function InteractionManager() {
             </div>
           </div>
 
-          <div style={{ padding: "16px 32px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-tertiary)", letterSpacing: "0.1em" }}>5 documentos · 8.9 MB total · 1 público</span>
-            <button onClick={() => setActive("waitlist")} style={{ padding: "12px 24px", background: "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer" }}>
-              Solicitar acceso completo →
-            </button>
-          </div>
+          {!submitted ? (
+            <div style={{ padding: "16px 32px", borderTop: "1px solid var(--border)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10, marginBottom: 12 }}>
+                {(["nombre", "cargo", "empresa", "email"] as const).map((field) => (
+                  <div key={field}>
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--text-tertiary)", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 6 }}>{field === "email" ? "Email corporativo" : field}</div>
+                    <input type={field === "email" ? "email" : "text"} value={formData[field]} onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
+                      style={{ width: "100%", padding: "10px 12px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: apiError && active === "proof" ? "#B85450" : "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                  {apiError && active === "proof" ? apiError : "5 documentos · revisión admin · entrega bajo NDA"}
+                </span>
+                <button
+                  disabled={loading}
+                  onClick={async () => {
+                    setApiError("");
+                    if (!formData.nombre || !formData.cargo || !formData.empresa || !formData.email) {
+                      setApiError("Completa todos los campos.");
+                      return;
+                    }
+                    setLoading(true);
+                    try {
+                      await api.post("/nda/solicitar", {
+                        nombre: formData.nombre,
+                        cargo: formData.cargo,
+                        empresa: formData.empresa,
+                        email: formData.email,
+                        caso: "ape-plazas",
+                        documento: "paper-nda",
+                      });
+                      setSubmitted(true);
+                    } catch (err: unknown) {
+                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                      setApiError(msg ?? "Error al registrar solicitud NDA.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  style={{ padding: "12px 24px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}>
+                  {loading ? "Enviando..." : "Solicitar PDF bajo NDA →"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ padding: "28px 32px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+              <div style={{ fontFamily: "var(--serif)", fontSize: 24, marginBottom: 8 }}>Solicitud <em style={{ color: "var(--accent)" }}>recibida.</em></div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                El admin revisar&aacute; el acceso. Si se aprueba, recibir&aacute;s el PDF en {formData.email || "tu email"}.
+              </div>
+            </div>
+          )}
         </div>
       )}
 

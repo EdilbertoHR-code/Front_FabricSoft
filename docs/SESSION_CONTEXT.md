@@ -384,6 +384,90 @@ El proyecto **no usa Next.js**. El stack real es:
 | **S14 Investigación** | Papers gate + Benchmark early access | ✅ **Completado** | TODO: Resend para entrega automática de PDFs |
 | **S15 Founder / Waitlist** | Waitlist + capacidad slots | 🔴 Sin backend | `GET/PUT /api/capacidad` — persistir slots/waitlist en DB (actualmente in-memory en FabricContext) |
 
+## 18. Sesión 24 mayo 2026 (cont.) — Google Calendar + Office Hours backend completo
+
+### Resumen de cambios
+
+Se conectó Google Calendar API (Service Account) al backend de Office Hours. El flujo de disponibilidad es ahora completamente real: el calendario de Julio determina qué slots están bloqueados.
+
+### Archivos nuevos/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `Backend/services/calendar.service.js` | Nuevo. Consulta Google Calendar freebusy API. Mapea periodos ocupados a slots de 30 min (TZ: America/Mexico_City). |
+| `Backend/controllers/officeHours.controller.js` | +`disponibilidadMes`, +`disponibilidadDia`. Ambos fallback silencioso si Calendar no responde. |
+| `Backend/components/officeHours.component.js` | +`GET /disponibilidad/mes`, +`GET /disponibilidad/dia` |
+| `Backend/index.js` | `require("dotenv").config()` movido a línea 1 (fix crítico: Resend crasheaba porque se instanciaba antes de cargar .env) |
+| `src/components/InteractionManager.tsx` | Slots dinámicos desde API (`/office-hours/disponibilidad/dia`). Días siguientes calculados en runtime. |
+| `src/pages/public/home/s11-office-hours.tsx` | Calendario dinámico completo: navega meses, colorea días con slots disponibles via `/office-hours/disponibilidad/mes`. |
+
+### Credenciales Google Calendar (.env, nunca en git)
+
+```
+GOOGLE_CALENDAR_ID=escomsmile@gmail.com          # cambiar por calendario real de Julio
+GOOGLE_SERVICE_ACCOUNT_EMAIL=fabric-calendar@oval-botany-497322-i4.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_CALENDAR_TIMEZONE=America/Mexico_City
+```
+
+Para cambiar al calendario de Julio: actualizar `GOOGLE_CALENDAR_ID` y compartir ese calendario con `fabric-calendar@oval-botany-497322-i4.iam.gserviceaccount.com` (solo lectura).
+
+### Verificación exitosa
+
+```
+GET /api/office-hours/disponibilidad/dia?date=2026-05-27
+→ {"ok":true,"data":[{"time":"09:00","taken":false},...]}   ← 10 slots disponibles
+```
+
+Booking completo funcional: usuario reserva → se guarda en MongoDB con status `pendiente`.
+
+### Pendiente: email de confirmación al confirmar desde admin
+
+🔴 **PENDIENTE — implementar en próximo chat**
+
+Cuando admin cambia status a `confirmado` en `PATCH /api/office-hours/admin/:id/status`, debe enviarse email al usuario. Ver sección 19.
+
+## 19. PENDIENTE — Email de confirmación de Office Hours
+
+🔴 **No implementado. Iniciar aquí en próximo chat.**
+
+### Flujo acordado
+
+```
+Admin panel → click "Confirmar"
+  → PATCH /api/office-hours/admin/:id/status  { status: "confirmado" }
+  → controller detecta status === "confirmado"
+  → fire-and-forget: sendConfirmacionOfficeHours(booking)
+  → actualiza booking.emailEnviado = true/false según resultado
+  → admin ve en tabla si email llegó o no
+```
+
+### Patrón correcto (no bloquea la respuesta HTTP)
+
+```js
+if (status === 'confirmado') {
+  sendConfirmacionOfficeHours(booking)
+    .then(() => Booking.findByIdAndUpdate(id, { emailEnviado: true }))
+    .catch(err => {
+      console.error('Email confirmación OH falló:', err.message);
+      // emailEnviado queda false — visible en admin panel
+    });
+}
+```
+
+### Archivos a tocar
+
+1. `Backend/models/model.officeHoursBooking.js` — agregar `emailEnviado: { type: Boolean, default: false }`
+2. `Backend/controllers/officeHours.controller.js` — `actualizarStatus`: agregar bloque fire-and-forget arriba
+3. `Backend/services/email.service.js` — agregar `templateOfficeHoursConfirmacion` + `exports.sendConfirmacionOfficeHours`
+4. Admin panel (frontend) — mostrar columna o indicador `emailEnviado` en tabla de bookings
+
+### Datos disponibles en el booking
+
+`nombre`, `empresa`, `email`, `dia` (YYYY-MM-DD), `slot` (HH:MM). Formatear `dia` como "martes 26 de mayo de 2026" en el template.
+
+---
+
 ### Pendiente para siguiente sesión
 
 **Prioridad 1 — /aplicar (leads críticos)**
@@ -410,3 +494,224 @@ El proyecto **no usa Next.js**. El stack real es:
 - `AdminLeads`, `AdminOfficeHours`, `AdminMetricas`, `AdminCapacidad` — todos usan FabricContext (in-memory). Al reiniciar el server pierden datos. Necesitan endpoints reales.
 - `formData.nombre` se envía como `cargo` al endpoint de papers — la UI dice "nombre" pero el brief pide cargo. Revisar si se debe agregar campo separado o renombrar el label.
 - Backend `POST /api/leads` para el diagnóstico de 14 pasos (S05 Análisis de Fallas) también está sin implementar.
+
+---
+
+## 20. SesiÃ³n 24 mayo 2026 (cont.) â€” Office Hours email + Clerk admin
+
+### Resumen de cambios
+
+Se implementÃ³ el email de confirmaciÃ³n para Office Hours al cambiar una reserva a `confirmado` desde admin. TambiÃ©n se corrigiÃ³ el flujo de acceso admin con Clerk, eliminando la mezcla entre Clerk y el login local antiguo por `sessionStorage`.
+
+### Office Hours email â€” completado
+
+| Archivo | Cambio |
+|---------|--------|
+| `Backend/models/model.officeHoursBooking.js` | Agregado `emailEnviado: { type: Boolean, default: false }`. |
+| `Backend/controllers/officeHours.controller.js` | `actualizarStatus` dispara `sendConfirmacionOfficeHours(booking)` en fire-and-forget al confirmar. Si Resend responde bien, marca `emailEnviado: true`; si falla, queda `false`. |
+| `Backend/services/email.service.js` | Agregado `templateOfficeHoursConfirmacion`, `formatOfficeHoursDate`, escape HTML y `exports.sendConfirmacionOfficeHours`. |
+| `src/pages/admin/AdminOfficeHours.tsx` | Muestra indicador `Email ok` / `Email pendiente` en la fila y en el panel lateral. Refresca la tabla 2.5s despuÃ©s de confirmar para recoger el resultado async. |
+
+### VerificaciÃ³n realizada
+
+```
+node --check Backend/controllers/officeHours.controller.js
+node --check Backend/services/email.service.js
+```
+
+Ambos OK. Se verificÃ³ tambiÃ©n el formato de fecha:
+
+```
+2026-05-26 -> martes 26 de mayo de 2026
+```
+
+### Clerk / Admin â€” corregido
+
+Problema detectado: el admin mezclaba dos modelos de autenticaciÃ³n:
+- `AppRouter.tsx` protegÃ­a `/admin/*` con Clerk.
+- `AdminLayout.tsx` ademÃ¡s exigÃ­a `sessionStorage.fabric_admin` y redirigÃ­a a `/admin/login`.
+- `/admin/login` no estaba montado en `AppRouter.tsx`.
+- `VerificarAcceso.tsx` redirigÃ­a admins a `/Admin` con mayÃºscula, ruta inexistente.
+- Backend/Mongo usa rol `admin` en minÃºscula, mientras el frontend esperaba `Admin`.
+
+Cambios aplicados:
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/routers/AppRouter.tsx` | `/admin/*` queda protegido por `ProtectorRoles`. `/admin/login` redirige a `/acceso` como compatibilidad. |
+| `src/pages/admin/AdminLayout.tsx` | Quitada validaciÃ³n de `sessionStorage.fabric_admin`. Logout ahora usa `signOut()` de Clerk. Sidebar muestra nombre real del usuario Clerk. |
+| `src/auth/ProtecteRoles.tsx` | Si no hay sesiÃ³n, redirige a `/acceso`. Normaliza roles a minÃºsculas y acepta `publicMetadata.rol` o `publicMetadata.role`. |
+| `src/auth/VerificarAcceso.tsx` | Admin ahora redirige a `/admin`. Acepta `admin` y `superadmin` normalizados. |
+| `.env.local` | Agregado `VITE_CLERK_PUBLISHABLE_KEY`. Vite no lee `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`. |
+
+### Variables necesarias
+
+Frontend (`.env.local`, gitignored):
+
+```
+VITE_API_URL=http://localhost:4000/api
+VITE_ADMIN_API_KEY=fabric_admin_2026
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+```
+
+Backend (`Backend/.env`, gitignored):
+
+```
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SECRET=whsec_...
+ADMIN_API_KEY=fabric_admin_2026
+```
+
+El usuario admin debe tener en Clerk public metadata:
+
+```
+{ "rol": "admin" }
+```
+
+Tambien se acepta:
+
+```
+{ "role": "admin" }
+```
+
+### Pendiente inmediato al retomar
+
+1. Reiniciar Vite para que lea `VITE_CLERK_PUBLISHABLE_KEY`.
+2. Probar flujo: `/admin` -> `/acceso` -> login Clerk -> `/verificar-acceso` -> `/admin`.
+3. Probar confirmar Office Hours desde admin y verificar que `emailEnviado` pase a `true`.
+4. Si el admin no entra, revisar en Clerk que el usuario tenga `publicMetadata.rol = "admin"` y que backend `/api/auth/login` responda `{ rol: "admin", status: "activo" }`.
+5. Por seguridad, rotar secretos expuestos en chat antes de producciÃ³n o repositorio compartido: `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SECRET`, `MONGO_URI`, `RESEND_API_KEY`, private key de Google.
+
+### Estado de build
+
+`npm run build` sigue fallando por errores preexistentes no relacionados con esta sesiÃ³n:
+
+```
+src/pages/public/home/s06-doctrina.tsx
+- Link importado sin uso
+- isModalOpen / setIsModalOpen sin uso
+
+src/pages/public/home/s15-founder.tsx
+- Incompatibilidad de tipos alrededor de SlotStatus
+- Acceso a `.status` sobre una uniÃ³n que incluye strings
+```
+
+## 21. Sesion 24 mayo 2026 (cont.) - S15 Founder / capacidad
+
+### Resumen
+
+Se completo S15 conectando la seccion Founder/Waitlist con backend real de capacidad y stats. Tambien se corrigio la migracion del documento historico de capacidad en MongoDB.
+
+### Cambios aplicados
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/pages/public/home/s15-founder.tsx` | Normaliza slots del backend (`disponible`, `activo`, `reservado`) al formato del store (`libre`, `activo`, `reservado`). Consume `/api/capacidad` y `/api/stats`. Usa `enListaEspera` real para waitlist. |
+| `Backend/models/model.capacidad.js` | `admissionQuarters` ahora es arreglo de objetos con `quarter`, `status`, `label`, `description`, `deadline`. `deadlineQ3` default queda en ISO: `2026-07-30T23:59:59-06:00`. |
+| `Backend/controllers/capacidad.controller.js` | Migra `deadlineQ3` viejo (`30 jun 2026`) a ISO con `updateOne(..., runValidators: false)` para no revalidar documentos historicos. |
+| `src/pages/public/home/s06-doctrina.tsx` | Limpieza minima para build: eliminado `Link` y estado modal no usados. |
+
+### Verificacion realizada
+
+```
+GET /api/capacidad -> ok true
+deadlineQ3 -> 2026-07-30T23:59:59-06:00
+npm.cmd run build -> OK
+```
+
+Nota: la primera corrida de build dentro del sandbox fallo por permisos de Vite al leer `vite.config.ts`; al correrlo fuera del sandbox compilo correctamente.
+
+## 22. Sesion 24 mayo 2026 (cont.) - S12 Referencias dinamicas
+
+### Resumen
+
+Se completo el backend de S12 Referencias Disponibles. La seccion ya no depende solo de un array hardcodeado: lee un catalogo publico desde MongoDB y mantiene fallback local si la API no responde.
+
+### Cambios aplicados
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/models/model.referencia.js` | Nuevo singleton `ReferenciasConfig` con `rotationWeeks` y referencias default. |
+| `backend/controllers/referencias.controller.js` | Nuevo controlador: listado publico, listado admin, actualizacion y reset a defaults. |
+| `backend/components/referencias.component.js` | Nuevo router: `GET /api/referencias`, `GET/PUT /api/referencias/admin`, `POST /api/referencias/admin/reset`. |
+| `backend/routers/app.routers.js` | Montada ruta `/referencias`. |
+| `src/pages/public/home/s12-referencias.tsx` | Ahora consume `/api/referencias`; fallback local si falla API. |
+| `src/pages/admin/AdminReferencias.tsx` | Nueva pagina admin para editar referencias, idiomas, visibilidad y semanas de rotacion. |
+| `src/pages/admin/AdminLayout.tsx` | Agregado nav `Referencias`. |
+| `src/routers/AppRouter.tsx` | Agregada ruta `/admin/referencias`. |
+
+### Verificacion realizada
+
+```
+GET /api/referencias -> ok true, 5 referencias default
+GET /api/referencias/admin -> ok true con x-admin-key
+npm.cmd run build -> OK
+```
+
+Pendiente opcional: implementar rotacion automatica real por fecha usando `rotationWeeks`; por ahora el admin controla manualmente `disponible`.
+
+## 23. Sesión 24 mayo 2026 (cont.) — S13 Transparencia backend completo
+
+### Resumen
+
+Se implementó el backend específico para S13 Transparencia con arquitectura "transparencia editable pero con candados". El modelo separado de `/api/metricas` elimina el riesgo de publicar defaults peligrosos como `nps: 72`.
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `backend/models/model.transparencia.js` | Singleton con tres sub-arrays: `publicadas`, `proximas`, `compromisos`. Defaults replican el contenido editorial previo. |
+| `backend/controllers/transparencia.controller.js` | `listarPublico`, `listarAdmin`, `actualizar`, `restaurarDefaults`. Sanitización completa de inputs. |
+| `backend/components/transparencia.component.js` | Router: `GET /api/transparencia`, `GET/PUT/POST /api/transparencia/admin`. |
+| `src/pages/admin/AdminTransparencia.tsx` | Panel admin con 3 pestañas: Publicadas / Próximas / Compromisos. |
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/routers/app.routers.js` | Montada ruta `/transparencia`. |
+| `src/pages/public/home/s13-transparencia.tsx` | Consume `GET /api/transparencia`. Fallback al array editorial si API no responde. |
+| `src/pages/public/transparencia/TransparenciaPage.tsx` | Consume `GET /api/transparencia`. Fallback idéntico al contenido hardcodeado anterior. |
+| `src/pages/admin/AdminLayout.tsx` | Agregado nav `Transparencia`. |
+| `src/routers/AppRouter.tsx` | Agregada ruta `/admin/transparencia`. |
+
+### Regla de publicación (candado doble)
+
+```
+visible === true && verified === true  →  aparece en público
+visible === true && verified === false →  oculto (pendiente de verificación)
+visible === false                      →  oculto
+```
+
+El campo `verified` es el gate editorial crítico. En el admin panel aparece como checkbox diferenciado en color acento (#C9A96E). Sin él, ninguna métrica sale al público aunque esté "visible".
+
+### Verificación
+
+```
+node --check backend/models/model.transparencia.js     → OK
+node --check backend/controllers/transparencia.controller.js → OK
+node --check backend/components/transparencia.component.js   → OK
+npm.cmd run build → OK (sin errores ni warnings nuevos)
+```
+
+### Estado de S13 en tabla de secciones
+
+| Sección | Estado backend |
+|---------|---------------|
+| **S13 Transparencia** | ✅ **Completado** — `GET /api/transparencia` + `/admin` |
+
+### Ajuste S12 FOMO - rotacion semanal
+
+Regla acordada: no inventar mas referencias. El catalogo autorizado mantiene 5 referencias, pero el home solo muestra 3 por semana para generar escasez real.
+
+Cambios:
+- `backend/models/model.referencia.js`: agregado `publicLimit`, default `3`; `rotationWeeks` default `1`.
+- `backend/controllers/referencias.controller.js`: `GET /api/referencias` filtra referencias disponibles y devuelve una ventana circular de 3 segun semana actual.
+- `src/pages/admin/AdminReferencias.tsx`: admin puede ver/editar `publicLimit`; DB quedo actualizada a `rotationWeeks: 1`, `publicLimit: 3`.
+- `src/pages/public/home/s12-referencias.tsx`: copy actualizado a ventana semanal limitada.
+
+Verificacion:
+```
+GET /api/referencias -> 3 referencias visibles, publicLimit 3, totalDisponibles 5, rotationWeeks 1
+npm.cmd run build -> OK
+```

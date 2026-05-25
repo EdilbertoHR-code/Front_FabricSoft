@@ -1,5 +1,6 @@
 const Booking         = require('../models/model.officeHoursBooking');
 const calendarService = require('../services/calendar.service');
+const { sendConfirmacionOfficeHours } = require('../services/email.service');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 
@@ -65,13 +66,89 @@ exports.actualizarStatus = async (req, res) => {
 
     if (!VALID.includes(status)) return res.status(400).json({ error: 'Status inválido.' });
 
-    const booking = await Booking.findByIdAndUpdate(id, { status }, { new: true });
+    const update = { status };
+    if (status === 'confirmado') update.emailEnviado = false;
+
+    const booking = await Booking.findByIdAndUpdate(id, update, { new: true });
     if (!booking) return res.status(404).json({ error: 'Reserva no encontrada.' });
 
     res.json({ ok: true, data: booking });
+
+    if (status === 'confirmado') {
+      if (!booking.calendarEventId) {
+        calendarService.createOfficeHoursEvent(booking)
+          .then(event => Booking.findByIdAndUpdate(id, {
+            calendarEnviado: true,
+            calendarEventId: event.id || '',
+          }))
+          .catch(err => {
+            console.error('Calendar OH fallo:', err.message);
+          });
+      }
+
+      sendConfirmacionOfficeHours(booking)
+        .then(() => Booking.findByIdAndUpdate(id, { emailEnviado: true }))
+        .catch(err => {
+          console.error('Email confirmacion OH fallo:', err.message);
+        });
+    }
+
+    if (status === 'cancelado' && booking.calendarEventId) {
+      calendarService.deleteOfficeHoursEvent(booking.calendarEventId)
+        .then(() => Booking.findByIdAndUpdate(id, {
+          calendarEnviado: false,
+          calendarEventId: '',
+        }))
+        .catch(err => {
+          console.error('Calendar OH delete fallo:', err.message);
+        });
+    }
   } catch (err) {
     console.error('officeHours.actualizarStatus error:', err);
     res.status(500).json({ error: 'Error actualizando status.' });
+  }
+};
+
+exports.reintentarEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ error: 'Reserva no encontrada.' });
+    if (booking.status !== 'confirmado') return res.status(400).json({ error: 'Solo se puede enviar email de reservas confirmadas.' });
+
+    await Booking.findByIdAndUpdate(id, { emailEnviado: false });
+    await sendConfirmacionOfficeHours(booking);
+    const updated = await Booking.findByIdAndUpdate(id, { emailEnviado: true }, { new: true });
+
+    res.json({ ok: true, data: updated });
+  } catch (err) {
+    console.error('officeHours.reintentarEmail error:', err);
+    res.status(500).json({ error: err.message || 'Error reintentando email.' });
+  }
+};
+
+exports.reintentarCalendar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ error: 'Reserva no encontrada.' });
+    if (booking.status !== 'confirmado') return res.status(400).json({ error: 'Solo se puede crear evento de reservas confirmadas.' });
+
+    if (booking.calendarEventId) {
+      const alreadyUpdated = await Booking.findByIdAndUpdate(id, { calendarEnviado: true }, { new: true });
+      return res.json({ ok: true, data: alreadyUpdated, message: 'Evento ya existia en Calendar.' });
+    }
+
+    const event = await calendarService.createOfficeHoursEvent(booking);
+    const updated = await Booking.findByIdAndUpdate(id, {
+      calendarEnviado: true,
+      calendarEventId: event.id || '',
+    }, { new: true });
+
+    res.json({ ok: true, data: updated });
+  } catch (err) {
+    console.error('officeHours.reintentarCalendar error:', err);
+    res.status(500).json({ error: err.message || 'Error creando evento en Calendar.' });
   }
 };
 

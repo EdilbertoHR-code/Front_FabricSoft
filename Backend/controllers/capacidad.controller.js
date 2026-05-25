@@ -3,6 +3,14 @@ const Capacidad = require('../models/model.capacidad');
 async function getSingleton() {
   let doc = await Capacidad.findOne();
   if (!doc) doc = await Capacidad.create({});
+  if (!doc.deadlineQ3 || !/^\d{4}-\d{2}-\d{2}T/.test(doc.deadlineQ3) || Number.isNaN(new Date(doc.deadlineQ3).getTime())) {
+    await Capacidad.updateOne(
+      { _id: doc._id },
+      { $set: { deadlineQ3: '2026-07-30T23:59:59-06:00' } },
+      { runValidators: false }
+    );
+    doc.deadlineQ3 = '2026-07-30T23:59:59-06:00';
+  }
   return doc;
 }
 

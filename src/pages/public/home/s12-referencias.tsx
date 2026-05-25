@@ -1,34 +1,51 @@
-
-// BACKEND TODO: Este array debe venir de CMS/DB.
-// Lógica de rotación: cada N semanas (configurable desde admin) se activa un subconjunto
-// diferente de referencias para generar escasez real — no todos los ejecutivos están
-// disponibles al mismo tiempo. El campo `langs` indica los idiomas en que cada ejecutivo
-// puede sostener la conversación (ES / EN); mostrarlo genera expectativa correcta al prospecto.
-const references = [
-  ["01", "CFO de operadora de centros comerciales", "México · USD 100M+ revenue · Multi-plaza", "Inmobiliario", ["ES"] as string[]],
-  ["02", "CTO de institución financiera", "México · USD 300M+ revenue · Regulada", "Serv. Financieros", ["ES", "EN"]],
-  ["03", "CFO Controller de fintech regulada", "México · USD 80M+ revenue · Crédito al consumo", "Serv. Financieros", ["ES"] as string[]],
-  ["04", "CISO / CTO de fintech de crédito al consumo", "México · USD 60M+ revenue · CNBV", "Serv. Financieros", ["ES", "EN"]],
-  ["05", "Director de Consultoría · Oracle ACS", "LATAM · Partner Oracle senior · Externo", "Partner Oracle", ["ES", "EN"]]
-] as const;
-
+import { useEffect, useState } from 'react';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+import { api } from '../../../config/api';
+
+interface ReferenceItem {
+  id?: string;
+  numero: string;
+  title: string;
+  subtitle: string;
+  vertical: string;
+  langs: string[];
+}
+
+const fallbackReferences: ReferenceItem[] = [
+  { numero: '01', title: 'CFO de operadora de centros comerciales', subtitle: 'Mexico - USD 100M+ revenue - Multi-plaza', vertical: 'Inmobiliario', langs: ['ES'] },
+  { numero: '02', title: 'CTO de institucion financiera', subtitle: 'Mexico - USD 300M+ revenue - Regulada', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
+  { numero: '03', title: 'CFO Controller de fintech regulada', subtitle: 'Mexico - USD 80M+ revenue - Credito al consumo', vertical: 'Serv. Financieros', langs: ['ES'] },
+  { numero: '04', title: 'CISO / CTO de fintech de credito al consumo', subtitle: 'Mexico - USD 60M+ revenue - CNBV', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
+  { numero: '05', title: 'Director de Consultoria - Oracle ACS', subtitle: 'LATAM - Partner Oracle senior - Externo', vertical: 'Partner Oracle', langs: ['ES', 'EN'] },
+];
 
 export default function S12Referencias() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
+  const [references, setReferences] = useState<ReferenceItem[]>(fallbackReferences);
+
+  useEffect(() => {
+    api.get('/referencias')
+      .then(res => {
+        if (Array.isArray(res.data.data) && res.data.data.length > 0) {
+          setReferences(res.data.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section ref={ref} id="s12" className={`demo-section s12 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
         <div className="s12-intro">
           <div className="label">Referencias Disponibles</div>
           <h2>Habla directamente con <span className="text-[#C9A96E]">ejecutivos</span><br />que operan con FABRIC.</h2>
-          <p>La decisión de contratar Oracle Critical Engineering requiere validación directa. Prospectos calificados acceden a conversaciones con:</p>
+          <p>La decision de contratar Oracle Critical Engineering requiere validacion directa. Cada semana abrimos una ventana limitada de referencias para prospectos calificados:</p>
         </div>
 
         <div className="refs-table">
-          {references.map(([num, title, subtitle, vertical, langs]) => (
-            <div className="refs-row" data-interaction="reference" role="button" tabIndex={0} key={num}>
-              <span className="refs-num">{num}</span>
+          {references.map(({ id, numero, title, subtitle, vertical, langs }) => (
+            <div className="refs-row" data-interaction="reference" role="button" tabIndex={0} key={id ?? numero}>
+              <span className="refs-num">{numero}</span>
               <div className="refs-desc">
                 {title}
                 <small>{subtitle}</small>
@@ -37,7 +54,7 @@ export default function S12Referencias() {
                 <span className="refs-vertical">{vertical}</span>
                 <div className="refs-lang">
                   <span className="active">ES</span>
-                  <span className={langs.includes("EN") ? "active" : undefined}>EN</span>
+                  <span className={langs.includes('EN') ? 'active' : undefined}>EN</span>
                 </div>
                 <span className="refs-action">Disponible</span>
               </div>
@@ -46,11 +63,11 @@ export default function S12Referencias() {
         </div>
 
         <div className="refs-footnote">
-          El acceso a referencias forma parte del proceso de evaluación post-admisión inicial. FABRIC realiza la introducción tras validar el ajuste estratégico de la conversación.
+          El acceso a referencias forma parte del proceso de evaluacion post-admision inicial. La disponibilidad rota semanalmente y FABRIC realiza la introduccion tras validar el ajuste estrategico de la conversacion.
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 48 }}>
-          <button data-interaction="reference" className="btn-secondary">Iniciar evaluación →</button>
+        <div style={{ textAlign: 'center', marginTop: 48 }}>
+          <button data-interaction="reference" className="btn-secondary">Iniciar evaluacion</button>
         </div>
       </div>
     </section>

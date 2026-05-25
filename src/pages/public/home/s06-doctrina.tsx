@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { DoctrineGeneratorModal } from "./DoctrinaModal";
 
 // --- HOOK DE ANIMACIÓN ---
@@ -98,7 +97,6 @@ const clauses = [
 export default function S06Doctrina() {
   const { ref: headerRef, isInView: headerInView } = useInView(0.1);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section id="doctrina" className="relative w-full bg-[#050505] py-24 md:py-32 border-t border-[#111]">

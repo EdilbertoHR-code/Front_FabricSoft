@@ -49,8 +49,8 @@ export const VerificarAcceso = () => {
         });
         
   
-        if (data.rol === 'Admin') {
-          navigate('/Admin', { replace: true });
+        if (['admin', 'superadmin'].includes(String(data.rol).toLowerCase())) {
+          navigate('/admin', { replace: true });
 
         } else if (data.rol === 'atención al cliente') {
           const empresas = data.assignedCompanies || [];

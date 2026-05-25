@@ -8,6 +8,10 @@ const officeHoursRoutes = require('../components/officeHours.component');
 const capacidadRoutes   = require('../components/capacidad.component');
 const statsRoutes       = require('../components/stats.component');
 const metricasRoutes    = require('../components/metricas.component');
+const ndaRoutes         = require('../components/nda.component');
+const referenciasRoutes    = require('../components/referencias.component');
+const transparenciaRoutes      = require('../components/transparencia.component');
+const researchLettersRoutes    = require('../components/researchLetters.component');
 
 router.get('/', (req, res) => {
   res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
@@ -20,6 +24,10 @@ router.use('/office-hours', officeHoursRoutes);
 router.use('/capacidad',    capacidadRoutes);
 router.use('/stats',        statsRoutes);
 router.use('/metricas',     metricasRoutes);
+router.use('/nda',          ndaRoutes);
+router.use('/referencias',   referenciasRoutes);
+router.use('/transparencia',    transparenciaRoutes);
+router.use('/research-letters', researchLettersRoutes);
 
 
 

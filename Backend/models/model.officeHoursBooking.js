@@ -7,6 +7,9 @@ const officeHoursBookingSchema = new mongoose.Schema({
   dia:       { type: String, required: true },
   slot:      { type: String, required: true },
   status:    { type: String, enum: ['pendiente', 'confirmado', 'cancelado'], default: 'pendiente' },
+  emailEnviado: { type: Boolean, default: false },
+  calendarEnviado: { type: Boolean, default: false },
+  calendarEventId: { type: String, default: '' },
   notas:     { type: String, default: '' },
   ipAddress: { type: String, default: '' },
 }, { timestamps: true, versionKey: false });

@@ -1,7 +1,17 @@
 const { Resend } = require('resend');
+const fs   = require('fs');
+const path = require('path');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM   = process.env.EMAIL_FROM || 'FABRIC <onboarding@resend.dev>';
+
+async function sendEmail(payload) {
+  const result = await resend.emails.send(payload);
+  if (result.error) {
+    throw new Error(result.error.message || 'Error enviando email con Resend');
+  }
+  return result;
+}
 
 // ── Utilidades ────────────────────────────────────────────────────────────────
 
@@ -74,6 +84,28 @@ function dataRow(key, value) {
       <span style="font-size:12px;color:#2A2A2A;">${value}</span>
     </td>
   </tr>`;
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatOfficeHoursDate(dia) {
+  const [year, month, day] = String(dia).split('-').map(Number);
+  if (!year || !month || !day) return dia;
+
+  const date = new Date(year, month - 1, day);
+  return new Intl.DateTimeFormat('es-MX', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date).replace(',', '');
 }
 
 // ── Templates ─────────────────────────────────────────────────────────────────
@@ -174,10 +206,139 @@ function templateReferencia({ nombre, empresa }) {
   return wrap(body);
 }
 
+function templateOfficeHoursConfirmacion({ nombre, empresa, dia, slot }) {
+  const nombreSafe = escapeHtml(nombre);
+  const empresaSafe = escapeHtml(empresa);
+  const diaFormateado = escapeHtml(formatOfficeHoursDate(dia));
+  const slotSafe = escapeHtml(slot);
+
+  const body = `
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('Office Hours confirmada')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        ${nombreSafe},<br/>tu sesi&oacute;n<br/>est&aacute; confirmada.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        Confirmamos la conversaci&oacute;n de Office Hours para <strong style="color:#2A2A2A;">${empresaSafe}</strong>. La sesi&oacute;n est&aacute; reservada para revisar contexto, urgencia operativa y compatibilidad con la capacidad actual de FABRIC.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Empresa', empresaSafe)}
+        ${dataRow('Contacto', nombreSafe)}
+        ${dataRow('Dia', diaFormateado)}
+        ${dataRow('Horario', `${slotSafe} hrs`)}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <p style="margin:0;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        Antes de la llamada, ten a la mano el contexto del sistema Oracle, etapa del proyecto, riesgos visibles y cualquier fecha critica de negocio. Esto permite que la conversaci&oacute;n sea tecnica y accionable desde el primer minuto.
+      </p>
+    </td>
+  </tr>`;
+
+  return wrap(body);
+}
+
+function templateNdaPdfAccess({ nombre, empresa, caso, pdfUrl }) {
+  const nombreSafe = escapeHtml(nombre);
+  const empresaSafe = escapeHtml(empresa);
+  const casoSafe = escapeHtml(caso);
+  const pdfUrlSafe = escapeHtml(pdfUrl);
+
+  const body = `
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('Acceso aprobado bajo NDA')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        ${nombreSafe},<br/>tu acceso<br/>fue aprobado.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        Aprobamos la solicitud de <strong style="color:#2A2A2A;">${empresaSafe}</strong> para consultar el PDF bajo NDA del caso <strong style="color:#2A2A2A;">${casoSafe}</strong>.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Empresa', empresaSafe)}
+        ${dataRow('Contacto', nombreSafe)}
+        ${dataRow('Caso', casoSafe)}
+        ${dataRow('Acceso', 'PDF bajo NDA')}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <p style="margin:0 0 20px;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        Este material es confidencial. No debe reenviarse, publicarse ni compartirse fuera del proceso autorizado.
+      </p>
+      <a href="${pdfUrlSafe}"
+         style="display:inline-block;padding:12px 28px;background:#C9A96E;color:#0A0A0A;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">
+        Abrir PDF bajo NDA
+      </a>
+    </td>
+  </tr>`;
+
+  return wrap(body);
+}
+
+const PAPER_TITLES = {
+  '01': 'Por qué fallan los go-live de Oracle Fusion',
+  '02': 'IA aplicada a cierre contable en Fusion Cloud',
+  '03': 'Modelo de entrega en primer ciclo crítico',
+};
+
+function templatePaperEntrega({ empresa, paperId, paperTitle }) {
+  const empresaSafe = escapeHtml(empresa);
+  const titleSafe   = escapeHtml(paperTitle);
+
+  const body = `
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label(`Research Paper ${paperId} · FABRIC`)}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        Tu paper<br/>est&aacute; adjunto.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        El material que solicitaste para <strong style="color:#2A2A2A;">${empresaSafe}</strong> est&aacute; adjunto a este correo como archivo PDF.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Paper', titleSafe)}
+        ${dataRow('N&uacute;mero', paperId)}
+        ${dataRow('Empresa', empresaSafe)}
+        ${dataRow('Formato', 'PDF adjunto')}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <p style="margin:0 0 20px;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        Este material es para uso interno de tu organizaci&oacute;n. Si tienes preguntas sobre el contenido o quieres profundizar en alg&uacute;n punto, podemos agendarlo en una sesi&oacute;n de Office Hours.
+      </p>
+      <a href="https://fabricsoft.com.mx/#s11"
+         style="display:inline-block;padding:12px 28px;background:#C9A96E;color:#0A0A0A;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">
+        Agendar Office Hours &rarr;
+      </a>
+    </td>
+  </tr>`;
+
+  return wrap(body);
+}
+
 // ── Funciones públicas ────────────────────────────────────────────────────────
 
 exports.sendConfirmacionAplicar = ({ nombre, empresa, email, status }) =>
-  resend.emails.send({
+  sendEmail({
     from:    FROM,
     to:      email,
     subject: status === 'WaitList'
@@ -187,7 +348,7 @@ exports.sendConfirmacionAplicar = ({ nombre, empresa, email, status }) =>
   });
 
 exports.sendConfirmacionWaitlist = ({ nombre, empresa, email }) =>
-  resend.emails.send({
+  sendEmail({
     from:    FROM,
     to:      email,
     subject: 'Lista de espera Q3 2026 — FABRIC',
@@ -195,9 +356,117 @@ exports.sendConfirmacionWaitlist = ({ nombre, empresa, email }) =>
   });
 
 exports.sendConfirmacionReferencia = ({ nombre, empresa, email }) =>
-  resend.emails.send({
+  sendEmail({
     from:    FROM,
     to:      email,
     subject: 'Información recibida — FABRIC',
     html: templateReferencia({ nombre, empresa }),
   });
+
+exports.sendConfirmacionOfficeHours = ({ nombre, empresa, email, dia, slot }) =>
+  sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: 'Office Hours confirmada - FABRIC',
+    html: templateOfficeHoursConfirmacion({ nombre, empresa, dia, slot }),
+  });
+
+exports.sendNdaPdfAccess = ({ nombre, empresa, email, caso, pdfUrl }) =>
+  sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: `Acceso PDF bajo NDA - ${caso}`,
+    html: templateNdaPdfAccess({ nombre, empresa, caso, pdfUrl }),
+  });
+
+exports.sendResearchLetterConfirmacion = ({ nombre, empresa, email }) =>
+  sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: 'Solicitud recibida — FABRIC Research Letters',
+    html: wrap(`
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('Research Letters · FABRIC')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        Solicitud<br/>recibida.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        Registramos la solicitud de <strong style="color:#2A2A2A;">${escapeHtml(empresa)}</strong> para acceder a FABRIC Research Letters. Validaremos tu perfil en las pr&oacute;ximas 48 horas y recibirás confirmaci&oacute;n en este correo.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Empresa', escapeHtml(empresa))}
+        ${dataRow('Contacto', escapeHtml(nombre))}
+        ${dataRow('Estado', 'En validaci&oacute;n')}
+        ${dataRow('Tiempo de respuesta', '48 horas hábiles')}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <p style="margin:0;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        Research Letters es una membres&iacute;a editorial cerrada con an&aacute;lisis quincenal para CFOs y CTOs en evaluaci&oacute;n Oracle. El acceso requiere validaci&oacute;n de perfil corporativo.
+      </p>
+    </td>
+  </tr>`),
+  });
+
+exports.sendResearchLetterBienvenida = ({ nombre, empresa, email }) =>
+  sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: 'Acceso aprobado — FABRIC Research Letters',
+    html: wrap(`
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('Research Letters · Acceso aprobado')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        ${escapeHtml(nombre)},<br/>tu acceso<br/>fue aprobado.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        Aprobamos la solicitud de <strong style="color:#2A2A2A;">${escapeHtml(empresa)}</strong> para FABRIC Research Letters. Recibirás los análisis quincenales directamente en este correo.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Empresa', escapeHtml(empresa))}
+        ${dataRow('Contacto', escapeHtml(nombre))}
+        ${dataRow('Membres&iacute;a', 'Research Letters · Activa')}
+        ${dataRow('Frecuencia', 'Quincenal')}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <p style="margin:0 0 20px;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        El próximo an&aacute;lisis llegar&aacute; a este correo. El contenido est&aacute; restringido a uso interno de tu organizaci&oacute;n.
+      </p>
+      <a href="https://fabricsoft.com.mx"
+         style="display:inline-block;padding:12px 28px;background:#C9A96E;color:#0A0A0A;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">
+        Conocer FABRIC &rarr;
+      </a>
+    </td>
+  </tr>`),
+  });
+
+exports.sendPaperEntrega = ({ empresa, email, paperId }) => {
+  const paperTitle = PAPER_TITLES[paperId] || `Paper ${paperId}`;
+  const pdfPath    = path.join(__dirname, '..', 'assets', 'papers', `paper-${paperId}.pdf`);
+
+  // Lanza si el PDF no existe — el controller lo captura antes de llamar esta función
+  const content = fs.readFileSync(pdfPath);
+
+  return sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: `Paper ${paperId} — ${paperTitle} · FABRIC`,
+    html:    templatePaperEntrega({ empresa, paperId, paperTitle }),
+    attachments: [{ filename: `FABRIC-Paper-${paperId}.pdf`, content }],
+  });
+};

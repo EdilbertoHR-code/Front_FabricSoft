@@ -1,8 +1,57 @@
 import { useEffect, useState } from 'react';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
 import { useCapacidad, useMetrica } from '../../../store/FabricContext';
-import { countSlots } from '../../../store/fabricStore';
+import { countSlots, type AdmissionQuarter, type QuarterStatus, type SlotStatus } from '../../../store/fabricStore';
 import { api } from '../../../config/api';
+
+interface ApiSlot {
+  id: number;
+  status: 'disponible' | 'activo' | 'reservado' | string;
+}
+
+const DEFAULT_ADMISSION_QUARTERS: AdmissionQuarter[] = [
+  { quarter: 'Q1 2026', status: 'closed',   label: 'Cerrado',  description: '3 proyectos aceptados',      deadline: 'Completo' },
+  { quarter: 'Q2 2026', status: 'closed',   label: 'Cerrado',  description: '2 proyectos aceptados',      deadline: 'Completo' },
+  { quarter: 'Q3 2026', status: 'open',     label: 'Abierto',  description: 'Evaluando aplicaciones',     deadline: 'Plazo · 30 julio' },
+  { quarter: 'Q4 2026', status: 'upcoming', label: 'Próximo',  description: 'Aplicaciones desde 01 sept', deadline: 'Próximo' },
+];
+
+function normalizeSlotStatus(status: string): SlotStatus {
+  if (status === 'activo' || status === 'reservado') return status;
+  return 'libre';
+}
+
+function normalizeApiSlots(slots?: ApiSlot[]): SlotStatus[] | null {
+  if (!Array.isArray(slots) || slots.length === 0) return null;
+  return slots.map(slot => normalizeSlotStatus(slot.status));
+}
+
+function normalizeAdmissionQuarters(value: unknown): AdmissionQuarter[] | null {
+  if (!Array.isArray(value) || value.length === 0) return null;
+
+  if (typeof value[0] === 'string') {
+    return DEFAULT_ADMISSION_QUARTERS;
+  }
+
+  return value.map((item, index) => {
+    const q = item as Partial<AdmissionQuarter>;
+    const fallback = DEFAULT_ADMISSION_QUARTERS[index] ?? DEFAULT_ADMISSION_QUARTERS[DEFAULT_ADMISSION_QUARTERS.length - 1];
+    const status = ['closed', 'open', 'upcoming'].includes(String(q.status)) ? q.status as QuarterStatus : fallback.status;
+
+    return {
+      quarter: q.quarter ?? fallback.quarter,
+      status,
+      label: q.label ?? fallback.label,
+      description: q.description ?? fallback.description,
+      deadline: q.deadline ?? fallback.deadline,
+    };
+  });
+}
+
+function normalizeDeadline(value: unknown, fallback: string) {
+  if (typeof value !== 'string') return fallback;
+  return Number.isNaN(new Date(value).getTime()) ? fallback : value;
+}
 
 function useCountdown(isoDate: string) {
   const calc = () => {
@@ -46,28 +95,40 @@ export default function S15Founder() {
   const metricaWaitlist = useMetrica('waitlist');
 
   // Override desde API cuando esté disponible
-  const [apiSlots, setApiSlots]       = useState<Array<{id: number; status: string}> | null>(null);
+  const [apiSlots, setApiSlots]       = useState<SlotStatus[] | null>(null);
   const [apiDeadline, setApiDeadline] = useState<string | null>(null);
+  const [apiAdmissionQuarters, setApiAdmissionQuarters] = useState<AdmissionQuarter[] | null>(null);
+  const [apiWaitlistCount, setApiWaitlistCount] = useState<number | null>(null);
 
   useEffect(() => {
-    api.get('/capacidad')
-      .then(res => {
-        const d = res.data.data;
-        if (d.slots?.length) setApiSlots(d.slots);
-        if (d.deadlineQ3)    setApiDeadline(d.deadlineQ3);
+    Promise.all([
+      api.get('/capacidad'),
+      api.get('/stats'),
+    ])
+      .then(([capRes, statsRes]) => {
+        const d = capRes.data.data;
+        const normalizedSlots = normalizeApiSlots(d.slots);
+        const normalizedQuarters = normalizeAdmissionQuarters(d.admissionQuarters);
+        if (normalizedSlots) setApiSlots(normalizedSlots);
+        if (normalizedQuarters) setApiAdmissionQuarters(normalizedQuarters);
+        if (d.deadlineQ3) setApiDeadline(normalizeDeadline(d.deadlineQ3, ctxDeadline));
+
+        const waitlistCount = statsRes.data.data?.enListaEspera;
+        if (typeof waitlistCount === 'number') setApiWaitlistCount(waitlistCount);
       })
       .catch(() => {});
-  }, []);
+  }, [ctxDeadline]);
 
   const slots    = apiSlots ?? ctxSlots;
   const deadlineQ3 = apiDeadline ?? ctxDeadline;
+  const quarters = apiAdmissionQuarters ?? admissionQuarters;
 
   const { activos, reservados } = countSlots(slots);
-  const proyectosActivos = metricaSlots?.value   ?? activos;
-  const enListaEspera    = metricaWaitlist?.value ?? waitlist.length;
+  const proyectosActivos = apiSlots ? activos : metricaSlots?.value ?? activos;
+  const enListaEspera    = apiWaitlistCount ?? metricaWaitlist?.value ?? waitlist.length;
 
   // Próxima ventana abierta
-  const proximaVentana = admissionQuarters.find(q => q.status === 'open')?.quarter ?? 'Q3 2026';
+  const proximaVentana = quarters.find(q => q.status === 'open')?.quarter ?? 'Q3 2026';
 
   return (
     <section ref={ref} id="s15" className={`demo-section s15 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -247,7 +308,7 @@ export default function S15Founder() {
               {slots.map((s, i) => (
                 <span
                   key={i}
-                  className={`slot${s.status === 'activo' ? ' filled' : s.status === 'reservado' ? ' reserved' : ''}`}
+                  className={`slot${s === 'activo' ? ' filled' : s === 'reservado' ? ' reserved' : ''}`}
                 />
               ))}
             </div>
@@ -276,7 +337,7 @@ export default function S15Founder() {
           {/* Ciclo de admisión en vivo */}
           <div className="admission">
             <div className="admission-head">Ciclo de Admisión 2026</div>
-            {admissionQuarters.map(q => (
+            {quarters.map(q => (
               <div className="admission-row" key={q.quarter}>
                 <span className="admission-q">{q.quarter}</span>
                 <span className={`admission-status ${q.status}`}>{q.label}</span>

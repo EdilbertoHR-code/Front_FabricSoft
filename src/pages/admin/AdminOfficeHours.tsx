@@ -10,6 +10,9 @@ interface Booking {
   dia: string;
   slot: string;
   status: 'pendiente' | 'confirmado' | 'cancelado';
+  emailEnviado?: boolean;
+  calendarEnviado?: boolean;
+  calendarEventId?: string;
   notas?: string;
   createdAt: string;
 }
@@ -45,9 +48,34 @@ export default function AdminOfficeHours() {
   const handleStatus = async (id: string, status: Booking['status']) => {
     setSaving(true);
     try {
-      await adminApi.patch(`/office-hours/admin/${id}/status`, { status });
-      setBookings(prev => prev.map(b => b._id === id ? { ...b, status } : b));
-      setSelected(prev => prev?._id === id ? { ...prev, status } : prev);
+      const res = await adminApi.patch(`/office-hours/admin/${id}/status`, { status });
+      const updated = res.data.data as Booking;
+      setBookings(prev => prev.map(b => b._id === id ? { ...b, ...updated } : b));
+      setSelected(prev => prev?._id === id ? { ...prev, ...updated } : prev);
+      setSavedId(id);
+      setTimeout(() => setSavedId(null), 2000);
+      if (status === 'confirmado') {
+        setTimeout(async () => {
+          try {
+            const refresh = await adminApi.get('/office-hours/admin');
+            const next = (refresh.data.data ?? []) as Booking[];
+            setBookings(next);
+            setSelected(prev => prev ? next.find(b => b._id === prev._id) ?? prev : prev);
+          } catch { /* ignore */ }
+        }, 2500);
+      }
+    } catch { /* ignore */ }
+    finally { setSaving(false); }
+  };
+
+  const handleRetry = async (id: string, type: 'email' | 'calendar') => {
+    setSaving(true);
+    try {
+      const endpoint = type === 'email' ? 'retry-email' : 'retry-calendar';
+      const res = await adminApi.post(`/office-hours/admin/${id}/${endpoint}`);
+      const updated = res.data.data as Booking;
+      setBookings(prev => prev.map(b => b._id === id ? { ...b, ...updated } : b));
+      setSelected(prev => prev?._id === id ? { ...prev, ...updated } : prev);
       setSavedId(id);
       setTimeout(() => setSavedId(null), 2000);
     } catch { /* ignore */ }
@@ -126,10 +154,12 @@ export default function AdminOfficeHours() {
                 ['Día',     selected.dia],
                 ['Horario', selected.slot],
                 ['Estado',  STATUS_LABEL[selected.status]],
+                ['Email confirmacion', selected.emailEnviado ? 'Enviado' : 'No enviado'],
+                ['Calendar', selected.calendarEnviado ? 'Creado' : 'No creado'],
               ] as [string, string][]).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', paddingBottom: 12 }}>
                   <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
-                  <span style={{ fontSize: 11, color: k === 'Estado' ? STATUS_COLOR[selected.status] : '#F5F5F5' }}>{v}</span>
+                  <span style={{ fontSize: 11, color: k === 'Estado' ? STATUS_COLOR[selected.status] : (k === 'Email confirmacion' && !selected.emailEnviado) || (k === 'Calendar' && !selected.calendarEnviado) ? '#B85450' : '#F5F5F5' }}>{v}</span>
                 </div>
               ))}
             </div>
@@ -151,6 +181,24 @@ export default function AdminOfficeHours() {
                   style={{ padding: '12px', background: 'transparent', border: '1px solid #B85450', color: '#B85450', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
                 >
                   Cancelar reserva
+                </button>
+              )}
+              {selected.status === 'confirmado' && !selected.calendarEnviado && (
+                <button
+                  onClick={() => handleRetry(selected._id, 'calendar')}
+                  disabled={saving}
+                  style={{ padding: '12px', background: 'transparent', border: '1px solid #C9A96E', color: '#C9A96E', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
+                >
+                  {saving ? 'Guardando...' : 'Reintentar Calendar'}
+                </button>
+              )}
+              {selected.status === 'confirmado' && !selected.emailEnviado && (
+                <button
+                  onClick={() => handleRetry(selected._id, 'email')}
+                  disabled={saving}
+                  style={{ padding: '12px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.6 : 1 }}
+                >
+                  {saving ? 'Guardando...' : 'Reintentar email'}
                 </button>
               )}
               {selected.status === 'cancelado' && (
@@ -204,6 +252,16 @@ function BookingRow({
         <span style={{ fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px', border: `1px solid ${STATUS_COLOR[booking.status]}44`, color: STATUS_COLOR[booking.status], background: STATUS_COLOR[booking.status] + '10' }}>
           {STATUS_LABEL[booking.status]}
         </span>
+        {booking.status === 'confirmado' && (
+          <span style={{ fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px', border: `1px solid ${booking.emailEnviado ? '#4ade8044' : '#B8545044'}`, color: booking.emailEnviado ? '#4ade80' : '#B85450', background: booking.emailEnviado ? '#4ade8010' : '#B8545010' }}>
+            {booking.emailEnviado ? 'Email ok' : 'Email pendiente'}
+          </span>
+        )}
+        {booking.status === 'confirmado' && (
+          <span style={{ fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px', border: `1px solid ${booking.calendarEnviado ? '#4ade8044' : '#B8545044'}`, color: booking.calendarEnviado ? '#4ade80' : '#B85450', background: booking.calendarEnviado ? '#4ade8010' : '#B8545010' }}>
+            {booking.calendarEnviado ? 'Calendar ok' : 'Calendar pendiente'}
+          </span>
+        )}
         <span style={{ fontSize: 9, color: '#5A5A5A' }}>{fmt(booking.createdAt)}</span>
         <span style={{ fontSize: 10, color: '#3A3A3A' }}>Abrir →</span>
       </div>

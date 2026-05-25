@@ -1,12 +1,17 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useClerk, useUser } from '@clerk/clerk-react';
 
 const NAV = [
   { path: '/admin',                label: 'Dashboard',   badge: null },
   { path: '/admin/leads',          label: 'Leads',       badge: '8'  },
+  { path: '/admin/nda',            label: 'NDA',         badge: null },
+  { path: '/admin/referencias',    label: 'Referencias', badge: null },
   { path: '/admin/papers',         label: 'Papers',      badge: null },
   { path: '/admin/capacidad',      label: 'Capacidad',   badge: null },
   { path: '/admin/office-hours',   label: 'Office Hours',badge: '4'  },
+  { path: '/admin/transparencia',    label: 'Transparencia',     badge: null },
+  { path: '/admin/research-letters', label: 'Research Letters',  badge: null },
   { path: '/admin/metricas',       label: 'Métricas',    badge: null },
   { path: '/admin/logs',           label: 'Logs',        badge: '∞'  },
 ];
@@ -14,20 +19,15 @@ const NAV = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { signOut } = useClerk();
+  const { user } = useUser();
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (!sessionStorage.getItem('fabric_admin')) {
-      navigate('/admin/login', { replace: true });
-    }
-  }, [navigate]);
 
   // Cerrar sidebar en cada cambio de ruta
   useEffect(() => { setOpen(false); }, [location.pathname]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem('fabric_admin');
-    navigate('/admin/login', { replace: true });
+    signOut(() => navigate('/', { replace: true }));
   };
 
   const Sidebar = () => (
@@ -78,10 +78,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <div style={{
             width: 28, height: 28, borderRadius: '50%', background: '#C9A96E', color: '#060606',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0,
-          }}>J</div>
+          }}>{user?.firstName?.[0] || 'A'}</div>
           <div>
-            <div style={{ fontSize: 10, color: '#F5F5F5', letterSpacing: '0.1em' }}>Julio Alvarez</div>
-            <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Owner</div>
+            <div style={{ fontSize: 10, color: '#F5F5F5', letterSpacing: '0.1em' }}>{user?.fullName || 'Admin FABRIC'}</div>
+            <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Admin</div>
           </div>
         </div>
         <button onClick={handleLogout} style={{

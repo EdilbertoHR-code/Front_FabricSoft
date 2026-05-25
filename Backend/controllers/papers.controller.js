@@ -1,5 +1,8 @@
+const fs              = require('fs');
+const path            = require('path');
 const PaperAccess     = require('../models/model.paperAccess');
 const BenchmarkAccess = require('../models/model.benchmarkAccess');
+const { sendPaperEntrega } = require('../services/email.service');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -57,13 +60,6 @@ exports.solicitar = async (req, res) => {
       status:    'pendiente',
     });
     await acceso.save();
-
-    // TODO: integrar Resend para entrega automática del PDF
-    // const { sendPaperEmail } = require('../services/email.service');
-    // await sendPaperEmail({ to: email, paperId, paperTitle: PAPER_TITLES[paperId] });
-    // acceso.status   = 'enviado';
-    // acceso.emailSent = true;
-    // await acceso.save();
 
     console.log(`📄 Paper ${paperId} solicitado por ${email} (${empresa})`);
 
@@ -168,13 +164,30 @@ exports.actualizarStatus = async (req, res) => {
       return res.status(400).json({ error: 'Estado no válido.' });
     }
 
-    const acceso = await PaperAccess.findByIdAndUpdate(
-      id,
-      { status, ...(status === 'enviado' && { emailSent: true }) },
-      { new: true }
-    );
-
+    const acceso = await PaperAccess.findById(id);
     if (!acceso) return res.status(404).json({ error: 'Solicitud no encontrada.' });
+
+    // Verificar PDF antes de marcar como enviado
+    if (status === 'enviado') {
+      const pdfPath = path.join(__dirname, '..', 'assets', 'papers', `paper-${acceso.paperId}.pdf`);
+      if (!fs.existsSync(pdfPath)) {
+        return res.status(409).json({
+          error: `PDF paper-${acceso.paperId}.pdf no encontrado. Colócalo en Backend/assets/papers/ antes de enviar.`,
+        });
+      }
+    }
+
+    acceso.status = status;
+    if (status === 'enviado') acceso.emailSent = true;
+    await acceso.save();
+
+    if (status === 'enviado') {
+      sendPaperEntrega({
+        empresa: acceso.empresa,
+        email:   acceso.email,
+        paperId: acceso.paperId,
+      }).catch(err => console.error('🚨 papers.sendPaperEntrega:', err.message));
+    }
 
     return res.json({ ok: true, data: acceso });
   } catch (error) {

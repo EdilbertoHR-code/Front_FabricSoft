@@ -12,5 +12,7 @@ router.get('/disponibilidad/dia',          officeHoursController.disponibilidadD
 // Admin
 router.get('/admin',               requireAdminKey, officeHoursController.listar);
 router.patch('/admin/:id/status',  requireAdminKey, officeHoursController.actualizarStatus);
+router.post('/admin/:id/retry-email',    requireAdminKey, officeHoursController.reintentarEmail);
+router.post('/admin/:id/retry-calendar', requireAdminKey, officeHoursController.reintentarCalendar);
 
 module.exports = router;

@@ -43,6 +43,10 @@ const AdminCapacidad = lazy(() => import('../pages/admin/AdminCapacidad'));
 const AdminOfficeHours = lazy(() => import('../pages/admin/AdminOfficeHours'));
 const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
 const AdminPapers = lazy(() => import('../pages/admin/AdminPapers'));
+const AdminNda = lazy(() => import('../pages/admin/AdminNda'));
+const AdminReferencias    = lazy(() => import('../pages/admin/AdminReferencias'));
+const AdminTransparencia     = lazy(() => import('../pages/admin/AdminTransparencia'));
+const AdminResearchLetters   = lazy(() => import('../pages/admin/AdminResearchLetters'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -172,8 +176,10 @@ export const AppRouter = () => {
           />
 
           {/* =================================================================
-              RUTAS DE ADMINISTRACIÓN (Protegidas por Roles de Clerk)
+              RUTAS DE ADMINISTRACIÓN
               ================================================================= */}
+          <Route path="/admin/login" element={<Navigate to="/acceso" replace />} />
+
           <Route 
             path="/admin/*" 
             element={
@@ -181,6 +187,10 @@ export const AppRouter = () => {
                 <Routes>
                   <Route index element={<AdminDashboard />} />
                   <Route path="leads" element={<AdminLeads />} />
+                  <Route path="nda" element={<AdminNda />} />
+                  <Route path="referencias"    element={<AdminReferencias />} />
+                  <Route path="transparencia"    element={<AdminTransparencia />} />
+                  <Route path="research-letters" element={<AdminResearchLetters />} />
                   <Route path="metricas" element={<AdminMetricas />} />
                   <Route path="capacidad" element={<AdminCapacidad />} />
                   <Route path="office-hours" element={<AdminOfficeHours />} />
