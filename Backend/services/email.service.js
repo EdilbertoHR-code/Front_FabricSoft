@@ -2,10 +2,23 @@ const { Resend } = require('resend');
 const fs   = require('fs');
 const path = require('path');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM   = process.env.EMAIL_FROM || 'FABRIC <onboarding@resend.dev>';
+let resendClient = null;
+
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY no configurada.');
+  }
+
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+
+  return resendClient;
+}
 
 async function sendEmail(payload) {
+  const resend = getResendClient();
   const result = await resend.emails.send(payload);
   if (result.error) {
     throw new Error(result.error.message || 'Error enviando email con Resend');

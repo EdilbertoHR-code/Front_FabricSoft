@@ -33,6 +33,27 @@ function calcScore({ revenue = '', industria = '', plazo = '', iniciativa = '' }
   return Math.min(score, 95);
 }
 
+function calcCloudComparatorScore({ monthlySpend = 0, criticalApplication = '', objective = '', workload = '' }) {
+  let score = 35;
+
+  if (monthlySpend >= 100000) score += 35;
+  else if (monthlySpend >= 50000) score += 28;
+  else if (monthlySpend >= 25000) score += 20;
+  else if (monthlySpend >= 10000) score += 12;
+
+  if (/SAP|Oracle|Dynamics|NetSuite/i.test(criticalApplication)) score += 15;
+  if (/business case|migrar|migracion|OCI|sobrecostos|reducir/i.test(objective)) score += 10;
+  if (String(workload).trim().length >= 40) score += 5;
+
+  return Math.min(score, 98);
+}
+
+function asNumber(value) {
+  const next = Number(value);
+  if (!Number.isFinite(next)) return 0;
+  return Math.max(0, next);
+}
+
 function nowLabel() {
   return new Date().toLocaleDateString('es-MX', {
     day: '2-digit', month: 'short', year: '2-digit',
@@ -212,6 +233,105 @@ exports.solicitarWaitlist = async (req, res) => {
   } catch (err) {
     console.error('leads.solicitarWaitlist error:', err);
     res.status(500).json({ error: 'Error interno al guardar solicitud.' });
+  }
+};
+
+exports.solicitarCloudComparator = async (req, res) => {
+  try {
+    const {
+      nombre,
+      cargo,
+      empresa,
+      email,
+      telefono,
+      cloudProvider,
+      monthlySpend,
+      analysisPeriod,
+      criticalApplication,
+      objective,
+      workload,
+      breakdown = {},
+      ndaAccepted,
+      tracking,
+    } = req.body;
+
+    const spend = asNumber(monthlySpend);
+
+    if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!cargo?.trim()) return res.status(400).json({ error: 'Cargo requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+    if (!cloudProvider?.trim()) return res.status(400).json({ error: 'Selecciona tu cloud actual.' });
+    if (spend <= 0) return res.status(400).json({ error: 'Captura un gasto mensual aproximado.' });
+    if (!criticalApplication?.trim()) return res.status(400).json({ error: 'Selecciona la aplicacion critica.' });
+    if (!objective?.trim()) return res.status(400).json({ error: 'Selecciona el objetivo del analisis.' });
+    if (!workload?.trim() || workload.trim().length < 10) {
+      return res.status(400).json({ error: 'Describe brevemente tu workload principal.' });
+    }
+    if (!ndaAccepted) return res.status(400).json({ error: 'Debes aceptar la revision bajo NDA.' });
+
+    const score = calcCloudComparatorScore({
+      monthlySpend: spend,
+      criticalApplication,
+      objective,
+      workload,
+    });
+    const status = score >= 65 ? 'Nuevo' : 'WaitList';
+    const iniciativa = [
+      `Cloud Cost Comparator: ${cloudProvider}.`,
+      `Gasto mensual aproximado: USD ${spend}.`,
+      `Aplicacion critica: ${criticalApplication}.`,
+      `Objetivo: ${objective}.`,
+      `Workload: ${workload.trim()}`,
+    ].join(' ');
+
+    const lead = await Lead.create({
+      nombre: nombre.trim(),
+      cargo: cargo.trim(),
+      empresa: empresa.trim(),
+      email: email.trim().toLowerCase(),
+      telefono: telefono?.trim() || '',
+      revenue: `Cloud monthly spend USD ${spend}`,
+      industria: 'cloud',
+      iniciativa,
+      plazo: objective.trim(),
+      source: 'cloud-comparator',
+      score,
+      status,
+      ipAddress: req.ip || '',
+      historial: [{ fecha: nowLabel(), estado: status, autor: 'Sistema' }],
+      queryChat: workload.trim(),
+      tracking: sanitizeTracking(tracking),
+      cloudComparator: {
+        provider: cloudProvider.trim(),
+        monthlySpend: spend,
+        analysisPeriod: analysisPeriod?.trim() || '',
+        criticalApplication: criticalApplication.trim(),
+        objective: objective.trim(),
+        workload: workload.trim(),
+        breakdown: {
+          compute: asNumber(breakdown.compute),
+          storage: asNumber(breakdown.storage),
+          database: asNumber(breakdown.database),
+          networking: asNumber(breakdown.networking),
+          other: asNumber(breakdown.other),
+        },
+      },
+    });
+
+    log({
+      accion: `CREATE - Cloud Comparator - ${lead.empresa}`,
+      categoria: 'Leads',
+      autor: 'system',
+      status: status === 'WaitList' ? 'WARN' : 'OK',
+      detalle: `${lead.nombre} - ${lead.cargo} - USD ${spend}`,
+    });
+
+    res.status(201).json({ ok: true, data: lead });
+  } catch (err) {
+    console.error('leads.solicitarCloudComparator error:', err);
+    res.status(500).json({ error: 'Error interno al guardar la solicitud.' });
   }
 };
 
