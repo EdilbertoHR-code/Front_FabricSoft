@@ -54,14 +54,20 @@ export default function S11OfficeHours() {
   const [year,  setYear]  = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [monthData, setMonthData] = useState<MonthData>({});
+  const [monthFull, setMonthFull] = useState(false);
+  const [monthBooked, setMonthBooked] = useState(0);
   const [loadingCal, setLoadingCal] = useState(false);
 
   useEffect(() => {
     if (!isInView) return;
     setLoadingCal(true);
     api.get(`/office-hours/disponibilidad/mes?year=${year}&month=${month}`)
-      .then(res => setMonthData(res.data.data ?? {}))
-      .catch(() => setMonthData({}))
+      .then(res => {
+        setMonthData(res.data.data ?? {});
+        setMonthFull(res.data.monthFull ?? false);
+        setMonthBooked(res.data.booked ?? 0);
+      })
+      .catch(() => { setMonthData({}); setMonthFull(false); setMonthBooked(0); })
       .finally(() => setLoadingCal(false));
   }, [year, month, isInView]);
 
@@ -138,7 +144,7 @@ export default function S11OfficeHours() {
                 <div
                   key={idx}
                   className={`cal-day ${cell.className}`}
-                  data-slots={cell.available > 0 ? `${cell.available}/10` : undefined}
+                  data-slots={cell.available > 0 ? 'Disponible' : undefined}
                   data-interaction={cell.available > 0 ? "office-hours" : undefined}
                   data-date={cell.available > 0 ? cell.dateStr : undefined}
                 >
@@ -146,6 +152,16 @@ export default function S11OfficeHours() {
                 </div>
               ))}
             </div>
+
+            {monthFull ? (
+              <div style={{ marginTop: 14, padding: '10px 14px', border: '1px solid rgba(201,169,110,0.2)', background: 'rgba(201,169,110,0.05)', color: 'var(--text-secondary)', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', lineHeight: 1.7 }}>
+                SESIONES AGOTADAS · {MONTH_NAMES[month - 1].toUpperCase()} · Navega al mes siguiente →
+              </div>
+            ) : (
+              <div style={{ marginTop: 12, fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>
+                {4 - monthBooked} / 4 sesiones disponibles en {MONTH_NAMES[month - 1]}
+              </div>
+            )}
 
             <div className="calendar-legend">
               <span><span className="legend-swatch available"></span>Slot disponible</span>

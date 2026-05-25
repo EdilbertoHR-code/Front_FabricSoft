@@ -72,21 +72,44 @@ export default function InteractionManager() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [slots, setSlots] = useState<DaySlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [monthBooked, setMonthBooked] = useState<Record<string, number>>({}); // "YYYY-MM" → booked count
   const tracking = (sourceSection: string, interactionType: string) => getInteractionTracking(sourceSection, interactionType);
+
+  const MONTHLY_LIMIT = 4;
+
+  const getMonthKey = (dateISO: string) => dateISO.slice(0, 7);
+
+  const isMonthFull = (dateISO: string) => (monthBooked[getMonthKey(dateISO)] ?? 0) >= MONTHLY_LIMIT;
 
   const fetchSlots = useCallback(async (dateISO: string) => {
     setSlotsLoading(true);
+    const monthKey = getMonthKey(dateISO);
     try {
+      // Consultar disponibilidad mensual si no la tenemos aún
+      if (monthBooked[monthKey] === undefined) {
+        const [year, month] = monthKey.split('-');
+        const mesRes = await api.get(`/office-hours/disponibilidad/mes?year=${year}&month=${month}`);
+        const booked = mesRes.data.booked ?? 0;
+        setMonthBooked(prev => ({ ...prev, [monthKey]: booked }));
+        if (booked >= MONTHLY_LIMIT) {
+          setSlots([]);
+          setSlotsLoading(false);
+          return;
+        }
+      } else if ((monthBooked[monthKey] ?? 0) >= MONTHLY_LIMIT) {
+        setSlots([]);
+        setSlotsLoading(false);
+        return;
+      }
       const res = await api.get(`/office-hours/disponibilidad/dia?date=${dateISO}`);
       setSlots(res.data.data ?? []);
     } catch {
-      // Fallback: todos disponibles
       setSlots(['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00']
         .map(time => ({ time, taken: false })));
     } finally {
       setSlotsLoading(false);
     }
-  }, []);
+  }, [monthBooked]);
 
   useEffect(() => {
     if (active === 'office-hours' && selectedDay) {
@@ -326,6 +349,16 @@ export default function InteractionManager() {
                   {slotsLoading ? (
                     <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.14em", padding: "20px 0" }}>
                       Consultando disponibilidad...
+                    </div>
+                  ) : isMonthFull(selectedDay) ? (
+                    <div style={{ padding: "20px 0 10px" }}>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 8 }}>
+                        Mes completo
+                      </div>
+                      <p style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7, margin: 0 }}>
+                        Las 4 sesiones de este mes ya están reservadas.<br />
+                        Navega al mes siguiente para ver disponibilidad.
+                      </p>
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>

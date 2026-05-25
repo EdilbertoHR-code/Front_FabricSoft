@@ -22,6 +22,16 @@ exports.book = async (req, res) => {
     if (!dia) return res.status(400).json({ error: 'Selecciona un día.' });
     if (!slot) return res.status(400).json({ error: 'Selecciona un horario.' });
 
+    // Límite de 4 sesiones por mes (brief)
+    const monthPrefix = dia.slice(0, 7); // "YYYY-MM"
+    const monthCount = await Booking.countDocuments({
+      dia: { $regex: `^${monthPrefix}` },
+      status: { $ne: 'cancelado' },
+    });
+    if (monthCount >= MONTHLY_LIMIT) {
+      return res.status(409).json({ error: 'Las 4 sesiones de este mes ya están reservadas. Consulta el próximo mes.' });
+    }
+
     // Anti-duplicate: same slot same day
     const existing = await Booking.findOne({ dia, slot, status: { $ne: 'cancelado' } });
     if (existing) return res.status(409).json({ error: 'Ese horario ya fue reservado. Elige otro.' });
@@ -175,6 +185,7 @@ exports.reintentarCalendar = async (req, res) => {
 };
 
 const DEFAULT_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00'];
+const MONTHLY_LIMIT = 4;
 
 // GET /office-hours/disponibilidad/mes?year=2026&month=7
 exports.disponibilidadMes = async (req, res) => {
@@ -182,10 +193,16 @@ exports.disponibilidadMes = async (req, res) => {
   const month = parseInt(req.query.month) || new Date().getMonth() + 1;
   const prefix = `${year}-${String(month).padStart(2, '0')}-`;
 
-  // Siempre consultar DB primero — independiente de Calendar
   const monthBookings = await Booking.find(
     { dia: { $regex: `^${prefix}` }, status: { $ne: 'cancelado' } }, 'dia slot'
   ).catch(() => []);
+
+  // Si el mes ya alcanzó el límite, no hay días disponibles
+  if (monthBookings.length >= MONTHLY_LIMIT) {
+    return res.json({ ok: true, data: {}, monthFull: true, booked: monthBookings.length, limit: MONTHLY_LIMIT });
+  }
+
+  const remaining = MONTHLY_LIMIT - monthBookings.length;
 
   const dbByDay = {};
   monthBookings.forEach(b => {
@@ -194,11 +211,15 @@ exports.disponibilidadMes = async (req, res) => {
   });
 
   try {
-    const data = await calendarService.getMonthAvailability(year, month, dbByDay);
-    res.json({ ok: true, data });
+    const rawData = await calendarService.getMonthAvailability(year, month, dbByDay);
+    // Normalizar: cada día con slots disponibles muestra remaining (cupos mensuales restantes)
+    const data = {};
+    Object.keys(rawData).forEach(dateStr => {
+      if (rawData[dateStr] > 0) data[dateStr] = remaining;
+    });
+    res.json({ ok: true, data, booked: monthBookings.length, limit: MONTHLY_LIMIT });
   } catch (err) {
     console.error('officeHours.disponibilidadMes error:', err.message);
-    // Fallback: calcular desde DB pura
     try {
       const today = new Date().toISOString().split('T')[0];
       const daysInMonth = new Date(year, month, 0).getDate();
@@ -209,10 +230,9 @@ exports.disponibilidadMes = async (req, res) => {
         const dow = new Date(dateStr + 'T12:00:00').getDay();
         if (dow === 0 || dow === 6) continue;
         const taken = dbByDay[dateStr] ? dbByDay[dateStr].size : 0;
-        const available = Math.max(0, DEFAULT_SLOTS.length - taken);
-        if (available > 0) data[dateStr] = available;
+        if (DEFAULT_SLOTS.length - taken > 0) data[dateStr] = remaining;
       }
-      res.json({ ok: true, data, error: 'calendar_unavailable' });
+      res.json({ ok: true, data, booked: monthBookings.length, limit: MONTHLY_LIMIT, error: 'calendar_unavailable' });
     } catch {
       res.json({ ok: true, data: {}, error: 'calendar_unavailable' });
     }
