@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import {
@@ -7,9 +7,9 @@ import {
   CheckCircle2,
   ClipboardList,
   Clock3,
+  Download,
   LockKeyhole,
   Mail,
-  Paperclip,
   Phone,
   RefreshCw,
   Search,
@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   Trash2,
   UserRound,
-  X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { api } from '../../config/api';
@@ -69,49 +68,54 @@ const STATUS_LABEL: Record<DiagnosticStatus, string> = {
 };
 
 const STATUS_HINT: Record<DiagnosticStatus, string> = {
-  nuevo: 'Entrada sin revisar',
-  en_revision: 'Caso evaluado por admin',
-  contactado: 'Prospecto ya recibido',
-  aprobado: 'Listo para admision',
-  descartado: 'Fuera de pipeline',
+  nuevo: 'Datos recibidos',
+  en_revision: 'En evaluacion',
+  contactado: 'Correo o llamada enviada',
+  aprobado: 'Puede avanzar',
+  descartado: 'Fuera del proceso',
 };
 
 const STATUS_CLASS: Record<DiagnosticStatus, string> = {
-  nuevo: 'border-sky-400/25 bg-sky-400/10 text-sky-300',
-  en_revision: 'border-amber-300/30 bg-amber-300/10 text-amber-200',
-  contactado: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300',
-  aprobado: 'border-lime-400/25 bg-lime-400/10 text-lime-300',
-  descartado: 'border-red-400/25 bg-red-400/10 text-red-300',
+  nuevo: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
+  en_revision: 'border-amber-300/35 bg-amber-300/10 text-amber-200',
+  contactado: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+  aprobado: 'border-lime-400/30 bg-lime-400/10 text-lime-300',
+  descartado: 'border-red-400/30 bg-red-400/10 text-red-300',
 };
 
 const EMAIL_LABEL: Record<EmailStatus, string> = {
   not_sent: 'No enviado',
   sent: 'Enviado',
-  preview: 'Pendiente manual',
+  preview: 'Preparado',
   failed: 'Error',
 };
 
 const EMAIL_CLASS: Record<EmailStatus, string> = {
-  not_sent: 'border-zinc-700 bg-zinc-900 text-zinc-400',
-  sent: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300',
-  preview: 'border-amber-300/30 bg-amber-300/10 text-amber-200',
-  failed: 'border-red-400/25 bg-red-400/10 text-red-300',
+  not_sent: 'border-zinc-700 bg-zinc-950 text-zinc-400',
+  sent: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+  preview: 'border-amber-300/35 bg-amber-300/10 text-amber-200',
+  failed: 'border-red-400/30 bg-red-400/10 text-red-300',
 };
 
-const LEVEL_CLASS: Record<string, string> = {
+const LEVEL_CLASS: Record<Diagnostic['result']['level'], string> = {
   CRITICO: 'text-red-300',
-  ALTO: 'text-red-200',
+  ALTO: 'text-rose-200',
   MEDIO: 'text-amber-200',
   BAJO: 'text-zinc-400',
 };
 
+const LEVEL_BADGE_CLASS: Record<Diagnostic['result']['level'], string> = {
+  CRITICO: 'border-red-400/30 bg-red-400/10 text-red-300',
+  ALTO: 'border-rose-400/30 bg-rose-400/10 text-rose-200',
+  MEDIO: 'border-amber-300/35 bg-amber-300/10 text-amber-200',
+  BAJO: 'border-zinc-700 bg-zinc-950 text-zinc-400',
+};
+
+const PROSPECTS_PER_PAGE = 8;
+
 const authHeaders = (token: string) => ({
   Authorization: `Bearer ${token}`,
 });
-
-function buildMailtoUrl(to: string, subject: string, body: string) {
-  return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
 
 function defaultEmailSubject(item: Diagnostic) {
   return `Diagnostico Oracle FABRIC - ${item.contact.company}`;
@@ -121,19 +125,107 @@ function defaultEmailMessage(item: Diagnostic) {
   return [
     `Hola ${item.contact.name},`,
     '',
-    'Gracias por completar el diagnostico ejecutivo de FABRIC.',
+    'Gracias por completar el diagnostico.',
     '',
-    `Nivel detectado: ${item.result.level}`,
-    `Patron principal: ${item.result.pattern}`,
-    `Accion recomendada: ${item.result.action}`,
-    `Inversion tipica: ${item.result.investment}`,
+    'Te compartimos el documento con tus respuestas y el resultado obtenido.',
     '',
-    item.result.description,
-    '',
-    'Este diagnostico es orientativo. El siguiente paso recomendado es una evaluacion senior para confirmar alcance, prioridades y viabilidad.',
+    `Adjunto: ${diagnosticFileName(item)}`,
     '',
     'FABRIC',
   ].join('\n');
+}
+
+function buildMailtoUrl(to: string, subject: string, body: string) {
+  return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function diagnosticFileName(item: Diagnostic) {
+  const company = String(item.contact.company || 'prospecto')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+
+  return `diagnostico-oracle-${company || 'prospecto'}.doc`;
+}
+
+function buildDiagnosticDocument(item: Diagnostic) {
+  const escapeHtml = (value: string | number) => String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const rows = item.answers.map((answer) => `
+    <tr>
+      <td style="border:1px solid #d9d9d9;padding:8px;">${escapeHtml(answer.question)}</td>
+      <td style="border:1px solid #d9d9d9;padding:8px;"><strong>${escapeHtml(answer.answer)}</strong></td>
+      <td style="border:1px solid #d9d9d9;padding:8px;text-align:center;">+${escapeHtml(answer.score)}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="utf-8" />
+        <title>Diagnostico Oracle FABRIC</title>
+        <style>
+          body { font-family: Arial, sans-serif; color: #111111; line-height: 1.45; }
+          h1 { font-size: 28px; margin-bottom: 4px; }
+          h2 { font-size: 18px; margin-top: 24px; border-bottom: 1px solid #cccccc; padding-bottom: 6px; }
+          .muted { color: #666666; font-size: 12px; }
+          .summary { border: 1px solid #d9d9d9; padding: 14px; margin: 18px 0; background: #f7f7f7; }
+          table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+          th { border: 1px solid #d9d9d9; padding: 8px; background: #eeeeee; text-align: left; }
+        </style>
+      </head>
+      <body>
+        <h1>Diagnostico Oracle FABRIC</h1>
+        <p class="muted">Documento generado desde el panel administrativo FABRIC.</p>
+
+        <h2>Prospecto</h2>
+        <p><strong>Empresa:</strong> ${escapeHtml(item.contact.company)}</p>
+        <p><strong>Contacto:</strong> ${escapeHtml(item.contact.name)}</p>
+        <p><strong>Cargo:</strong> ${escapeHtml(item.contact.role)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(item.contact.email)}</p>
+        <p><strong>Telefono:</strong> ${escapeHtml(item.contact.phone || 'No capturado')}</p>
+
+        <h2>Resultado</h2>
+        <div class="summary">
+          <p><strong>Nivel:</strong> ${escapeHtml(item.result.level)}</p>
+          <p><strong>Score:</strong> ${escapeHtml(item.result.totalScore)}</p>
+          <p><strong>Detalle:</strong> ${escapeHtml(item.result.description)}</p>
+        </div>
+
+        <h2>Preguntas y respuestas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pregunta</th>
+              <th>Respuesta</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </body>
+    </html>
+  `;
+}
+
+function downloadDiagnosticDocument(item: Diagnostic) {
+  const blob = new Blob([buildDiagnosticDocument(item)], { type: 'application/msword;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = diagnosticFileName(item);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function canMoveStatus(current: DiagnosticStatus, next: DiagnosticStatus) {
@@ -144,17 +236,28 @@ function canSendDiagnostic(item: Diagnostic) {
   return ['en_revision', 'contactado', 'aprobado'].includes(item.status);
 }
 
+function formatRelative(value: string) {
+  const diff = Date.now() - new Date(value).getTime();
+  const minutes = Math.max(0, Math.floor(diff / 60000));
+
+  if (minutes < 1) return 'ahora';
+  if (minutes < 60) return `${minutes}m`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+
+  return `${Math.floor(hours / 24)}d`;
+}
+
 export default function AdminDiagnosticosOracle() {
   const { getToken } = useAuth();
   const [items, setItems] = useState<Diagnostic[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<DiagnosticStatus | 'todos'>('todos');
-  const [levelFilter, setLevelFilter] = useState<string>('todos');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [sendingId, setSendingId] = useState<string | null>(null);
-  const [composeItem, setComposeItem] = useState<Diagnostic | null>(null);
 
   const loadDiagnostics = async () => {
     try {
@@ -170,7 +273,7 @@ export default function AdminDiagnosticosOracle() {
       setItems(nextItems);
       setSelectedId((current) => current || nextItems[0]?._id || null);
     } catch (error: any) {
-      toast.error('No se pudieron cargar los diagnosticos', {
+      toast.error('No se pudieron cargar los prospectos', {
         description: error.response?.data?.error || 'Revisa el backend e intenta otra vez.',
       });
     } finally {
@@ -188,8 +291,6 @@ export default function AdminDiagnosticosOracle() {
 
     return items.filter((item) => {
       if (statusFilter !== 'todos' && item.status !== statusFilter) return false;
-      if (levelFilter !== 'todos' && item.result.level !== levelFilter) return false;
-
       if (!query) return true;
 
       return [
@@ -198,13 +299,9 @@ export default function AdminDiagnosticosOracle() {
         item.contact.email,
         item.contact.company,
         item.result.level,
-        item.result.pattern,
-        item.result.action,
-        item.emailStatus,
-        item.ip,
       ].some((value) => String(value || '').toLowerCase().includes(query));
     });
-  }, [items, levelFilter, search, statusFilter]);
+  }, [items, search, statusFilter]);
 
   const selected =
     filtered.find((item) => item._id === selectedId) ||
@@ -212,18 +309,27 @@ export default function AdminDiagnosticosOracle() {
     filtered[0] ||
     items[0];
 
-  const stats = useMemo(() => {
-    const critical = items.filter((item) => ['CRITICO', 'ALTO'].includes(item.result.level)).length;
-    const sent = items.filter((item) => item.emailStatus === 'sent').length;
-    return { critical, sent };
-  }, [items]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PROSPECTS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStartIndex = (currentPage - 1) * PROSPECTS_PER_PAGE;
+  const paginated = filtered.slice(pageStartIndex, pageStartIndex + PROSPECTS_PER_PAGE);
+  const showingFrom = filtered.length ? pageStartIndex + 1 : 0;
+  const showingTo = Math.min(pageStartIndex + PROSPECTS_PER_PAGE, filtered.length);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const updateStatus = async (id: string, status: DiagnosticStatus) => {
     const current = items.find((item) => item._id === id);
 
     if (current && !canMoveStatus(current.status, status)) {
       toast.error('Flujo bloqueado', {
-        description: 'No puedes regresar un diagnostico a un estado anterior.',
+        description: 'No puedes regresar un prospecto a un estado anterior.',
       });
       return;
     }
@@ -241,7 +347,7 @@ export default function AdminDiagnosticosOracle() {
       setItems((currentItems) => currentItems.map((item) => (item._id === id ? data.diagnostico : item)));
       toast.success('Estado actualizado');
     } catch (error: any) {
-      toast.error('No se pudo actualizar el diagnostico', {
+      toast.error('No se pudo actualizar el prospecto', {
         description: error.response?.data?.error || 'Intenta otra vez.',
       });
     }
@@ -249,58 +355,17 @@ export default function AdminDiagnosticosOracle() {
 
   const sendDiagnostic = async (item: Diagnostic) => {
     if (!canSendDiagnostic(item)) {
-      toast.error('Primero evalua el caso', {
-        description: 'Marca el diagnostico como En revision o superior antes de enviarlo.',
+      toast.error('Primero revisa el prospecto', {
+        description: 'Marca el prospecto como En revision o superior antes de enviar el correo.',
       });
       return;
     }
 
-    setComposeItem(item);
-  };
-
-  const openEmailComposer = async (item: Diagnostic, subject: string, message: string, attachmentName: string) => {
-    try {
-      const token = await getToken();
-      if (!token) return;
-
-      setSendingId(item._id);
-
-      const { data } = await api.post(
-        `/diagnostico-oracle/${item._id}/send`,
-        {
-          mode: 'manual',
-          subject,
-          message,
-          attachmentName,
-        },
-        { headers: authHeaders(token) },
-      );
-
-      if (data.diagnostico) {
-        setItems((current) => current.map((entry) => (entry._id === item._id ? data.diagnostico : entry)));
-      }
-
-      window.location.href = data.mailtoUrl || buildMailtoUrl(item.contact.email, subject, message);
-      setComposeItem(null);
-
-      toast.success('Correo preparado', {
-        description: attachmentName ? 'Adjunta el archivo seleccionado antes de enviarlo.' : 'Revisa el mensaje antes de enviarlo.',
-      });
-    } catch (error: any) {
-      if (error.response?.data?.diagnostico) {
-        setItems((current) => current.map((entry) => (entry._id === item._id ? error.response.data.diagnostico : entry)));
-      }
-
-      toast.error('No se pudo preparar el correo', {
-        description: error.response?.data?.error || 'Revisa el diagnostico e intenta otra vez.',
-      });
-    } finally {
-      setSendingId(null);
-    }
+    window.location.href = buildMailtoUrl(item.contact.email, defaultEmailSubject(item), defaultEmailMessage(item));
   };
 
   const deleteDiagnostic = async (item: Diagnostic) => {
-    const confirmed = window.confirm(`Eliminar diagnostico de ${item.contact.company}? Esta accion no se puede deshacer.`);
+    const confirmed = window.confirm(`Eliminar prospecto de ${item.contact.company}? Esta accion no se puede deshacer.`);
     if (!confirmed) return;
 
     try {
@@ -319,9 +384,9 @@ export default function AdminDiagnosticosOracle() {
         return next;
       });
 
-      toast.success('Diagnostico eliminado');
+      toast.success('Prospecto eliminado');
     } catch (error: any) {
-      toast.error('No se pudo eliminar el diagnostico', {
+      toast.error('No se pudo eliminar el prospecto', {
         description: error.response?.data?.error || 'Intenta otra vez.',
       });
     } finally {
@@ -330,44 +395,62 @@ export default function AdminDiagnosticosOracle() {
   };
 
   return (
-    <div className="min-h-screen bg-[#17181B] px-3 py-4 text-zinc-100 sm:px-5 lg:px-8">
+    <div className="min-h-screen bg-[#0A0B0E] px-3 py-4 text-zinc-100 sm:px-5 lg:px-8">
       <style>{`
-        @keyframes diagnosticIn {
+        @keyframes panelIn {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        .diagnostic-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #3f3f46 #111214;
+        }
+        .diagnostic-scroll::-webkit-scrollbar {
+          width: 10px;
+          height: 10px;
+        }
+        .diagnostic-scroll::-webkit-scrollbar-track {
+          background: #111214;
+          border-left: 1px solid #27272a;
+        }
+        .diagnostic-scroll::-webkit-scrollbar-thumb {
+          background: #3f3f46;
+          border: 2px solid #111214;
+        }
+        .diagnostic-scroll::-webkit-scrollbar-thumb:hover {
+          background: #71717a;
+        }
       `}</style>
 
-      <header className="overflow-hidden border border-zinc-800 bg-[#111214] shadow-[0_18px_44px_rgba(0,0,0,0.18)] animate-[diagnosticIn_260ms_ease-out]">
-        <div className="flex flex-col gap-5 border-b border-zinc-800 p-5 sm:p-6 xl:flex-row xl:items-end xl:justify-between">
-          <div>
+      <header className="border border-zinc-800 bg-[#0F1012] animate-[panelIn_220ms_ease-out]">
+        <div className="grid gap-4 border-b border-zinc-800 p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="min-w-0">
             <div className="mb-3 inline-flex items-center gap-2 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">
               <ClipboardList size={13} />
-              Rescue Diagnostic
+              Prospectos
             </div>
             <h1 className="font-serif text-3xl leading-tight text-zinc-50 sm:text-4xl">
-              Diagnosticos Oracle
+              Diagnosticos recibidos
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-              Pipeline ejecutivo para revisar solicitudes, bloquear avances hacia atras y enviar el diagnostico al correo corporativo del prospecto.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
+              Prospectos que enviaron sus datos. Revisa respuestas, cambia el proceso, descarga el Word o abre el correo.
             </p>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Stat icon={ClipboardList} label="Total" value={String(items.length)} />
-            <Stat icon={AlertTriangle} label="Riesgo alto" value={String(stats.critical)} />
-            <Stat icon={Send} label="Enviados" value={String(stats.sent)} />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <Stat label="Prospectos" value={String(items.length)} />
+            <Stat label="Filtrados" value={String(filtered.length)} />
+            <Stat label="Enviados" value={String(items.filter((item) => item.emailStatus === 'sent').length)} />
           </div>
         </div>
 
-        <div className="grid gap-3 p-4 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:items-center">
+        <div className="grid gap-3 p-4 md:grid-cols-[minmax(0,1fr)_220px_auto] md:items-center">
           <div className="relative min-w-0">
             <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              className="h-10 w-full border border-zinc-800 bg-[#17181B] pl-9 pr-3 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-amber-400/40"
-              placeholder="Buscar empresa, email, nivel, patron, IP..."
+              className="h-10 w-full border border-zinc-800 bg-[#17181B] pl-9 pr-3 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-amber-400/50"
+              placeholder="Buscar prospecto, empresa, correo..."
             />
           </div>
 
@@ -376,14 +459,6 @@ export default function AdminDiagnosticosOracle() {
             {Object.entries(STATUS_LABEL).map(([value, label]) => (
               <option key={value} value={value}>{label}</option>
             ))}
-          </Select>
-
-          <Select value={levelFilter} onChange={setLevelFilter}>
-            <option value="todos">Todos los niveles</option>
-            <option value="CRITICO">Critico</option>
-            <option value="ALTO">Alto</option>
-            <option value="MEDIO">Medio</option>
-            <option value="BAJO">Bajo</option>
           </Select>
 
           <button
@@ -398,320 +473,224 @@ export default function AdminDiagnosticosOracle() {
         </div>
       </header>
 
-      <section className="mt-5 grid gap-5 xl:grid-cols-[420px_minmax(0,1fr)]">
-        <aside className="overflow-hidden border border-zinc-800 bg-[#111214] animate-[diagnosticIn_320ms_ease-out]">
+      <section className="mt-5 grid gap-5 xl:grid-cols-[380px_minmax(0,1fr)]">
+        <aside className="overflow-hidden border border-zinc-800 bg-[#0F1012] animate-[panelIn_280ms_ease-out]">
           <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
-              Solicitudes
+              Prospectos
             </span>
-            <span className="font-mono text-[10px] text-zinc-500">{filtered.length}/{items.length}</span>
+            <span className="font-mono text-[10px] text-zinc-500">
+              {showingFrom}-{showingTo}/{filtered.length}
+            </span>
           </div>
 
-          <div className="max-h-[560px] overflow-y-auto p-2 xl:h-[calc(100vh-315px)] xl:max-h-none">
+          <div className="diagnostic-scroll max-h-[510px] overflow-y-auto p-2 xl:h-[calc(100vh-370px)] xl:max-h-none">
             {loading && (
-              <div className="border border-zinc-800 bg-[#17181B] p-4 text-sm text-zinc-500">
-                Cargando diagnosticos...
+              <div className="border border-zinc-800 bg-[#17181B] p-4 text-sm text-zinc-500 animate-pulse">
+                Cargando prospectos...
               </div>
             )}
 
             {!loading && filtered.length === 0 && (
               <EmptyState
                 icon={AlertTriangle}
-                title="Sin resultados"
-                text="Ajusta filtros o espera a que entren nuevas solicitudes desde el diagnostico publico."
+                title="Sin prospectos"
+                text="No hay prospectos con esos filtros."
               />
             )}
 
-            <div className="space-y-1.5">
-              {filtered.map((item) => {
-                const active = selected?._id === item._id;
-                const emailStatus = item.emailStatus || 'not_sent';
-
-                return (
-                  <button
-                    key={item._id}
-                    type="button"
-                    onClick={() => setSelectedId(item._id)}
-                    className={[
-                      'grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 border px-3 py-3 text-left transition active:scale-[0.99]',
-                      active
-                        ? 'border-amber-400/35 bg-amber-400/10'
-                        : 'border-zinc-800 bg-[#17181B] hover:border-zinc-700 hover:bg-zinc-900/60',
-                    ].join(' ')}
-                  >
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-zinc-100">{item.contact.company}</div>
-                      <div className="mt-1 truncate text-xs text-zinc-500">{item.contact.name} / {item.contact.role}</div>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        <Badge label={STATUS_LABEL[item.status]} className={STATUS_CLASS[item.status]} />
-                        <Badge label={item.result.level} />
-                        {emailStatus !== 'not_sent' && <Badge label={EMAIL_LABEL[emailStatus]} className={EMAIL_CLASS[emailStatus]} />}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-serif text-3xl leading-none ${LEVEL_CLASS[item.result.level] || 'text-zinc-50'}`}>
-                        {item.result.totalScore}
-                      </div>
-                      <div className="mt-2 text-[10px] text-zinc-600">{formatRelative(item.createdAt)}</div>
-                    </div>
-                  </button>
-                );
-              })}
+            <div className="space-y-2">
+              {paginated.map((item, index) => (
+                <ProspectCard
+                  key={item._id}
+                  item={item}
+                  active={selected?._id === item._id}
+                  index={index}
+                  onClick={() => setSelectedId(item._id)}
+                />
+              ))}
             </div>
+          </div>
+
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 border-t border-zinc-800 p-3">
+            <button
+              type="button"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={currentPage <= 1}
+              className="h-9 border border-zinc-800 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Anterior
+            </button>
+            <div className="text-center font-mono text-[10px] text-zinc-500">
+              Pagina {currentPage}/{totalPages}
+            </div>
+            <button
+              type="button"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              disabled={currentPage >= totalPages}
+              className="h-9 border border-zinc-800 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Siguiente
+            </button>
           </div>
         </aside>
 
-        <main className="min-h-[620px] overflow-hidden border border-zinc-800 bg-[#111214] animate-[diagnosticIn_380ms_ease-out]">
+        <main className="min-h-[640px] overflow-hidden border border-zinc-800 bg-[#0F1012] animate-[panelIn_340ms_ease-out]">
           {selected ? (
-            <DiagnosticDetail
+            <ProspectDetail
               item={selected}
               deleting={deletingId === selected._id}
-              sending={sendingId === selected._id}
               onDelete={() => deleteDiagnostic(selected)}
               onSend={() => sendDiagnostic(selected)}
               onStatusChange={(status) => updateStatus(selected._id, status)}
             />
           ) : (
-            <div className="grid min-h-[620px] place-items-center p-8 text-center">
-              <EmptyState icon={ClipboardList} title="Selecciona una solicitud" text="Los diagnosticos recibidos apareceran en la bandeja izquierda." />
+            <div className="grid min-h-[640px] place-items-center p-8 text-center">
+              <EmptyState icon={ClipboardList} title="Selecciona un prospecto" text="Sus datos y respuestas apareceran aqui." />
             </div>
           )}
         </main>
       </section>
 
-      {composeItem && (
-        <EmailComposerModal
-          item={composeItem}
-          sending={sendingId === composeItem._id}
-          onClose={() => setComposeItem(null)}
-          onSubmit={(subject, message, attachmentName) => openEmailComposer(composeItem, subject, message, attachmentName)}
-        />
-      )}
     </div>
   );
 }
 
-function EmailComposerModal({
+function ProspectCard({
   item,
-  sending,
-  onClose,
-  onSubmit,
+  active,
+  index,
+  onClick,
 }: {
   item: Diagnostic;
-  sending: boolean;
-  onClose: () => void;
-  onSubmit: (subject: string, message: string, attachmentName: string) => void;
+  active: boolean;
+  index: number;
+  onClick: () => void;
 }) {
-  const [subject, setSubject] = useState(() => defaultEmailSubject(item));
-  const [message, setMessage] = useState(() => defaultEmailMessage(item));
-  const [attachmentName, setAttachmentName] = useState('');
-
-  useEffect(() => {
-    setSubject(defaultEmailSubject(item));
-    setMessage(defaultEmailMessage(item));
-    setAttachmentName('');
-  }, [item]);
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-
-    if (!subject.trim() || !message.trim()) {
-      toast.error('Completa asunto y mensaje');
-      return;
-    }
-
-    onSubmit(subject.trim(), message.trim(), attachmentName);
-  };
+  const emailStatus = item.emailStatus || 'not_sent';
 
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center bg-black/75 px-4 py-6 backdrop-blur-sm animate-[diagnosticIn_180ms_ease-out]">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-[620px] overflow-hidden border border-zinc-800 bg-[#111214] shadow-[0_28px_80px_rgba(0,0,0,0.55)]"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-zinc-800 p-4 sm:p-5">
-          <div className="min-w-0">
-            <div className="mb-1 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-              <Mail size={13} />
-              Preparar correo
-            </div>
-            <h3 className="truncate font-serif text-2xl text-zinc-50">{item.contact.company}</h3>
-            <p className="mt-1 text-xs text-zinc-500">{item.contact.email}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={sending}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center border border-zinc-800 text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:opacity-50"
-            aria-label="Cerrar"
-          >
-            <X size={15} />
-          </button>
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        'grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 border px-3 py-3 text-left transition active:scale-[0.99]',
+        active
+          ? 'border-amber-400/40 bg-amber-400/10 shadow-[inset_3px_0_0_rgba(251,191,36,0.75)]'
+          : 'border-zinc-800 bg-[#17181B] hover:border-zinc-700 hover:bg-zinc-900/70',
+      ].join(' ')}
+      style={{ animation: `panelIn 200ms ease-out ${Math.min(index * 18, 160)}ms both` }}
+    >
+      <div className="min-w-0">
+        <div className="truncate text-sm font-semibold text-zinc-100">{item.contact.company}</div>
+        <div className="mt-1 truncate text-xs text-zinc-500">{item.contact.name}</div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Badge label={STATUS_LABEL[item.status]} className={STATUS_CLASS[item.status]} />
+          <Badge label={item.result.level} className={LEVEL_BADGE_CLASS[item.result.level]} />
+          {emailStatus !== 'not_sent' && <Badge label={EMAIL_LABEL[emailStatus]} className={EMAIL_CLASS[emailStatus]} />}
         </div>
+      </div>
 
-        <div className="space-y-4 p-4 sm:p-5">
-          <label className="block">
-            <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Asunto</span>
-            <input
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-              className="h-10 w-full border border-zinc-800 bg-[#17181B] px-3 text-sm text-zinc-100 outline-none transition focus:border-amber-400/40"
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Mensaje</span>
-            <textarea
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              className="min-h-[220px] w-full resize-y border border-zinc-800 bg-[#17181B] p-3 text-sm leading-6 text-zinc-100 outline-none transition focus:border-amber-400/40"
-            />
-          </label>
-
-          <label className="flex cursor-pointer flex-col gap-2 border border-dashed border-zinc-800 bg-[#17181B] p-3 transition hover:border-amber-400/35 sm:flex-row sm:items-center sm:justify-between">
-            <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-300">
-              <Paperclip size={15} className="shrink-0 text-amber-300" />
-              <span className="truncate">{attachmentName || 'Seleccionar archivo opcional'}</span>
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">Adjunto manual</span>
-            <input
-              type="file"
-              className="hidden"
-              onChange={(event) => setAttachmentName(event.target.files?.[0]?.name || '')}
-            />
-          </label>
-
-          {attachmentName && (
-            <div className="border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
-              Por seguridad del navegador, el archivo no se adjunta automaticamente. Al abrir el correo, adjunta manualmente: {attachmentName}.
-            </div>
-          )}
+      <div className="text-right">
+        <div className={`font-serif text-3xl leading-none ${LEVEL_CLASS[item.result.level]}`}>
+          {item.result.totalScore}
         </div>
-
-        <div className="flex flex-col-reverse gap-2 border-t border-zinc-800 p-4 sm:flex-row sm:justify-end sm:p-5">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={sending}
-            className="inline-flex h-10 items-center justify-center border border-zinc-800 px-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:opacity-50"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={sending}
-            className="inline-flex h-10 items-center justify-center gap-2 border border-amber-400/30 bg-amber-400/10 px-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-200 transition hover:border-amber-300 hover:bg-amber-400/15 disabled:cursor-wait disabled:opacity-60"
-          >
-            {sending ? <RefreshCw size={15} className="animate-spin" /> : <Send size={15} />}
-            Abrir correo
-          </button>
-        </div>
-      </form>
-    </div>
+        <div className="mt-2 text-[10px] text-zinc-600">{formatRelative(item.createdAt)}</div>
+      </div>
+    </button>
   );
 }
 
-function DiagnosticDetail({
+function ProspectDetail({
   item,
   deleting,
-  sending,
   onDelete,
   onSend,
   onStatusChange,
 }: {
   item: Diagnostic;
   deleting: boolean;
-  sending: boolean;
   onDelete: () => void;
   onSend: () => void;
   onStatusChange: (status: DiagnosticStatus) => void;
 }) {
-  const sendEnabled = canSendDiagnostic(item);
   const emailStatus = item.emailStatus || 'not_sent';
 
   return (
-    <div className="grid min-h-full gap-0 lg:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
-      <section className="min-w-0 border-b border-zinc-800 p-5 lg:border-b-0 lg:border-r 2xl:p-6">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+    <div className="grid min-h-full xl:grid-cols-[minmax(0,1fr)_340px]">
+      <section className="min-w-0 border-b border-zinc-800 p-5 xl:border-b-0 xl:border-r 2xl:p-6">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
           <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              Resultado tecnico
+            <div className="mb-3 flex flex-wrap gap-2">
+              <Badge label={STATUS_LABEL[item.status]} className={STATUS_CLASS[item.status]} />
+              <Badge label={EMAIL_LABEL[emailStatus]} className={EMAIL_CLASS[emailStatus]} />
+              <Badge label={item.result.level} className={LEVEL_BADGE_CLASS[item.result.level]} />
             </div>
-            <h2 className="mt-1 break-words font-serif text-2xl text-zinc-50 sm:text-3xl">
+            <h2 className="break-words font-serif text-2xl leading-tight text-zinc-50 sm:text-3xl">
               {item.contact.company}
             </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-              {item.result.description} Patron: {item.result.pattern}.
-            </p>
+            <p className="mt-2 text-sm text-zinc-400">{item.contact.name} / {item.contact.role}</p>
           </div>
 
-          <div className="flex items-center justify-between gap-3 xl:justify-end">
-            <div className="text-left xl:text-right">
-              <div className={`font-serif text-5xl ${LEVEL_CLASS[item.result.level] || 'text-zinc-50'}`}>{item.result.totalScore}</div>
-              <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{item.result.level}</div>
+          <div className="flex items-center justify-between gap-3 lg:justify-end">
+            <div className="text-left lg:text-right">
+              <div className={`font-serif text-5xl leading-none ${LEVEL_CLASS[item.result.level]}`}>
+                {item.result.totalScore}
+              </div>
+              <div className="mt-1 text-[10px] uppercase tracking-[0.16em] text-zinc-500">Score</div>
             </div>
             <div className="flex gap-2">
-              <button
-                type="button"
+              <IconButton
+                icon={Download}
+                label="Descargar Word"
+                onClick={() => {
+                  downloadDiagnosticDocument(item);
+                  toast.success('Documento descargado');
+                }}
+              />
+              <IconButton
+                icon={Send}
+                label="Abrir correo"
                 onClick={onSend}
-                disabled={!sendEnabled || sending}
-                className={[
-                  'inline-flex h-10 items-center justify-center gap-2 border px-3 text-[10px] font-semibold uppercase tracking-[0.14em] transition',
-                  sendEnabled
-                    ? 'border-amber-400/30 bg-amber-400/10 text-amber-200 hover:border-amber-300 hover:bg-amber-400/15'
-                    : 'cursor-not-allowed border-zinc-800 bg-[#17181B] text-zinc-600',
-                ].join(' ')}
-                title={sendEnabled ? 'Enviar diagnostico al correo corporativo' : 'Primero marca el caso como En revision o superior'}
-              >
-                {sending ? <RefreshCw size={15} className="animate-spin" /> : <Send size={15} />}
-                <span className="hidden sm:inline">{emailStatus === 'sent' ? 'Reenviar' : 'Enviar'}</span>
-              </button>
-              <button
-                type="button"
+                disabled={!canSendDiagnostic(item)}
+                tone="primary"
+              />
+              <IconButton
+                icon={deleting ? RefreshCw : Trash2}
+                label="Eliminar prospecto"
                 onClick={onDelete}
                 disabled={deleting}
-                className="inline-flex h-10 w-10 items-center justify-center border border-red-400/25 bg-red-400/10 text-red-300 transition hover:border-red-300 hover:bg-red-400/15 disabled:cursor-wait disabled:opacity-60"
-                aria-label="Eliminar diagnostico"
-                title="Eliminar diagnostico"
-              >
-                {deleting ? <RefreshCw size={16} className="animate-spin" /> : <Trash2 size={16} />}
-              </button>
+                tone="danger"
+                spinning={deleting}
+              />
             </div>
           </div>
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          <Info icon={UserRound} label="Directivo" value={item.contact.name} />
+          <Info icon={UserRound} label="Contacto" value={item.contact.name} />
           <Info icon={ShieldCheck} label="Cargo" value={item.contact.role} />
           <Info icon={Building2} label="Empresa" value={item.contact.company} />
-          <Info icon={Mail} label="Email" value={item.contact.email} />
+          <Info icon={Mail} label="Correo" value={item.contact.email} />
           <Info icon={Phone} label="Telefono" value={item.contact.phone || 'No capturado'} />
           <Info icon={Clock3} label="Recibido" value={new Date(item.createdAt).toLocaleString('es-MX')} />
         </div>
 
-        <div className="mt-5 grid gap-5 xl:grid-cols-3">
-          <Panel title="Accion recomendada">
-            <p className="text-sm leading-6 text-zinc-300">{item.result.action}</p>
-          </Panel>
-          <Panel title="Inversion tipica">
-            <p className="text-sm leading-6 text-amber-200">{item.result.investment}</p>
-          </Panel>
-          <Panel title="ROI esperado">
-            <p className="text-sm leading-6 text-zinc-300">{item.result.roi}</p>
-          </Panel>
-        </div>
+        <Panel title="Detalle del resultado" className="mt-5">
+          <p className="text-sm leading-6 text-zinc-300">{item.result.description}</p>
+        </Panel>
 
-        <Panel title="Respuestas" className="mt-5">
-          <div className="max-h-[430px] overflow-y-auto pr-1">
+        <Panel title="Preguntas que contesto" className="mt-5">
+          <div className="diagnostic-scroll max-h-[520px] overflow-y-auto pr-1">
             <div className="divide-y divide-zinc-800">
               {item.answers.map((answer) => (
-                <div key={answer.questionId} className="grid gap-3 py-3 md:grid-cols-[minmax(0,1fr)_220px_52px] md:items-center">
+                <div key={answer.questionId} className="grid gap-3 py-3 md:grid-cols-[minmax(0,1fr)_240px_58px] md:items-center">
                   <div className="min-w-0">
                     <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-600">Pregunta {answer.questionId}</div>
                     <div className="mt-1 text-sm leading-5 text-zinc-300">{answer.question}</div>
                   </div>
-                  <div className="text-sm font-medium text-zinc-100">{answer.answer}</div>
-                  <div className="font-mono text-xs text-amber-200">+{answer.score}</div>
+                  <div className="break-words text-sm font-medium text-zinc-100">{answer.answer}</div>
+                  <div className="font-mono text-xs text-amber-200 md:text-right">+{answer.score}</div>
                 </div>
               ))}
             </div>
@@ -721,37 +700,16 @@ function DiagnosticDetail({
 
       <aside className="p-5 2xl:p-6">
         <StatusPanel item={item} onStatusChange={onStatusChange} />
-        <EmailPanel item={item} sending={sending} onSend={onSend} />
-
-        <Panel title="Origen" className="mt-5">
-          <div className="space-y-3 text-xs text-zinc-400">
-            <Row label="IP" value={item.ip || 'No disponible'} />
-            <Row label="User agent" value={item.userAgent || 'No disponible'} />
-          </div>
-        </Panel>
       </aside>
     </div>
   );
 }
 
 function StatusPanel({ item, onStatusChange }: { item: Diagnostic; onStatusChange: (status: DiagnosticStatus) => void }) {
-  const currentIndex = STATUS_ORDER.indexOf(item.status);
-  const progress = currentIndex <= 0 ? 0 : (currentIndex / (STATUS_ORDER.length - 1)) * 100;
-
   return (
-    <Panel title="Estado">
-      <div className="mb-4">
-        <div className="h-1 overflow-hidden bg-zinc-900">
-          <div className="h-full bg-amber-300 transition-all duration-500" style={{ width: `${progress}%` }} />
-        </div>
-        <div className="mt-2 flex items-center justify-between text-[10px] uppercase tracking-[0.14em] text-zinc-600">
-          <span>Flujo bloqueado hacia atras</span>
-          <span>{currentIndex + 1}/{STATUS_ORDER.length}</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2">
-        {STATUS_ORDER.map((value) => {
+    <Panel title="Proceso del prospecto">
+      <div className="space-y-2">
+        {STATUS_ORDER.map((value, index) => {
           const active = item.status === value;
           const locked = !canMoveStatus(item.status, value);
           const disabled = active || locked;
@@ -764,7 +722,7 @@ function StatusPanel({ item, onStatusChange }: { item: Diagnostic; onStatusChang
               disabled={disabled}
               title={locked ? 'No se puede volver a un estado anterior' : STATUS_HINT[value]}
               className={[
-                'flex min-h-[44px] items-center justify-between gap-2 border px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.1em] transition',
+                'grid w-full grid-cols-[30px_minmax(0,1fr)_auto] items-center gap-3 border px-3 py-2 text-left transition',
                 active
                   ? STATUS_CLASS[value]
                   : locked
@@ -772,7 +730,11 @@ function StatusPanel({ item, onStatusChange }: { item: Diagnostic; onStatusChang
                     : 'border-zinc-800 bg-[#111214] text-zinc-400 hover:border-zinc-700 hover:text-zinc-100',
               ].join(' ')}
             >
-              <span className="min-w-0 truncate">{STATUS_LABEL[value]}</span>
+              <span className="grid h-7 w-7 place-items-center border border-current text-[10px] font-semibold">{index + 1}</span>
+              <span className="min-w-0">
+                <span className="block truncate text-[11px] font-semibold uppercase tracking-[0.1em]">{STATUS_LABEL[value]}</span>
+                <span className="mt-0.5 block truncate text-[10px] normal-case tracking-normal opacity-65">{STATUS_HINT[value]}</span>
+              </span>
               {active && <CheckCircle2 size={14} />}
               {locked && <LockKeyhole size={13} />}
             </button>
@@ -783,64 +745,11 @@ function StatusPanel({ item, onStatusChange }: { item: Diagnostic; onStatusChang
   );
 }
 
-function EmailPanel({ item, sending, onSend }: { item: Diagnostic; sending: boolean; onSend: () => void }) {
-  const emailStatus = item.emailStatus || 'not_sent';
-  const sendEnabled = canSendDiagnostic(item);
-
-  return (
-    <Panel title="Correo al prospecto" className="mt-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-zinc-100">{item.contact.email}</div>
-          <p className="mt-1 text-xs leading-5 text-zinc-500">
-            {sendEnabled
-              ? 'Envia el resumen ejecutivo validado al correo corporativo.'
-              : 'Evalua el caso antes de enviar el diagnostico.'}
-          </p>
-        </div>
-        <Badge label={EMAIL_LABEL[emailStatus]} className={EMAIL_CLASS[emailStatus]} />
-      </div>
-
-      {item.emailSentAt && (
-        <div className="mt-3 border-t border-zinc-800 pt-3 text-xs text-zinc-500">
-          Ultimo envio: {new Date(item.emailSentAt).toLocaleString('es-MX')}
-        </div>
-      )}
-
-      {item.emailError && (
-        <div className="mt-3 border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
-          {item.emailError}
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={onSend}
-        disabled={!sendEnabled || sending}
-        className={[
-          'mt-4 inline-flex h-10 w-full items-center justify-center gap-2 border px-4 text-[10px] font-semibold uppercase tracking-[0.14em] transition',
-          sendEnabled
-            ? 'border-amber-400/30 bg-amber-400/10 text-amber-200 hover:border-amber-300 hover:bg-amber-400/15'
-            : 'cursor-not-allowed border-zinc-800 bg-[#111214] text-zinc-600',
-        ].join(' ')}
-      >
-        {sending ? <RefreshCw size={15} className="animate-spin" /> : <Mail size={15} />}
-        {emailStatus === 'sent' ? 'Reenviar diagnostico' : 'Enviar diagnostico'}
-      </button>
-    </Panel>
-  );
-}
-
-function Stat({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="border border-zinc-800 bg-[#17181B] px-4 py-3">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{label}</div>
-          <div className="mt-1 font-serif text-2xl text-zinc-50">{value}</div>
-        </div>
-        <Icon size={17} className="text-amber-300" />
-      </div>
+      <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{label}</div>
+      <div className="mt-1 font-serif text-2xl text-zinc-50">{value}</div>
     </div>
   );
 }
@@ -857,6 +766,41 @@ function Info({ icon: Icon, label, value }: { icon: LucideIcon; label: string; v
   );
 }
 
+function IconButton({
+  icon: Icon,
+  label,
+  onClick,
+  disabled = false,
+  tone = 'default',
+  spinning = false,
+}: {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  tone?: 'default' | 'primary' | 'danger';
+  spinning?: boolean;
+}) {
+  const toneClass = {
+    default: 'border-zinc-800 bg-[#17181B] text-zinc-300 hover:border-amber-400/35 hover:text-amber-200',
+    primary: 'border-amber-400/30 bg-amber-400/10 text-amber-200 hover:border-amber-300 hover:bg-amber-400/15',
+    danger: 'border-red-400/25 bg-red-400/10 text-red-300 hover:border-red-300 hover:bg-red-400/15',
+  }[tone];
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`inline-flex h-10 w-10 items-center justify-center border transition disabled:cursor-not-allowed disabled:opacity-50 ${toneClass}`}
+      aria-label={label}
+      title={label}
+    >
+      <Icon size={16} className={spinning ? 'animate-spin' : ''} />
+    </button>
+  );
+}
+
 function Panel({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
   return (
     <article className={`border border-zinc-800 bg-[#17181B] p-4 ${className}`}>
@@ -866,20 +810,11 @@ function Panel({ title, children, className = '' }: { title: string; children: R
   );
 }
 
-function Badge({ label, className = 'border-zinc-700 bg-zinc-900 text-zinc-400' }: { label: string; className?: string }) {
+function Badge({ label, className = 'border-zinc-700 bg-zinc-950 text-zinc-400' }: { label: string; className?: string }) {
   return (
-    <span className={`inline-flex shrink-0 border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] ${className}`}>
-      {label}
+    <span className={`inline-flex max-w-full shrink-0 border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] ${className}`}>
+      <span className="truncate">{label}</span>
     </span>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border-b border-zinc-800 pb-3">
-      <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-600">{label}</div>
-      <div className="mt-1 break-words text-zinc-300">{value}</div>
-    </div>
   );
 }
 
@@ -888,7 +823,7 @@ function Select({ value, onChange, children }: { value: string; onChange: (value
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="h-10 border border-zinc-800 bg-[#17181B] px-3 text-[11px] uppercase tracking-[0.12em] text-zinc-300 outline-none transition focus:border-amber-400/40"
+      className="h-10 border border-zinc-800 bg-[#17181B] px-3 text-[11px] uppercase tracking-[0.12em] text-zinc-300 outline-none transition focus:border-amber-400/50"
     >
       {children}
     </select>
@@ -903,17 +838,4 @@ function EmptyState({ icon: Icon, title, text }: { icon: LucideIcon; title: stri
       <p className="mx-auto mt-1 max-w-sm text-xs leading-5 text-zinc-500">{text}</p>
     </div>
   );
-}
-
-function formatRelative(value: string) {
-  const diff = Date.now() - new Date(value).getTime();
-  const minutes = Math.max(0, Math.floor(diff / 60000));
-
-  if (minutes < 1) return 'ahora';
-  if (minutes < 60) return `${minutes}m`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-
-  return `${Math.floor(hours / 24)}d`;
 }

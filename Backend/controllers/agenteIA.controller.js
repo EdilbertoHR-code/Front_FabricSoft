@@ -6,11 +6,12 @@ const DEFAULT_CONFIG = {
   prompt: `Eres el agente publico de FABRIC.
 Respondes en la parte publica del sitio.
 Tu trabajo es orientar a CFOs, CTOs y ejecutivos con iniciativas Oracle.
-Responde claro, breve y con criterio senior.
+Responde claro, breve y con criterio senior, sin sonar academico.
 No prometas resultados sin evaluacion.
 Si el caso parece viable, invita a iniciar admision.
 Si falta informacion, pregunta industria, revenue, urgencia y sistema actual.
-Tu voz debe sonar como consultor senior: sobria, directa, humana y comercialmente util.`,
+Tu voz debe sonar como consultor senior: sobria, directa, humana y comercialmente util.
+Explica con palabras simples que significan algo para negocio: riesgo, cierre, adopcion, costo, tiempo y siguiente paso.`,
   files: [],
   knowledgeFile: null,
   llmChain: [
@@ -31,6 +32,7 @@ const MAX_HISTORY_CHARS = 2400;
 const MAX_LEAD_MESSAGES = 12;
 const MIN_SCORE_TO_SAVE = 80;
 const REQUEST_TIMEOUT_MS = 10000;
+const LEAD_STATUS_ORDER = ['nuevo', 'calificado', 'aplico', 'abandonado', 'descartado'];
 
 function normalizePayload(body) {
   const prompt = String(body.prompt || '').trim();
@@ -89,7 +91,7 @@ function validatePayload(payload) {
   }
 
   if (payload.knowledgeFile?.size > MAX_FILE_BYTES) {
-    return 'El archivo debe pesar menos de 60 KB.';
+    return 'El archivo debe pesar menos de 2 MB.';
   }
 
   if (payload.knowledgeFile?.content?.length > MAX_FILE_CHARS) {
@@ -324,6 +326,14 @@ function leadStatusFromAnalysis(analysis) {
   return 'abandonado';
 }
 
+function canMoveLeadStatus(currentStatus, nextStatus) {
+  const currentIndex = LEAD_STATUS_ORDER.indexOf(currentStatus);
+  const nextIndex = LEAD_STATUS_ORDER.indexOf(nextStatus);
+
+  if (currentIndex === -1 || nextIndex === -1) return false;
+  return nextIndex >= currentIndex;
+}
+
 async function saveQualifiedLead({ req, sessionId, history, message, reply, analysis }) {
   if (!sessionId || !shouldPersistLead(analysis)) return null;
 
@@ -425,10 +435,13 @@ function buildSystemPrompt(agente, message, history = []) {
 - Usa la memoria reciente: no repitas preguntas que el usuario ya contesto, continua desde el ultimo dato confirmado y reconoce el contexto sin decir "como mencionaste" demasiadas veces.
 - Si el usuario se sale del tema, no lo reganes: reconoce brevemente y vuelve a una pregunta util sobre su iniciativa Oracle o situacion operativa.
 - No inventes precios, promesas, resultados, clientes, certificaciones ni garantias.
-- No abras demasiadas preguntas. Pide maximo 2 datos clave por respuesta si ya existe memoria, o maximo 3 si es el primer mensaje.
-- Prioriza velocidad y claridad: 2 a 5 frases, sin parrafos largos.
-- Si el caso suena viable, guia hacia admision.
-- Si el caso esta incompleto, pide industria, revenue aproximado, urgencia, sistema actual o bloqueo principal.
+- No uses formato academico, definiciones largas, listas extensas ni titulares como "Patron detectado", "Escenario" o "Analisis".
+- Estructura ideal: 1 frase que entienda el problema, 1 frase que diga por que importa, 1 pregunta concreta para avanzar.
+- No abras demasiadas preguntas. Pide solo 1 dato clave por respuesta; maximo 2 si el usuario ya dio buen contexto.
+- Prioriza velocidad y claridad: 2 a 4 frases, parrafos cortos, palabras simples.
+- Si el caso suena viable, guia hacia admision sin presionar: "vale la pena revisarlo en admision" o "podemos evaluarlo con mas detalle".
+- Si el caso esta incompleto, pide el dato que mas falta ahora: industria, revenue aproximado, urgencia, sistema actual o bloqueo principal.
+- Si el usuario pregunta precio, explica que depende de alcance y pide sistema actual + urgencia antes de hablar de rangos.
 - Si el usuario pide algo fuera de FABRIC, responde con tacto y redirige hacia el objetivo de evaluacion.`;
 
   const memoryContext = history.length
@@ -443,12 +456,30 @@ function buildSystemPrompt(agente, message, history = []) {
 }
 
 function polishReply(reply) {
-  return String(reply || '')
+  const cleaned = String(reply || '')
     .replace(/\bcomo (modelo|ia|inteligencia artificial|asistente virtual)[^,.]*[,.]?\s*/gi, '')
     .replace(/\b(OpenAI|Claude|Grok|GPT[-\w. ]*|Anthropic|xAI)\b/gi, 'FABRIC')
     .replace(/\b(prompt|entrenamiento|training|api key|api|configuracion tecnica|configuración técnica)\b/gi, 'criterio interno')
+    .replace(/^\s*(patron detectado|patrÃ³n detectado|escenario|analisis|anÃ¡lisis)\s*:\s*/gim, '')
+    .replace(/\*\*/g, '')
+    .replace(/^\s*[-*]\s+/gm, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+
+  return compactHumanReply(cleaned);
+}
+
+function compactHumanReply(reply) {
+  const lines = String(reply || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length > 4) {
+    return lines.slice(0, 4).join('\n');
+  }
+
+  return lines.join('\n');
 }
 
 async function postJson(url, options) {
@@ -837,10 +868,22 @@ exports.actualizarLeadIA = async (req, res) => {
     }
 
     const status = String(req.body.status || '').trim();
-    const allowed = ['nuevo', 'calificado', 'aplico', 'abandonado', 'descartado'];
+    const allowed = LEAD_STATUS_ORDER;
 
     if (!allowed.includes(status)) {
       return res.status(400).json({ error: 'Estado invalido.' });
+    }
+
+    const currentLead = await AgenteLead.findById(req.params.id).lean();
+
+    if (!currentLead) {
+      return res.status(404).json({ error: 'Lead no encontrado.' });
+    }
+
+    if (!canMoveLeadStatus(currentLead.status, status)) {
+      return res.status(400).json({
+        error: 'No se puede regresar la conversacion a un estado anterior.',
+      });
     }
 
     const lead = await AgenteLead.findByIdAndUpdate(
