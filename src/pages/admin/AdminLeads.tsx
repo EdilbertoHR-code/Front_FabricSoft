@@ -248,119 +248,158 @@ export default function AdminLeads() {
       {/* Panel de detalle */}
       {selected && (
         <div
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 100, display: 'flex', justifyContent: 'flex-end' }}
           onClick={() => setSelected(null)}
         >
-          <div
-            className="admin-slide-panel"
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-              <div style={{ fontSize: 9, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase' }}>Detalle del lead</div>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#5A5A5A', cursor: 'pointer', fontSize: 16 }}>×</button>
-            </div>
+          <div className="admin-slide-panel" onClick={e => e.stopPropagation()}>
 
-            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 24, color: '#F5F5F5', marginBottom: 4 }}>{selected.empresa}</div>
-            <div style={{ fontSize: 10, color: '#8A8A8A', marginBottom: 20 }}>{selected.nombre} · {selected.cargo}</div>
-
-            {/* Score */}
-            <div style={{ textAlign: 'center', padding: '16px 0', borderTop: '1px solid #1a1a1a', borderBottom: '1px solid #1a1a1a', marginBottom: 20 }}>
-              <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Score FABRIC</div>
-              <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 52, fontStyle: 'italic', color: '#C9A96E' }}>{selected.score}</div>
-            </div>
-
-            {/* Campos */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
-              {([
-                ['Industria',  INDUSTRY_LABEL[selected.industria] ?? selected.industria],
-                ['Revenue',    selected.revenue],
-                ['Iniciativa', selected.iniciativa],
-                ['Plazo',      selected.plazo],
-                ['Email',      selected.email],
-                ['Fuente',     selected.source],
-                ['Fecha',      fmt(selected.createdAt)],
-              ] as [string, string][]).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #141414', paddingBottom: 10 }}>
-                  <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
-                  <span style={{ fontSize: 11, color: '#F5F5F5', maxWidth: 200, textAlign: 'right', wordBreak: 'break-word' }}>{v}</span>
+            {/* Cabecera */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+              <div>
+                <div style={{ fontSize: 8, letterSpacing: '0.25em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 8 }}>
+                  FABRIC · ADMIN · LEADS · DETALLE
                 </div>
-              ))}
+                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 28, color: '#F5F5F5', lineHeight: 1.1 }}>{selected.empresa}</div>
+                <div style={{ fontSize: 11, color: '#8A8A8A', marginTop: 6 }}>{selected.nombre} · {selected.cargo}</div>
+              </div>
+              <button
+                onClick={() => setSelected(null)}
+                style={{ background: 'none', border: '1px solid #252525', color: '#5A5A5A', cursor: 'pointer', fontSize: 14, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+              >×</button>
+            </div>
+
+            {/* Score + estado actual */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, marginBottom: 32, background: '#141414' }}>
+              <div style={{ background: '#060606', padding: '20px 24px', textAlign: 'center' }}>
+                <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 8 }}>Score FABRIC</div>
+                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 56, fontStyle: 'italic', color: '#C9A96E', lineHeight: 1 }}>{selected.score}</div>
+              </div>
+              <div style={{ background: '#060606', padding: '20px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase' }}>Estado actual</div>
+                <span style={{
+                  fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '6px 16px',
+                  border: `1px solid ${STATUS_COLOR[selected.status]}44`,
+                  color: STATUS_COLOR[selected.status],
+                  background: `${STATUS_COLOR[selected.status]}10`,
+                }}>{selected.status}</span>
+              </div>
+            </div>
+
+            {/* Datos en dos columnas */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #141414' }}>Información del prospecto</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 32px' }}>
+                {([
+                  ['Industria',  INDUSTRY_LABEL[selected.industria] ?? selected.industria],
+                  ['Revenue',    selected.revenue],
+                  ['Plazo',      selected.plazo],
+                  ['Fuente',     selected.source],
+                  ['Email',      selected.email],
+                  ['Fecha',      fmt(selected.createdAt)],
+                ] as [string, string][]).map(([k, v]) => (
+                  <div key={k}>
+                    <div style={{ fontSize: 8, letterSpacing: '0.15em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 4 }}>{k}</div>
+                    <div style={{ fontSize: 11, color: '#F5F5F5', wordBreak: 'break-word' }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              {selected.iniciativa && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontSize: 8, letterSpacing: '0.15em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 4 }}>Iniciativa</div>
+                  <div style={{ fontSize: 11, color: '#F5F5F5', lineHeight: 1.6 }}>{selected.iniciativa}</div>
+                </div>
+              )}
               {selected.queryChat && (
-                <div style={{ borderBottom: '1px solid #141414', paddingBottom: 10 }}>
-                  <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>Consulta vía chat IA</div>
-                  <div style={{ fontSize: 10, color: '#8A8A8A', fontStyle: 'italic' }}>"{selected.queryChat}"</div>
+                <div style={{ marginTop: 16, padding: '14px 16px', borderLeft: '2px solid #C9A96E33', background: '#0a0a0a' }}>
+                  <div style={{ fontSize: 8, letterSpacing: '0.15em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>Consulta vía chat IA</div>
+                  <div style={{ fontSize: 10, color: '#8A8A8A', fontStyle: 'italic', lineHeight: 1.6 }}>"{selected.queryChat}"</div>
                 </div>
               )}
             </div>
 
-            {/* Historial */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 10 }}>Historial</div>
-              {selected.historial.map((h, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontSize: 8, color: '#3A3A3A', minWidth: 60 }}>{h.fecha}</span>
-                  <span style={{
-                    fontSize: 8, padding: '2px 8px',
-                    border: `1px solid ${STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A'}33`,
-                    color: STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A',
-                  }}>{h.estado}</span>
-                  <span style={{ fontSize: 8, color: '#5A5A5A' }}>{h.autor}</span>
-                </div>
-              ))}
+            {/* Pipeline — mover estado */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #141414' }}>Mover en pipeline</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                {(['Aprobado', 'WaitList', 'Revisión'] as LeadStatus[])
+                  .filter(s => s !== selected.status)
+                  .map(s => (
+                    <button
+                      key={s}
+                      disabled={updating === selected._id}
+                      onClick={() => handleStatusChange(selected._id, s)}
+                      style={{
+                        padding: '12px', background: `${STATUS_COLOR[s]}10`,
+                        border: `1px solid ${STATUS_COLOR[s]}33`,
+                        color: STATUS_COLOR[s],
+                        fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase',
+                        cursor: 'pointer', fontFamily: 'inherit', transition: 'all .15s',
+                      }}
+                    >
+                      → {s}
+                    </button>
+                  ))}
+                {selected.status !== 'Rechazado' && (
+                  <button
+                    disabled={updating === selected._id}
+                    onClick={() => handleStatusChange(selected._id, 'Rechazado')}
+                    style={{ padding: '12px', background: 'transparent', border: '1px solid #B8545044', color: '#B85450', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    → Rechazar
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Notas internas */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>Notas internas</div>
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #141414' }}>Notas internas</div>
               <textarea
                 value={notasEdit}
                 onChange={e => setNotasEdit(e.target.value)}
-                rows={3}
+                rows={5}
+                placeholder="Añade observaciones sobre este prospecto..."
                 style={{
-                  width: '100%', background: '#060606', border: '1px solid #252525',
+                  width: '100%', background: '#0a0a0a', border: '1px solid #1e1e1e',
                   color: '#F5F5F5', fontFamily: 'inherit', fontSize: 11,
-                  padding: '8px 10px', outline: 'none', resize: 'vertical', boxSizing: 'border-box',
+                  padding: '12px 14px', outline: 'none', resize: 'vertical',
+                  boxSizing: 'border-box', lineHeight: 1.6,
                 }}
               />
               <button
                 onClick={handleSaveNotas}
                 disabled={updating === selected._id}
-                style={{ marginTop: 6, padding: '6px 14px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{
+                  marginTop: 8, padding: '10px 20px', background: 'rgba(201,169,110,0.08)',
+                  border: '1px solid #C9A96E44', color: '#C9A96E',
+                  fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
               >
                 Guardar notas
               </button>
             </div>
 
-            {/* Acciones de estado */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {(['Aprobado', 'WaitList', 'Revisión'] as LeadStatus[])
-                .filter(s => s !== selected.status)
-                .map(s => (
-                  <button
-                    key={s}
-                    disabled={updating === selected._id}
-                    onClick={() => handleStatusChange(selected._id, s)}
-                    style={{
-                      padding: '10px', background: `${STATUS_COLOR[s]}15`,
-                      border: `1px solid ${STATUS_COLOR[s]}44`,
-                      color: STATUS_COLOR[s],
-                      fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                    }}
-                  >
-                    Mover a {s}
-                  </button>
-                ))}
-              {selected.status !== 'Rechazado' && (
-                <button
-                  disabled={updating === selected._id}
-                  onClick={() => handleStatusChange(selected._id, 'Rechazado')}
-                  style={{ padding: '10px', background: 'transparent', border: '1px solid #B85450', color: '#B85450', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}
-                >
-                  Rechazar
-                </button>
-              )}
-            </div>
+            {/* Historial */}
+            {selected.historial.length > 0 && (
+              <div>
+                <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #141414' }}>Historial de cambios</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[...selected.historial].reverse().map((h, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 16, alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #0d0d0d' }}>
+                      <span style={{ fontSize: 9, color: '#3A3A3A', minWidth: 80, flexShrink: 0 }}>{h.fecha}</span>
+                      <span style={{
+                        fontSize: 8, padding: '3px 10px',
+                        border: `1px solid ${STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A'}33`,
+                        color: STATUS_COLOR[h.estado as LeadStatus] ?? '#5A5A5A',
+                      }}>{h.estado}</span>
+                      <span style={{ fontSize: 9, color: '#5A5A5A' }}>{h.autor}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       )}
