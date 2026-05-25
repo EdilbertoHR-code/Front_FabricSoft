@@ -132,51 +132,68 @@ const defaultQuestions: Question[] = [
 ];
 
 type SeverityLevel = 'BAJO' | 'MODERADO' | 'ALTO' | 'CRÍTICO';
+type Escenario = 'fusion-fallando' | 'migrando' | 'greenfield';
 
-function getSeverity(score: number): { level: SeverityLevel; color: string; desc: string; action: string } {
-  if (score <= 8) {
-    return {
-      level: 'BAJO',
-      color: '#4ade80',
-      desc: 'Tu implementacion presenta senales de estabilidad. Existen oportunidades de optimizacion, pero no hay crisis activa.',
-      action: 'Conversa con FABRIC sobre optimizacion y FABRIC OS.',
-    };
-  }
-  if (score <= 16) {
-    return {
-      level: 'MODERADO',
-      color: '#fbbf24',
-      desc: 'Senales de friccion operativa. Sin intervencion, los problemas actuales pueden escalar hacia el proximo cierre contable.',
-      action: 'FABRIC recomienda diagnostico tecnico en las proximas 4 semanas.',
-    };
-  }
-  if (score <= 24) {
-    return {
-      level: 'ALTO',
-      color: '#f97316',
-      desc: 'Tu implementacion presenta patrones de abandono post go-live. El riesgo operativo es real y documentado.',
-      action: 'Rescate FABRIC estimado: 8-12 semanas · Inversion tipica: USD 150-300K.',
-    };
-  }
-  return {
-    level: 'CRÍTICO',
-    color: '#ef4444',
-    desc: 'Situacion de crisis operativa activa. Tu implementacion Oracle requiere intervencion inmediata de ingenieros senior.',
-    action: 'Rescate de emergencia FABRIC: inicio en 72 horas · Inversion tipica: USD 200-500K.',
-  };
+const ESCENARIOS: { id: Escenario; label: string; desc: string; tag: string }[] = [
+  {
+    id: 'fusion-fallando',
+    label: 'Fusion fallando',
+    desc: 'Tienes Oracle Fusion en producción con problemas críticos activos — cierres lentos, incidencias abiertas, usuarios evadiendo el sistema.',
+    tag: 'Rescate activo',
+  },
+  {
+    id: 'migrando',
+    label: 'Migrando a Oracle',
+    desc: 'Estás en proceso de migración o implementación de Oracle ERP y necesitas validar que vas por buen camino.',
+    tag: 'Implementación en curso',
+  },
+  {
+    id: 'greenfield',
+    label: 'Greenfield',
+    desc: 'Estás evaluando Oracle ERP desde cero — sin implementación previa. Buscas evitar los errores comunes antes de comenzar.',
+    tag: 'Nueva implementación',
+  },
+];
+
+const SEVERITY_COPY: Record<Escenario, Record<SeverityLevel, { desc: string; action: string }>> = {
+  'fusion-fallando': {
+    BAJO:     { desc: 'Tu implementacion muestra senales de estabilidad relativa. Los problemas detectados son gestionables sin intervencion de emergencia.', action: 'FABRIC recomienda una revision de optimizacion en los proximos 60 dias.' },
+    MODERADO: { desc: 'Hay friccion operativa visible. Sin atencion en las proximas semanas, los problemas actuales pueden bloquear el proximo cierre contable.', action: 'Diagnostico tecnico FABRIC recomendado: inicio en 2-4 semanas.' },
+    ALTO:     { desc: 'Tu Fusion presenta patrones clasicos de abandono post go-live. El riesgo operativo es documentable y el costo de inaccion crece cada semana.', action: 'Rescate FABRIC estimado: 8-12 semanas · Inversion tipica: USD 150-300K.' },
+    'CRÍTICO':{ desc: 'Crisis operativa activa. Tu implementacion Oracle requiere intervencion inmediata de ingenieros senior especializados en rescate.', action: 'Rescate de emergencia FABRIC: inicio en 72 horas · Inversion tipica: USD 200-500K.' },
+  },
+  'migrando': {
+    BAJO:     { desc: 'Tu migracion muestra indicadores saludables. El ritmo actual sugiere que puedes llegar al go-live sin desviaciones criticas.', action: 'FABRIC puede acompanar como validador independiente en los hitos clave.' },
+    MODERADO: { desc: 'Hay senales de que la migracion acumulara deuda tecnica antes del go-live. Algunos procesos criticos aun no estan cubiertos correctamente.', action: 'FABRIC recomienda revision de arquitectura y plan de pruebas antes del siguiente hito.' },
+    ALTO:     { desc: 'La migracion presenta riesgos estructurales que comprometen el go-live. El patron detectado es comun en proyectos que terminan en rescate 6 meses despues.', action: 'Intervencion FABRIC recomendada antes del go-live · Inversion tipica: USD 100-250K.' },
+    'CRÍTICO':{ desc: 'La migracion esta en riesgo severo de fracasar o requerir rescate inmediato post go-live. Los indicadores apuntan a una implementacion sin base solida.', action: 'FABRIC recomienda pausa tecnica y auditoria urgente · Contacto en menos de 48 horas.' },
+  },
+  'greenfield': {
+    BAJO:     { desc: 'Tu punto de partida es solido. Tienes claridad en objetivos y el contexto organizacional favorece una implementacion exitosa.', action: 'FABRIC puede estructurar el RFP y los criterios de seleccion de consultora.' },
+    MODERADO: { desc: 'Hay vacios en la definicion que, si no se abordan antes de comenzar, se convierten en los problemas tipicos de los primeros 6 meses post go-live.', action: 'FABRIC recomienda un workshop de arquitectura antes de seleccionar consultora.' },
+    ALTO:     { desc: 'El contexto organizacional presenta factores de riesgo altos para una implementacion Oracle. Sin intervencion en el diseno, el proyecto tendra problemas predecibles.', action: 'FABRIC recomienda un programa de gobierno y arquitectura desde el inicio · USD 80-150K.' },
+    'CRÍTICO':{ desc: 'Las condiciones actuales hacen que una implementacion Oracle sin acompanamiento especializado tenga probabilidad muy alta de fracaso en los primeros 12 meses.', action: 'FABRIC debe ser parte del equipo desde el dia uno · Contacto prioritario recomendado.' },
+  },
+};
+
+function getSeverity(score: number, escenario: Escenario): { level: SeverityLevel; color: string; desc: string; action: string } {
+  let level: SeverityLevel;
+  let color: string;
+
+  if (score <= 8)       { level = 'BAJO';     color = '#4ade80'; }
+  else if (score <= 16) { level = 'MODERADO'; color = '#fbbf24'; }
+  else if (score <= 24) { level = 'ALTO';     color = '#f97316'; }
+  else                  { level = 'CRÍTICO';  color = '#ef4444'; }
+
+  const copy = SEVERITY_COPY[escenario][level];
+  return { level, color, ...copy };
 }
 
-const symptoms = [
-  'Cierre contable pesado',
-  'Reportes fuera del ERP',
-  'Baja adopcion de usuarios',
-  'Incidencias criticas',
-  'Consultora anterior ausente',
-];
 
 export default function S07bRescueAssessment() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
+  const [escenario, setEscenario] = useState<Escenario | null>(null);
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [current, setCurrent] = useState(0);
@@ -235,7 +252,7 @@ export default function S07bRescueAssessment() {
     } catch {
       // El resultado publico no se bloquea si el email o el CRM fallan.
     } finally {
-      setSeverity(getSeverity(totalScore));
+      setSeverity(getSeverity(totalScore, escenario ?? 'fusion-fallando'));
       setStep('result');
       setSending(false);
     }
@@ -244,6 +261,7 @@ export default function S07bRescueAssessment() {
   const handleReset = () => {
     setStep('quiz');
     setStarted(false);
+    setEscenario(null);
     setAnswers({});
     setCurrent(0);
     setEmail('');
@@ -271,25 +289,60 @@ export default function S07bRescueAssessment() {
               <p style={{ color: 'var(--text-secondary)', fontSize: 17, lineHeight: 1.7, marginTop: 24 }}>
                 12 preguntas · 3 minutos · Diagnostico de severidad inmediato.
               </p>
-              <div className="rescue-chips" style={{ justifyContent: 'center' }}>
-                {symptoms.map((symptom) => (
-                  <span key={symptom} style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: 10,
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                    padding: '6px 12px',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-secondary)',
-                    background: 'rgba(255,255,255,0.02)',
-                  }}>
-                    {symptom}
-                  </span>
-                ))}
+
+              {/* Selector de escenario */}
+              <div style={{ marginTop: 40, width: '100%', maxWidth: 820 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 20 }}>
+                  ¿Cuál es tu situación actual?
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                  {ESCENARIOS.map((esc) => {
+                    const isSelected = escenario === esc.id;
+                    return (
+                      <button
+                        key={esc.id}
+                        onClick={() => setEscenario(esc.id)}
+                        style={{
+                          textAlign: 'left',
+                          padding: '20px 22px',
+                          background: isSelected ? 'rgba(201,169,110,0.08)' : 'rgba(255,255,255,0.02)',
+                          border: `1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          transition: 'all .18s ease',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 10,
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{
+                            fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.18em',
+                            textTransform: 'uppercase',
+                            color: isSelected ? 'var(--accent)' : 'var(--text-secondary)',
+                          }}>
+                            {esc.tag}
+                          </span>
+                          {isSelected && (
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
+                          )}
+                        </div>
+                        <div style={{ fontFamily: 'var(--serif)', fontSize: 18, lineHeight: 1.2, color: isSelected ? '#F5F5F5' : '#8A8A8A' }}>
+                          {esc.label}
+                        </div>
+                        <div style={{ fontFamily: 'var(--sans)', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                          {esc.desc}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div style={{ marginTop: 8 }}>
+
+              <div style={{ marginTop: 28 }}>
                 <button
                   onClick={() => setStarted(true)}
+                  disabled={!escenario}
                   style={{
                     padding: '14px 36px',
                     fontFamily: 'var(--mono)',
@@ -297,10 +350,10 @@ export default function S07bRescueAssessment() {
                     fontWeight: 700,
                     letterSpacing: '0.22em',
                     textTransform: 'uppercase',
-                    background: 'var(--accent)',
-                    color: '#0A0A0A',
-                    border: 'none',
-                    cursor: 'pointer',
+                    background: escenario ? 'var(--accent)' : 'transparent',
+                    color: escenario ? '#0A0A0A' : 'var(--text-secondary)',
+                    border: escenario ? 'none' : '1px solid var(--border)',
+                    cursor: escenario ? 'pointer' : 'not-allowed',
                     transition: 'all .2s ease',
                   }}
                 >
@@ -313,6 +366,18 @@ export default function S07bRescueAssessment() {
 
         {started && step === 'quiz' && (
           <div style={{ marginTop: 48, animation: 'fadeIn .3s ease' }}>
+            {escenario && (
+              <div style={{ marginBottom: 24 }}>
+                <span style={{
+                  fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em',
+                  textTransform: 'uppercase', padding: '5px 12px',
+                  border: '1px solid var(--accent)', color: 'var(--accent)',
+                  background: 'rgba(201,169,110,0.06)',
+                }}>
+                  {ESCENARIOS.find(e => e.id === escenario)?.label}
+                </span>
+              </div>
+            )}
             <div style={{ marginBottom: 40 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>

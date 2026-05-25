@@ -22,13 +22,11 @@
 
 ---
 
-### 3. Rescue Assessment — falta selección de escenario inicial
-**Archivo:** `src/pages/public/home/s07b-rescue-assessment.tsx`
-**Problema:** El quiz actual es genérico (12 preguntas de síntomas). Brief2 pide 3 chips de escenario al inicio para personalizar el diagnóstico:
-- **Fusion fallando** — proyecto activo con problemas críticos
-- **Migrando** — en proceso de migración Oracle
-- **Greenfield** — implementación nueva desde cero
-**Fix requerido:** Agregar pantalla previa con los 3 chips. El escenario seleccionado debe condicionar el contexto del diagnóstico (puede ser solo visual/label, o filtrar preguntas relevantes).
+### 3. ~~Rescue Assessment — falta selección de escenario inicial~~ ✅ RESUELTO
+- 3 cards de escenario antes del quiz: Fusion fallando / Migrando / Greenfield
+- Botón "Iniciar" deshabilitado hasta seleccionar escenario
+- Badge de escenario visible durante el quiz
+- Copy de resultado personalizado por escenario (12 variantes: 3 escenarios × 4 niveles)
 
 ---
 
