@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-// 1. Configuración de CORS
+
 app.use(
   cors({
     origin: (origin, cb) => {

@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import AdminLayout from './AdminLayout';
 import { adminApi as api } from '../../config/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -157,7 +156,6 @@ export default function AdminResearchLetters() {
   const S = { fontFamily: 'var(--mono, "JetBrains Mono", monospace)' };
 
   return (
-    <AdminLayout>
       <div style={{ padding: '48px 40px', maxWidth: 1100 }}>
 
         {/* Header */}
@@ -355,6 +353,5 @@ export default function AdminResearchLetters() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

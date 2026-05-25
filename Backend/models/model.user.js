@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema({
     type: String, 
     required: true, 
     unique: true,
-    lowercase: true, // Asegura que siempre se guarde en minúsculas
-    trim: true       // Quita espacios en blanco al inicio o final
+    lowercase: true, 
+    trim: true      
   },
   firstName: { 
     type: String, 
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   rol: { 
     type: String, 
-    enum: ['admin', 'superadmin'], // Seguridad: Solo permite estos valores
+    enum: ['admin', 'superadmin'],
     default: 'admin' 
   },
   status: { 

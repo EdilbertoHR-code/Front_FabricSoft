@@ -22,7 +22,6 @@ const TerminosPage = lazy(() => import('../pages/public/legal/TerminosPage'));
 const PrivacidadPage = lazy(() => import('../pages/public/legal/PrivacidadPage'));
 const DoctrinaNoAlineacionPage = lazy(() => import('../pages/public/legal/DoctrinaNoAlineacionPage'));
 
-
 import { VerificarAcceso } from '../auth/VerificarAcceso';
 
 // Páginas de Herramientas
@@ -35,18 +34,23 @@ const BenchmarkIndexPage = lazy(() => import('../pages/public/herramientas/Bench
 const ResearchLettersPage = lazy(() => import('../pages/public/investigacion/ResearchLettersPage'));
 const PaperPage = lazy(() => import('../pages/public/investigacion/PaperPage'));
 
-// Páginas de Administración
+// Páginas de Administración — Layout nuevo (rama diagnostico)
+const AdminLayout = lazy(() => import('../layouts/admin/adminLayaout'));
+
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const AdminLeads = lazy(() => import('../pages/admin/AdminLeads'));
+const AdminPapers = lazy(() => import('../pages/admin/AdminPapers'));
+const AdminNda = lazy(() => import('../pages/admin/AdminNda'));
+const AdminReferencias = lazy(() => import('../pages/admin/AdminReferencias'));
+const AdminTransparencia = lazy(() => import('../pages/admin/AdminTransparencia'));
+const AdminResearchLetters = lazy(() => import('../pages/admin/AdminResearchLetters'));
 const AdminMetricas = lazy(() => import('../pages/admin/AdminMetricas'));
 const AdminCapacidad = lazy(() => import('../pages/admin/AdminCapacidad'));
 const AdminOfficeHours = lazy(() => import('../pages/admin/AdminOfficeHours'));
 const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
-const AdminPapers = lazy(() => import('../pages/admin/AdminPapers'));
-const AdminNda = lazy(() => import('../pages/admin/AdminNda'));
-const AdminReferencias    = lazy(() => import('../pages/admin/AdminReferencias'));
-const AdminTransparencia     = lazy(() => import('../pages/admin/AdminTransparencia'));
-const AdminResearchLetters   = lazy(() => import('../pages/admin/AdminResearchLetters'));
+const AdminAgenteIA = lazy(() => import('../pages/admin/AdminAgenteIA'));
+const AdminConversacionesIA = lazy(() => import('../pages/admin/AdminConversacionesIA'));
+const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosticosOracle'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -82,7 +86,6 @@ function ScrollToTop() {
   return null;
 }
 
-
 const GlobalLoader = () => (
   <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] font-sans">
     <div className="relative mb-6 flex h-16 w-16 items-center justify-center">
@@ -103,19 +106,21 @@ export const AppRouter = () => {
   return (
     <>
       <ScrollToTop />
-      {/* El Suspense envuelve las rutas lazy para mostrar el Loader mientras se descargan */}
       <Suspense fallback={<GlobalLoader />}>
         <Routes>
-          
-          {/* =================================================================
-              RUTAS PÚBLICAS (Dentro del Layout Público) 
-              ================================================================= */}
-          <Route path="/" element={<PublicLayout />}>
+
+          <Route path="/verificar-acceso" element={<VerificarAcceso />} />
+
+          <Route
+            path="/"
+            element={
+              <PublicRouteProtector>
+                <PublicLayout />
+              </PublicRouteProtector>
+            }
+          >
             <Route index element={<Home />} />
 
-            <Route path="/verificar-acceso" element={<VerificarAcceso />} />
-     
-            
             {/* Casos y Engagements */}
             <Route path="casos/:slug" element={<CasoPage />} />
             <Route path="casos/:slug/audit-trail" element={<AuditTrailPage />} />
@@ -131,7 +136,7 @@ export const AppRouter = () => {
             <Route path="privacidad" element={<PrivacidadPage />} />
             <Route path="doctrina/no-alineacion" element={<DoctrinaNoAlineacionPage />} />
 
-            {/* Herramientas (El Generador ya es Modal en el Home, pero dejamos las demás) */}
+            {/* Herramientas */}
             <Route path="roadmap" element={<MigrationRoadmapPage />} />
             <Route path="readiness" element={<ReadinessScorePage />} />
             <Route path="rfp-template" element={<RFPTemplatePage />} />
@@ -143,10 +148,10 @@ export const AppRouter = () => {
           </Route>
 
           {/* =================================================================
-              RUTAS DE AUTENTICACIÓN (CLERK) - URLs Personalizadas
+              RUTAS DE AUTENTICACIÓN (CLERK)
               ================================================================= */}
-          <Route 
-            path="/acceso/*" 
+          <Route
+            path="/acceso/*"
             element={
               <PublicRouteProtector>
                 <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
@@ -157,11 +162,11 @@ export const AppRouter = () => {
                   </div>
                 </div>
               </PublicRouteProtector>
-            } 
+            }
           />
 
-          <Route 
-            path="/crear-cuenta/*" 
+          <Route
+            path="/crear-cuenta/*"
             element={
               <PublicRouteProtector>
                 <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
@@ -172,36 +177,39 @@ export const AppRouter = () => {
                   </div>
                 </div>
               </PublicRouteProtector>
-            } 
+            }
           />
 
           {/* =================================================================
-              RUTAS DE ADMINISTRACIÓN
+              RUTAS DE ADMINISTRACIÓN — protegidas por Clerk + roles
               ================================================================= */}
           <Route path="/admin/login" element={<Navigate to="/acceso" replace />} />
 
-          <Route 
-            path="/admin/*" 
+          <Route
+            path="/admin"
             element={
-              <ProtectorRoles rolesPermitidos={['Admin']}>
-                <Routes>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="leads" element={<AdminLeads />} />
-                  <Route path="nda" element={<AdminNda />} />
-                  <Route path="referencias"    element={<AdminReferencias />} />
-                  <Route path="transparencia"    element={<AdminTransparencia />} />
-                  <Route path="research-letters" element={<AdminResearchLetters />} />
-                  <Route path="metricas" element={<AdminMetricas />} />
-                  <Route path="capacidad" element={<AdminCapacidad />} />
-                  <Route path="office-hours" element={<AdminOfficeHours />} />
-                  <Route path="papers" element={<AdminPapers />} />
-                  <Route path="logs" element={<AdminLogs />} />
-                </Routes>
+              <ProtectorRoles rolesPermitidos={['admin']}>
+                <AdminLayout />
               </ProtectorRoles>
-            } 
-          />
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="leads" element={<AdminLeads />} />
+            <Route path="papers" element={<AdminPapers />} />
+            <Route path="nda" element={<AdminNda />} />
+            <Route path="referencias" element={<AdminReferencias />} />
+            <Route path="transparencia" element={<AdminTransparencia />} />
+            <Route path="research-letters" element={<AdminResearchLetters />} />
+            <Route path="metricas" element={<AdminMetricas />} />
+            <Route path="capacidad" element={<AdminCapacidad />} />
+            <Route path="office-hours" element={<AdminOfficeHours />} />
+            <Route path="logs" element={<AdminLogs />} />
+            <Route path="agente-ia" element={<AdminAgenteIA />} />
+            <Route path="conversaciones-ia" element={<AdminConversacionesIA />} />
+            <Route path="diagnosticos-oracle" element={<AdminDiagnosticosOracle />} />
+          </Route>
 
-          {/* REDIRECCIÓN POR DEFECTO (404 a Home) */}
+          {/* 404 → Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

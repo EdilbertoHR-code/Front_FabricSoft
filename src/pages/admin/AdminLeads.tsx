@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import AdminLayout from './AdminLayout';
 import { adminApi } from '../../config/api';
 
 type LeadStatus = 'Nuevo' | 'Aprobado' | 'WaitList' | 'Revisión' | 'Rechazado';
@@ -120,7 +119,7 @@ export default function AdminLeads() {
   }
 
   return (
-    <AdminLayout>
+      <>
       {/* Header */}
       <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
@@ -358,6 +357,6 @@ export default function AdminLeads() {
           </div>
         </div>
       )}
-    </AdminLayout>
+      </>
   );
 }

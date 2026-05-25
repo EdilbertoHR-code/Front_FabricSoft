@@ -1,4 +1,3 @@
-import AdminLayout from './AdminLayout';
 import { useState, useEffect } from 'react';
 import { adminApi } from '../../config/api';
 
@@ -75,7 +74,7 @@ export default function AdminCapacidad() {
     new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
 
   return (
-    <AdminLayout>
+    <>
       <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
@@ -225,6 +224,6 @@ export default function AdminCapacidad() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 }

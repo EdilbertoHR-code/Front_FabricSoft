@@ -193,6 +193,14 @@ exports.solicitarWaitlist = async (req, res) => {
       email:   lead.email,
     }).catch(e => console.error('email.waitlist error:', e.message));
 
+    log({
+      accion:    `CREATE · WaitList · ${lead.empresa}`,
+      categoria: 'Leads',
+      autor:     'system',
+      status:    'OK',
+      detalle:   `${lead.nombre} · waitlist Q3 2026`,
+    });
+
     res.status(201).json({ ok: true, data: lead });
   } catch (err) {
     console.error('leads.solicitarWaitlist error:', err);

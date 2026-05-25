@@ -811,6 +811,137 @@ export default function InteractionManager() {
         </div>
       )}
 
+      {/* ── WAIT LIST Q3 2026 ── */}
+      {active === "waitlist" && (
+        <div className="im-modal" style={{ background: "var(--bg-panel)", border: "1px solid var(--border-strong)", maxWidth: 560, width: "100%", display: "flex", flexDirection: "column" }}>
+          {/* Header */}
+          <div style={{ padding: "28px 32px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, width: 2, height: "100%", background: "linear-gradient(to bottom, var(--accent), transparent)" }} />
+            <div style={{ paddingLeft: 20 }}>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--accent)", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: 10 }}>Wait List · Q3 2026</div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: 30, lineHeight: 1.1, fontWeight: 300 }}>
+                Reservar lugar <em style={{ color: "var(--accent)" }}>en lista.</em>
+              </div>
+            </div>
+            <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer", flexShrink: 0 }}>×</button>
+          </div>
+
+          <div style={{ padding: "28px 32px", flex: 1 }}>
+            {!submitted ? (
+              <>
+                {/* Contexto editorial */}
+                <div style={{ padding: "16px 20px", border: "1px solid var(--border)", background: "var(--bg-base)", marginBottom: 28 }}>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--accent)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 10 }}>Capacidad · Q3 2026</div>
+                  <div style={{ display: "flex", gap: 24 }}>
+                    {[
+                      { num: "12", lbl: "Slots totales" },
+                      { num: "Q3", lbl: "Próxima ventana" },
+                      { num: "30 jul", lbl: "Cierre admisión" },
+                    ].map((s) => (
+                      <div key={s.lbl}>
+                        <div style={{ fontFamily: "var(--serif)", fontSize: 28, color: "var(--accent)", fontWeight: 300, lineHeight: 1 }}>{s.num}</div>
+                        <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginTop: 4 }}>{s.lbl}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Nota de selectividad */}
+                <div style={{ borderLeft: "2px solid rgba(201,169,110,0.35)", paddingLeft: 16, marginBottom: 28 }}>
+                  <p style={{ fontFamily: "var(--sans)", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.75, margin: 0, fontStyle: "italic" }}>
+                    FABRIC mantiene capacidad máxima de 12 proyectos simultáneos. La lista de espera notifica cuando se abre un slot. No hay garantía de admisión — cada proyecto pasa por evaluación.
+                  </p>
+                </div>
+
+                {/* Formulario */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {([
+                    { field: "nombre", label: "Nombre completo", type: "text" },
+                    { field: "empresa", label: "Empresa", type: "text" },
+                    { field: "email", label: "Email corporativo", type: "email" },
+                  ] as { field: "nombre" | "empresa" | "email"; label: string; type: string }[]).map(({ field, label, type }) => (
+                    <div key={field}>
+                      <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>{label}</div>
+                      <input
+                        type={type}
+                        value={formData[field]}
+                        onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
+                        placeholder={field === "email" ? "nombre@empresa.com" : ""}
+                        style={{ width: "100%", padding: "13px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box", transition: "border-color 200ms" }}
+                        onFocus={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.5)"; }}
+                        onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {apiError && active === "waitlist" && (
+                  <div style={{ marginTop: 14, fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</div>
+                )}
+              </>
+            ) : (
+              <div style={{ textAlign: "center", padding: "32px 0 24px" }}>
+                <div style={{ fontFamily: "var(--serif)", fontSize: 52, color: "var(--accent)", fontWeight: 300, lineHeight: 1, marginBottom: 20 }}>I.</div>
+                <div style={{ fontFamily: "var(--serif)", fontSize: 26, marginBottom: 12, fontWeight: 300 }}>
+                  Lugar <em style={{ color: "var(--accent)" }}>reservado.</em>
+                </div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.9, marginBottom: 24 }}>
+                  Recibirás notificación en<br />
+                  <span style={{ color: "var(--accent)" }}>{formData.email || "tu email"}</span><br />
+                  cuando se abra un slot en Q3 2026.
+                </div>
+                <div style={{ width: 48, height: 1, background: "var(--border)", margin: "0 auto 20px" }} />
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.1em", lineHeight: 1.7 }}>
+                  FABRIC valida cada perfil antes de confirmar acceso.<br />Si califica, se envía NDA mutuo.
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: "16px 32px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            {!submitted ? (
+              <>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
+                  No gmail · hotmail · yahoo
+                </span>
+                <button
+                  disabled={loading}
+                  onClick={async () => {
+                    setApiError("");
+                    if (!formData.nombre.trim() || !formData.empresa.trim() || !formData.email.trim()) {
+                      setApiError("Completa todos los campos.");
+                      return;
+                    }
+                    setLoading(true);
+                    try {
+                      await api.post("/leads/waitlist", {
+                        nombre:  formData.nombre.trim(),
+                        empresa: formData.empresa.trim(),
+                        email:   formData.email.trim(),
+                      });
+                      setSubmitted(true);
+                    } catch (err: unknown) {
+                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+                      setApiError(msg ?? "Error al registrar. Intenta de nuevo.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  style={{ padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer", transition: "background 200ms" }}
+                >
+                  {loading ? "Registrando..." : "Solicitar lugar →"}
+                </button>
+              </>
+            ) : (
+              <button onClick={close} style={{ marginLeft: "auto", padding: "11px 24px", background: "transparent", border: "1px solid var(--accent)", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}>
+                Cerrar
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── FABRIC OS (I03) — redirige internamente ── */}
       {active === "fabric-os" && (
         <div className="im-modal" style={{ background: "var(--bg-panel)", border: "1px solid var(--border-strong)", maxWidth: 520, width: "100%", padding: "40px 36px" }}>
