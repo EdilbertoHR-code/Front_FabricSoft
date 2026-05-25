@@ -526,6 +526,69 @@ exports.sendRescueAssessmentResultado = ({ nombre, empresa, email, severity, tot
   });
 };
 
+function templateOciAudit({ empresa, cargo, gastoOci }) {
+  const empresaSafe = escapeHtml(empresa);
+  const cargoSafe   = escapeHtml(cargo);
+  const gastoSafe   = escapeHtml(gastoOci);
+
+  const body = `
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('FABRIC OCI Cost Audit · Diagnóstico gratuito')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        Solicitud<br/>recibida.
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        Registramos la solicitud de diagnóstico OCI para <strong style="color:#2A2A2A;">${empresaSafe}</strong>. Un senior de FABRIC se pondrá en contacto en las próximas <strong style="color:#2A2A2A;">24 horas hábiles</strong> para coordinar el acceso de solo lectura a tu tenant.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Empresa', empresaSafe)}
+        ${dataRow('Cargo', cargoSafe)}
+        ${dataRow('Gasto OCI estimado', gastoSafe)}
+        ${dataRow('Tipo de acceso requerido', 'Solo lectura · Audit role OCI')}
+        ${dataRow('Entrega del reporte', '48 – 72 horas tras coordinar acceso')}
+        ${dataRow('Cobertura NDA', 'Mutuo · Desde este contacto')}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 20px;">
+      <div style="background:#F7F5F2;border-left:3px solid #C9A96E;padding:20px 24px;">
+        <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8A8A8A;">Qué esperar</p>
+        <p style="margin:0;font-size:13px;color:#5A5A5A;line-height:1.75;">
+          FABRIC analiza tu tenant OCI con acceso de solo lectura. El reporte incluye hallazgos cuantificados en USD por categoría (compute, storage, networking, database, backups) y el ahorro mensual y anual potencial total.<br/><br/>
+          El diagnóstico es gratuito y sin compromiso. La ejecución de las optimizaciones se pacta bajo modelo Fixed-Price o Success-Fee si decides continuar.
+        </p>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:20px 48px 40px;">
+      <p style="margin:0 0 20px;font-size:12px;color:#8A8A8A;line-height:1.7;">
+        Si tienes preguntas antes de coordinar el acceso, puedes responder directamente a este correo.
+      </p>
+      <a href="https://fabricsoft.com.mx/optimizador-oci"
+         style="display:inline-block;padding:12px 28px;background:#C9A96E;color:#0A0A0A;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">
+        Ver detalles del diagnóstico &rarr;
+      </a>
+    </td>
+  </tr>`;
+
+  return wrap(body);
+}
+
+exports.sendConfirmacionOciAudit = ({ empresa, cargo, email, gastoOci }) =>
+  sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: 'Solicitud OCI Cost Audit recibida — FABRIC Oracle Critical Engineering',
+    html:    templateOciAudit({ empresa, cargo, gastoOci }),
+  });
+
 exports.sendPaperEntrega = ({ empresa, email, paperId }) => {
   const paperTitle = PAPER_TITLES[paperId] || `Paper ${paperId}`;
   const pdfPath    = path.join(__dirname, '..', 'assets', 'papers', `paper-${paperId}.pdf`);

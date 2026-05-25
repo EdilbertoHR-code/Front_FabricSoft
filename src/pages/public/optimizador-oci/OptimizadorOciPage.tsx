@@ -68,13 +68,13 @@ export default function OptimizadorOciPage() {
 
     setLoading(true);
     try {
-      await api.post('/leads', {
-        empresa: form.empresa,
-        cargo: form.cargo,
-        email: form.email,
-        notas: `Gasto OCI: ${form.gastoOci}`,
-        tipo: 'optimizador-oci',
-        tracking: getInteractionTracking('optimizador-oci', 'optimizador-oci-page'),
+      await api.post('/oci-audit/solicitar', {
+        empresa:     form.empresa,
+        cargo:       form.cargo,
+        email:       form.email,
+        gastoOci:    form.gastoOci,
+        ndaAceptado: form.ndaAceptado,
+        tracking:    getInteractionTracking('optimizador-oci', 'optimizador-oci-page'),
       });
       setSent(true);
     } catch {
