@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { adminApi, api } from '../../config/api';
+import { api, useAuthApi } from '../../config/api';
 
 interface Metrica {
   id: string;
@@ -14,6 +14,7 @@ interface Metrica {
 }
 
 export default function AdminMetricas() {
+  const adminApi = useAuthApi();
   const [metricas, setMetricas] = useState<Metrica[]>([]);
   const [autoActivos, setAutoActivos]   = useState<number | null>(null);
   const [autoWaitlist, setAutoWaitlist] = useState<number | null>(null);

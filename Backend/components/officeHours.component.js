@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const officeHoursController = require('../controllers/officeHours.controller');
-const { requireAdminKey } = require('../middleware/admin.middleware');
+const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 
 // Público
 router.post('/book',                       officeHoursController.book);
@@ -10,9 +10,9 @@ router.get('/disponibilidad/mes',          officeHoursController.disponibilidadM
 router.get('/disponibilidad/dia',          officeHoursController.disponibilidadDia);
 
 // Admin
-router.get('/admin',               requireAdminKey, officeHoursController.listar);
-router.patch('/admin/:id/status',  requireAdminKey, officeHoursController.actualizarStatus);
-router.post('/admin/:id/retry-email',    requireAdminKey, officeHoursController.reintentarEmail);
-router.post('/admin/:id/retry-calendar', requireAdminKey, officeHoursController.reintentarCalendar);
+router.get('/admin',               ClerkExpressRequireAuth(), officeHoursController.listar);
+router.patch('/admin/:id/status',  ClerkExpressRequireAuth(), officeHoursController.actualizarStatus);
+router.post('/admin/:id/retry-email',    ClerkExpressRequireAuth(), officeHoursController.reintentarEmail);
+router.post('/admin/:id/retry-calendar', ClerkExpressRequireAuth(), officeHoursController.reintentarCalendar);
 
 module.exports = router;

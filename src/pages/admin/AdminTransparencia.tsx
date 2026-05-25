@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -69,6 +69,7 @@ const emptyCompromiso = (orden: number): Compromiso => ({
 type Tab = 'publicadas' | 'proximas' | 'compromisos';
 
 export default function AdminTransparencia() {
+  const adminApi = useAuthApi();
   const [tab, setTab] = useState<Tab>('publicadas');
   const [publicadas, setPublicadas]   = useState<Publicada[]>([]);
   const [proximas, setProximas]       = useState<Proxima[]>([]);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 type PaperStatus = 'pendiente' | 'enviado' | 'bloqueado';
 type Tab = 'papers' | 'benchmark';
@@ -41,6 +41,7 @@ function fmt(iso: string) {
 }
 
 export default function AdminPapers() {
+  const adminApi = useAuthApi();
   const [tab, setTab]               = useState<Tab>('papers');
   const [papers, setPapers]         = useState<PaperAccess[]>([]);
   const [benchmark, setBenchmark]   = useState<BenchmarkAccess[]>([]);

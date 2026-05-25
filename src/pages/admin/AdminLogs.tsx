@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { adminApi as api } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,6 +38,7 @@ function shortId(id: string) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminLogs() {
+  const api = useAuthApi();
   const [logs, setLogs]       = useState<LogEntry[]>([]);
   const [filter, setFilter]   = useState('Todas');
   const [loading, setLoading] = useState(false);

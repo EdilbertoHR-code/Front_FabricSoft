@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 interface Slot { id: number; status: 'disponible' | 'activo' | 'reservado'; }
 interface WaitlistLead {
@@ -24,6 +24,7 @@ const ADMISSION_QUARTERS = [
 ];
 
 export default function AdminCapacidad() {
+  const adminApi = useAuthApi();
   const [slots, setSlots]                 = useState<Slot[]>([]);
   const [waitlist, setWaitlist]           = useState<WaitlistLead[]>([]);
   const [deadlineQ3, setDeadlineQ3]       = useState('');

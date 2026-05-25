@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 type LeadStatus = 'Nuevo' | 'Aprobado' | 'WaitList' | 'Revisión' | 'Rechazado';
 
@@ -52,6 +52,7 @@ function fmt(iso: string) {
 }
 
 export default function AdminLeads() {
+  const adminApi = useAuthApi();
   const [leads, setLeads]         = useState<Lead[]>([]);
   const [total, setTotal]         = useState(0);
   const [loading, setLoading]     = useState(true);

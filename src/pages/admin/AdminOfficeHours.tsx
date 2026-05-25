@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 interface Booking {
   _id: string;
@@ -28,6 +28,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function AdminOfficeHours() {
+  const adminApi = useAuthApi();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading]   = useState(true);
   const [selected, setSelected] = useState<Booking | null>(null);

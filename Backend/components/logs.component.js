@@ -1,8 +1,8 @@
 const express = require('express');
 const router  = express.Router();
 const ctrl    = require('../controllers/logs.controller');
-const { requireAdminKey } = require('../middleware/admin.middleware');
+const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 
-router.get('/admin', requireAdminKey, ctrl.listar);
+router.get('/admin', ClerkExpressRequireAuth(), ctrl.listar);
 
 module.exports = router;

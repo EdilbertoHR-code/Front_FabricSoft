@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 type NdaStatus = 'pendiente' | 'aprobado' | 'enviado' | 'rechazado';
 
@@ -34,6 +34,7 @@ function fmt(iso: string) {
 }
 
 export default function AdminNda() {
+  const adminApi = useAuthApi();
   const [requests, setRequests] = useState<NdaRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);

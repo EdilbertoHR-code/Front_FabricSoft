@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { adminApi } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 interface ReferenceItem {
   _id?: string;
@@ -24,6 +24,7 @@ const emptyReference = (orden: number): ReferenceItem => ({
 });
 
 export default function AdminReferencias() {
+  const adminApi = useAuthApi();
   const [references, setReferences] = useState<ReferenceItem[]>([]);
   const [rotationWeeks, setRotationWeeks] = useState(4);
   const [publicLimit, setPublicLimit] = useState(3);

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { adminApi as api } from '../../config/api';
+import { useAuthApi } from '../../config/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -58,6 +58,7 @@ function formatDate(iso: string) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminResearchLetters() {
+  const api = useAuthApi();
   const [suscriptores, setSuscriptores] = useState<Suscriptor[]>([]);
   const [aprobados, setAprobados]       = useState(0);
   const [total, setTotal]               = useState(0);
