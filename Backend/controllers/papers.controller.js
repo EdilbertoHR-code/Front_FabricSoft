@@ -3,6 +3,7 @@ const path            = require('path');
 const PaperAccess     = require('../models/model.paperAccess');
 const BenchmarkAccess = require('../models/model.benchmarkAccess');
 const { sendPaperEntrega } = require('../services/email.service');
+const { log } = require('../services/log.service');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -61,7 +62,12 @@ exports.solicitar = async (req, res) => {
     });
     await acceso.save();
 
-    console.log(`📄 Paper ${paperId} solicitado por ${email} (${empresa})`);
+    log({
+      accion:    `CREATE · Paper ${paperId} · ${empresa}`,
+      categoria: 'Papers',
+      autor:     'system',
+      detalle:   PAPER_TITLES[paperId] || '',
+    });
 
     return res.status(201).json({
       ok: true,
@@ -108,7 +114,11 @@ exports.benchmarkEarlyAccess = async (req, res) => {
     });
     await acceso.save();
 
-    console.log(`📊 Benchmark early access: ${email} (${empresa})`);
+    log({
+      accion:    `CREATE · Benchmark Early Access · ${empresa}`,
+      categoria: 'Papers',
+      autor:     'system',
+    });
 
     return res.status(201).json({
       ok: true,
@@ -188,6 +198,13 @@ exports.actualizarStatus = async (req, res) => {
         paperId: acceso.paperId,
       }).catch(err => console.error('🚨 papers.sendPaperEntrega:', err.message));
     }
+
+    log({
+      accion:    `${status.toUpperCase()} · Paper ${acceso.paperId} · ${acceso.empresa}`,
+      categoria: 'Papers',
+      autor:     'admin',
+      status:    status === 'bloqueado' ? 'WARN' : 'OK',
+    });
 
     return res.json({ ok: true, data: acceso });
   } catch (error) {

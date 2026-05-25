@@ -12,6 +12,7 @@ const ndaRoutes         = require('../components/nda.component');
 const referenciasRoutes    = require('../components/referencias.component');
 const transparenciaRoutes      = require('../components/transparencia.component');
 const researchLettersRoutes    = require('../components/researchLetters.component');
+const logsRoutes               = require('../components/logs.component');
 
 router.get('/', (req, res) => {
   res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
@@ -28,6 +29,7 @@ router.use('/nda',          ndaRoutes);
 router.use('/referencias',   referenciasRoutes);
 router.use('/transparencia',    transparenciaRoutes);
 router.use('/research-letters', researchLettersRoutes);
+router.use('/logs',             logsRoutes);
 
 
 

@@ -1,6 +1,7 @@
 const Booking         = require('../models/model.officeHoursBooking');
 const calendarService = require('../services/calendar.service');
 const { sendConfirmacionOfficeHours } = require('../services/email.service');
+const { log } = require('../services/log.service');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 
@@ -31,6 +32,13 @@ exports.book = async (req, res) => {
       dia,
       slot,
       ipAddress: req.ip || '',
+    });
+
+    log({
+      accion:    `CREATE · Office Hours · ${booking.empresa}`,
+      categoria: 'Office Hours',
+      autor:     'system',
+      detalle:   `${booking.dia} ${booking.slot} · ${booking.nombre}`,
     });
 
     res.status(201).json({ ok: true, data: booking });
@@ -71,6 +79,14 @@ exports.actualizarStatus = async (req, res) => {
 
     const booking = await Booking.findByIdAndUpdate(id, update, { new: true });
     if (!booking) return res.status(404).json({ error: 'Reserva no encontrada.' });
+
+    log({
+      accion:    `${status.toUpperCase()} · Office Hours · ${booking.empresa}`,
+      categoria: 'Office Hours',
+      autor:     'admin',
+      status:    status === 'cancelado' ? 'WARN' : 'OK',
+      detalle:   `${booking.dia} ${booking.slot}`,
+    });
 
     res.json({ ok: true, data: booking });
 
