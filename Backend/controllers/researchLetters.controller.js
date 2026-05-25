@@ -1,6 +1,7 @@
 const ResearchLetterSuscriptor = require('../models/model.researchLetterSuscriptor');
 const ResearchLetterConfig     = require('../models/model.researchLetterConfig');
 const { sendResearchLetterConfirmacion, sendResearchLetterBienvenida } = require('../services/email.service');
+const { log } = require('../services/log.service');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -67,7 +68,12 @@ exports.solicitar = async (req, res) => {
       email:   email.toLowerCase(),
     }).catch(err => console.error('🚨 researchLetters.sendConfirmacion:', err.message));
 
-    console.log(`📰 Research Letters: solicitud de ${email} (${empresa})`);
+    log({
+      accion:    `CREATE · Research Letter · ${suscriptor.empresa}`,
+      categoria: 'Research Letters',
+      autor:     'system',
+      detalle:   `${suscriptor.nombre} · ${suscriptor.cargo} · oracle: ${suscriptor.iniciativaOracle}`,
+    });
 
     return res.status(201).json({
       ok: true,
@@ -128,6 +134,13 @@ exports.actualizarStatus = async (req, res) => {
         email:   suscriptor.email,
       }).catch(err => console.error('🚨 researchLetters.sendBienvenida:', err.message));
     }
+
+    log({
+      accion:    `${status.toUpperCase()} · Research Letter · ${suscriptor.empresa}`,
+      categoria: 'Research Letters',
+      autor:     'admin',
+      status:    status === 'rechazado' ? 'WARN' : 'OK',
+    });
 
     return res.json({ ok: true, data: suscriptor });
   } catch (error) {

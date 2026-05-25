@@ -1,5 +1,6 @@
 const NdaRequest = require('../models/model.ndaRequest');
 const { sendNdaPdfAccess } = require('../services/email.service');
+const { log } = require('../services/log.service');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -48,6 +49,13 @@ exports.solicitar = async (req, res) => {
       ipAddress: req.ip || '',
     });
 
+    log({
+      accion:    `CREATE · NDA · ${request.empresa}`,
+      categoria: 'NDA',
+      autor:     'system',
+      detalle:   `${request.nombre} · ${request.cargo} · caso: ${request.caso}`,
+    });
+
     res.status(201).json({
       ok: true,
       data: request,
@@ -88,6 +96,13 @@ exports.actualizarStatus = async (req, res) => {
     const request = await NdaRequest.findByIdAndUpdate(id, { status }, { new: true });
     if (!request) return res.status(404).json({ error: 'Solicitud NDA no encontrada.' });
 
+    log({
+      accion:    `${status.toUpperCase()} · NDA · ${request.empresa}`,
+      categoria: 'NDA',
+      autor:     'admin',
+      status:    status === 'rechazado' ? 'WARN' : 'OK',
+    });
+
     res.json({ ok: true, data: request });
   } catch (err) {
     console.error('nda.actualizarStatus error:', err);
@@ -118,6 +133,13 @@ exports.aprobarYEnviar = async (req, res) => {
       status: 'enviado',
       emailSent: true,
     }, { new: true });
+
+    log({
+      accion:    `ENVIADO · NDA PDF · ${request.empresa}`,
+      categoria: 'NDA',
+      autor:     'admin',
+      detalle:   `caso: ${request.caso} · ${request.email}`,
+    });
 
     res.json({ ok: true, data: updated });
   } catch (err) {

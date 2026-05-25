@@ -22,19 +22,34 @@ const papers = [
 interface DaySlot { time: string; taken: boolean; }
 
 // Genera los próximos N días laborables a partir de mañana
-function getNextWorkDays(count: number): string[] {
+function cursorToLocalISO(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// Días hábiles desde mañana hasta el último día del mes siguiente
+function getWorkDaysUntilEndOfNextMonth(): string[] {
   const result: string[] = [];
   const cursor = new Date();
-  cursor.setHours(0, 0, 0, 0);
-  while (result.length < count) {
-    cursor.setDate(cursor.getDate() + 1);
+  cursor.setHours(12, 0, 0, 0);
+  cursor.setDate(cursor.getDate() + 1); // empezar desde mañana
+
+  // Último día del mes siguiente
+  const endOfNextMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 2, 0);
+  endOfNextMonth.setHours(12, 0, 0, 0);
+
+  while (cursor <= endOfNextMonth) {
     const dow = cursor.getDay();
-    if (dow !== 0 && dow !== 6) result.push(cursor.toISOString().split('T')[0]);
+    if (dow !== 0 && dow !== 6) result.push(cursorToLocalISO(cursor));
+    cursor.setDate(cursor.getDate() + 1);
   }
   return result;
 }
 
-const TODAY_ISO = new Date().toISOString().split('T')[0];
+function localDateISO(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+const TODAY_ISO = localDateISO();
 const NOW_HH_MM = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 function formatDayLabel(iso: string): string {
@@ -44,15 +59,16 @@ function formatDayLabel(iso: string): string {
 
 export default function InteractionManager() {
   const [active, setActive] = useState<InteractionType>(null);
-  const [selectedDay, setSelectedDay] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<string>(() => getWorkDaysUntilEndOfNextMonth()[0]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedPaper, setSelectedPaper] = useState(0);
-  const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "" });
+  const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "", revenue: "", iniciativa: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
-  const [days] = useState<string[]>(() => getNextWorkDays(5));
+  const [days] = useState<string[]>(() => getWorkDaysUntilEndOfNextMonth());
+  const [weekOffset, setWeekOffset] = useState(0);
   const [slots, setSlots] = useState<DaySlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
@@ -71,10 +87,16 @@ export default function InteractionManager() {
   }, []);
 
   useEffect(() => {
-    if (active === 'office-hours' && days[selectedDay]) {
-      fetchSlots(days[selectedDay]);
+    if (active === 'office-hours' && selectedDay) {
+      fetchSlots(selectedDay);
     }
-  }, [active, selectedDay, days, fetchSlots]);
+  }, [active, selectedDay, fetchSlots]);
+
+  // Cuando selectedDay cambia (ej. click desde el calendario s11), saltar a la semana correcta
+  useEffect(() => {
+    const idx = days.indexOf(selectedDay);
+    if (idx !== -1) setWeekOffset(Math.floor(idx / 5));
+  }, [selectedDay, days]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -85,6 +107,10 @@ export default function InteractionManager() {
       // nda-pdf redirige al modal de proof (mismo flujo de acceso NDA)
       if (type === "nda-pdf") type = "proof";
       e.preventDefault();
+      if (type === "office-hours") {
+        const clickedDate = target.getAttribute("data-date");
+        setSelectedDay(clickedDate || days[0]);
+      }
       setActive(type);
       setSubmitted(false);
       setSelectedSlot(null);
@@ -261,23 +287,38 @@ export default function InteractionManager() {
             <div style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0 }}>
               {!selectedSlot ? (
                 <>
-                  <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
-                    {days.map((iso, i) => {
-                      const isPast = iso < TODAY_ISO;
-                      return (
-                        <button
-                          key={iso}
-                          disabled={isPast}
-                          className={`im-day-btn${selectedDay === i ? " active" : ""}`}
-                          onClick={() => !isPast && setSelectedDay(i)}
-                          style={{ padding: "8px 14px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: isPast ? "var(--text-tertiary)" : selectedDay === i ? "var(--accent)" : "var(--text-secondary)", cursor: isPast ? "not-allowed" : "pointer", transition: "all 200ms", letterSpacing: "0.1em", textDecoration: isPast ? "line-through" : "none", opacity: isPast ? 0.4 : 1 }}>
-                          {formatDayLabel(iso)}
-                        </button>
-                      );
-                    })}
+                  {/* Navegación semanal */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
+                    <button
+                      onClick={() => setWeekOffset(w => Math.max(0, w - 1))}
+                      disabled={weekOffset === 0}
+                      style={{ padding: "8px 10px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: weekOffset === 0 ? "var(--text-quaternary)" : "var(--text-secondary)", cursor: weekOffset === 0 ? "default" : "pointer", opacity: weekOffset === 0 ? 0.3 : 1, flexShrink: 0 }}>
+                      ←
+                    </button>
+                    <div style={{ display: "flex", gap: 6, flex: 1 }}>
+                      {days.slice(weekOffset * 5, weekOffset * 5 + 5).map((iso) => {
+                        const isPast = iso < TODAY_ISO;
+                        return (
+                          <button
+                            key={iso}
+                            disabled={isPast}
+                            className={`im-day-btn${selectedDay === iso ? " active" : ""}`}
+                            onClick={() => !isPast && setSelectedDay(iso)}
+                            style={{ flex: 1, padding: "8px 4px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: isPast ? "var(--text-tertiary)" : selectedDay === iso ? "var(--accent)" : "var(--text-secondary)", cursor: isPast ? "not-allowed" : "pointer", transition: "all 200ms", letterSpacing: "0.08em", textDecoration: isPast ? "line-through" : "none", opacity: isPast ? 0.4 : 1, textAlign: "center" }}>
+                            {formatDayLabel(iso)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      onClick={() => setWeekOffset(w => Math.min(Math.floor((days.length - 1) / 5), w + 1))}
+                      disabled={weekOffset >= Math.floor((days.length - 1) / 5)}
+                      style={{ padding: "8px 10px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: weekOffset >= Math.floor((days.length - 1) / 5) ? "var(--text-quaternary)" : "var(--text-secondary)", cursor: weekOffset >= Math.floor((days.length - 1) / 5) ? "default" : "pointer", opacity: weekOffset >= Math.floor((days.length - 1) / 5) ? 0.3 : 1, flexShrink: 0 }}>
+                      →
+                    </button>
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12 }}>
-                    {days[selectedDay] ? new Date(days[selectedDay] + 'T12:00:00').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }).toUpperCase() : ''} · CDMX
+                    {selectedDay ? new Date(selectedDay + 'T12:00:00').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }).toUpperCase() : ''} · CDMX
                   </div>
                   {slotsLoading ? (
                     <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.14em", padding: "20px 0" }}>
@@ -286,7 +327,7 @@ export default function InteractionManager() {
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
                       {slots.map((slot) => {
-                        const isPastSlot = days[selectedDay] === TODAY_ISO && slot.time <= NOW_HH_MM;
+                        const isPastSlot = selectedDay === TODAY_ISO && slot.time <= NOW_HH_MM;
                         const disabled = slot.taken || isPastSlot;
                         return (
                           <button key={slot.time} disabled={disabled} onClick={() => setSelectedSlot(slot.time)}
@@ -304,7 +345,7 @@ export default function InteractionManager() {
                   {!submitted ? (
                     <>
                       <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", marginBottom: 16, textTransform: "uppercase" }}>
-                        Slot seleccionado · {formatDayLabel(days[selectedDay])} · {selectedSlot}
+                        Slot seleccionado · {formatDayLabel(selectedDay)} · {selectedSlot}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                         {(["nombre", "empresa", "email"] as const).map((field) => (
@@ -331,7 +372,7 @@ export default function InteractionManager() {
                                 nombre:  formData.nombre,
                                 empresa: formData.empresa,
                                 email:   formData.email,
-                                dia:     days[selectedDay], // YYYY-MM-DD
+                                dia:     selectedDay,
                                 slot:    selectedSlot,
                               });
                               setSubmitted(true);
@@ -389,19 +430,70 @@ export default function InteractionManager() {
             <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
           </div>
           <div style={{ padding: "24px 28px", overflowY: "auto", flex: 1 }}>
-            <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
-              Las referencias ejecutivas se facilitan únicamente durante el proceso de evaluación post-admisión inicial. Acceso al contacto directo, no a un broker.
+            <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>
+              Las referencias ejecutivas se facilitan únicamente durante el proceso de evaluación post-admisión. FABRIC valida ajuste antes de facilitar el contacto directo.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {(["nombre", "empresa", "email"] as const).map((field) => (
-                <div key={field}>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{field === "email" ? "Email corporativo" : field}</div>
-                  <input type={field === "email" ? "email" : "text"} value={formData[field]} onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
+
+              {/* Fila nombre + cargo */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                {(["nombre", "cargo"] as const).map(field => (
+                  <div key={field}>
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{field}</div>
+                    {field === "cargo" ? (
+                      <select value={formData.cargo} onChange={e => setFormData(p => ({ ...p, cargo: e.target.value }))}
+                        style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.cargo ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                        <option value="">Seleccionar...</option>
+                        <option value="CFO">CFO</option>
+                        <option value="CTO">CTO</option>
+                        <option value="CIO">CIO</option>
+                        <option value="Director Transformación">Director Transformación</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    ) : (
+                      <input type="text" value={formData.nombre} onChange={e => setFormData(p => ({ ...p, nombre: e.target.value }))}
+                        style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Empresa */}
+              <div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Empresa</div>
+                <input type="text" value={formData.empresa} onChange={e => setFormData(p => ({ ...p, empresa: e.target.value }))}
+                  style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              {/* Fila email + revenue */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Email corporativo</div>
+                  <input type="email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
                     style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
                 </div>
-              ))}
-              <div style={{ padding: "14px 16px", background: "var(--bg-base)", border: "1px solid var(--border)", fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7, marginTop: 4 }}>
-                FABRIC revisará ajuste estratégico (revenue, industria, patrocinio ejecutivo) antes de facilitar el contacto. Tiempo de respuesta: 3 días hábiles.
+                <div>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Revenue anual</div>
+                  <select value={formData.revenue} onChange={e => setFormData(p => ({ ...p, revenue: e.target.value }))}
+                    style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.revenue ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                    <option value="">Seleccionar...</option>
+                    <option value="USD 50M–100M">USD 50M – 100M</option>
+                    <option value="USD 100M–500M">USD 100M – 500M</option>
+                    <option value="USD 500M+">USD 500M+</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Iniciativa Oracle */}
+              <div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Iniciativa Oracle actual o planeada</div>
+                <input type="text" value={formData.iniciativa} onChange={e => setFormData(p => ({ ...p, iniciativa: e.target.value }))}
+                  placeholder="Ej. implementación Fusion Cloud, migración OCI, soporte post go-live..."
+                  style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }} />
+              </div>
+
+              <div style={{ padding: "12px 16px", background: "var(--bg-base)", border: "1px solid var(--border)", borderLeft: "2px solid var(--accent)", fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Respuesta en 3 días hábiles · Proceso bajo NDA mutuo
               </div>
             </div>
           </div>
@@ -415,16 +507,19 @@ export default function InteractionManager() {
                   disabled={loading}
                   onClick={async () => {
                     setApiError("");
-                    if (!formData.nombre || !formData.empresa || !formData.email) {
-                      setApiError("Completa todos los campos.");
+                    if (!formData.nombre || !formData.cargo || !formData.empresa || !formData.email || !formData.iniciativa) {
+                      setApiError("Completa todos los campos obligatorios.");
                       return;
                     }
                     setLoading(true);
                     try {
                       await api.post("/leads/referencia", {
-                        nombre:  formData.nombre,
-                        empresa: formData.empresa,
-                        email:   formData.email,
+                        nombre:     formData.nombre,
+                        cargo:      formData.cargo,
+                        empresa:    formData.empresa,
+                        email:      formData.email,
+                        revenue:    formData.revenue,
+                        iniciativa: formData.iniciativa,
                       });
                       setSubmitted(true);
                     } catch (err: unknown) {

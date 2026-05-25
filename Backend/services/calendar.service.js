@@ -88,7 +88,7 @@ async function getCalendarBusy(startISO, endISO) {
  * Disponibilidad de un mes completo.
  * Retorna { 'YYYY-MM-DD': availableCount }  (solo días con al menos 1 slot)
  */
-exports.getMonthAvailability = async (year, month) => {
+exports.getMonthAvailability = async (year, month, dbByDay = {}) => {
   const start = DateTime.fromObject({ year, month, day: 1 }, { zone: TZ });
   const end   = start.endOf('month');
 
@@ -101,7 +101,8 @@ exports.getMonthAvailability = async (year, month) => {
     const dow = cursor.weekday; // 1=Lun … 7=Dom
     if (dow < 6) { // solo lun-vie
       const gcalBlocked = calendarBusy[dateStr] ?? new Set();
-      const available = ALL_SLOTS.filter(s => !gcalBlocked.has(s));
+      const dbTaken     = dbByDay[dateStr]       ?? new Set();
+      const available = ALL_SLOTS.filter(s => !gcalBlocked.has(s) && !dbTaken.has(s));
       if (available.length > 0) result[dateStr] = available.length;
     }
     cursor = cursor.plus({ days: 1 });

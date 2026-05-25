@@ -24,15 +24,17 @@ function buildCalendarGrid(year: number, month: number, monthData: MonthData) {
     const dow = new Date(dateStr + 'T12:00:00').getDay(); // 0=Dom 6=Sab
     const isWeekend = dow === 0 || dow === 6;
     const isToday   = dateStr === today;
+    const isPast    = dateStr < today;
     const available = monthData[dateStr] ?? 0;
 
     let className = 'muted';
     if (!isWeekend) {
-      if (available === 0) className = isToday ? 'active today' : 'active';
-      else                 className = `slot${available <= 1 ? ' critical' : ''}${isToday ? ' today' : ''}`;
+      if (isPast)            className = 'past';
+      else if (available === 0) className = isToday ? 'active today' : 'active';
+      else                   className = `slot${available <= 1 ? ' critical' : ''}${isToday ? ' today' : ''}`;
     }
 
-    cells.push({ day: d, dateStr, className, available });
+    cells.push({ day: d, dateStr, className, available: isPast ? 0 : available });
   }
 
   // Completar hasta múltiplo de 7
@@ -63,15 +65,24 @@ export default function S11OfficeHours() {
       .finally(() => setLoadingCal(false));
   }, [year, month, isInView]);
 
+  const nowYear  = now.getFullYear();
+  const nowMonth = now.getMonth() + 1;
+  const maxYear  = nowMonth === 12 ? nowYear + 1 : nowYear;
+  const maxMonth = nowMonth === 12 ? 1 : nowMonth + 1;
+  const isAtMin  = year === nowYear  && month === nowMonth;
+  const isAtMax  = year === maxYear  && month === maxMonth;
+
   const prevMonth = () => {
+    if (isAtMin) return;
     if (month === 1) { setMonth(12); setYear(y => y - 1); }
     else setMonth(m => m - 1);
   };
   const nextMonth = () => {
+    if (isAtMax) return;
     if (month === 12) { setMonth(1); setYear(y => y + 1); }
     else setMonth(m => m + 1);
   };
-  const goToday = () => { setYear(now.getFullYear()); setMonth(now.getMonth() + 1); };
+  const goToday = () => { setYear(nowYear); setMonth(nowMonth); };
 
   const cells = buildCalendarGrid(year, month, monthData);
 
@@ -101,8 +112,7 @@ export default function S11OfficeHours() {
               Llega con tu situación Oracle actual sintetizada: módulos en uso, problemática principal, plazo. Treinta minutos · honestidad absoluta.
             </div>
 
-            <div className="s11-cta-desktop" style={{ marginTop: 32, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-              <a href="#office-hours" data-interaction="office-hours" className="btn-primary">Reservar conversación →</a>
+            <div style={{ marginTop: 32 }}>
               <span className="nda-seal">Confidencial · NDA mutuo</span>
             </div>
           </div>
@@ -114,9 +124,9 @@ export default function S11OfficeHours() {
                 {loadingCal && <span style={{ fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.1em' }}>↻</span>}
               </div>
               <div className="calendar-nav">
-                <span style={{ cursor: 'pointer' }} onClick={prevMonth}>←</span>
+                <span style={{ cursor: isAtMin ? 'default' : 'pointer', opacity: isAtMin ? 0.25 : 1 }} onClick={prevMonth}>←</span>
                 <span style={{ cursor: 'pointer' }} onClick={goToday}>Hoy</span>
-                <span style={{ cursor: 'pointer' }} onClick={nextMonth}>→</span>
+                <span style={{ cursor: isAtMax ? 'default' : 'pointer', opacity: isAtMax ? 0.25 : 1 }} onClick={nextMonth}>→</span>
               </div>
             </div>
 
@@ -129,9 +139,8 @@ export default function S11OfficeHours() {
                   key={idx}
                   className={`cal-day ${cell.className}`}
                   data-slots={cell.available > 0 ? `${cell.available}/10` : undefined}
-                  data-interaction={
-                    cell.available > 0 ? "office-hours" : undefined
-                  }
+                  data-interaction={cell.available > 0 ? "office-hours" : undefined}
+                  data-date={cell.available > 0 ? cell.dateStr : undefined}
                 >
                   {cell.day ?? ''}
                 </div>

@@ -58,6 +58,7 @@ export default function AdminLeads() {
   const [loading, setLoading]     = useState(true);
   const [filter, setFilter]       = useState<LeadStatus | 'Todos'>('Todos');
   const [industry, setIndustry]   = useState('Todas');
+  const [source, setSource]       = useState('Todos');
   const [selected, setSelected]   = useState<Lead | null>(null);
   const [notasEdit, setNotasEdit] = useState('');
   const [updating, setUpdating]   = useState<string | null>(null);
@@ -80,7 +81,8 @@ export default function AdminLeads() {
   const visible = leads.filter(l => {
     const statusOk   = filter === 'Todos' || l.status === filter;
     const industryOk = industry === 'Todas' || l.industria === industry;
-    return statusOk && industryOk;
+    const sourceOk   = source === 'Todos' || l.source === source;
+    return statusOk && industryOk && sourceOk;
   });
 
   const openDetail = (lead: Lead) => {
@@ -163,6 +165,18 @@ export default function AdminLeads() {
             borderBottom: `1px solid ${industry === ind ? '#C9A96E' : 'transparent'}`,
           }}>
             {ind === 'Todas' ? 'Todas' : INDUSTRY_LABEL[ind]}
+          </button>
+        ))}
+        <div style={{ width: 1, background: '#1e1e1e' }} />
+        {(['Todos', 'aplicar', 'referencia', 'chat'] as const).map(s => (
+          <button key={s} onClick={() => setSource(s)} style={{
+            fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '6px 14px',
+            background: 'transparent', border: 'none',
+            color: source === s ? '#C9A96E' : '#3A3A3A',
+            cursor: 'pointer', fontFamily: 'inherit',
+            borderBottom: `1px solid ${source === s ? '#C9A96E' : 'transparent'}`,
+          }}>
+            {s === 'Todos' ? 'Todas fuentes' : s}
           </button>
         ))}
       </div>

@@ -2267,12 +2267,13 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   transition: all 0.2s ease;
 }
 
-.cal-day.muted { color: var(--text-quaternary); }
-.cal-day.active { color: var(--text-primary); cursor: pointer; }
-.cal-day.active:hover { border-color: var(--border-strong); }
+.cal-day.muted { color: var(--text-tertiary); opacity: 0.35; cursor: default; }
+.cal-day.past  { color: var(--text-tertiary); opacity: 0.45; cursor: default; }
+.cal-day.active { color: var(--text-tertiary); opacity: 0.55; cursor: default; }
+.cal-day.active:hover { border-color: transparent; }
 
 .cal-day.slot {
-  color: var(--accent);
+  color: var(--text-primary);
   border: 1px solid var(--accent-deep);
   background: rgba(201,169,110,0.04);
   cursor: pointer;
@@ -2325,7 +2326,7 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
 .calendar-legend span { display: flex; align-items: center; gap: 6px; }
 .legend-swatch { width: 10px; height: 10px; border: 1px solid; }
 .legend-swatch.available { background: rgba(201,169,110,0.08); border-color: var(--accent-deep); }
-.legend-swatch.full { background: var(--bg-panel); border-color: var(--border); }
+.legend-swatch.full { background: transparent; border-color: var(--text-tertiary); opacity: 0.5; }
 .legend-swatch.today { background: var(--bg-base); border-color: var(--accent); }
 
 /* REFERENCES (S12) */

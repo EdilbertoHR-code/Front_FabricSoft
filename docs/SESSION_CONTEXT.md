@@ -716,6 +716,80 @@ GET /api/referencias -> 3 referencias visibles, publicLimit 3, totalDisponibles 
 npm.cmd run build -> OK
 ```
 
+## 25. Sesión 24 mayo 2026 (cont.) — S11 calendario fixes + modal mejoras + Fabric Score
+
+### Resumen
+
+Se corrigieron 7 problemas del calendario de Office Hours (S11), se mejoró el modal de reserva, se enriqueció el formulario de referencias, se agregó filtro de source en AdminLeads, y se corrigió el Fabric Score para leads de referencia.
+
+### Bugs corregidos en S11 calendario
+
+| Bug | Causa | Fix |
+|-----|-------|-----|
+| Lunes con todos los slots ocupados | `TODAY_ISO` usaba UTC → después de 19:00 CDMX devolvía el día siguiente | `localDateISO()` con `getFullYear/Month/Date` locales |
+| Días pasados clickeables | Sin clase `past` ni guard en CSS | Clase `past` en `buildCalendarGrid`; `cursor: default` en CSS |
+| Navegación hacia atrás ilimitada | Sin límite inferior en `prevMonth` | Guard `isAtMin` (mes actual) y `isAtMax` (mes actual + 1) |
+| Días disponibles en ámbar | `.cal-day.slot` usaba `var(--accent)` | Cambiado a `var(--text-primary)` (blanco) |
+| Fines de semana sin gris | Sin clase CSS diferenciada | `.cal-day.muted` con `opacity: 0.35; cursor: default` |
+| Días llenos aún clickeables | `getMonthAvailability` ignoraba reservas en DB | Controller pre-consulta DB, construye `dbByDay` map, lo pasa al service |
+| Días sin slots futuros ambiguos | Sin clase visual | `.cal-day.active` con `opacity: 0.55; cursor: default` (gris) |
+
+### Modal de reserva — mejoras
+
+| Mejora | Detalle |
+|--------|---------|
+| Click en día del calendario pre-selecciona fecha en modal | `data-date` attribute en cada celda; InteractionManager lee atributo y hace `setSelectedDay(clickedDate)` |
+| `selectedDay` cambió de índice numérico a ISO string | Evita desfase cuando `days` cambia. `useState<string>(() => getWorkDaysUntilEndOfNextMonth()[0])` — inicialización directa sin referencia a `days` |
+| Selector de días muestra resto del mes + mes siguiente | `getWorkDaysUntilEndOfNextMonth()` genera días hábiles hasta fin del mes siguiente |
+| Paginación semanal (5 días visibles) | Estado `weekOffset`; `useEffect` auto-salta a la semana del día seleccionado cuando llega desde el calendario |
+| Quitado botón izquierdo "RESERVAR CONVERSACIÓN" | Solo queda el CTA debajo del calendario y el `nda-seal` |
+
+### Formulario de referencia enriquecido
+
+Antes solo pedía nombre + empresa + email. Ahora incluye:
+- **cargo** (select: CFO / CTO / CIO / Director Transformación / VP Finance / VP Technology)
+- **revenue** (select: rangos USD 50M–1B+)
+- **iniciativa Oracle** (textarea, mínimo 10 caracteres)
+
+Backend `solicitarReferencia` actualizado para validar y guardar los tres campos nuevos.
+
+### AdminLeads — filtro por source
+
+Agregados botones de filtro: **Todos / aplicar / referencia / chat**. El estado `sourceFilter` cruza con el filtro existente de status/industria.
+
+### Fabric Score — fix para leads de referencia
+
+`calcScore()` solo se llamaba en el flujo `solicitar`. Los leads de `solicitarReferencia` quedaban con `score: 0`. Fix: se llama `calcScore({ revenue, iniciativa })` antes de `Lead.create` en `solicitarReferencia`.
+
+**Qué mide el Fabric Score (0–95):**
+- Revenue de la empresa (máx 35 pts)
+- Industria calificada: financiero / inmobiliario / logística (25 pts)
+- Plazo de decisión (máx 25 pts — solo aplica al flujo `aplicar`)
+- Longitud de la descripción de iniciativa (máx 10 pts)
+
+Referencias no tienen `industria` ni `plazo` en su formulario, por lo que su score máximo es 45 pts.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/pages/public/home/s11-office-hours.tsx` | `buildCalendarGrid`: clase `past`, guards navegación, `data-date` en celdas |
+| `src/maquetado-dossier.css` | Clases `.slot`, `.muted`, `.past`, `.active`, `.legend-swatch.full` |
+| `src/components/InteractionManager.tsx` | `localDateISO`, `getWorkDaysUntilEndOfNextMonth`, `selectedDay` como ISO, `weekOffset`, paginación semanal, formulario referencia ampliado |
+| `Backend/services/calendar.service.js` | `getMonthAvailability` acepta `dbByDay` map |
+| `Backend/controllers/officeHours.controller.js` | `disponibilidadMes` consulta DB primero, pasa `dbByDay` al service |
+| `Backend/controllers/leads.controller.js` | `solicitarReferencia` calcula `score`; acepta `cargo`, `revenue`, `iniciativa` |
+| `src/pages/admin/AdminLeads.tsx` | Filtro por `source` (Todos / aplicar / referencia / chat) |
+
+### Pendiente para siguiente sesión
+
+- Frontend de Research Letters (página pública `/research-letters`)
+- `GET /api/stats` — endpoint real para S12b store
+- `POST /api/leads` — wizard de 5 pasos todavía no llama API
+- AdminLogs: conectar a DB real
+
+---
+
 ## 24. Sesión 24 mayo 2026 (cont.) — Papers PDF por email + Research Letters backend completo
 
 ### Resumen

@@ -174,29 +174,36 @@ const DEFAULT_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','
 exports.disponibilidadMes = async (req, res) => {
   const year  = parseInt(req.query.year)  || new Date().getFullYear();
   const month = parseInt(req.query.month) || new Date().getMonth() + 1;
+  const prefix = `${year}-${String(month).padStart(2, '0')}-`;
+
+  // Siempre consultar DB primero — independiente de Calendar
+  const monthBookings = await Booking.find(
+    { dia: { $regex: `^${prefix}` }, status: { $ne: 'cancelado' } }, 'dia slot'
+  ).catch(() => []);
+
+  const dbByDay = {};
+  monthBookings.forEach(b => {
+    if (!dbByDay[b.dia]) dbByDay[b.dia] = new Set();
+    dbByDay[b.dia].add(b.slot);
+  });
 
   try {
-    const data = await calendarService.getMonthAvailability(year, month);
+    const data = await calendarService.getMonthAvailability(year, month, dbByDay);
     res.json({ ok: true, data });
   } catch (err) {
     console.error('officeHours.disponibilidadMes error:', err.message);
-    // Fallback: weekdays del mes con disponibilidad real desde DB
+    // Fallback: calcular desde DB pura
     try {
       const today = new Date().toISOString().split('T')[0];
       const daysInMonth = new Date(year, month, 0).getDate();
-      const prefix = `${year}-${String(month).padStart(2, '0')}-`;
-      const monthBookings = await Booking.find(
-        { dia: { $regex: `^${prefix}` }, status: { $ne: 'cancelado' } }, 'dia'
-      );
-      const takenByDay = {};
-      monthBookings.forEach(b => { takenByDay[b.dia] = (takenByDay[b.dia] || 0) + 1; });
       const data = {};
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${prefix}${String(d).padStart(2, '0')}`;
         if (dateStr <= today) continue;
         const dow = new Date(dateStr + 'T12:00:00').getDay();
         if (dow === 0 || dow === 6) continue;
-        const available = Math.max(0, DEFAULT_SLOTS.length - (takenByDay[dateStr] || 0));
+        const taken = dbByDay[dateStr] ? dbByDay[dateStr].size : 0;
+        const available = Math.max(0, DEFAULT_SLOTS.length - taken);
         if (available > 0) data[dateStr] = available;
       }
       res.json({ ok: true, data, error: 'calendar_unavailable' });
