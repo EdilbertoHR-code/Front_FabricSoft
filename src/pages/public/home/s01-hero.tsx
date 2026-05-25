@@ -297,14 +297,14 @@ export default function S01Hero() {
             }`}
           >
             <Link
-              to="/contacto"
+              to="/aplicar"
               className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)] max-sm:min-w-0 max-sm:w-full max-sm:px-5 max-sm:text-[9px]"
             >
               <span className="relative z-10">{t('cta.start')}</span>
               <span className="relative z-10 ml-3">-&gt;</span>
             </Link>
 
-            <Link to="/#fabric-ai" className="btn-primary min-w-[250px] max-sm:min-w-0">
+            <Link to="/optimizador-oci" className="btn-primary min-w-[250px] max-sm:min-w-0">
               {t('cta.audit')} <span className="text-[#C9A96E]">-&gt;</span>
             </Link>
           </div>
