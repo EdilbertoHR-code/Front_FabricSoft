@@ -349,12 +349,12 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
       <button
         type="button"
         onClick={onOpen}
-        className="group mt-8 w-full border border-[#C9A96E]/20 bg-[#C9A96E]/5 p-6 text-left transition-all duration-300 hover:bg-[#C9A96E] rounded-sm"
+        className="group mt-8 w-full border border-[#C9A96E]/20 bg-[#C9A96E]/5 p-6 text-left transition-all duration-300 hover:border-[#C9A96E]/60 hover:bg-[#C9A96E]/10 hover:shadow-[0_0_20px_rgba(201,169,110,0.15)] rounded-sm"
       >
-        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] transition-colors duration-300 group-hover:text-black">
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] transition-colors duration-300">
           Ahorro 10 años estimado
         </p>
-        <p className="font-serif text-4xl text-[#F5F5F5] transition-colors duration-300 group-hover:text-black">
+        <p className="font-serif text-4xl text-[#F5F5F5] transition-colors duration-300 group-hover:text-[#C9A96E]">
           {fmtCompact(preview.savings10y)}
         </p>
       </button>

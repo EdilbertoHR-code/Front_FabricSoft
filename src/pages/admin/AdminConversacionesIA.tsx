@@ -15,7 +15,6 @@ import {
   CheckCheck,
   Zap
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { api } from '../../config/api';
 
 // ─── TIPOS ───
