@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
-const trackingSchema = new mongoose.Schema({
-  sourceSection:   { type: String, default: '' },
-  interactionType: { type: String, default: '' },
-  pagePath:        { type: String, default: '' },
-  referrer:        { type: String, default: '' },
-  utm_source:      { type: String, default: '' },
-  utm_medium:      { type: String, default: '' },
-  utm_campaign:    { type: String, default: '' },
-  utm_term:        { type: String, default: '' },
-  utm_content:     { type: String, default: '' },
-  locale:          { type: String, default: '' },
-}, { _id: false });
+const trackingSchema = new mongoose.Schema(
+  {
+    sourceSection: { type: String, default: '', trim: true },
+    interactionType: { type: String, default: '', trim: true },
+    pagePath: { type: String, default: '', trim: true },
+    referrer: { type: String, default: '', trim: true },
+    utm_source: { type: String, default: '', trim: true },
+    utm_medium: { type: String, default: '', trim: true },
+    utm_campaign: { type: String, default: '', trim: true },
+    utm_term: { type: String, default: '', trim: true },
+    utm_content: { type: String, default: '', trim: true },
+    locale: { type: String, default: '', trim: true },
+  },
+  { _id: false }
+);
 
 module.exports = trackingSchema;
