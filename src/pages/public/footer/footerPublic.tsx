@@ -33,7 +33,7 @@ const footerLinks: Record<string, FooterLink[]> = {
   ],
   herramientas: [
     { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
-    { label: 'Optimizador OCI',          path: '/#fabric-ai' },
+    { label: 'Optimizador OCI',          path: '/optimizador-oci' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
     { label: 'Doctrine Generator *',     path: '/doctrina/generator' },

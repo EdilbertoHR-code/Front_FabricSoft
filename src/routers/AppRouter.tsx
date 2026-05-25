@@ -33,6 +33,9 @@ const BenchmarkIndexPage = lazy(() => import('../pages/public/herramientas/Bench
 // Office Hours
 const OfficeHoursPage = lazy(() => import('../pages/public/office-hours/OfficeHoursPage'));
 
+// Optimizador OCI
+const OptimizadorOciPage = lazy(() => import('../pages/public/optimizador-oci/OptimizadorOciPage'));
+
 // Páginas de Investigación
 const ResearchLettersPage = lazy(() => import('../pages/public/investigacion/ResearchLettersPage'));
 const PaperPage = lazy(() => import('../pages/public/investigacion/PaperPage'));
@@ -148,6 +151,9 @@ export const AppRouter = () => {
 
             {/* Office Hours */}
             <Route path="office-hours" element={<OfficeHoursPage />} />
+
+            {/* Optimizador OCI */}
+            <Route path="optimizador-oci" element={<OptimizadorOciPage />} />
 
             {/* Investigación */}
             <Route path="research-letters" element={<ResearchLettersPage />} />
