@@ -18,7 +18,7 @@ function getAuth() {
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key:  privateKey,
     },
-    scopes: ['https://www.googleapis.com/auth/calendar.events'],
+    scopes: ['https://www.googleapis.com/auth/calendar'],
   });
 }
 
