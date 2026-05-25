@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import LanguageToggle from '../../../components/LanguageToggle';
 
 type FooterLink = {
   label: string;
@@ -167,11 +168,7 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/40">
-          <div className="flex gap-4">
-            <button className="hover:text-[#F5F5F5] transition-colors duration-300 bg-transparent border-0 p-0 m-0 cursor-pointer font-mono text-[11px] leading-none">EN</button>
-            <span className="text-[#C9A96E]/50">|</span>
-            <button className="text-[#F5F5F5] font-bold bg-transparent border-0 p-0 m-0 cursor-pointer font-mono text-[11px] leading-none">ES</button>
-          </div>
+          <LanguageToggle compact />
 
           <p>© {currentYear} FABRIC SOFT MEXICO SA DE CV</p>
         </div>

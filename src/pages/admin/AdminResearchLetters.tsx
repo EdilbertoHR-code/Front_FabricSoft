@@ -187,7 +187,7 @@ export default function AdminResearchLetters() {
             Configuración de membresía
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 32 }}>
+          <div className="admin-research-config-grid">
 
             {/* Admisión abierta */}
             <div>
@@ -265,7 +265,7 @@ export default function AdminResearchLetters() {
         </section>
 
         {/* ── Stats ───────────────────────────────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 32 }}>
+        <div className="admin-research-stats-grid">
           {[
             { label: 'Total solicitudes', value: total },
             { label: 'Aprobados',         value: aprobados },
@@ -299,10 +299,7 @@ export default function AdminResearchLetters() {
         ) : (
           <div style={{ borderTop: '1px solid #1E1E1E' }}>
             {suscriptores.map(s => (
-              <div key={s._id} style={{
-                display: 'grid', gridTemplateColumns: '1fr 140px 120px 180px',
-                gap: '0 24px', padding: '20px 0', borderBottom: '1px solid #1A1A1A', alignItems: 'start',
-              }}>
+              <div key={s._id} className="admin-research-list-row">
                 {/* Info */}
                 <div>
                   <div style={{ ...S, fontSize: 11, color: '#F5F5F5', marginBottom: 4 }}>{s.empresa}</div>

@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useI18n } from "../../../i18n/I18nProvider";
 
 
 
-const highlightPhrases = [
-  {
-    base: "Garantizamos la estabilización del primer ciclo crítico. ",
-    gold: "Por contrato.",
-  },
-  {
-    base: "Nos quedamos hasta el primer cierre contable operado en producción. ",
-    gold: "Sin sorpresas.",
-  },
-  {
-    base: "Transición a soporte sin incidencias bloqueantes abiertas. ",
-    gold: "Cero abandono post go-live.",
-  },
-];
+type HighlightPhrase = {
+  base: string;
+  gold: string;
+};
 
 const particles = [
   { x: "8%", y: "18%", d: "0s", s: "2px" },
@@ -53,13 +44,13 @@ function BackgroundParticles() {
   );
 }
 
-function TypewriterCarousel() {
+function TypewriterCarousel({ phrases }: { phrases: HighlightPhrase[] }) {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    const phrase = highlightPhrases[phraseIndex];
+    const phrase = phrases[phraseIndex] ?? phrases[0];
     const totalLength = phrase.base.length + phrase.gold.length;
 
     if (!deleting && charIndex === totalLength) {
@@ -69,7 +60,7 @@ function TypewriterCarousel() {
 
     if (deleting && charIndex === 0) {
       setDeleting(false);
-      setPhraseIndex((current) => (current + 1) % highlightPhrases.length);
+      setPhraseIndex((current) => (current + 1) % phrases.length);
       return;
     }
 
@@ -78,9 +69,9 @@ function TypewriterCarousel() {
     }, deleting ? 18 : 34);
 
     return () => clearTimeout(timer);
-  }, [charIndex, deleting, phraseIndex]);
+  }, [charIndex, deleting, phraseIndex, phrases]);
 
-  const phrase = highlightPhrases[phraseIndex];
+  const phrase = phrases[phraseIndex] ?? phrases[0];
   const base = phrase.base.slice(0, charIndex);
   const gold = charIndex > phrase.base.length ? phrase.gold.slice(0, charIndex - phrase.base.length) : "";
 
@@ -96,6 +87,7 @@ function TypewriterCarousel() {
 }
 
 function PremiumGlobe() {
+  const { t } = useI18n();
   const globeStars = [
     { left: "18%", top: "18%", delay: "0s" },
     { left: "76%", top: "14%", delay: ".7s" },
@@ -106,17 +98,17 @@ function PremiumGlobe() {
   const globeLabels = [
     {
       number: "01",
-      title: "Rescate Fusion",
+      title: t('hero.orb.1'),
       className: "left-[2%] top-[13%]",
     },
     {
       number: "02",
-      title: "Migración SAP/EBS",
+      title: t('hero.orb.2'),
       className: "right-[1%] top-[26%]",
     },
     {
       number: "03",
-      title: "Greenfield Oracle",
+      title: t('hero.orb.3'),
       className: "left-[4%] bottom-[16%]",
     },
   
@@ -191,7 +183,7 @@ function PremiumGlobe() {
           ERP Mission Critical
         </p>
         <p className="mt-2 text-[11px] leading-5 text-[#8A8A8A] md:text-xs">
-          Operaciones ERP sin dependencia manual.
+          {t('hero.orb.caption')}
         </p>
       </div>
     </div>
@@ -199,7 +191,13 @@ function PremiumGlobe() {
 }
 
 export default function S01Hero() {
+  const { t, lang } = useI18n();
   const [mounted, setMounted] = useState(false);
+  const highlightPhrases: HighlightPhrase[] = [
+    { base: t('hero.type.1.base'), gold: t('hero.type.1.gold') },
+    { base: t('hero.type.2.base'), gold: t('hero.type.2.gold') },
+    { base: t('hero.type.3.base'), gold: t('hero.type.3.gold') },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 80);
@@ -207,7 +205,7 @@ export default function S01Hero() {
   }, []);
 
   return (
-    <section id="inicio" className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28">
+    <section id="inicio" data-no-translate className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28">
       <style>{`
         @keyframes fabricStar {
           0%, 100% { opacity: 0; transform: translateY(0) scale(.85); }
@@ -257,39 +255,39 @@ export default function S01Hero() {
               <span className="relative h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
             </span>
             <span className="font-mono text-[8.5px] font-semibold uppercase tracking-[0.22em] text-[#F5F5F5]">
-              Oracle Certified Partner · Critical Engineering
+              {t('hero.badge')}
             </span>
           </div>
 
           <h1
-            className="mt-7 font-serif text-[clamp(46px,5.5vw,84px)] leading-[0.95] tracking-[-0.045em] text-[#F5F5F5] lg:whitespace-nowrap"
+            className="mt-7 font-serif text-[clamp(42px,5.5vw,84px)] leading-[0.95] tracking-[-0.045em] text-[#F5F5F5]"
             style={{ animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .18s both" }}
           >
-            No entregamos en go-live.
+            {t('hero.h1')}
           </h1>
 
           <h2
             className="mt-4 max-w-4xl font-serif text-[clamp(28px,3.1vw,46px)] font-semibold leading-[1.06] tracking-[-0.04em] text-[#F5F5F5]"
             style={{ animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .34s both" }}
           >
-            Entregamos cuando tu primer ciclo <span className="text-[#C9A96E]">crítico opera.</span>
+            {t('hero.h2.before')}<span className="text-[#C9A96E]">{t('hero.h2.gold')}</span>
           </h2>
 
           <p
             className="mt-7 max-w-2xl text-base leading-8 text-[#F5F5F5]/82 md:text-lg"
             style={{ animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .5s both" }}
           >
-            El 73% de las implementaciones Oracle Fusion celebran el go-live y abandonan al cliente con cierres pesados e incidencias abiertas.
+            {t('hero.body')}
           </p>
 
           <p
             className="mt-4 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A8A8A]"
             style={{ animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .6s both" }}
           >
-            Migraciones: SAP · EBS · JD Edwards · PeopleSoft · Greenfield
+            {t('hero.migrations')}
           </p>
 
-          <TypewriterCarousel />
+          <TypewriterCarousel key={lang} phrases={highlightPhrases} />
 
       
 
@@ -300,14 +298,14 @@ export default function S01Hero() {
           >
             <Link
               to="/contacto"
-          className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)]"
-   >
-              <span className="relative z-10">Iniciar conversación</span>
-              <span className="relative z-10 ml-3">→</span>
+              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)] max-sm:min-w-0 max-sm:w-full max-sm:px-5 max-sm:text-[9px]"
+            >
+              <span className="relative z-10">{t('cta.start')}</span>
+              <span className="relative z-10 ml-3">-&gt;</span>
             </Link>
 
-            <Link to="/#fabric-ai" className="btn-primary min-w-[250px]">
-              Auditoría OCI gratuita <span className="text-[#C9A96E]">→</span>
+            <Link to="/#fabric-ai" className="btn-primary min-w-[250px] max-sm:min-w-0">
+              {t('cta.audit')} <span className="text-[#C9A96E]">-&gt;</span>
             </Link>
           </div>
         </div>

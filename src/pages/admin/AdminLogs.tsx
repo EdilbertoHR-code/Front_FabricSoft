@@ -128,7 +128,7 @@ export default function AdminLogs() {
             Sin registros. Los logs aparecen cuando hay actividad en el sistema.
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="admin-table-wrap">
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #1a1a1a' }}>

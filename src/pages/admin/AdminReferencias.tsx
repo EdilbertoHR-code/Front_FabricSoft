@@ -165,7 +165,7 @@ export default function AdminReferencias() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {references.map((item, index) => (
               <div key={item._id ?? index} style={{ border: '1px solid #1e1e1e', background: '#080808', padding: 18 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '70px 1.4fr 1.4fr 1fr auto', gap: 12, alignItems: 'center' }}>
+                <div className="admin-reference-row">
                   <input value={item.numero} onChange={e => updateReference(index, { numero: e.target.value })} style={inputStyle()} />
                   <input value={item.title} onChange={e => updateReference(index, { title: e.target.value })} placeholder="Titulo publico" style={inputStyle()} />
                   <input value={item.subtitle} onChange={e => updateReference(index, { subtitle: e.target.value })} placeholder="Subtitulo" style={inputStyle()} />

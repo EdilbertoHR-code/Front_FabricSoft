@@ -851,3 +851,258 @@ Pendiente como tarea futura.
 - AdminLogs: conectar a DB real
 - `POST /api/leads` — wizard de 5 pasos en `/aplicar` todavía no llama API (datos se pierden)
 - `GET /api/stats` — endpoint real para S12b store (proyectos activos, solicitudes evaluadas)
+
+## 26. Sesion 24 mayo 2026 (cont.) - Selector ES/EN
+
+### Resumen
+
+Se habilito selector de idioma visible en header y footer. La primera version usa Google Translate oculto como motor para traducir el DOM completo sin tener que duplicar todo el copy manualmente.
+
+### Cambios aplicados
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/LanguageToggle.tsx` | Nuevo componente ES/EN. Guarda seleccion en `localStorage` (`fabric_lang`), actualiza `document.documentElement.lang` y dispara Google Translate en segundo plano. |
+| `src/pages/public/header/headerPublic.tsx` | Selector agregado arriba en desktop y dentro del menu mobile. |
+| `src/pages/public/footer/footerPublic.tsx` | El switch visual viejo ahora usa el mismo componente real. |
+| `src/index.css` | Oculta la UI externa de Google Translate y evita que mueva el body hacia abajo. |
+
+### Verificacion
+
+```
+npm.cmd run build -> OK
+```
+
+Nota tecnica: esta es una solucion rapida para bilingue completo. Si se requiere copy premium/curado en ingles, conviene migrar por etapas a diccionarios propios por seccion.
+
+## 27. Sesion 24 mayo 2026 (cont.) - i18n propio ES/EN
+
+### Resumen
+
+Se elimino la implementacion con Google Translate embebido porque inyectaba barra/iframe y rompia el layout visual. Se reemplazo por una base i18n propia, sin dependencias externas y sin tocar el DOM automaticamente.
+
+### Cambios aplicados
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/i18n/I18nProvider.tsx` | Nuevo provider de idioma (`es`/`en`), persiste en `localStorage` (`fabric_lang`) y actualiza `document.documentElement.lang`. |
+| `src/i18n/translations.ts` | Diccionario inicial ES/EN para header, footer keys y hero principal. |
+| `src/components/LanguageToggle.tsx` | Reescrito: ya no carga Google Translate; usa `useI18n()`. |
+| `src/App.tsx` | Envuelve `AppRouter` con `I18nProvider`. |
+| `src/pages/public/header/headerPublic.tsx` | Navegacion y CTA conectados a `t(...)`; selector ES/EN visible en header y menu mobile. |
+| `src/pages/public/home/s01-hero.tsx` | Textos principales del hero conectados a i18n. |
+| `src/index.css` | Eliminadas reglas de ocultamiento del widget Google; queda solo `body top: 0` inocuo. |
+
+### Verificacion
+
+```
+rg "googleTranslate|goog-te|translate_a|TranslateElement" src -n -> sin resultados
+npm.cmd run build -> OK
+```
+
+Pendiente: migrar progresivamente el resto de secciones a `useI18n()`/diccionarios curados. Prioridad sugerida: S06 Doctrina, S07 Casos, S11 Office Hours, S12 Referencias, S13 Transparencia, Aplicar.
+
+### Ajuste i18n completo con API + cache
+
+El selector ES/EN ya no usa Google Translate. Para traducir toda la pagina sin widget externo se agrego un traductor interno con API y cache.
+
+Backend nuevo:
+- `backend/models/model.translationCache.js`: cache de traducciones por `sourceLang`, `targetLang`, `sourceText`.
+- `backend/controllers/i18n.controller.js`: `POST /api/i18n/translate`, usa DeepL si existe `DEEPL_API_KEY`, guarda resultados en Mongo.
+- `backend/components/i18n.component.js`: router i18n.
+- `backend/routers/app.routers.js`: montado `/i18n`.
+
+Frontend nuevo:
+- `src/i18n/PageTranslator.tsx`: recorre textos del DOM publico, manda batches a `/api/i18n/translate`, reemplaza textos y observa cambios con `MutationObserver`.
+- `src/App.tsx`: monta `PageTranslator` dentro de `I18nProvider`.
+
+Variables necesarias en `backend/.env` para traduccion completa:
+```
+DEEPL_API_KEY=...
+# opcional si se quiere forzar endpoint:
+DEEPL_API_URL=https://api-free.deepl.com/v2/translate
+```
+Si no hay `DEEPL_API_KEY`, solo funcionan las traducciones manuales del diccionario (`translations.ts`), pero el sitio no se traduce completo.
+
+Verificacion:
+```
+node --check backend/controllers/i18n.controller.js -> OK
+node --check backend/components/i18n.component.js -> OK
+node --check backend/models/model.translationCache.js -> OK
+npm.cmd run build -> OK
+```
+
+## 28. Sesion 24 mayo 2026 (cont.) - Estado actual i18n, responsive y pendientes
+
+### Resumen ejecutivo
+
+Se dejo el sitio con una arquitectura bilingue propia ES/EN sin Google Translate, con traduccion automatica via backend + DeepL para textos no migrados manualmente. Tambien se reforzo responsive en frontend publico y panel admin para PC, tablet y movil.
+
+Importante: el build esta OK, pero la validacion responsive completa aun requiere pasada visual real en navegador con screenshots en desktop/tablet/mobile.
+
+### i18n / traduccion
+
+Estado actual:
+- `LanguageToggle` usa `useI18n()` y `localStorage` (`fabric_lang`).
+- Google Translate fue eliminado. No debe volver a usarse porque inyectaba barra/iframe y rompia el layout.
+- `I18nProvider` envuelve la app desde `src/App.tsx`.
+- `translations.ts` contiene diccionario manual inicial para header, footer keys y hero.
+- `PageTranslator` traduce el DOM publico restante con `/api/i18n/translate`.
+- Backend i18n usa DeepL si existe `DEEPL_API_KEY` y cachea traducciones en Mongo.
+- Admin queda excluido del traductor automatico por `.admin-main`.
+- Header y hero quedan excluidos del traductor automatico con `data-no-translate` porque ya usan diccionario manual.
+
+Archivos clave:
+- `src/i18n/I18nProvider.tsx`
+- `src/i18n/translations.ts`
+- `src/i18n/PageTranslator.tsx`
+- `src/components/LanguageToggle.tsx`
+- `src/App.tsx`
+- `backend/models/model.translationCache.js`
+- `backend/controllers/i18n.controller.js`
+- `backend/components/i18n.component.js`
+
+Notas importantes:
+- DeepL debe estar en `Backend/.env` como `DEEPL_API_KEY`.
+- Si la key termina en `:fx`, el backend usa endpoint free por defecto.
+- Si no hay key, solo traduce lo que este en `translations.ts`.
+- La primera traduccion de una pagina puede tardar por llamada a DeepL; despues queda cacheada en Mongo.
+
+### Ajustes visuales del selector ES/EN
+
+Estado actual:
+- `LanguageToggle` compacto usa estilo inline:
+  - `fontSize: '12px'`
+  - `letterSpacing: '0.1em'`
+- Se ubica junto al CTA del header, con separacion horizontal.
+- En menu mobile tambien existe selector.
+- Header marcado con `data-no-translate` para evitar que el traductor DOM modifique el CTA "Iniciar conversacion".
+
+### Hero
+
+Cambios:
+- Hero conectado a `useI18n()`.
+- Typewriter usa frases traducidas desde `translations.ts`.
+- `PremiumGlobe` usa diccionario para:
+  - `hero.orb.1`
+  - `hero.orb.2`
+  - `hero.orb.3`
+  - `hero.orb.caption`
+- Hero marcado con `data-no-translate`.
+- Quitado `lg:whitespace-nowrap` del H1 para evitar overflow en pantallas medianas/chicas.
+- CTAs del hero ajustados en mobile para no desbordar (`max-sm:w-full`, `max-sm:min-w-0`).
+
+### Responsive
+
+Se agrego capa responsive global en `src/index.css`:
+- `body` y `#root` con `overflow-x: hidden`.
+- `img`, `video`, `canvas`, `svg` con `max-width: 100%`.
+- `.admin-main { min-width: 0; }`.
+- Tablas admin con `min-width` + scroll horizontal.
+- Inputs/selects/buttons admin con `max-width: 100%`.
+- Paneles laterales admin (`admin-slide-panel`, `admin-detail-panel`) pasan a pantalla completa en mobile.
+- Sidebar admin mobile limitado a `min(86vw, 320px)`.
+- Botones `.btn-primary` / `.btn-secondary` full-width en mobile.
+
+Pantallas admin reforzadas:
+- `AdminLeads`: detalle lateral usa `.admin-slide-panel`.
+- `AdminOfficeHours`: filas usan `.admin-booking-row`, colapsan en mobile.
+- `AdminReferencias`: fila de inputs usa `.admin-reference-row`, colapsa a una columna.
+- `AdminTransparencia`: grids editoriales migrados a clases responsive.
+- `AdminResearchLetters`: config/stats/listado migrados a clases responsive.
+- `AdminLogs`: tabla usa `.admin-table-wrap`.
+
+Verificacion:
+```
+npm.cmd run build -> OK
+```
+
+Pendiente de QA visual responsive:
+- Revisar en navegador con resoluciones:
+  - Desktop `1440x900`
+  - Laptop `1366x768`
+  - Tablet `768x1024`
+  - Mobile grande `430x932`
+  - Mobile chico `375x667`
+- Revisar especialmente:
+  - Doctrina modal y scroll
+  - InteractionManager modales largos
+  - AdminResearchLetters lista con muchos registros
+  - AdminTransparencia editor con textos largos
+  - Office Hours drawer en mobile
+  - Header con selector ES/EN + CTA
+
+### Backend / producto - estado consolidado
+
+Completado:
+- S11 Office Hours:
+  - reservas
+  - status admin
+  - email confirmacion
+  - Google Calendar event al confirmar
+  - retry email/calendar
+  - flags `emailEnviado`, `calendarEnviado`, `calendarEventId`
+- S12 Referencias:
+  - backend + admin
+  - rotacion publica de 3 referencias por semana
+  - control manual de disponibilidad
+- S13 Transparencia:
+  - backend + admin
+  - candado doble `visible && verified`
+- S14 Papers:
+  - solicitud + entrega PDF por email cuando status pasa a `enviado`
+  - requiere PDFs reales en `Backend/assets/papers/paper-XX.pdf`
+- Research Letters:
+  - backend + admin de cupo/admisiones/status
+  - emails de confirmacion/bienvenida
+- S15 Founder / Capacidad:
+  - conectado a `/api/capacidad`
+  - admin capacidad funcional
+- AdminLogs:
+  - backend, modelo, servicio, ruta y panel admin reales
+  - ya no es hardcodeado
+  - controllers clave ya escriben logs: leads, NDA, Office Hours, Papers, Research Letters
+- Clerk/admin:
+  - Admin protegido por Clerk en frontend
+  - roles normalizados
+  - logout con Clerk
+
+### Pendientes principales
+
+Prioridad alta:
+- QA visual responsive real con screenshots en desktop/tablet/mobile.
+- Completar migracion manual i18n de secciones criticas para copy premium:
+  - S06 Doctrina
+  - S07 Casos
+  - S11 Office Hours
+  - S12 Referencias
+  - S13 Transparencia
+  - `/aplicar`
+- Revisar performance/fluidez de Doctrina; el usuario noto scroll poco fluido.
+- Frontend publico de Research Letters: form real de registro en `/research-letters`.
+- `POST /api/leads` para wizard de 5 pasos en `/aplicar` si todavia no esta conectado.
+- `GET /api/stats` real para S12b / store si sigue usando placeholders.
+
+Prioridad media:
+- Completar logs en controllers que aun falten:
+  - capacidad
+  - metricas
+  - referencias
+  - transparencia
+  - auth/webhooks
+- Implementar prewarm/cache de traducciones para que el cambio ES/EN sea mas rapido en primera carga.
+- Revisar todas las paginas satelite del footer para i18n y responsive.
+- Revisar chunks grandes de Vite (`index` > 500 kB) y considerar code splitting/manualChunks.
+
+Dependencias externas pendientes:
+- Verificar dominio Resend para que emails lleguen a clientes externos.
+- Configurar `NDA_APE_PLAZAS_PDF_URL` si se seguira usando link de NDA.
+- Colocar PDFs reales:
+  - `Backend/assets/papers/paper-01.pdf`
+  - `Backend/assets/papers/paper-02.pdf`
+  - `Backend/assets/papers/paper-03.pdf`
+- Mantener `DEEPL_API_KEY` en `Backend/.env` para traduccion completa.
+
+### Regla de seguridad
+
+Hay secretos reales en `.env`, `.env.local`, `Backend/.env` y archivos descargados. No imprimirlos, no copiarlos al contexto, no commitearlos.

@@ -321,7 +321,7 @@ function PublicadaRow({ item, index, onUpdate, onFuente, onRemove }: {
         </div>
 
         {/* Campos principales */}
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 90px 110px 110px', gap: 8, alignItems: 'start' }}>
+        <div className="admin-transparencia-main-grid">
           <div>
             <FieldLabel>Label público</FieldLabel>
             <input value={item.label} onChange={e => onUpdate(index, { label: e.target.value })} placeholder="Descripción de la métrica" style={input()} />
@@ -354,7 +354,7 @@ function PublicadaRow({ item, index, onUpdate, onFuente, onRemove }: {
       </div>
 
       {/* Fila 3 — fuente + verificadoPor + fecha */}
-      <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr 1fr 160px', gap: 8, alignItems: 'end', marginBottom: 12 }}>
+      <div className="admin-transparencia-source-grid">
         <div>
           <FieldLabel>Tipo de fuente</FieldLabel>
           <select
@@ -412,7 +412,7 @@ function TabProximas({ proximas, onUpdate, onRemove, onAdd }: {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {proximas.map((p, i) => (
           <div key={p._id ?? i} style={{ border: '1px solid #1a1a1a', background: '#080808', padding: 16 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px 1fr auto', gap: 10, alignItems: 'end' }}>
+            <div className="admin-transparencia-next-grid">
               <div>
                 <FieldLabel>Métrica pendiente</FieldLabel>
                 <input value={p.label} onChange={e => onUpdate(i, { label: e.target.value })} placeholder="NPS clientes activos" style={input()} />

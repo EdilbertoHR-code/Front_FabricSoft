@@ -235,8 +235,9 @@ function BookingRow({
 
   return (
     <div
+      className="admin-booking-row"
       onClick={onSelect}
-      style={{ background: '#0F0F0F', border: `1px solid ${borderColor}`, padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', transition: 'border-color .15s' }}
+      style={{ border: `1px solid ${borderColor}` }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 28, flex: 1 }}>
         <div style={{ minWidth: 120 }}>

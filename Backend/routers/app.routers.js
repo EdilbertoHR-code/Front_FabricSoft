@@ -13,6 +13,7 @@ const referenciasRoutes    = require('../components/referencias.component');
 const transparenciaRoutes      = require('../components/transparencia.component');
 const researchLettersRoutes    = require('../components/researchLetters.component');
 const logsRoutes               = require('../components/logs.component');
+const i18nRoutes               = require('../components/i18n.component');
 
 router.get('/', (req, res) => {
   res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
@@ -30,6 +31,7 @@ router.use('/referencias',   referenciasRoutes);
 router.use('/transparencia',    transparenciaRoutes);
 router.use('/research-letters', researchLettersRoutes);
 router.use('/logs',             logsRoutes);
+router.use('/i18n',             i18nRoutes);
 
 
 

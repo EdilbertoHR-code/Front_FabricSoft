@@ -246,11 +246,8 @@ export default function AdminLeads() {
           onClick={() => setSelected(null)}
         >
           <div
+            className="admin-slide-panel"
             onClick={e => e.stopPropagation()}
-            style={{
-              width: 380, height: '100vh', background: '#080808', borderLeft: '1px solid #1e1e1e',
-              padding: '28px 24px', overflowY: 'auto', fontFamily: 'var(--mono, "JetBrains Mono", monospace)',
-            }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ fontSize: 9, letterSpacing: '0.2em', color: '#5A5A5A', textTransform: 'uppercase' }}>Detalle del lead</div>
