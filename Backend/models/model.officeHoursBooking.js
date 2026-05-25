@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
+const trackingSchema = require('./schema.tracking');
 
 const officeHoursBookingSchema = new mongoose.Schema({
   nombre:    { type: String, required: true, trim: true },
+  cargo:     { type: String, default: '', trim: true },
   empresa:   { type: String, required: true, trim: true },
   email:     { type: String, required: true, lowercase: true, trim: true },
+  revenue:   { type: String, default: '' },
+  iniciativaOracle: { type: String, default: '' },
+  plazo:     { type: String, default: '' },
   dia:       { type: String, required: true },
   slot:      { type: String, required: true },
   status:    { type: String, enum: ['pendiente', 'confirmado', 'cancelado'], default: 'pendiente' },
@@ -12,6 +17,7 @@ const officeHoursBookingSchema = new mongoose.Schema({
   calendarEventId: { type: String, default: '' },
   notas:     { type: String, default: '' },
   ipAddress: { type: String, default: '' },
+  tracking:  { type: trackingSchema, default: () => ({}) },
 }, { timestamps: true, versionKey: false });
 
 officeHoursBookingSchema.index({ email: 1, createdAt: -1 });

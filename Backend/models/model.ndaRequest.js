@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const trackingSchema = require('./schema.tracking');
 
 const ndaRequestSchema = new mongoose.Schema({
   nombre:     { type: String, required: true, trim: true },
@@ -11,6 +12,7 @@ const ndaRequestSchema = new mongoose.Schema({
   emailSent:  { type: Boolean, default: false },
   notas:      { type: String, default: '' },
   ipAddress:  { type: String, default: '' },
+  tracking:   { type: trackingSchema, default: () => ({}) },
 }, { timestamps: true, versionKey: false });
 
 ndaRequestSchema.index({ email: 1, caso: 1, createdAt: -1 });

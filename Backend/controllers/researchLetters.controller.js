@@ -2,6 +2,7 @@ const ResearchLetterSuscriptor = require('../models/model.researchLetterSuscript
 const ResearchLetterConfig     = require('../models/model.researchLetterConfig');
 const { sendResearchLetterConfirmacion, sendResearchLetterBienvenida } = require('../services/email.service');
 const { log } = require('../services/log.service');
+const { sanitizeTracking } = require('../utils/tracking');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -13,7 +14,7 @@ function isPublicEmail(email) {
 // ─── POST /api/research-letters/solicitar ─────────────────────────────────────
 exports.solicitar = async (req, res) => {
   try {
-    const { email, nombre, empresa, cargo, revenueAprox, iniciativaOracle, industria } = req.body;
+    const { email, nombre, empresa, cargo, revenueAprox, iniciativaOracle, industria, tracking } = req.body;
 
     if (!email || !nombre || !empresa || !cargo || !iniciativaOracle) {
       return res.status(400).json({ error: 'Email, nombre, empresa, cargo e iniciativa Oracle son requeridos.' });
@@ -59,6 +60,7 @@ exports.solicitar = async (req, res) => {
       iniciativaOracle,
       industria:        industria?.trim() || '',
       ipAddress:        req.ip ?? '',
+      tracking:         sanitizeTracking(tracking),
     });
     await suscriptor.save();
 

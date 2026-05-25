@@ -63,7 +63,9 @@ export default function AdminLeads() {
   const [notasEdit, setNotasEdit] = useState('');
   const [updating, setUpdating]   = useState<string | null>(null);
 
-  useEffect(() => { fetchLeads(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchLeads();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function fetchLeads() {
     setLoading(true);

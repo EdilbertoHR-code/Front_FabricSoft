@@ -15,7 +15,8 @@ const researchLettersRoutes = require('../components/researchLetters.component')
 const logsRoutes           = require('../components/logs.component');
 const i18nRoutes           = require('../components/i18n.component');
 const agenteIARoutes       = require('../components/agenteIA.component');
-const diagnosticoOracleRoutes = require('../components/diagnosticoOracle.component');
+const diagnosticoOracleRoutes  = require('../components/diagnosticoOracle.component');
+const rescueAssessmentRoutes   = require('../components/rescueAssessment.component');
 
 router.get('/', (req, res) => {
   res.json({ ok: true, message: '✅ API FABRIC SOFT funcionando.' });
@@ -35,7 +36,8 @@ router.use('/research-letters',  researchLettersRoutes);
 router.use('/logs',              logsRoutes);
 router.use('/i18n',              i18nRoutes);
 router.use('/agente-ia',         agenteIARoutes);
-router.use('/diagnostico-oracle', diagnosticoOracleRoutes);
+router.use('/diagnostico-oracle',   diagnosticoOracleRoutes);
+router.use('/rescue-assessment',    rescueAssessmentRoutes);
 
 router.use((req, res) => {
   res.status(404).json({

@@ -1,6 +1,7 @@
 const Lead        = require('../models/model.lead');
 const emailService = require('../services/email.service');
 const { log }     = require('../services/log.service');
+const { sanitizeTracking } = require('../utils/tracking');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 const VALID_STATUSES = ['Nuevo', 'Aprobado', 'WaitList', 'Revisión', 'Rechazado'];
@@ -41,7 +42,7 @@ function nowLabel() {
 
 exports.solicitar = async (req, res) => {
   try {
-    const { nombre, cargo, empresa, revenue, email, industria, iniciativa, plazo } = req.body;
+    const { nombre, cargo, empresa, revenue, email, industria, iniciativa, plazo, tracking } = req.body;
 
     if (!nombre?.trim() || nombre.trim().length < 2)
       return res.status(400).json({ error: 'Nombre requerido.' });
@@ -76,6 +77,7 @@ exports.solicitar = async (req, res) => {
       status,
       ipAddress:  req.ip || '',
       historial:  [{ fecha: nowLabel(), estado: status, autor: 'Sistema' }],
+      tracking:   sanitizeTracking(tracking),
     });
 
     emailService.sendConfirmacionAplicar({
@@ -169,7 +171,7 @@ exports.actualizarNotas = async (req, res) => {
 
 exports.solicitarWaitlist = async (req, res) => {
   try {
-    const { nombre, empresa, email } = req.body;
+    const { nombre, cargo, empresa, email, revenue, iniciativa, plazo, tracking } = req.body;
 
     if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
     if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
@@ -178,13 +180,18 @@ exports.solicitarWaitlist = async (req, res) => {
 
     const lead = await Lead.create({
       nombre: nombre.trim(),
-      cargo:  '',
+      cargo:  cargo?.trim() || 'No especificado',
       empresa: empresa.trim(),
+      revenue: revenue?.trim() || '',
       email:  email.trim().toLowerCase(),
+      iniciativa: iniciativa?.trim() || '',
+      plazo: plazo?.trim() || '',
       source: 'waitlist',
+      score: calcScore({ revenue: revenue || '', plazo: plazo || '', iniciativa: iniciativa || '' }),
       status: 'WaitList',
       ipAddress: req.ip || '',
       historial: [{ fecha: nowLabel(), estado: 'WaitList', autor: 'Sistema' }],
+      tracking: sanitizeTracking(tracking),
     });
 
     emailService.sendConfirmacionWaitlist({
@@ -210,7 +217,7 @@ exports.solicitarWaitlist = async (req, res) => {
 
 exports.solicitarReferencia = async (req, res) => {
   try {
-    const { nombre, cargo, empresa, email, revenue, iniciativa } = req.body;
+    const { nombre, cargo, empresa, email, revenue, iniciativa, tracking } = req.body;
 
     if (!nombre?.trim())     return res.status(400).json({ error: 'Nombre requerido.' });
     if (!cargo?.trim())      return res.status(400).json({ error: 'Cargo requerido.' });
@@ -233,6 +240,7 @@ exports.solicitarReferencia = async (req, res) => {
       status:     'Nuevo',
       ipAddress:  req.ip || '',
       historial:  [{ fecha: nowLabel(), estado: 'Nuevo', autor: 'Sistema' }],
+      tracking:   sanitizeTracking(tracking),
     });
 
     emailService.sendConfirmacionReferencia({

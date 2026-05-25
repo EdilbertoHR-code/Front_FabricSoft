@@ -8,16 +8,17 @@ type SectionItem = {
 };
 
 const sections: SectionItem[] = [
-  { id: "inicio",      label: "Hero",               number: "01" }, // S01 + Rescue Counter + Puente
-  { id: "tco",         label: "ERP TCO · AI",       number: "02" }, // S03 + S04 + ChatIa
-  { id: "fabric-ai",    label: "Rescue Assessment",  number: "03" }, // S05
-  { id: "doctrina",    label: "Doctrina",            number: "04" }, // S06 + Fixed Price
-  { id: "s07",         label: "Casos · Industrias", number: "05" }, // S07 + S08
-  { id: "s09",         label: "FABRIC OS · Lifecycle", number: "06" }, // S09 + S10
-  { id: "s11",         label: "Office Hours",       number: "07" }, // S11
-  { id: "s12",         label: "Referencias",        number: "08" }, // S12 + Criterios
-  { id: "s13",         label: "Transparencia · Investigación", number: "09" }, // S13 + S14
-  { id: "s15",         label: "Founder · Wait List",number: "10" }, // S15
+  { id: "inicio",           label: "Hero",                       number: "01" },
+  { id: "tco",              label: "ERP TCO · AI",               number: "02" },
+  { id: "rescue-diagnostic", label: "Rescue Diagnostic",          number: "03" },
+  { id: "doctrina",         label: "Doctrina",                   number: "04" },
+  { id: "s07",              label: "Casos · Industrias",         number: "05" },
+  { id: "rescue-assessment",label: "Rescue Assessment",          number: "06" },
+  { id: "s09",              label: "FABRIC OS · Lifecycle",      number: "07" },
+  { id: "s11",              label: "Office Hours",               number: "08" },
+  { id: "s12",              label: "Referencias",                number: "09" },
+  { id: "s13",              label: "Transparencia · Investigación", number: "10" },
+  { id: "s15",              label: "Founder · Wait List",        number: "11" },
 ];
 
 export default function SectionNavigator() {

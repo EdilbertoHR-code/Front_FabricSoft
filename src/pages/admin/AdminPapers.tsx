@@ -7,9 +7,11 @@ type Tab = 'papers' | 'benchmark';
 interface PaperAccess {
   _id: string;
   paperId: '01' | '02' | '03';
+  nombre?: string;
   email: string;
   cargo: string;
   empresa: string;
+  tracking?: { sourceSection?: string; interactionType?: string; pagePath?: string };
   status: PaperStatus;
   emailSent: boolean;
   createdAt: string;
@@ -20,6 +22,7 @@ interface BenchmarkAccess {
   nombre: string;
   empresa: string;
   email: string;
+  tracking?: { sourceSection?: string; interactionType?: string; pagePath?: string };
   status: string;
   createdAt: string;
 }
@@ -54,6 +57,8 @@ export default function AdminPapers() {
   useEffect(() => {
     fetchPapers();
     fetchBenchmark();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchPapers() {
@@ -97,23 +102,24 @@ export default function AdminPapers() {
   });
 
   return (
-      <>
-      {/* Header */}
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · INVESTIGACIÓN
+      <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · INVESTIGACION</div>
+            <h1 className="fabric-admin-title">Papers</h1>
+            <div className="fabric-admin-subtitle">{total} solicitudes · entregas bajo tracking · benchmark early access separado.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Papers · {total} solicitudes
+          <div className="fabric-admin-actions">
+            <span className="fabric-admin-pill">{papers.length} papers · {benchmark.length} benchmark</span>
+            <button
+              onClick={fetchPapers}
+              style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Actualizar
+            </button>
           </div>
         </div>
-        <button
-          onClick={fetchPapers}
-          style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}
-        >
-          Actualizar
-        </button>
       </div>
 
       {/* Tabs */}
@@ -172,7 +178,7 @@ export default function AdminPapers() {
           </div>
 
           {/* Tabla */}
-          <div style={{ padding: '0 36px 36px', overflowX: 'auto' }}>
+          <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
             {loading ? (
               <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
             ) : visiblePapers.length === 0 ? (
@@ -181,7 +187,7 @@ export default function AdminPapers() {
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                    {['Fecha', 'Paper', 'Empresa', 'Cargo', 'Email', 'Estado', 'Acciones'].map(h => (
+                    {['Fecha', 'Paper', 'Empresa', 'Contacto', 'Cargo', 'Origen', 'Estado', 'Acciones'].map(h => (
                       <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>{h}</th>
                     ))}
                   </tr>
@@ -196,8 +202,12 @@ export default function AdminPapers() {
                         </span>
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{p.empresa}</td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <div style={{ fontSize: 10, color: '#F5F5F5' }}>{p.nombre || 'Sin nombre'}</div>
+                        <div style={{ fontSize: 9, color: '#5A5A5A' }}>{p.email}</div>
+                      </td>
                       <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{p.cargo}</td>
-                      <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{p.email}</td>
+                      <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{[p.tracking?.sourceSection, p.tracking?.interactionType].filter(Boolean).join(' · ') || p.email}</td>
                       <td style={{ padding: '12px 16px' }}>
                         <span style={{ fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '3px 10px', border: `1px solid ${STATUS_COLOR[p.status]}44`, color: STATUS_COLOR[p.status], background: `${STATUS_COLOR[p.status]}10` }}>
                           {p.status}
@@ -235,7 +245,7 @@ export default function AdminPapers() {
       )}
 
       {tab === 'benchmark' && (
-        <div style={{ padding: '0 36px 36px', overflowX: 'auto' }}>
+        <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
           <div style={{ padding: '20px 0 16px', fontSize: 10, color: '#5A5A5A', letterSpacing: '0.14em' }}>
             {benchmark.length} registros para Benchmark Index · Q4 2026
           </div>
@@ -245,7 +255,7 @@ export default function AdminPapers() {
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                  {['Fecha', 'Nombre', 'Empresa', 'Email', 'Estado'].map(h => (
+                  {['Fecha', 'Nombre', 'Empresa', 'Email', 'Origen', 'Estado'].map(h => (
                     <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>{h}</th>
                   ))}
                 </tr>
@@ -257,6 +267,7 @@ export default function AdminPapers() {
                     <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{b.nombre}</td>
                     <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{b.empresa}</td>
                     <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{b.email}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 9, color: '#5A5A5A' }}>{[b.tracking?.sourceSection, b.tracking?.interactionType].filter(Boolean).join(' · ') || 'Sin tracking'}</td>
                     <td style={{ padding: '12px 16px' }}>
                       <span style={{ fontSize: 8, padding: '3px 8px', border: '1px solid #C9A96E44', color: '#C9A96E', letterSpacing: '0.1em' }}>
                         {b.status}
@@ -269,6 +280,6 @@ export default function AdminPapers() {
           )}
         </div>
       )}
-      </>
+      </div>
   );
 }

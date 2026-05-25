@@ -2,6 +2,7 @@ const Booking         = require('../models/model.officeHoursBooking');
 const calendarService = require('../services/calendar.service');
 const { sendConfirmacionOfficeHours } = require('../services/email.service');
 const { log } = require('../services/log.service');
+const { sanitizeTracking } = require('../utils/tracking');
 
 const PUBLIC_DOMAINS = ['gmail','hotmail','yahoo','outlook','icloud','live','msn','me','proton'];
 
@@ -12,7 +13,7 @@ function isPublicEmail(email) {
 
 exports.book = async (req, res) => {
   try {
-    const { nombre, empresa, email, dia, slot } = req.body;
+    const { nombre, cargo, empresa, email, revenue, iniciativaOracle, plazo, dia, slot, tracking } = req.body;
 
     if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
     if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
@@ -27,11 +28,16 @@ exports.book = async (req, res) => {
 
     const booking = await Booking.create({
       nombre:    nombre.trim(),
+      cargo:     cargo?.trim() || '',
       empresa:   empresa.trim(),
       email:     email.trim().toLowerCase(),
+      revenue:   revenue?.trim() || '',
+      iniciativaOracle: iniciativaOracle?.trim() || '',
+      plazo:     plazo?.trim() || '',
       dia,
       slot,
       ipAddress: req.ip || '',
+      tracking:  sanitizeTracking(tracking),
     });
 
     log({

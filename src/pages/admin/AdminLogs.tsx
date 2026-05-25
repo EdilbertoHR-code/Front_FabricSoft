@@ -59,7 +59,9 @@ export default function AdminLogs() {
     }
   };
 
-  useEffect(() => { cargar('Todas'); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { cargar('Todas');   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const aplicarFiltro = (cat: string) => {
     setFilter(cat);

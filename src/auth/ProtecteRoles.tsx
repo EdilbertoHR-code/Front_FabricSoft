@@ -21,12 +21,14 @@ export const ProtectorRoles = ({
   children: React.ReactNode, 
   rolesPermitidos: string[] 
 }) => {
-  const { isSignedIn } = useAuth();
-  const { user, isLoaded } = useUser();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
+  const { user, isLoaded: userLoaded } = useUser();
   const location = useLocation();
 
 
-  if (!isLoaded) return <div className="flex justify-center p-10">Verificando gafete...</div>;
+  if (!authLoaded || !userLoaded) {
+    return <div className="flex justify-center p-10">Verificando gafete...</div>;
+  }
 
   if (!isSignedIn) {
     return <Navigate to="/acceso" state={{ from: location.pathname }} replace />;

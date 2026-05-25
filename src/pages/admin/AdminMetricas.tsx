@@ -47,19 +47,18 @@ export default function AdminMetricas() {
   };
 
   return (
-    <>
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · MÉTRICAS
+    <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · METRICAS</div>
+            <h1 className="fabric-admin-title">Metricas publicas</h1>
+            <div className="fabric-admin-subtitle">Editor operativo · preview publico · visibilidad granular para datos de S15 y transparencia.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Métricas públicas
-          </div>
+          <a href="/" target="_blank" rel="noreferrer" style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#C9A96E', textDecoration: 'none', border: '1px solid #252525', padding: '9px 18px' }}>
+            Vista previa →
+          </a>
         </div>
-        <a href="/" target="_blank" rel="noreferrer" style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#5A5A5A', textDecoration: 'none' }}>
-          Vista previa →
-        </a>
       </div>
 
       <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', background: 'rgba(201,169,110,0.04)' }}>
@@ -68,7 +67,7 @@ export default function AdminMetricas() {
         </span>
       </div>
 
-      <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="fabric-admin-content" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Auto-computed (read-only) */}
         <AutoMetricRow
@@ -96,7 +95,7 @@ export default function AdminMetricas() {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -104,7 +103,7 @@ function AutoMetricRow({ label, value, unit, appearsIn }: {
   label: string; value: number | null; unit: string; appearsIn: string;
 }) {
   return (
-    <div style={{ background: '#0A0A0A', border: '1px solid #1a1a1a', padding: '20px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="fabric-admin-panel" style={{ background: '#0A0A0A', border: '1px solid #1a1a1a', padding: '20px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
         <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 6 }}>
           {label} · auto-calculado desde DB
@@ -129,7 +128,7 @@ function MetricaCard({ m, justSaved, onUpdate }: {
   onUpdate: (id: string, field: keyof Metrica, val: number | boolean | string) => void;
 }) {
   return (
-    <div style={{ background: '#0F0F0F', border: `1px solid ${justSaved ? '#4ade8055' : '#1e1e1e'}`, padding: '28px 32px', transition: 'border-color .3s' }}>
+    <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: `1px solid ${justSaved ? '#4ade8055' : '#1e1e1e'}`, padding: '28px 32px', transition: 'border-color .3s' }}>
       <div className="admin-metrics-card-grid">
 
         {/* Vista previa pública */}

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../config/api";
+import { getInteractionTracking } from "../utils/tracking";
 
 type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | "nda-pdf" | null;
 
@@ -62,7 +63,7 @@ export default function InteractionManager() {
   const [selectedDay, setSelectedDay] = useState<string>(() => getWorkDaysUntilEndOfNextMonth()[0]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedPaper, setSelectedPaper] = useState(0);
-  const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "", revenue: "", iniciativa: "" });
+  const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "", revenue: "", iniciativa: "", plazo: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -71,6 +72,7 @@ export default function InteractionManager() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [slots, setSlots] = useState<DaySlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const tracking = (sourceSection: string, interactionType: string) => getInteractionTracking(sourceSection, interactionType);
 
   const fetchSlots = useCallback(async (dateISO: string) => {
     setSlotsLoading(true);
@@ -226,6 +228,7 @@ export default function InteractionManager() {
                         email: formData.email,
                         caso: "ape-plazas",
                         documento: "paper-nda",
+                        tracking: tracking("S07", "nda-pdf"),
                       });
                       setSubmitted(true);
                     } catch (err: unknown) {
@@ -348,13 +351,40 @@ export default function InteractionManager() {
                         Slot seleccionado · {formatDayLabel(selectedDay)} · {selectedSlot}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                        {(["nombre", "empresa", "email"] as const).map((field) => (
+                        {(["nombre", "cargo", "empresa", "email"] as const).map((field) => (
                           <div key={field}>
-                            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{field}</div>
+                            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{field === "email" ? "Email corporativo" : field}</div>
                             <input type={field === "email" ? "email" : "text"} value={formData[field]} onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
                               style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
                           </div>
                         ))}
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                          <div>
+                            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Revenue</div>
+                            <select value={formData.revenue} onChange={e => setFormData(p => ({ ...p, revenue: e.target.value }))}
+                              style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.revenue ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                              <option value="">Seleccionar...</option>
+                              <option>USD 50M-250M</option>
+                              <option>USD 250M-1B</option>
+                              <option>Mas de USD 1B</option>
+                            </select>
+                          </div>
+                          <div>
+                            <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Plazo</div>
+                            <select value={formData.plazo} onChange={e => setFormData(p => ({ ...p, plazo: e.target.value }))}
+                              style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.plazo ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                              <option value="">Seleccionar...</option>
+                              <option>{'<3 meses'}</option>
+                              <option>3-6 meses</option>
+                              <option>6-12 meses</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Iniciativa Oracle</div>
+                          <input value={formData.iniciativa} onChange={e => setFormData(p => ({ ...p, iniciativa: e.target.value }))}
+                            style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+                        </div>
                         {apiError && active === "office-hours" && (
                           <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "#B85450", letterSpacing: "0.05em" }}>{apiError}</span>
                         )}
@@ -372,8 +402,13 @@ export default function InteractionManager() {
                                 nombre:  formData.nombre,
                                 empresa: formData.empresa,
                                 email:   formData.email,
+                                cargo:   formData.cargo,
+                                revenue: formData.revenue,
+                                iniciativaOracle: formData.iniciativa,
+                                plazo:   formData.plazo,
                                 dia:     selectedDay,
                                 slot:    selectedSlot,
+                                tracking: tracking("S11", "office-hours"),
                               });
                               setSubmitted(true);
                             } catch (err: unknown) {
@@ -520,6 +555,7 @@ export default function InteractionManager() {
                         email:      formData.email,
                         revenue:    formData.revenue,
                         iniciativa: formData.iniciativa,
+                        tracking:   tracking("S12", "reference"),
                       });
                       setSubmitted(true);
                     } catch (err: unknown) {
@@ -573,7 +609,7 @@ export default function InteractionManager() {
                 <p style={{ color: "var(--text-secondary)", fontSize: 13, lineHeight: 1.7, marginBottom: 16 }}>{papers[selectedPaper].abstract}</p>
                 <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.1em", marginBottom: 24 }}>{papers[selectedPaper].meta}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {(["nombre", "empresa", "email"] as const).map((field) => (
+                  {(["nombre", "cargo", "empresa", "email"] as const).map((field) => (
                     <div key={field}>
                       <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{field === "email" ? "Email corporativo" : field}</div>
                       <input type={field === "email" ? "email" : "text"} value={formData[field]} onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
@@ -591,7 +627,7 @@ export default function InteractionManager() {
                   onClick={async () => {
                     setApiError("");
                     const paperId = `0${selectedPaper + 1}`;
-                    if (!formData.nombre || !formData.empresa || !formData.email) {
+                    if (!formData.nombre || !formData.cargo || !formData.empresa || !formData.email) {
                       setApiError("Completa todos los campos.");
                       return;
                     }
@@ -599,9 +635,11 @@ export default function InteractionManager() {
                     try {
                       await api.post("/papers/solicitar", {
                         paperId,
-                        cargo:   formData.nombre,
+                        nombre:  formData.nombre,
+                        cargo:   formData.cargo,
                         empresa: formData.empresa,
                         email:   formData.email,
+                        tracking: tracking("S14", "paper"),
                       });
                       setSubmitted(true);
                     } catch (err: unknown) {
@@ -623,92 +661,6 @@ export default function InteractionManager() {
               <div style={{ fontFamily: "var(--serif)", fontSize: 24, marginBottom: 12 }}>{papers[selectedPaper].num} <em>enviado.</em></div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Recibirás el PDF en {formData.email || "tu email"}.<br />Solo emails corporativos. Tiempo: minutos.
-              </div>
-              <button onClick={close} style={{ marginTop: 24, padding: "10px 24px", background: "transparent", border: "1px solid var(--accent)", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}>Cerrar</button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── WAIT LIST (I07) ── */}
-      {active === "waitlist" && (
-        <div className="im-modal" style={{ background: "var(--bg-panel)", border: "1px solid var(--border-strong)", maxWidth: 600, width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "24px 28px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, width: 2, height: 40, background: "var(--accent)" }} />
-            <div style={{ paddingLeft: 16 }}>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 6 }}>Wait List · Q3 2026 · 1 lugar disponible</div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 26 }}>Solicitar <em style={{ color: "var(--accent)" }}>lugar.</em></div>
-            </div>
-            <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
-          </div>
-
-          {!submitted ? (
-            <>
-              <div style={{ padding: "24px 28px", overflowY: "auto", flex: 1 }}>
-                <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
-                  FABRIC evalúa ajuste estratégico antes de aceptar un lugar en lista. La selección protege la capacidad operativa del equipo.
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {[
-                    { field: "nombre" as const, label: "Nombre completo" },
-                    { field: "empresa" as const, label: "Empresa" },
-                    { field: "email" as const, label: "Email corporativo" },
-                  ].map(({ field, label }) => (
-                    <div key={field}>
-                      <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
-                      <input type={field === "email" ? "email" : "text"} value={formData[field]} onChange={e => setFormData(p => ({ ...p, [field]: e.target.value }))}
-                        style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
-                    </div>
-                  ))}
-                  <div style={{ padding: "14px 16px", background: "var(--bg-base)", border: "1px solid var(--border)", fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7, marginTop: 4 }}>
-                    <strong style={{ color: "var(--accent)", display: "block", marginBottom: 4, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase" }}>Criterios mínimos</strong>
-                    Revenue anual USD 50M+ · Iniciativa Oracle activa · Patrocinio ejecutivo C-level · Plazo de decisión menor a 12 meses
-                  </div>
-                </div>
-              </div>
-              <div style={{ padding: "16px 28px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>
-                  {apiError && active === "waitlist" ? (
-                    <span style={{ color: "#B85450" }}>{apiError}</span>
-                  ) : "Aplicación bajo NDA mutuo"}
-                </span>
-                <button
-                  disabled={loading}
-                  onClick={async () => {
-                    setApiError("");
-                    if (!formData.nombre || !formData.empresa || !formData.email) {
-                      setApiError("Completa todos los campos.");
-                      return;
-                    }
-                    setLoading(true);
-                    try {
-                      await api.post("/leads/waitlist", {
-                        nombre:  formData.nombre,
-                        empresa: formData.empresa,
-                        email:   formData.email,
-                      });
-                      setSubmitted(true);
-                    } catch (err: unknown) {
-                      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-                      setApiError(msg ?? "Error al enviar. Intenta de nuevo.");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  style={{ padding: "13px 28px", background: loading ? "rgba(201,169,110,0.5)" : "var(--accent)", color: "var(--bg-base)", border: "none", fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer" }}
-                >
-                  {loading ? "Enviando..." : "Solicitar lugar →"}
-                </button>
-              </div>
-            </>
-          ) : (
-            <div style={{ padding: "48px 28px", textAlign: "center" }}>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 48, color: "var(--accent)", marginBottom: 16 }}>✓</div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 24, marginBottom: 12 }}>Solicitud <em>recibida.</em></div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                FABRIC revisará tu perfil en 5 días hábiles.<br />
-                Recibirás respuesta en {formData.email || "tu email"}.<br />
-                Si califica, se enviará NDA mutuo.
               </div>
               <button onClick={close} style={{ marginTop: 24, padding: "10px 24px", background: "transparent", border: "1px solid var(--accent)", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}>Cerrar</button>
             </div>
@@ -793,6 +745,7 @@ export default function InteractionManager() {
                       nombre:  formData.nombre,
                       empresa: formData.empresa,
                       email:   formData.email,
+                      tracking: tracking("S14", "benchmark"),
                     });
                     setSubmitted(true);
                   } catch (err: unknown) {
@@ -857,9 +810,10 @@ export default function InteractionManager() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                   {([
                     { field: "nombre", label: "Nombre completo", type: "text" },
+                    { field: "cargo", label: "Cargo", type: "text" },
                     { field: "empresa", label: "Empresa", type: "text" },
                     { field: "email", label: "Email corporativo", type: "email" },
-                  ] as { field: "nombre" | "empresa" | "email"; label: string; type: string }[]).map(({ field, label, type }) => (
+                  ] as { field: "nombre" | "cargo" | "empresa" | "email"; label: string; type: string }[]).map(({ field, label, type }) => (
                     <div key={field}>
                       <div style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>{label}</div>
                       <input
@@ -873,6 +827,28 @@ export default function InteractionManager() {
                       />
                     </div>
                   ))}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <select value={formData.revenue} onChange={e => setFormData(p => ({ ...p, revenue: e.target.value }))}
+                      style={{ width: "100%", padding: "13px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.revenue ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                      <option value="">Revenue</option>
+                      <option>USD 50M-250M</option>
+                      <option>USD 250M-1B</option>
+                      <option>Mas de USD 1B</option>
+                    </select>
+                    <select value={formData.plazo} onChange={e => setFormData(p => ({ ...p, plazo: e.target.value }))}
+                      style={{ width: "100%", padding: "13px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: formData.plazo ? "var(--text-primary)" : "var(--text-tertiary)", fontFamily: "var(--mono)", fontSize: 12, outline: "none", boxSizing: "border-box" }}>
+                      <option value="">Plazo</option>
+                      <option>{'<3 meses'}</option>
+                      <option>3-6 meses</option>
+                      <option>6-12 meses</option>
+                    </select>
+                  </div>
+                  <input
+                    value={formData.iniciativa}
+                    onChange={e => setFormData(p => ({ ...p, iniciativa: e.target.value }))}
+                    placeholder="Iniciativa Oracle / contexto"
+                    style={{ width: "100%", padding: "13px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+                  />
                 </div>
 
                 {apiError && active === "waitlist" && (
@@ -917,8 +893,13 @@ export default function InteractionManager() {
                     try {
                       await api.post("/leads/waitlist", {
                         nombre:  formData.nombre.trim(),
+                        cargo:   formData.cargo.trim(),
                         empresa: formData.empresa.trim(),
                         email:   formData.email.trim(),
+                        revenue: formData.revenue.trim(),
+                        iniciativa: formData.iniciativa.trim(),
+                        plazo:   formData.plazo.trim(),
+                        tracking: tracking("S15", "waitlist"),
                       });
                       setSubmitted(true);
                     } catch (err: unknown) {

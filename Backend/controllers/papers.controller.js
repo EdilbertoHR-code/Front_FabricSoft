@@ -4,6 +4,7 @@ const PaperAccess     = require('../models/model.paperAccess');
 const BenchmarkAccess = require('../models/model.benchmarkAccess');
 const { sendPaperEntrega } = require('../services/email.service');
 const { log } = require('../services/log.service');
+const { sanitizeTracking } = require('../utils/tracking');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -21,7 +22,7 @@ const PAPER_TITLES = {
 // ─── POST /api/papers/solicitar ───────────────────────────────────────────────
 exports.solicitar = async (req, res) => {
   try {
-    const { paperId, email, cargo, empresa } = req.body;
+    const { paperId, nombre, email, cargo, empresa, tracking } = req.body;
 
     if (!paperId || !['01', '02', '03'].includes(paperId)) {
       return res.status(400).json({ error: 'Paper no válido.' });
@@ -54,10 +55,12 @@ exports.solicitar = async (req, res) => {
 
     const acceso = new PaperAccess({
       paperId,
+      nombre:    nombre?.trim() || '',
       email:     email.toLowerCase().trim(),
       cargo:     cargo.trim(),
       empresa:   empresa.trim(),
       ipAddress: req.ip ?? '',
+      tracking:  sanitizeTracking(tracking),
       status:    'pendiente',
     });
     await acceso.save();
@@ -84,7 +87,7 @@ exports.solicitar = async (req, res) => {
 // ─── POST /api/papers/benchmark ───────────────────────────────────────────────
 exports.benchmarkEarlyAccess = async (req, res) => {
   try {
-    const { nombre, empresa, email } = req.body;
+    const { nombre, empresa, email, tracking } = req.body;
 
     if (!nombre || !empresa || !email) {
       return res.status(400).json({ error: 'Todos los campos son requeridos.' });
@@ -111,6 +114,7 @@ exports.benchmarkEarlyAccess = async (req, res) => {
       empresa:   empresa.trim(),
       email:     email.toLowerCase().trim(),
       ipAddress: req.ip ?? '',
+      tracking:  sanitizeTracking(tracking),
     });
     await acceso.save();
 

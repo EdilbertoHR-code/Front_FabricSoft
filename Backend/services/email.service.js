@@ -455,6 +455,64 @@ exports.sendResearchLetterBienvenida = ({ nombre, empresa, email }) =>
   </tr>`),
   });
 
+const SEVERITY_LABELS = {
+  'BAJO':     { color: '#4ade80', desc: 'Tu implementación presenta señales de estabilidad. Existen oportunidades de optimización pero no hay crisis activa.', accion: 'Conversa con FABRIC sobre optimización y FABRIC OS.' },
+  'MODERADO': { color: '#fbbf24', desc: 'Señales de fricción operativa. Sin intervención, los problemas actuales escalarán hacia el próximo cierre contable.', accion: 'FABRIC recomienda diagnóstico técnico en las próximas 4 semanas.' },
+  'ALTO':     { color: '#f97316', desc: 'Tu implementación presenta patrones de abandono post go-live. El riesgo operativo es real y documentado.', accion: 'Rescate FABRIC estimado: 8–12 semanas · Inversión típica: USD 150–300K.' },
+  'CRÍTICO':  { color: '#ef4444', desc: 'Situación de crisis operativa activa. Tu implementación Oracle requiere intervención inmediata de ingenieros senior.', accion: 'Rescate de emergencia FABRIC: inicio en 72 horas · Inversión típica: USD 200–500K.' },
+};
+
+exports.sendRescueAssessmentResultado = ({ nombre, empresa, email, severity, totalScore }) => {
+  const s = SEVERITY_LABELS[severity] || SEVERITY_LABELS['ALTO'];
+  const nombreSafe  = escapeHtml(nombre);
+  const empresaSafe = escapeHtml(empresa || '');
+
+  return sendEmail({
+    from:    FROM,
+    to:      email,
+    subject: `Resultado Oracle Fusion Rescue Assessment — Severidad ${severity} · FABRIC`,
+    html: wrap(`
+  <tr>
+    <td style="padding:40px 48px 20px;">
+      ${label('Oracle Fusion Rescue Assessment')}
+      <h1 style="margin:0 0 16px;font-size:28px;font-weight:300;color:#0A0A0A;line-height:1.2;">
+        Nivel de Severidad:<br/><span style="color:${s.color};font-weight:700;">${severity}</span>
+      </h1>
+      <p style="margin:0 0 28px;font-size:14px;color:#5A5A5A;line-height:1.8;">
+        ${empresaSafe ? `<strong style="color:#2A2A2A;">${empresaSafe}</strong> — ` : ''}${escapeHtml(s.desc)}
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${dataRow('Puntuaci&oacute;n total', `${totalScore} / 36`)}
+        ${dataRow('Nivel de severidad', severity)}
+        ${empresaSafe ? dataRow('Empresa', empresaSafe) : ''}
+        ${dataRow('Contacto', nombreSafe)}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 20px;">
+      <div style="background:#F7F5F2;border-left:3px solid ${s.color};padding:16px 20px;">
+        <p style="margin:0;font-size:12px;color:#5A5A5A;line-height:1.7;">
+          <strong style="color:#2A2A2A;">Acción recomendada:</strong><br/>${escapeHtml(s.accion)}
+        </p>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 48px 40px;">
+      <a href="https://fabricsoft.com.mx/aplicar"
+         style="display:inline-block;padding:12px 28px;background:#C9A96E;color:#0A0A0A;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">
+        Solicitar evaluaci&oacute;n detallada &rarr;
+      </a>
+    </td>
+  </tr>`),
+  });
+};
+
 exports.sendPaperEntrega = ({ empresa, email, paperId }) => {
   const paperTitle = PAPER_TITLES[paperId] || `Paper ${paperId}`;
   const pdfPath    = path.join(__dirname, '..', 'assets', 'papers', `paper-${paperId}.pdf`);

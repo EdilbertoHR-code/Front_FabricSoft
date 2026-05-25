@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const trackingSchema = require('./schema.tracking');
 
 const historialEntrySchema = new mongoose.Schema({
   fecha:  { type: String, required: true },
@@ -22,6 +23,7 @@ const leadSchema = new mongoose.Schema({
   ipAddress:  { type: String, default: '' },
   historial:  [historialEntrySchema],
   queryChat:  { type: String, default: '' },
+  tracking:   { type: trackingSchema, default: () => ({}) },
 }, { timestamps: true, versionKey: false });
 
 leadSchema.index({ email: 1 });

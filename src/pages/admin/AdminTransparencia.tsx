@@ -80,7 +80,9 @@ export default function AdminTransparencia() {
   const [message, setMessage] = useState('');
   const msgRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => { fetchData(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchData();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-clear message after 4 s
   function setMsg(msg: string) {
@@ -180,13 +182,17 @@ export default function AdminTransparencia() {
   }
 
   const isError = message.toLowerCase().includes('error');
+  const publicadasVisibles = publicadas.filter(p => p.visible && p.verified).length;
+  const publicadasIncompletas = publicadas.filter(p =>
+    (p.visible || p.verified) && (!p.label.trim() || !p.valor.trim() || !p.metodologia.trim() || !p.fuente.descripcion.trim())
+  ).length;
 
   return (
-      <>
+      <div className="fabric-admin-page">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
           <div style={labelStyle}>FABRIC — ADMIN — TRANSPARENCIA</div>
           <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
             Transparencia Honesta
@@ -214,6 +220,15 @@ export default function AdminTransparencia() {
       )}
 
       {/* ── Tabs ───────────────────────────────────────────────────────────── */}
+      <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', display: 'flex', gap: 18, flexWrap: 'wrap', background: 'rgba(255,255,255,0.01)' }}>
+        <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#C9A96E', textTransform: 'uppercase' }}>
+          Preview publico: {publicadasVisibles} metricas pasan gate
+        </span>
+        <span style={{ fontSize: 9, letterSpacing: '0.14em', color: publicadasIncompletas ? '#B85450' : '#5A5A5A', textTransform: 'uppercase' }}>
+          Campos incompletos: {publicadasIncompletas}
+        </span>
+      </div>
+
       <div style={{ display: 'flex', borderBottom: '1px solid #1e1e1e', padding: '0 36px' }}>
         {(['publicadas', 'proximas', 'compromisos'] as Tab[]).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
@@ -237,7 +252,7 @@ export default function AdminTransparencia() {
       </div>
 
       {/* ── Content ────────────────────────────────────────────────────────── */}
-      <div style={{ padding: '24px 36px 48px' }}>
+      <div className="fabric-admin-content">
         {loading ? (
           <div style={{ padding: '60px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>
             Cargando...
@@ -250,7 +265,7 @@ export default function AdminTransparencia() {
           </>
         )}
       </div>
-      </>
+      </div>
   );
 }
 

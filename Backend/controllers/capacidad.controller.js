@@ -28,14 +28,23 @@ exports.update = async (req, res) => {
   try {
     const { slots, admissionQuarters, deadlineQ3, waitlist } = req.body;
     const doc = await getSingleton();
+    const $set = {};
 
-    if (slots)             doc.slots             = slots;
-    if (admissionQuarters) doc.admissionQuarters = admissionQuarters;
-    if (deadlineQ3)        doc.deadlineQ3        = deadlineQ3;
-    if (waitlist)          doc.waitlist          = waitlist;
+    if (slots)             $set.slots             = slots;
+    if (admissionQuarters) $set.admissionQuarters = admissionQuarters;
+    if (deadlineQ3)        $set.deadlineQ3        = deadlineQ3;
+    if (waitlist)          $set.waitlist          = waitlist;
 
-    await doc.save();
-    res.json({ ok: true, data: doc });
+    if (Object.keys($set).length > 0) {
+      await Capacidad.updateOne(
+        { _id: doc._id },
+        { $set },
+        { runValidators: true }
+      );
+    }
+
+    const updated = await Capacidad.findById(doc._id);
+    res.json({ ok: true, data: updated });
   } catch (err) {
     console.error('capacidad.update error:', err);
     res.status(500).json({ error: 'Error actualizando capacidad.' });
@@ -45,7 +54,7 @@ exports.update = async (req, res) => {
 exports.updateSlot = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, assignedLeadId, assignedLead, notas } = req.body;
     const VALID = ['disponible', 'activo', 'reservado'];
 
     if (!VALID.includes(status)) return res.status(400).json({ error: 'Status inválido.' });
@@ -54,9 +63,23 @@ exports.updateSlot = async (req, res) => {
     const slot = doc.slots.find(s => s.id === Number(id));
     if (!slot) return res.status(404).json({ error: 'Slot no encontrado.' });
 
-    slot.status = status;
-    await doc.save();
-    res.json({ ok: true, data: doc });
+    const slotUpdate = {
+      'slots.$.status': status,
+      'slots.$.updatedAt': new Date().toISOString(),
+    };
+
+    if (assignedLeadId !== undefined) slotUpdate['slots.$.assignedLeadId'] = String(assignedLeadId || '').trim();
+    if (assignedLead !== undefined)   slotUpdate['slots.$.assignedLead']   = String(assignedLead || '').trim();
+    if (notas !== undefined)          slotUpdate['slots.$.notas']          = String(notas || '').trim();
+
+    await Capacidad.updateOne(
+      { _id: doc._id, 'slots.id': Number(id) },
+      { $set: slotUpdate },
+      { runValidators: true }
+    );
+
+    const updated = await Capacidad.findById(doc._id);
+    res.json({ ok: true, data: updated });
   } catch (err) {
     console.error('capacidad.updateSlot error:', err);
     res.status(500).json({ error: 'Error actualizando slot.' });

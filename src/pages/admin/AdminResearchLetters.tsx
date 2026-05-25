@@ -12,6 +12,7 @@ interface Suscriptor {
   revenueAprox: string;
   iniciativaOracle: 'activa' | 'planeada' | 'evaluando';
   industria: string;
+  tracking?: { sourceSection?: string; interactionType?: string; pagePath?: string };
   status: 'pendiente' | 'aprobado' | 'rechazado';
   createdAt: string;
 }
@@ -97,7 +98,9 @@ export default function AdminResearchLetters() {
     }
   };
 
-  useEffect(() => { cargar(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { cargar();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const aplicarFiltro = (f: string) => {
     setFiltro(f);
@@ -157,17 +160,19 @@ export default function AdminResearchLetters() {
   const S = { fontFamily: 'var(--mono, "JetBrains Mono", monospace)' };
 
   return (
-      <div style={{ padding: '48px 40px', maxWidth: 1100 }}>
-
-        {/* Header */}
-        <div style={{ marginBottom: 40 }}>
-          <div style={{ ...S, fontSize: 9, color: '#C9A96E', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 10 }}>
-            Admin · Research Letters
+      <div className="fabric-admin-page">
+        <div className="fabric-admin-hero">
+          <div className="fabric-admin-hero-inner">
+            <div>
+              <div className="fabric-admin-eyebrow">ADMIN · RESEARCH LETTERS</div>
+              <h1 className="fabric-admin-title">Research Letters</h1>
+              <div className="fabric-admin-subtitle">Cupo editorial · admision calificada · aprobacion con email de bienvenida.</div>
+            </div>
+            <span className="fabric-admin-pill">{aprobados}/{config.cupoMaximo} aprobados · {total} solicitudes</span>
           </div>
-          <h1 style={{ fontFamily: 'Georgia, serif', fontSize: 28, fontWeight: 300, color: '#F5F5F5', margin: 0 }}>
-            Research Letters
-          </h1>
         </div>
+
+        <div className="fabric-admin-content">
 
         {/* Flash */}
         {msg && (
@@ -304,6 +309,9 @@ export default function AdminResearchLetters() {
                   <div style={{ ...S, fontSize: 11, color: '#F5F5F5', marginBottom: 4 }}>{s.empresa}</div>
                   <div style={{ ...S, fontSize: 10, color: '#8A8A8A' }}>{s.nombre} · {s.cargo}</div>
                   <div style={{ ...S, fontSize: 9, color: '#5A5A5A', marginTop: 4 }}>{s.email}</div>
+                  <div style={{ ...S, fontSize: 8, color: '#3A3A3A', marginTop: 4, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                    {[s.tracking?.sourceSection, s.tracking?.interactionType].filter(Boolean).join(' · ') || 'Sin tracking'}
+                  </div>
                   <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
                     <span style={{ ...S, fontSize: 9, color: '#3A3A3A' }}>
                       Oracle: <span style={{ color: '#5A5A5A' }}>{s.iniciativaOracle}</span>
@@ -353,6 +361,7 @@ export default function AdminResearchLetters() {
             ))}
           </div>
         )}
+        </div>
       </div>
   );
 }

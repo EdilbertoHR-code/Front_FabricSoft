@@ -52,9 +52,10 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'IA & Diagnóstico',
     defaultOpen: true,
     items: [
-      { path: '/admin/agente-ia',           label: 'Agente IA',          badge: 'Beta', icon: Bot },
-      { path: '/admin/conversaciones-ia',   label: 'Conversaciones',     badge: 'New',  icon: MessageSquareText },
-      { path: '/admin/diagnosticos-oracle', label: 'Diagnósticos Oracle',               icon: ClipboardList },
+      { path: '/admin/agente-ia',           label: 'Agente IA',           badge: 'Beta', icon: Bot },
+      { path: '/admin/conversaciones-ia',   label: 'Conversaciones',      badge: 'Nuevo', icon: MessageSquareText },
+      { path: '/admin/diagnosticos-oracle', label: 'Diagnósticos Oracle',                icon: ClipboardList },
+      { path: '/admin/rescue-assessment',   label: 'Rescue Assessment',                  icon: Activity },
     ],
   },
   {

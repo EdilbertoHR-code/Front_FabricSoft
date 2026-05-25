@@ -19,6 +19,7 @@ import S13Transparencia from './s13-transparencia';
 import S14Investigacion from './s14-investigacion';
 import S15Founder from './s15-founder';
 import S06bFixedPrice from './s06b-fixed-price';
+import S07bRescueAssessment from './s07b-rescue-assessment';
 
 export default function Home() {
   return (
@@ -34,6 +35,7 @@ export default function Home() {
       <S06Doctrina />
       <S06bFixedPrice />
       <S07Casos />
+      <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />
       <S10Lifecycle />

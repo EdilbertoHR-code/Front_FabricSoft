@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuthApi } from '../../config/api';
 
-interface Slot { id: number; status: 'disponible' | 'activo' | 'reservado'; }
+interface Slot {
+  id: number;
+  status: 'disponible' | 'activo' | 'reservado';
+  assignedLeadId?: string;
+  assignedLead?: string;
+  notas?: string;
+  updatedAt?: string;
+}
 interface WaitlistLead {
   _id: string; nombre: string; cargo: string; empresa: string;
   industria: string; score: number; createdAt: string;
@@ -56,6 +63,31 @@ export default function AdminCapacidad() {
     }
   };
 
+  const assignLeadToSlot = async (lead: WaitlistLead) => {
+    const slot = slots.find(s => s.status === 'disponible') ?? slots.find(s => !s.assignedLeadId);
+    if (!slot) return;
+
+    const nextSlot = {
+      ...slot,
+      status: 'reservado' as const,
+      assignedLeadId: lead._id,
+      assignedLead: `${lead.empresa} · ${lead.nombre}`,
+      notas: 'Asignado desde WaitList',
+    };
+
+    setSlots(prev => prev.map(s => s.id === slot.id ? nextSlot : s));
+    try {
+      await adminApi.patch(`/capacidad/slot/${slot.id}`, {
+        status: 'reservado',
+        assignedLeadId: lead._id,
+        assignedLead: `${lead.empresa} · ${lead.nombre}`,
+        notas: 'Asignado desde WaitList',
+      });
+    } catch {
+      setSlots(prev => prev.map(s => s.id === slot.id ? slot : s));
+    }
+  };
+
   const saveDeadline = async () => {
     setSavingDeadline(true);
     try {
@@ -75,27 +107,26 @@ export default function AdminCapacidad() {
     new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
 
   return (
-    <>
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · CAPACIDAD
+    <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · CAPACIDAD</div>
+            <h1 className="fabric-admin-title">Capacidad operativa</h1>
+            <div className="fabric-admin-subtitle">Slots Q3 2026 · waitlist calificada · admision y deadline sincronizados con S15.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Capacidad operativa
-          </div>
+          {!loading && (
+            <span className="fabric-admin-pill">
+              {activos} activos · {reservados} reservados · {libres} disponibles
+            </span>
+          )}
         </div>
-        {!loading && (
-          <span style={{ fontSize: 10, color: '#5A5A5A' }}>
-            {activos} activos · {reservados} reservados · {libres} disponibles
-          </span>
-        )}
       </div>
 
-      <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <div className="fabric-admin-content" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
 
         {/* Grid de slots */}
-        <div style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '28px 32px' }}>
+        <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '28px 32px' }}>
           <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 8 }}>
             Slots · capacidad Q3 2026
           </div>
@@ -108,7 +139,7 @@ export default function AdminCapacidad() {
             ) : slots.map(s => (
               <div
                 key={s.id}
-                title={`Slot ${s.id} · ${s.status}`}
+                title={`Slot ${s.id} · ${s.status}${s.assignedLead ? ` · ${s.assignedLead}` : ''}`}
                 onClick={() => cycleSlot(s)}
                 style={{ width: 44, height: 44, background: SLOT_BG[s.status], border: `1px solid ${SLOT_BORDER[s.status]}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: SLOT_TEXT[s.status], cursor: 'pointer', fontWeight: 700, transition: 'all .15s', userSelect: 'none' }}
               >
@@ -132,7 +163,7 @@ export default function AdminCapacidad() {
         <div className="admin-cap-grid">
 
           {/* Wait list real */}
-          <div style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px' }}>
+          <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px' }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 20 }}>
               Wait list · {waitlist.length} leads en espera
             </div>
@@ -140,7 +171,7 @@ export default function AdminCapacidad() {
               <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                    {['Empresa', 'Contacto', 'Sector', 'Score', 'Desde'].map(h => (
+                    {['Empresa', 'Contacto', 'Sector', 'Score', 'Desde', 'Accion'].map(h => (
                       <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 7, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
                         {h}
                       </th>
@@ -150,7 +181,7 @@ export default function AdminCapacidad() {
                 <tbody>
                   {waitlist.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ padding: '20px 12px', fontSize: 9, color: '#5A5A5A' }}>
+                      <td colSpan={6} style={{ padding: '20px 12px', fontSize: 9, color: '#5A5A5A' }}>
                         Sin leads en WaitList.
                       </td>
                     </tr>
@@ -170,6 +201,15 @@ export default function AdminCapacidad() {
                         </span>
                       </td>
                       <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{fmt(w.createdAt)}</td>
+                      <td style={{ padding: '10px 12px' }}>
+                        <button
+                          onClick={() => assignLeadToSlot(w)}
+                          disabled={!slots.some(s => s.status === 'disponible')}
+                          style={{ fontSize: 8, padding: '5px 10px', background: 'transparent', border: '1px solid #252525', color: slots.some(s => s.status === 'disponible') ? '#C9A96E' : '#3A3A3A', cursor: slots.some(s => s.status === 'disponible') ? 'pointer' : 'default', fontFamily: 'inherit', letterSpacing: '0.1em' }}
+                        >
+                          Reservar slot
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -178,7 +218,7 @@ export default function AdminCapacidad() {
           </div>
 
           {/* Ciclo de admisión + deadline editable */}
-          <div style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase' }}>
               Ciclo de admisión 2026
             </div>
@@ -225,6 +265,6 @@ export default function AdminCapacidad() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

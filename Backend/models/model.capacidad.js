@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 
 const slotSchema = new mongoose.Schema({
-  id:     { type: Number, required: true },
-  status: { type: String, enum: ['disponible', 'activo', 'reservado'], default: 'disponible' },
+  id:             { type: Number, required: true },
+  status:         { type: String, enum: ['disponible', 'activo', 'reservado'], default: 'disponible' },
+  assignedLeadId: { type: String, default: '' },
+  assignedLead:   { type: String, default: '' },
+  notas:          { type: String, default: '' },
+  updatedAt:      { type: String, default: '' },
 }, { _id: false });
 
 const admissionQuarterSchema = new mongoose.Schema({

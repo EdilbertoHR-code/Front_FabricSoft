@@ -1,6 +1,7 @@
 const NdaRequest = require('../models/model.ndaRequest');
 const { sendNdaPdfAccess } = require('../services/email.service');
 const { log } = require('../services/log.service');
+const { sanitizeTracking } = require('../utils/tracking');
 
 const PUBLIC_DOMAINS = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live', 'msn', 'me', 'proton', 'aol'];
 
@@ -11,7 +12,7 @@ function isPublicEmail(email) {
 
 exports.solicitar = async (req, res) => {
   try {
-    const { nombre, cargo, empresa, email, caso = 'ape-plazas', documento = 'paper-nda' } = req.body;
+    const { nombre, cargo, empresa, email, caso = 'ape-plazas', documento = 'paper-nda', tracking } = req.body;
 
     if (!nombre?.trim() || !cargo?.trim() || !empresa?.trim() || !email?.trim()) {
       return res.status(400).json({ error: 'Nombre, cargo, empresa y email son requeridos.' });
@@ -47,6 +48,7 @@ exports.solicitar = async (req, res) => {
       caso,
       documento,
       ipAddress: req.ip || '',
+      tracking: sanitizeTracking(tracking),
     });
 
     log({

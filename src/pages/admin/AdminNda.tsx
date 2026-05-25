@@ -11,6 +11,7 @@ interface NdaRequest {
   email: string;
   caso: string;
   documento: string;
+  tracking?: { sourceSection?: string; interactionType?: string; pagePath?: string };
   status: NdaStatus;
   emailSent: boolean;
   createdAt: string;
@@ -53,7 +54,9 @@ export default function AdminNda() {
     }
   }
 
-  useEffect(() => { fetchRequests(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchRequests();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function updateStatus(id: string, status: NdaStatus) {
     setUpdating(id);
@@ -83,19 +86,18 @@ export default function AdminNda() {
   }
 
   return (
-    <>
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · NDA
+    <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · NDA</div>
+            <h1 className="fabric-admin-title">Solicitudes NDA</h1>
+            <div className="fabric-admin-subtitle">{requests.length} solicitudes · aprobacion, envio y metadata documental en una sola vista.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Solicitudes NDA · {requests.length}
-          </div>
+          <button onClick={fetchRequests} style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}>
+            Actualizar
+          </button>
         </div>
-        <button onClick={fetchRequests} style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}>
-          Actualizar
-        </button>
       </div>
 
       {error && (
@@ -104,7 +106,7 @@ export default function AdminNda() {
         </div>
       )}
 
-      <div style={{ padding: '0 36px 36px', overflowX: 'auto' }}>
+      <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
         {loading ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
         ) : requests.length === 0 ? (
@@ -113,7 +115,7 @@ export default function AdminNda() {
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                {['Fecha', 'Caso', 'Empresa', 'Contacto', 'Cargo', 'Email', 'Estado', 'Acciones'].map(h => (
+                {['Fecha', 'Caso', 'Empresa', 'Contacto', 'Cargo', 'Email', 'Origen', 'Estado', 'Acciones'].map(h => (
                   <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>{h}</th>
                 ))}
               </tr>
@@ -127,6 +129,7 @@ export default function AdminNda() {
                   <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{r.nombre}</td>
                   <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{r.cargo}</td>
                   <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{r.email}</td>
+                  <td style={{ padding: '12px 16px', fontSize: 9, color: '#5A5A5A' }}>{[r.tracking?.sourceSection, r.tracking?.interactionType].filter(Boolean).join(' · ') || r.documento}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <span style={{ fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '3px 10px', border: `1px solid ${STATUS_COLOR[r.status]}44`, color: STATUS_COLOR[r.status], background: `${STATUS_COLOR[r.status]}10` }}>
                       {r.status}
@@ -157,6 +160,6 @@ export default function AdminNda() {
           </table>
         )}
       </div>
-    </>
+    </div>
   );
 }

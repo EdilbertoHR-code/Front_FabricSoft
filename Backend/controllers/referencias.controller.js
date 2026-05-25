@@ -16,11 +16,13 @@ function getWeekIndex(date = new Date()) {
   return Math.floor(diffDays / 7);
 }
 
-function pickWeeklyWindow(refs, limit) {
+function pickWeeklyWindow(refs, limit, rotationWeeks = 1) {
   if (refs.length <= limit) return refs;
 
   const weekIndex = getWeekIndex();
-  const start = weekIndex % refs.length;
+  const cadence = Math.max(1, Number(rotationWeeks) || 1);
+  const rotationIndex = Math.floor(weekIndex / cadence);
+  const start = rotationIndex % refs.length;
   return Array.from({ length: limit }, (_, offset) => refs[(start + offset) % refs.length]);
 }
 
@@ -29,7 +31,7 @@ exports.listarPublicas = async (req, res) => {
     const doc = await getSingleton();
     const eligible = sortRefs(doc.referencias).filter(ref => ref.disponible);
     const publicLimit = Number(doc.publicLimit || 3);
-    const data = pickWeeklyWindow(eligible, publicLimit)
+    const data = pickWeeklyWindow(eligible, publicLimit, doc.rotationWeeks)
       .map(ref => ({
         id: ref._id,
         numero: ref.numero,

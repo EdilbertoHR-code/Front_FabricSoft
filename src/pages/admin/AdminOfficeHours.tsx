@@ -4,8 +4,12 @@ import { useAuthApi } from '../../config/api';
 interface Booking {
   _id: string;
   nombre: string;
+  cargo?: string;
   empresa: string;
   email: string;
+  revenue?: string;
+  iniciativaOracle?: string;
+  plazo?: string;
   dia: string;
   slot: string;
   status: 'pendiente' | 'confirmado' | 'cancelado';
@@ -13,6 +17,7 @@ interface Booking {
   calendarEnviado?: boolean;
   calendarEventId?: string;
   notas?: string;
+  tracking?: { sourceSection?: string; interactionType?: string; pagePath?: string; referrer?: string; locale?: string };
   createdAt: string;
 }
 
@@ -43,7 +48,9 @@ export default function AdminOfficeHours() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchBookings(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchBookings();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStatus = async (id: string, status: Booking['status']) => {
     setSaving(true);
@@ -90,19 +97,18 @@ export default function AdminOfficeHours() {
   const cancelado  = bookings.filter(b => b.status === 'cancelado').length;
 
   return (
-    <>
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · OFFICE HOURS
+    <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · OFFICE HOURS</div>
+            <h1 className="fabric-admin-title">Office Hours</h1>
+            <div className="fabric-admin-subtitle">Reservas calificadas · criterios de admision · email y calendar status listos para seguimiento.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Office Hours
-          </div>
+          <span className="fabric-admin-pill">
+            {pendiente} pendiente · {confirmado} confirmado · {cancelado} cancelado
+          </span>
         </div>
-        <span style={{ fontSize: 10, color: '#5A5A5A' }}>
-          {pendiente} pendiente · {confirmado} confirmado · {cancelado} cancelado
-        </span>
       </div>
 
       <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', background: 'rgba(201,169,110,0.04)' }}>
@@ -111,7 +117,7 @@ export default function AdminOfficeHours() {
         </span>
       </div>
 
-      <div style={{ padding: '32px 36px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="fabric-admin-content" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading ? (
           <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.16em' }}>Cargando reservas...</div>
         ) : bookings.length === 0 ? (
@@ -151,11 +157,16 @@ export default function AdminOfficeHours() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 28 }}>
               {([
                 ['Email',   selected.email],
+                ['Cargo',   selected.cargo || 'No especificado'],
+                ['Revenue', selected.revenue || 'No especificado'],
+                ['Iniciativa', selected.iniciativaOracle || 'No especificado'],
+                ['Plazo',   selected.plazo || 'No especificado'],
                 ['Día',     selected.dia],
                 ['Horario', selected.slot],
                 ['Estado',  STATUS_LABEL[selected.status]],
                 ['Email confirmacion', selected.emailEnviado ? 'Enviado' : 'No enviado'],
                 ['Calendar', selected.calendarEnviado ? 'Creado' : 'No creado'],
+                ['Origen', [selected.tracking?.sourceSection, selected.tracking?.interactionType].filter(Boolean).join(' · ') || 'Sin tracking'],
               ] as [string, string][]).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1a1a1a', paddingBottom: 12 }}>
                   <span style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{k}</span>
@@ -214,7 +225,7 @@ export default function AdminOfficeHours() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -246,7 +257,7 @@ function BookingRow({
         </div>
         <div>
           <div style={{ fontSize: 11, color: '#F5F5F5' }}>{booking.nombre}</div>
-          <div style={{ fontSize: 9, color: '#8A8A8A' }}>{booking.empresa}</div>
+          <div style={{ fontSize: 9, color: '#8A8A8A' }}>{booking.empresa}{booking.cargo ? ` · ${booking.cargo}` : ''}</div>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>

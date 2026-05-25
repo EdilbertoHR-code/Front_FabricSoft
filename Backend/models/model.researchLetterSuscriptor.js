@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const trackingSchema = require('./schema.tracking');
 
 const researchLetterSuscriptorSchema = new mongoose.Schema(
   {
@@ -14,6 +15,7 @@ const researchLetterSuscriptorSchema = new mongoose.Schema(
     iniciativaOracle: { type: String, enum: ['activa', 'planeada', 'evaluando'], required: true },
     industria:        { type: String, trim: true, default: '' },
     ipAddress:        { type: String, default: '' },
+    tracking:         { type: trackingSchema, default: () => ({}) },
     status:           { type: String, enum: ['pendiente', 'aprobado', 'rechazado'], default: 'pendiente' },
   },
   { timestamps: true, versionKey: false }

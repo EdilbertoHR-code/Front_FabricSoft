@@ -32,7 +32,9 @@ export default function AdminReferencias() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => { fetchReferences(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchReferences();   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function fetchReferences() {
     setLoading(true);
@@ -110,23 +112,25 @@ export default function AdminReferencias() {
     }
   }
 
+  const publicPreview = references.filter(item => item.disponible).slice(0, publicLimit);
+
   return (
-    <>
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC - ADMIN - REFERENCIAS
+    <div className="fabric-admin-page">
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · REFERENCIAS</div>
+            <h1 className="fabric-admin-title">Referencias</h1>
+            <div className="fabric-admin-subtitle">Preview publico · rotacion real por semanas · control de disponibilidad para S12.</div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Referencias disponibles
+          <div className="fabric-admin-actions">
+            <span className="fabric-admin-pill">{publicPreview.length} visibles · cada {rotationWeeks} semanas</span>
+            <button onClick={fetchReferences} style={buttonStyle}>Actualizar</button>
+            <button onClick={resetDefaults} disabled={saving} style={buttonStyle}>Restaurar</button>
+            <button onClick={save} disabled={saving} style={{ ...buttonStyle, borderColor: '#C9A96E', color: '#C9A96E' }}>
+              {saving ? 'Guardando...' : 'Guardar'}
+            </button>
           </div>
-        </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button onClick={fetchReferences} style={buttonStyle}>Actualizar</button>
-          <button onClick={resetDefaults} disabled={saving} style={buttonStyle}>Restaurar</button>
-          <button onClick={save} disabled={saving} style={{ ...buttonStyle, borderColor: '#C9A96E', color: '#C9A96E' }}>
-            {saving ? 'Guardando...' : 'Guardar'}
-          </button>
         </div>
       </div>
 
@@ -158,7 +162,23 @@ export default function AdminReferencias() {
         </span>
       </div>
 
-      <div style={{ padding: '24px 36px 36px' }}>
+      <div className="fabric-admin-content">
+        {!loading && (
+          <div style={{ border: '1px solid #1e1e1e', background: '#0A0A0A', padding: '18px 20px', marginBottom: 18 }}>
+            <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 12 }}>
+              Preview publico · {publicPreview.length} visibles
+            </div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              {publicPreview.length ? publicPreview.map(item => (
+                <span key={item._id ?? item.numero} style={{ border: '1px solid #252525', padding: '8px 10px', color: '#8A8A8A', fontSize: 10 }}>
+                  {item.numero} · {item.title || 'Sin titulo'}
+                </span>
+              )) : (
+                <span style={{ color: '#B85450', fontSize: 10 }}>No hay referencias disponibles para publicar.</span>
+              )}
+            </div>
+          </div>
+        )}
         {loading ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
         ) : (
@@ -204,7 +224,7 @@ export default function AdminReferencias() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

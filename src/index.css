@@ -704,6 +704,138 @@
   gap: 28px;
 }
 
+/* Scoped premium admin language for Rescue Assessment -> Metricas */
+.fabric-admin-page {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(201, 169, 110, 0.07), transparent 34%),
+    linear-gradient(180deg, #070707 0%, #050505 100%);
+  color: #F5F5F5;
+  padding-bottom: 56px;
+}
+
+.fabric-admin-hero {
+  position: relative;
+  padding: 42px 36px 34px;
+  border-bottom: 1px solid #1A1A1A;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(7, 7, 7, 0.92));
+  overflow: hidden;
+}
+
+.fabric-admin-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.08), transparent),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.035), transparent 28%);
+  opacity: 0.7;
+}
+
+.fabric-admin-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.fabric-admin-eyebrow {
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #C9A96E;
+  margin-bottom: 10px;
+}
+
+.fabric-admin-title {
+  font-family: var(--serif, Georgia, serif);
+  font-size: clamp(54px, 7vw, 104px);
+  line-height: 0.88;
+  font-weight: 300;
+  color: #F5F5F5;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.fabric-admin-hero-inner > div[style*="font-size: 22px"] {
+  font-family: var(--serif, Georgia, serif) !important;
+  font-size: clamp(54px, 7vw, 104px) !important;
+  line-height: 0.88 !important;
+  font-weight: 300 !important;
+  color: #F5F5F5 !important;
+  letter-spacing: 0 !important;
+}
+
+.fabric-admin-subtitle {
+  margin-top: 16px;
+  max-width: 720px;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.14em;
+  color: #6E6E6E;
+  text-transform: uppercase;
+}
+
+.fabric-admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.fabric-admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  background: rgba(201, 169, 110, 0.07);
+  color: #C9A96E;
+  padding: 7px 12px;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.fabric-admin-content {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 32px 36px 0;
+}
+
+.fabric-admin-panel {
+  background: rgba(10, 10, 10, 0.9) !important;
+  border: 1px solid #1F1F1F !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.fabric-admin-stat-card {
+  border: 1px solid #1E1E1E;
+  background: rgba(255, 255, 255, 0.015);
+  padding: 20px 24px;
+}
+
+@media (max-width: 900px) {
+  .fabric-admin-hero {
+    padding: 34px 22px 28px;
+  }
+
+  .fabric-admin-title {
+    font-size: clamp(42px, 13vw, 72px);
+  }
+
+  .fabric-admin-content {
+    padding: 24px 18px 0;
+  }
+}
+
 @media (max-width: 639px) {
   .admin-page-header {
     padding: 16px;
