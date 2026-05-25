@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useUser, useClerk } from '@clerk/clerk-react'; // 🔥 Importamos useClerk
 import { toast } from 'sonner'; 
@@ -11,15 +11,19 @@ export const VerificarAcceso = () => {
   const { signOut } = useClerk(); 
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const validacionIniciada = useRef(false);
 
   useEffect(() => {
     const validarConBackend = async () => {
       if (!isLoaded) return;
+      if (validacionIniciada.current) return;
 
       if (!isSignedIn) {
-        navigate('/sign-in', { replace: true });
+        navigate('/acceso/*', { replace: true });
         return;
       }
+
+      validacionIniciada.current = true;
 
       try {
         const token = await getToken();
@@ -49,43 +53,10 @@ export const VerificarAcceso = () => {
         });
         
   
-        if (data.rol === 'Admin') {
-          navigate('/Admin', { replace: true });
+        if (data.rol === 'admin') {
+          navigate('/admin', { replace: true });
 
-        } else if (data.rol === 'atención al cliente') {
-          const empresas = data.assignedCompanies || [];
-
-          if (empresas === 'all' || empresas.length > 1) {
-            navigate('/seleccionar-empresa', { state: { empresasAsignadas: empresas }, replace: true });
-            
-          } else if (empresas.length === 1) {
-            localStorage.setItem('activeCompanyId', empresas[0]);
-
-           try {
-              await api.patch('/userAdmin/seleccionar-empresa', { companyId: empresas[0] });
-            } catch (error) {
-              console.error("Error asignando empresa por defecto:", error);
-            }
-            
-            navigate('/dashboard', { replace: true });
-            
-          } else {
-        
-            toast.error("Sin espacios de trabajo asignados");
-            setError("Tu cuenta no tiene empresas asignadas. Habla con el administrador. Cerrando sesión...");
-            
-            // Lo deslogueamos después de 4 segundos
-            setTimeout(() => {
-              signOut();
-            }, 5000);
-          }
-
-        } else { 
-          if (data.companyId) {
-             localStorage.setItem('activeCompanyId', data.companyId);
-          }
-          navigate('/dashboard', { replace: true });
-        }
+         }
 
       } catch (err: any) {
         console.error("Error validando sesión:", err);

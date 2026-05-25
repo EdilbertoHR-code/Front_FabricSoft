@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
+import { api } from "../../../config/api";
 
 // --- HOOK PARA ANIMACIÓN AL HACER SCROLL ---
 function useInView(threshold = 0.2) {
@@ -34,6 +35,19 @@ type Scenario = {
   shortLabel: string;
   prompt: string;
   response: string;
+};
+
+type AgentCta = {
+  type: "apply" | "schedule" | "send_case";
+  label: string;
+  href: string;
+};
+
+type ChatMessage = {
+  role: "user" | "agent";
+  text: string;
+  cta?: AgentCta | null;
+  score?: number;
 };
 
 const DISCLAIMER = "\n\n— Recomendaciones generales basadas en best practices. Cada caso requiere evaluación específica con un senior de FABRIC. fabricsoft.com.mx/aplicar";
@@ -131,12 +145,15 @@ export default function ChatIa() {
   const { ref: sectionRef, isInView } = useInView(0.15);
   
   const [inputValue, setInputValue] = useState("");
-  const [chatHistory, setChatHistory] = useState<{role: 'user' | 'agent', text: string}[]>([
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
     { role: 'agent', text: "Sistema de diagnóstico FABRIC IA en línea.\nEscribe tu problema o selecciona un escenario predeterminado." }
   ]);
   const [isTyping, setIsTyping] = useState(false);
   
   const inputRef = useRef<HTMLInputElement>(null);
+  const sessionIdRef = useRef(
+    window.crypto?.randomUUID?.() || `fabric-ai-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  );
 
   useEffect(() => {
     const container = document.getElementById("chat-scroll-container");
@@ -145,35 +162,79 @@ export default function ChatIa() {
     }
   }, [chatHistory]);
 
-  const handleScenarioClick = (scenarioKey: ScenarioKey) => {
-    if (isTyping) return;
-    const scenario = scenarios.find(s => s.key === scenarioKey)!;
-    
-    setChatHistory(prev => [...prev, { role: 'user', text: scenario.prompt }]);
+  const askPublicAgent = async (message: string) => {
+    const cleanMessage = message.trim();
+    if (!cleanMessage || isTyping) return;
+
+    const recentHistory = chatHistory
+      .filter((item) => item.text && !item.text.startsWith('Sistema de diagn'))
+      .slice(-8);
+
+    setChatHistory(prev => [...prev, { role: 'user', text: cleanMessage }]);
     setIsTyping(true);
 
-    setTimeout(() => {
-      setChatHistory(prev => [...prev, { role: 'agent', text: scenario.response }]);
-      setIsTyping(false);
-    }, 600);
+    try {
+      const { data } = await api.post('/agente-ia/public', {
+        message: cleanMessage,
+        history: recentHistory,
+        sessionId: sessionIdRef.current,
+      });
+
+      const reply =
+        data?.reply ||
+        'Puedo ayudarte a evaluar el caso, pero necesito un poco mas de contexto: industria, sistema actual y bloqueo principal.';
+      const score = Number(data?.score || 0);
+      const cta = data?.cta
+        ? {
+            ...data.cta,
+            href: '/aplicar',
+            label: score >= 86 ? 'Agendar cita con FABRIC' : 'Agendar diagnóstico',
+          }
+        : null;
+
+      setChatHistory(prev => [...prev, { role: 'agent', text: reply, cta, score }]);
+    } catch (error: any) {
+      const fallbackReply =
+        error.response?.data?.error ||
+        'Ahora mismo el agente no pudo responder. Intenta de nuevo en unos segundos o comparte tu industria, sistema actual y bloqueo principal para retomar el diagnostico.';
+
+      setChatHistory(prev => [...prev, { role: 'agent', text: fallbackReply }]);
+    } finally {
+      window.setTimeout(() => setIsTyping(false), 450);
+    }
   };
 
-  const handleManualSubmit = (e: React.FormEvent) => {
+  const handleScenarioClick = (scenarioKey: ScenarioKey) => {
+    const scenario = scenarios.find(s => s.key === scenarioKey);
+    if (!scenario) return;
+
+    askPublicAgent(scenario.prompt);
+  };
+
+  const handleManualSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
 
-    setChatHistory(prev => [...prev, { role: 'user', text: inputValue }]);
+    const message = inputValue;
     setInputValue("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      setChatHistory(prev => [...prev, { role: 'agent', text: "Entendido. Un ingeniero de FABRIC revisará este escenario específico. Para un análisis en profundidad, te recomendamos agendar un diagnóstico formal a través del menú superior." }]);
-      setIsTyping(false);
-    }, 800);
+    askPublicAgent(message);
   };
 
   const handleFocusChat = () => {
     inputRef.current?.focus();
+  };
+
+  const handleCtaClick = async (cta: AgentCta) => {
+    try {
+      await api.post('/agente-ia/public/action', {
+        sessionId: sessionIdRef.current,
+        action: cta.type,
+      });
+    } catch {
+      // El CTA debe seguir funcionando aunque el tracking falle.
+    } finally {
+      window.location.href = cta.href;
+    }
   };
 
   return (
@@ -289,11 +350,49 @@ export default function ChatIa() {
                                 {msg.text}
                               </p>
                             )}
+                            {isAgent && msg.cta && (
+                              <div className="mt-4 border border-[#C9A96E]/35 bg-[#C9A96E]/[0.07] p-3 shadow-[0_0_28px_rgba(201,169,110,0.08)]">
+                                <p className="mb-3 font-sans text-[12px] leading-5 text-[#A0A0A0]">
+                                  Podemos revisar tu caso con más detalle y definir el siguiente paso.
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCtaClick(msg.cta as AgentCta)}
+                                  className="group flex w-full items-center justify-center gap-2 border border-[#C9A96E] bg-[#C9A96E] px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_24px_rgba(201,169,110,0.24)] transition hover:bg-[#D8BD82] active:scale-[0.99]"
+                                >
+                                  {msg.cta.label}
+                                  <ArrowIcon />
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
                     );
                   })}
+
+                  {isTyping && chatHistory[chatHistory.length - 1]?.role === 'user' && (
+                    <div className="flex justify-start animate-[fadeIn_0.3s_ease-out]">
+                      <div className="max-w-[85%] flex flex-col gap-1.5 items-start">
+                        <div className="flex items-center gap-1.5 opacity-50">
+                          <SparkIcon />
+                          <span className="font-mono text-[8px] uppercase tracking-widest text-[#F5F5F5]">
+                            FABRIC AI
+                          </span>
+                        </div>
+                        <div className="bg-[#050505] border border-[#1A1A1A] px-5 py-4 rounded-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#666]">
+                              Analizando
+                            </span>
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E] animate-bounce" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E] animate-bounce [animation-delay:120ms]" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E] animate-bounce [animation-delay:240ms]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Controles Inferiores */}

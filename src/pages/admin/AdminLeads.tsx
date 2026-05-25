@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import AdminLayout from './AdminLayout';
 import { useFabric } from '../../store/FabricContext';
 import type { Lead, LeadStatus } from '../../store/fabricStore';
 
@@ -47,7 +46,7 @@ export default function AdminLeads() {
   };
 
   return (
-    <AdminLayout>
+    <>
       {/* Header */}
       <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
@@ -265,6 +264,6 @@ export default function AdminLeads() {
           </div>
         </div>
       )}
-    </AdminLayout>
+    </>
   );
 }

@@ -22,7 +22,7 @@ exports.webhookRegistro = async (req, res) => {
     return res.status(400).json({ error: 'Faltan cabeceras de seguridad Svix' });
   }
 
-  // Obtener y verificar payload
+
   const payload = req.body.toString('utf8');
   const wh = new Webhook(WEBHOOK_SECRET);
 
@@ -38,34 +38,31 @@ exports.webhookRegistro = async (req, res) => {
   const eventType = evt.type;
 
   try {
-    // ------------------------------------------------------------------------
-    // EVENTO: CREADO
-    // ------------------------------------------------------------------------
+  
     if (eventType === 'user.created') {
       const correo = email_addresses?.find(e => e.id === primary_email_address_id)?.email_address || email_addresses[0]?.email_address;
 
       if (!correo) return res.status(400).json({ error: 'Usuario sin correo' });
 
-      // Verificar si ya existe en Mongo
       const usuarioExistente = await User.findOne({ email: correo });
       if (usuarioExistente) {
         return res.status(200).json({ success: true, message: 'Usuario ya existe' });
       }
 
-      // Crear nuevo perfil directivo en MongoDB
+   
       const nuevoUsuario = new User({
         clerkId: id,
         email: correo,
         firstName: first_name || '',
         lastName: last_name || '',
         photoUrl: image_url || '',
-        rol: 'admin', // Asignamos 'admin' directamente ya que es de uso interno
+        rol: 'admin', 
         status: 'activo'
       });
 
       await nuevoUsuario.save();
 
-      // Sincronizar el rol en Clerk Metadata
+  
       await clerkClient.users.updateUser(id, {
         publicMetadata: { rol: 'admin' }
       });

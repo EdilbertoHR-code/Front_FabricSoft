@@ -42,6 +42,10 @@ const AdminMetricas = lazy(() => import('../pages/admin/AdminMetricas'));
 const AdminCapacidad = lazy(() => import('../pages/admin/AdminCapacidad'));
 const AdminOfficeHours = lazy(() => import('../pages/admin/AdminOfficeHours'));
 const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
+const AdminAgenteIA = lazy(() => import('../pages/admin/AdminAgenteIA'));
+const AdminConversacionesIA = lazy(() => import('../pages/admin/AdminConversacionesIA'));
+const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosticosOracle'));
+const AdminLayout = lazy(() => import('../layouts/admin/adminLayaout'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -98,17 +102,22 @@ export const AppRouter = () => {
   return (
     <>
       <ScrollToTop />
-      {/* El Suspense envuelve las rutas lazy para mostrar el Loader mientras se descargan */}
+    
       <Suspense fallback={<GlobalLoader />}>
         <Routes>
           
-          {/* =================================================================
-              RUTAS PÚBLICAS (Dentro del Layout Público) 
-              ================================================================= */}
-          <Route path="/" element={<PublicLayout />}>
-            <Route index element={<Home />} />
+    
+          <Route path="/verificar-acceso" element={<VerificarAcceso />} />
 
-            <Route path="/verificar-acceso" element={<VerificarAcceso />} />
+          <Route
+            path="/"
+            element={
+              <PublicRouteProtector>
+                <PublicLayout />
+              </PublicRouteProtector>
+            }
+          >
+            <Route index element={<Home />} />
      
             
             {/* Casos y Engagements */}
@@ -173,21 +182,24 @@ export const AppRouter = () => {
           {/* =================================================================
               RUTAS DE ADMINISTRACIÓN (Protegidas por Roles de Clerk)
               ================================================================= */}
-          <Route 
-            path="/admin/*" 
+          <Route
+            path="/admin"
             element={
-              <ProtectorRoles rolesPermitidos={['Admin']}>
-                <Routes>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="leads" element={<AdminLeads />} />
-                  <Route path="metricas" element={<AdminMetricas />} />
-                  <Route path="capacidad" element={<AdminCapacidad />} />
-                  <Route path="office-hours" element={<AdminOfficeHours />} />
-                  <Route path="logs" element={<AdminLogs />} />
-                </Routes>
+              <ProtectorRoles rolesPermitidos={['admin']}>
+                <AdminLayout />
               </ProtectorRoles>
-            } 
-          />
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="leads" element={<AdminLeads />} />
+            <Route path="agente-ia" element={<AdminAgenteIA />} />
+            <Route path="conversaciones-ia" element={<AdminConversacionesIA />} />
+            <Route path="diagnosticos-oracle" element={<AdminDiagnosticosOracle />} />
+            <Route path="metricas" element={<AdminMetricas />} />
+            <Route path="capacidad" element={<AdminCapacidad />} />
+            <Route path="office-hours" element={<AdminOfficeHours />} />
+            <Route path="logs" element={<AdminLogs />} />
+          </Route>
 
           {/* REDIRECCIÓN POR DEFECTO (404 a Home) */}
           <Route path="*" element={<Navigate to="/" replace />} />

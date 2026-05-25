@@ -4,8 +4,8 @@ import { Navigate } from 'react-router-dom';
 
 const obtenerRutaPorRol = (rol: string) => {
   switch (rol) {
-    case 'Admin':
-      return '/Admin';
+    case 'admin':
+      return '/admin';
     default:
       return '/';
   }

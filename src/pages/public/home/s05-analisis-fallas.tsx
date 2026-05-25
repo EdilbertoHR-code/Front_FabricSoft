@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { api } from "../../../config/api";
 
 // --- HOOK DE ANIMACIÓN ---
 function useInView(threshold = 0.2) {
@@ -194,7 +195,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     }, 650);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFormError("");
 
@@ -229,13 +230,28 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
       return;
     }
 
-    setIsProcessing(true);
-    
-    // Simulación de envío a backend
-    setTimeout(() => {
+    try {
+      setIsProcessing(true);
+
+      await api.post('/diagnostico-oracle', {
+        answers,
+        contact,
+        honeypot,
+        captcha: {
+          a: captcha.a,
+          b: captcha.b,
+        },
+        captchaAnswer,
+        authorized,
+      });
+
       setIsProcessing(false);
       setStep(14); 
-    }, 1500);
+    } catch (error: any) {
+      setIsProcessing(false);
+      setFormError(error.response?.data?.error || "No pudimos guardar el diagnóstico. Inténtalo de nuevo.");
+      refreshCaptcha();
+    }
   };
 
   const diagnostic = getDiagnosticResult(answers);
