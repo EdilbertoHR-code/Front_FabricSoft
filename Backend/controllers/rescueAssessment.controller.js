@@ -239,7 +239,7 @@ exports.resetQuestionSet = async (req, res) => {
 
 exports.submit = async (req, res) => {
   try {
-    const { email, nombre, empresa, cargo, answers, tracking } = req.body;
+    const { email, nombre, empresa, cargo, escenario, answers, tracking } = req.body;
 
     if (!email || !answers || !Array.isArray(answers) || answers.length !== 12) {
       return res.status(400).json({ error: 'Email y 12 respuestas son requeridos.' });
@@ -251,11 +251,13 @@ exports.submit = async (req, res) => {
     const totalScore = answers.reduce((sum, answer) => sum + (Number(answer.score) || 0), 0);
     const severity = getSeverity(totalScore);
 
+    const VALID_ESCENARIOS = ['fusion-fallando', 'migrando', 'greenfield'];
     const assessment = await RescueAssessment.create({
       email: email.toLowerCase().trim(),
       nombre: nombre?.trim() || '',
       empresa: empresa?.trim() || '',
       cargo: cargo?.trim() || '',
+      escenario: VALID_ESCENARIOS.includes(escenario) ? escenario : 'fusion-fallando',
       answers,
       totalScore,
       severity,

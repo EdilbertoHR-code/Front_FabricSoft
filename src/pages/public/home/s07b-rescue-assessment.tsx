@@ -248,7 +248,7 @@ export default function S07bRescueAssessment() {
     setSending(true);
     const answersPayload = questions.map((question) => ({ questionId: question.id, score: answers[question.id] ?? 0 }));
     try {
-      await api.post('/rescue-assessment/submit', { email, nombre, empresa, answers: answersPayload });
+      await api.post('/rescue-assessment/submit', { email, nombre, empresa, escenario: escenario ?? 'fusion-fallando', answers: answersPayload });
     } catch {
       // El resultado publico no se bloquea si el email o el CRM fallan.
     } finally {
