@@ -578,29 +578,29 @@
 }
 
 .admin-slide-panel {
-  width: min(680px, 92vw);
+  width: min(860px, 96vw);
   height: 100vh;
-  background: #060606;
-  border-left: 1px solid #1e1e1e;
-  padding: 36px 40px;
+  background: #050505;
+  border-left: 1px solid #1a1a1a;
+  padding: 40px 52px;
   overflow-y: auto;
   font-family: var(--mono, "JetBrains Mono", monospace);
   scrollbar-width: thin;
-  scrollbar-color: #2a2a2a #060606;
+  scrollbar-color: #1e1e1e #050505;
 }
 
 .admin-slide-panel::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 .admin-slide-panel::-webkit-scrollbar-track {
-  background: #060606;
+  background: transparent;
 }
 .admin-slide-panel::-webkit-scrollbar-thumb {
-  background: #222;
+  background: #1e1e1e;
   border-radius: 2px;
 }
 .admin-slide-panel::-webkit-scrollbar-thumb:hover {
-  background: #C9A96E33;
+  background: #C9A96E44;
 }
 
 .admin-booking-row {
