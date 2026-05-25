@@ -1,29 +1,24 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import {
-  AlertTriangle,
-  ArrowUpRight,
   Bot,
-  Building2,
-  CheckCircle2,
-  Clock3,
+  Download,
   Filter,
-  Gauge,
-  MessageSquareText,
   RefreshCw,
   Search,
-  ShieldCheck,
-  Target,
   Trash2,
+  Database,
+  Terminal,
+  Activity,
+  Copy,
+  CheckCheck,
+  Zap
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { api } from '../../config/api';
 
-type LeadStatus = 'nuevo' | 'calificado' | 'aplico' | 'abandonado' | 'descartado';
-type ScoreFilter = 'todos' | 'hot' | 'medium' | 'low';
-type SortMode = 'recent' | 'score' | 'status';
-
+// ─── TIPOS ───
 type AgentLead = {
   _id: string;
   sessionId: string;
@@ -39,7 +34,7 @@ type AgentLead = {
   summary: string;
   nextStep: string;
   pendingQuestions: string[];
-  status: LeadStatus;
+  status: string;
   ctaType: string;
   lastQuestion: string;
   ip: string;
@@ -48,43 +43,65 @@ type AgentLead = {
   conversation: Array<{ role: 'user' | 'agent'; text: string }>;
 };
 
-const STATUS_LABEL: Record<LeadStatus, string> = {
-  nuevo: 'Nuevo',
-  calificado: 'Calificado',
-  aplico: 'Aplicó',
-  abandonado: 'Abandonado',
-  descartado: 'Descartado',
-};
-
-const STATUS_CLASS: Record<LeadStatus, string> = {
-  nuevo: 'border-sky-400/25 bg-sky-400/10 text-sky-300',
-  calificado: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300',
-  aplico: 'border-amber-300/30 bg-amber-300/10 text-amber-200',
-  abandonado: 'border-zinc-700 bg-zinc-900 text-zinc-400',
-  descartado: 'border-red-400/25 bg-red-400/10 text-red-300',
-};
-
-const SCORE_LABEL: Record<ScoreFilter, string> = {
-  todos: 'Todos',
-  hot: '80+',
-  medium: '65-79',
-  low: '<65',
-};
-
 const authHeaders = (token: string) => ({
   Authorization: `Bearer ${token}`,
 });
 
+// ─── UTILS ───
+const formatDateTime = (value?: string) => {
+  if (!value) return 'FECHA DESCONOCIDA';
+  try {
+    const d = new Date(value);
+    return d.toLocaleString('en-GB', { 
+      day: '2-digit', month: 'short', year: 'numeric', 
+      hour: '2-digit', minute: '2-digit', hour12: false 
+    }).toUpperCase();
+  } catch {
+    return 'FECHA INVÁLIDA';
+  }
+};
+
+const safeFileName = (value?: string) => String(value || 'dataset')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]+/gi, '_')
+  .replace(/^_+|_+$/g, '')
+  .toLowerCase();
+
+const downloadConversationAsTxt = (lead: AgentLead) => {
+  // Formato estructurado para Fine-Tuning
+  const metadata = `--- METADATA ---\nID: ${lead._id || 'N/A'}\nEmpresa: ${lead.company || 'N/A'}\nIndustria: ${lead.industry || 'N/A'}\nIntencion: ${lead.intent || 'N/A'}\nScore: ${lead.score || 0}\nSistema: ${lead.currentSystem || 'N/A'}\n\n`;
+  const textContent = (lead.conversation || [])
+    .map((msg) => `${msg.role === 'user' ? 'USER_INPUT' : 'SYSTEM_RESPONSE'}:\n${msg.text}\n`)
+    .join('\n');
+
+  const blob = new Blob([metadata + '--- TRANSCRIPT ---\n' + textContent], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = `fabric_dataset_${safeFileName(lead.company)}_${lead._id?.slice(-6) || 'out'}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+const estimateTokens = (conversation?: AgentLead['conversation']) => {
+  if (!conversation || !Array.isArray(conversation)) return 0;
+  const text = conversation.map(c => c.text).join(' ');
+  return Math.round(text.length / 4);
+};
+
+// ─── COMPONENTE PRINCIPAL ───
 export default function AdminConversacionesIA() {
   const { getToken } = useAuth();
   const [leads, setLeads] = useState<AgentLead[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<LeadStatus | 'todos'>('todos');
-  const [scoreFilter, setScoreFilter] = useState<ScoreFilter>('todos');
-  const [sortMode, setSortMode] = useState<SortMode>('recent');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const loadLeads = async () => {
     try {
@@ -96,12 +113,12 @@ export default function AdminConversacionesIA() {
         headers: authHeaders(token),
       });
 
-      const nextLeads = data.leads || [];
-      setLeads(nextLeads);
-      setSelectedId((current) => current || nextLeads[0]?._id || null);
+      const highQualityLeads = (data.leads || []).filter((l: AgentLead) => l.score >= 80);
+      setLeads(highQualityLeads);
+      setSelectedId((current) => current || highQualityLeads[0]?._id || null);
     } catch (error: any) {
-      toast.error('No se pudieron cargar las conversaciones IA', {
-        description: error.response?.data?.error || 'Revisa el backend e intenta otra vez.',
+      toast.error('Error de sincronización', {
+        description: error.response?.data?.error || 'No se pudo conectar con el motor. Verifique su red.',
       });
     } finally {
       setLoading(false);
@@ -115,75 +132,21 @@ export default function AdminConversacionesIA() {
 
   const filteredLeads = useMemo(() => {
     const query = search.trim().toLowerCase();
+    if (!query) return [...leads].sort((a, b) => new Date(b.lastSeenAt || 0).getTime() - new Date(a.lastSeenAt || 0).getTime());
 
     return leads
-      .filter((lead) => {
-        if (statusFilter !== 'todos' && lead.status !== statusFilter) return false;
-        if (scoreFilter === 'hot' && lead.score < 80) return false;
-        if (scoreFilter === 'medium' && (lead.score < 65 || lead.score >= 80)) return false;
-        if (scoreFilter === 'low' && lead.score >= 65) return false;
+      .filter((lead) => [
+        lead.company, lead.intent, lead.industry, lead.currentSystem, lead.ip
+      ].filter(Boolean).some((value) => String(value).toLowerCase().includes(query)))
+      .sort((a, b) => new Date(b.lastSeenAt || 0).getTime() - new Date(a.lastSeenAt || 0).getTime());
+  }, [leads, search]);
 
-        if (!query) return true;
+  const selectedLead = filteredLeads.find((lead) => lead._id === selectedId) || leads[0];
 
-        return [
-          lead.company,
-          lead.intent,
-          lead.industry,
-          lead.currentSystem,
-          lead.painPoint,
-          lead.lastQuestion,
-          lead.summary,
-          lead.ip,
-        ]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(query));
-      })
-      .sort((a, b) => {
-        if (sortMode === 'score') return b.score - a.score;
-        if (sortMode === 'status') return a.status.localeCompare(b.status);
-        return new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime();
-      });
-  }, [leads, scoreFilter, search, sortMode, statusFilter]);
-
-  const selectedLead =
-    filteredLeads.find((lead) => lead._id === selectedId) ||
-    leads.find((lead) => lead._id === selectedId) ||
-    filteredLeads[0] ||
-    leads[0];
-
-  const stats = useMemo(() => {
-    const hot = leads.filter((lead) => lead.score >= 80).length;
-    const applied = leads.filter((lead) => lead.status === 'aplico').length;
-    const avg = Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / Math.max(leads.length, 1));
-    const active = leads.filter((lead) => !['descartado', 'abandonado'].includes(lead.status)).length;
-
-    return { hot, applied, avg, active };
-  }, [leads]);
-
-  const updateStatus = async (leadId: string, status: LeadStatus) => {
-    try {
-      const token = await getToken();
-      if (!token) return;
-
-      const { data } = await api.patch(
-        `/agente-ia/leads/${leadId}/status`,
-        { status },
-        { headers: authHeaders(token) },
-      );
-
-      setLeads((current) => current.map((lead) => (lead._id === leadId ? data.lead : lead)));
-      toast.success('Estado actualizado');
-    } catch (error: any) {
-      toast.error('No se pudo actualizar el estado', {
-        description: error.response?.data?.error || 'Intenta otra vez.',
-      });
-    }
-  };
-
-  const deleteLead = async (lead: AgentLead) => {
-    const label = lead.company !== 'No detectada' ? lead.company : lead.intent.replaceAll('_', ' ');
-    const confirmed = window.confirm(`Eliminar conversación de ${label}? Esta acción no se puede deshacer.`);
-
+  // ─── FUNCIONES CORREGIDAS (SOPORTAN UNDEFINED) ───
+  const deleteLead = async (lead?: AgentLead) => {
+    if (!lead) return;
+    const confirmed = window.confirm(`ATENCIÓN: ¿Purgar permanentemente el dataset de ${lead.company || 'esta entidad'}? Esta acción es irreversible.`);
     if (!confirmed) return;
 
     try {
@@ -191,406 +154,305 @@ export default function AdminConversacionesIA() {
       if (!token) return;
 
       setDeletingId(lead._id);
-
-      await api.delete(`/agente-ia/leads/${lead._id}`, {
-        headers: authHeaders(token),
-      });
+      await api.delete(`/agente-ia/leads/${lead._id}`, { headers: authHeaders(token) });
 
       setLeads((current) => {
         const next = current.filter((item) => item._id !== lead._id);
         setSelectedId(next[0]?._id || null);
         return next;
       });
-
-      toast.success('Conversación eliminada');
+      toast.success('Registro purgado exitosamente del dataset.');
     } catch (error: any) {
-      toast.error('No se pudo eliminar la conversación', {
-        description: error.response?.data?.error || 'Intenta otra vez.',
-      });
+      toast.error('Fallo al purgar', { description: 'Reintente la operación.' });
     } finally {
       setDeletingId(null);
     }
   };
 
+  const handleDownload = (lead?: AgentLead) => {
+    if (!lead) return;
+    try {
+      downloadConversationAsTxt(lead);
+      toast.success('Dataset descargado en .txt');
+    } catch {
+      toast.error('Error al generar el archivo');
+    }
+  };
+
+  const handleCopyTranscript = (lead?: AgentLead) => {
+    if (!lead || !lead.conversation) return;
+    const textContent = lead.conversation
+      .map((msg) => `${msg.role === 'user' ? 'USER_INPUT' : 'SYSTEM_RESPONSE'}:\n${msg.text}`)
+      .join('\n\n');
+    
+    navigator.clipboard.writeText(textContent);
+    setCopied(true);
+    toast.success('Transcripción copiada al portapapeles');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="min-h-screen bg-[#17181B] px-4 py-5 text-zinc-100 sm:px-6 lg:px-8">
-      <header className="border border-zinc-800 bg-[#111214] shadow-[0_18px_44px_rgba(0,0,0,0.18)]">
-        <div className="flex flex-col gap-5 border-b border-zinc-800 p-5 sm:p-6 xl:flex-row xl:items-end xl:justify-between">
+    <div className="min-h-screen bg-[#050505] px-4 py-6 text-[#F5F5F5] sm:px-8 font-sans selection:bg-[#C9A96E]/30 pb-10">
+      
+      {/* ── HEADER ── */}
+      <header className="border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm relative overflow-hidden mb-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-5 p-6">
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              <Bot size={13} />
-              Agente IA · Conversaciones
+            <div className="mb-3 inline-flex items-center gap-2 border border-[#C9A96E]/20 bg-[#C9A96E]/5 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
+              <Database size={12} />
+              Vault de Entrenamiento AI
             </div>
-            <h1 className="font-serif text-3xl leading-tight text-zinc-50 sm:text-4xl">
-              Prospectos detectados
+            <h1 className="font-serif text-3xl text-[#F5F5F5] tracking-tight">
+              Dataset de Inferencia Crítica.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
-              Bandeja operativa para revisar, priorizar y limpiar conversaciones calificadas por el agente.
+            <p className="mt-2 text-[13px] text-[#888] max-w-3xl leading-relaxed">
+              Repositorio de transcripciones de alto valor (Score ≥ 80). Extraiga estos registros como contexto estructurado para fine-tuning del motor LLM y análisis de patrones en arquitecturas Oracle.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-4">
-            <Stat icon={MessageSquareText} label="Total" value={String(leads.length)} />
-            <Stat icon={Gauge} label="Activos" value={String(stats.active)} />
-            <Stat icon={Target} label="Score prom." value={String(stats.avg || 0)} />
-            <Stat icon={CheckCircle2} label="Aplicaron" value={String(stats.applied)} />
-          </div>
-        </div>
-
-        <div className="grid gap-3 p-4 lg:grid-cols-[1fr_auto_auto_auto_auto] lg:items-center">
-          <div className="relative min-w-0">
-            <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="h-10 w-full border border-zinc-800 bg-[#17181B] pl-9 pr-3 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-amber-400/40"
-              placeholder="Buscar empresa, intención, sistema, IP..."
-            />
-          </div>
-
-          <Select value={statusFilter} onChange={(value) => setStatusFilter(value as LeadStatus | 'todos')}>
-            <option value="todos">Todos los estados</option>
-            {Object.entries(STATUS_LABEL).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-
-          <Select value={scoreFilter} onChange={(value) => setScoreFilter(value as ScoreFilter)}>
-            {Object.entries(SCORE_LABEL).map(([value, label]) => (
-              <option key={value} value={value}>
-                Score {label}
-              </option>
-            ))}
-          </Select>
-
-          <Select value={sortMode} onChange={(value) => setSortMode(value as SortMode)}>
-            <option value="recent">Más recientes</option>
-            <option value="score">Mayor score</option>
-            <option value="status">Estado</option>
-          </Select>
-
-          <button
-            type="button"
-            onClick={loadLeads}
-            disabled={loading}
-            className="inline-flex h-10 items-center justify-center gap-2 border border-zinc-800 bg-[#17181B] px-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:cursor-wait disabled:opacity-60"
-          >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-            Actualizar
-          </button>
-        </div>
-      </header>
-
-      <section className="mt-5 grid gap-5 xl:grid-cols-[420px_minmax(0,1fr)]">
-        <aside className="border border-zinc-800 bg-[#111214]">
-          <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
-              <Filter size={14} className="text-amber-300" />
-              Pipeline IA
-            </div>
-            <span className="font-mono text-[10px] text-zinc-500">
-              {filteredLeads.length}/{leads.length}
-            </span>
-          </div>
-
-          <div className="h-[calc(100vh-315px)] min-h-[520px] overflow-y-auto p-2">
-            {loading && (
-              <div className="border border-zinc-800 bg-[#17181B] p-4 text-sm text-zinc-500">
-                Cargando conversaciones...
-              </div>
-            )}
-
-            {!loading && filteredLeads.length === 0 && (
-              <EmptyState
-                icon={AlertTriangle}
-                title="Sin resultados"
-                text="Ajusta los filtros o espera a que el agente detecte prospectos con intención real."
+          <div className="flex items-center gap-3 w-full xl:w-auto">
+            <div className="relative flex-1 xl:min-w-[320px]">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full border border-[#2A2A2A] bg-[#050505] pl-9 pr-8 text-[11px] font-mono text-[#F5F5F5] outline-none focus:border-[#C9A96E]/50 transition-colors rounded-sm placeholder:text-[#444]"
+                placeholder="Buscar por entidad, IP, sector o intención..."
               />
-            )}
-
-            <div className="space-y-1.5">
-              {filteredLeads.map((lead) => {
-                const active = selectedLead?._id === lead._id;
-                const title = lead.company !== 'No detectada' ? lead.company : lead.intent.replaceAll('_', ' ');
-
-                return (
-                  <button
-                    key={lead._id}
-                    type="button"
-                    onClick={() => setSelectedId(lead._id)}
-                    className={[
-                      'grid w-full grid-cols-[1fr_auto] gap-3 border px-3 py-3 text-left transition active:scale-[0.99]',
-                      active
-                        ? 'border-amber-400/35 bg-amber-400/10'
-                        : 'border-zinc-800 bg-[#17181B] hover:border-zinc-700 hover:bg-zinc-900/60',
-                    ].join(' ')}
-                  >
-                    <div className="min-w-0">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span className="truncate text-sm font-semibold text-zinc-100">{title}</span>
-                        {lead.score >= 80 && (
-                          <span className="shrink-0 border border-amber-400/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.12em] text-amber-200">
-                            Hot
-                          </span>
-                        )}
-                      </div>
-                      <div className="mt-1 truncate text-xs text-zinc-500">{lead.lastQuestion}</div>
-                      <div className="mt-2 flex min-w-0 flex-wrap gap-1.5">
-                        <Badge label={STATUS_LABEL[lead.status]} className={STATUS_CLASS[lead.status]} />
-                        <Badge label={lead.intent.replaceAll('_', ' ')} />
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="font-serif text-3xl leading-none text-zinc-50">{lead.score}</div>
-                      <div className="mt-2 text-[10px] text-zinc-600">
-                        {formatRelative(lead.lastSeenAt)}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </aside>
-
-        <main className="min-h-[620px] border border-zinc-800 bg-[#111214]">
-          {selectedLead ? (
-            <LeadDetail
-              lead={selectedLead}
-              deleting={deletingId === selectedLead._id}
-              onDelete={() => deleteLead(selectedLead)}
-              onStatusChange={(status) => updateStatus(selectedLead._id, status)}
-            />
-          ) : (
-            <div className="grid min-h-[620px] place-items-center p-8 text-center">
-              <EmptyState
-                icon={MessageSquareText}
-                title="Selecciona una conversación"
-                text="Cuando tengas prospectos calificados, aparecerán en la bandeja izquierda."
-              />
-            </div>
-          )}
-        </main>
-      </section>
-    </div>
-  );
-}
-
-function LeadDetail({
-  lead,
-  deleting,
-  onDelete,
-  onStatusChange,
-}: {
-  lead: AgentLead;
-  deleting: boolean;
-  onDelete: () => void;
-  onStatusChange: (status: LeadStatus) => void;
-}) {
-  return (
-    <div className="grid min-h-full gap-0 2xl:grid-cols-[minmax(0,1fr)_380px]">
-      <section className="border-b border-zinc-800 p-5 2xl:border-b-0 2xl:border-r 2xl:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-300">
-              Caso detectado
-            </div>
-            <h2 className="mt-1 truncate font-serif text-2xl text-zinc-50 sm:text-3xl">
-              {lead.company !== 'No detectada' ? lead.company : 'Prospecto sin empresa detectada'}
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">{lead.summary}</p>
-          </div>
-
-          <div className="grid grid-cols-[auto_auto] items-center gap-3">
-            <div className="text-right">
-              <div className="font-serif text-5xl text-zinc-50">{lead.score}</div>
-              <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Score</div>
+              {search && (
+                <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#C9A96E] font-mono text-[10px]">
+                  ✕
+                </button>
+              )}
             </div>
             <button
-              type="button"
-              onClick={onDelete}
-              disabled={deleting}
-              className="inline-flex h-10 w-10 items-center justify-center border border-red-400/25 bg-red-400/10 text-red-300 transition hover:border-red-300 hover:bg-red-400/15 disabled:cursor-wait disabled:opacity-60"
-              title="Eliminar conversación"
-              aria-label="Eliminar conversación"
+              onClick={loadLeads}
+              disabled={loading}
+              className="flex h-10 w-10 items-center justify-center border border-[#2A2A2A] bg-[#0A0A0A] text-[#888] hover:text-[#F5F5F5] hover:border-[#555] transition-colors disabled:opacity-50 rounded-sm shrink-0"
+              title="Sincronizar base vectorial"
             >
-              {deleting ? <RefreshCw size={16} className="animate-spin" /> : <Trash2 size={16} />}
+              <RefreshCw size={14} className={loading ? 'animate-spin text-[#C9A96E]' : ''} />
             </button>
           </div>
         </div>
+      </header>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          <Info icon={Building2} label="Industria" value={lead.industry} />
-          <Info icon={ShieldCheck} label="Sistema actual" value={lead.currentSystem} />
-          <Info icon={Clock3} label="Urgencia" value={lead.urgency} />
-          <Info icon={Gauge} label="Revenue" value={lead.estimatedRevenue} />
-          <Info icon={Target} label="Fit FABRIC" value={lead.fabricFit} />
-          <Info icon={ArrowUpRight} label="Siguiente paso" value={lead.nextStep} />
-        </div>
-
-        <div className="mt-5 grid gap-5 xl:grid-cols-2">
-          <Panel title="Dolor principal">
-            <p className="text-sm leading-6 text-zinc-300">{lead.painPoint}</p>
-          </Panel>
-          <Panel title="Preguntas pendientes">
-            <div className="flex flex-wrap gap-2">
-              {lead.pendingQuestions.length ? (
-                lead.pendingQuestions.map((question) => <Badge key={question} label={question} />)
-              ) : (
-                <span className="text-sm text-zinc-500">Sin preguntas críticas pendientes.</span>
-              )}
+      {/* ── SPLIT VIEW ── */}
+      <section className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)] items-start">
+        
+        {/* ==========================================
+            IZQUIERDA: ÍNDICE DE REGISTROS (LOGS)
+            ========================================== */}
+        <aside className="border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm flex flex-col h-[calc(100vh-220px)] min-h-[500px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[#1A1A1A] px-5 py-4 shrink-0 bg-[#050505]">
+            <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] text-[#888]">
+              <Filter size={12} className="text-[#C9A96E]" />
+              Índice Vectorial
             </div>
-          </Panel>
-        </div>
+            <span className="font-mono text-[9px] text-[#C9A96E] border border-[#C9A96E]/20 bg-[#C9A96E]/5 px-2 py-0.5 rounded-sm">
+              N: {filteredLeads.length}
+            </span>
+          </div>
 
-        <Panel title="Conversación" className="mt-5">
-          <div className="h-[420px] space-y-3 overflow-y-auto pr-1">
-            {lead.conversation.map((message, index) => (
-              <div
-                key={`${message.role}-${index}`}
-                className={[
-                  'max-w-[88%] border px-3 py-2 text-sm leading-6',
-                  message.role === 'user'
-                    ? 'ml-auto border-amber-400/20 bg-amber-400/10 text-amber-100'
-                    : 'border-zinc-800 bg-[#111214] text-zinc-400',
-                ].join(' ')}
-              >
-                {message.text}
+          <div className="flex-1 overflow-y-auto p-3 space-y-1.5 scrollbar-thin scrollbar-thumb-[#1A1A1A] scrollbar-track-transparent">
+            {loading && <div className="text-center py-10 font-mono text-[10px] text-[#555] uppercase tracking-widest animate-pulse">Sincronizando vectores...</div>}
+            
+            {!loading && filteredLeads.length === 0 && (
+              <div className="text-center py-10 font-mono text-[10px] text-[#555] uppercase tracking-widest">Dataset Vacío o sin coincidencias</div>
+            )}
+
+            {filteredLeads.map((lead) => {
+              const active = selectedLead?._id === lead._id;
+              return (
+                <button
+                  key={lead._id}
+                  onClick={() => setSelectedId(lead._id)}
+                  className={`relative w-full flex items-center justify-between p-3 border text-left transition-colors rounded-sm overflow-hidden group ${
+                    active ? 'border-[#C9A96E]/40 bg-[#C9A96E]/5' : 'border-[#1A1A1A] bg-[#050505] hover:border-[#2A2A2A]'
+                  }`}
+                >
+                  {/* Resalte lateral para el activo */}
+                  {active && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#C9A96E]" />}
+                  
+                  <div className={`min-w-0 flex-1 ${active ? 'pl-2' : ''} transition-all`}>
+                    <div className="font-mono text-[8px] text-[#555] tracking-widest uppercase mb-1.5">
+                      {formatDateTime(lead.lastSeenAt)}
+                    </div>
+                    <div className={`truncate font-serif text-[15px] leading-none ${active ? 'text-[#C9A96E]' : 'text-[#F5F5F5] group-hover:text-white'}`}>
+                      {lead.company && lead.company !== 'No detectada' ? lead.company : lead.intent?.replace('_', ' ') || 'Sesión Anónima'}
+                    </div>
+                  </div>
+                  <div className={`ml-3 shrink-0 font-mono text-[11px] w-9 h-9 border rounded-sm flex items-center justify-center transition-colors ${active ? 'border-[#C9A96E]/30 text-[#C9A96E] bg-[#C9A96E]/10' : 'border-[#2A2A2A] text-[#888] bg-[#0A0A0A]'}`}>
+                    {lead.score || 0}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        {/* ==========================================
+            DERECHA: INSPECTOR DE ENTIDAD
+            ========================================== */}
+        <main className="border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm h-[calc(100vh-220px)] min-h-[500px] flex flex-col shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+          {selectedLead ? (
+            <>
+              {/* HEADER DEL INSPECTOR */}
+              <div className="border-b border-[#1A1A1A] px-6 py-5 shrink-0 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 bg-[#050505]">
+                <div>
+                  <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E] mb-1.5 flex items-center gap-2">
+                    <Activity size={10} /> Inspector de Contexto
+                  </div>
+                  <h2 className="font-serif text-3xl text-[#F5F5F5]">
+                    {selectedLead.company && selectedLead.company !== 'No detectada' ? selectedLead.company : 'Entidad Anonimizada'}
+                  </h2>
+                  <div className="mt-2.5 flex items-center gap-4">
+                    <span className="font-mono text-[10px] text-[#555] bg-[#111] px-2 py-1 rounded-sm border border-[#2A2A2A]">
+                      ID: {selectedLead._id?.slice(-8) || 'N/A'}
+                    </span>
+                    <span className="font-mono text-[10px] text-[#555] bg-[#111] px-2 py-1 rounded-sm border border-[#2A2A2A]">
+                      IP: {selectedLead.ip || 'Oculta'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => handleCopyTranscript(selectedLead)}
+                    className="flex items-center justify-center w-10 border border-[#2A2A2A] bg-[#050505] hover:border-[#C9A96E]/50 hover:text-[#C9A96E] text-[#888] transition-colors rounded-sm"
+                    title="Copiar transcripción"
+                  >
+                    {copied ? <CheckCheck size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                  </button>
+                  <button 
+                    onClick={() => handleDownload(selectedLead)}
+                    className="flex items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/10 hover:bg-[#C9A96E]/20 text-[#C9A96E] px-4 py-2 font-mono text-[9px] uppercase tracking-widest transition-colors rounded-sm"
+                  >
+                    <Download size={13} /> Exportar
+                  </button>
+                  <button 
+                    onClick={() => deleteLead(selectedLead)}
+                    disabled={deletingId === selectedLead._id}
+                    className="flex items-center justify-center w-10 border border-[#2A2A2A] bg-[#050505] hover:border-red-500/30 hover:text-red-400 text-[#555] transition-colors rounded-sm disabled:opacity-50"
+                    title="Purgar registro"
+                  >
+                    {deletingId === selectedLead._id ? <RefreshCw size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
-        </Panel>
+
+              {/* CONTENIDO SCROLLEABLE */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-[#1A1A1A] scrollbar-track-transparent">
+                
+                {/* 1. METADATA TÉCNICA (Properties) */}
+                <div>
+                  <h3 className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] border-b border-[#1A1A1A] pb-2 mb-3">
+                    Métricas de Inferencia
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Property label="Score del Modelo" value={String(selectedLead.score || 0)} highlight />
+                    <Property label="Timestamp (Local)" value={formatDateTime(selectedLead.lastSeenAt)} />
+                    <Property label="Turnos de Diálogo" value={String(selectedLead.conversation?.length || 0)} />
+                    <Property label="Estimación Tokens" value={`~${estimateTokens(selectedLead.conversation)} tkns`} />
+                  </div>
+                </div>
+
+                {/* 2. VECTORES EXTRAÍDOS (Comercial / Técnico) */}
+                <div>
+                  <h3 className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] border-b border-[#1A1A1A] pb-2 mb-3 mt-4">
+                    Vectores de Clasificación
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Property label="Intención Principal" value={selectedLead.intent?.replace('_', ' ')} />
+                    <Property label="Sector Industrial" value={selectedLead.industry} />
+                    <Property label="Revenue Estimado" value={selectedLead.estimatedRevenue} />
+                    <Property label="Sistema Core Actual" value={selectedLead.currentSystem} />
+                  </div>
+                </div>
+
+                {/* 3. ANÁLISIS NLP */}
+                <div className="grid md:grid-cols-2 gap-4 mt-2">
+                  <div className="border border-[#1A1A1A] bg-[#050505] p-5 rounded-sm shadow-[0_5px_15px_rgba(0,0,0,0.2)]">
+                    <div className="font-mono text-[8px] uppercase tracking-widest text-[#C9A96E] mb-2.5 flex items-center gap-1.5">
+                      <Zap size={12} /> Falla Crítica Detectada
+                    </div>
+                    <p className="text-[13px] text-[#A0A0A0] leading-relaxed">{selectedLead.painPoint || 'Sin dolor explícito detectado.'}</p>
+                  </div>
+                  <div className="border border-[#1A1A1A] bg-[#050505] p-5 rounded-sm shadow-[0_5px_15px_rgba(0,0,0,0.2)]">
+                    <div className="font-mono text-[8px] uppercase tracking-widest text-[#C9A96E] mb-2.5 flex items-center gap-1.5">
+                      <Bot size={12} /> Resumen Generado
+                    </div>
+                    <p className="text-[13px] text-[#A0A0A0] leading-relaxed">{selectedLead.summary || 'Sin resumen disponible.'}</p>
+                  </div>
+                </div>
+
+                {/* 4. PREGUNTAS PENDIENTES */}
+                {selectedLead.pendingQuestions && selectedLead.pendingQuestions.length > 0 && (
+                  <div>
+                    <h3 className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] border-b border-[#1A1A1A] pb-2 mb-3 mt-4">
+                      Vectores Faltantes (Preguntas Pendientes)
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedLead.pendingQuestions.map((q, i) => (
+                        <span key={i} className="border border-[#2A2A2A] bg-[#111] px-3 py-1.5 rounded-sm font-sans text-[11px] text-[#888]">
+                          {q}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. TRANSCRIPCIÓN TERMINAL */}
+                <div className="mt-6">
+                  <h3 className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#888] border-b border-[#1A1A1A] pb-2 mb-3 flex items-center gap-2">
+                    <Terminal size={12} /> Log de Transcripción Cruda
+                  </h3>
+                  <div className="border border-[#1A1A1A] bg-[#050505] rounded-sm p-5 space-y-6 shadow-[inset_0_0_20px_rgba(0,0,0,0.4)]">
+                    {selectedLead.conversation && selectedLead.conversation.length > 0 ? (
+                      selectedLead.conversation.map((msg, idx) => (
+                        <div key={idx} className={`flex flex-col gap-1.5 ${msg.role === 'user' ? 'ml-8 border-l-2 border-[#2A2A2A] pl-4' : 'mr-8 border-l-2 border-[#C9A96E]/50 pl-4'}`}>
+                          <div className="font-mono text-[8.5px] uppercase tracking-[0.15em] text-[#555] flex items-center gap-2">
+                            {msg.role === 'user' ? 'USER_INPUT' : 'SYSTEM_RESPONSE'}
+                          </div>
+                          <div className={`font-mono text-[12px] leading-[1.6] ${msg.role === 'user' ? 'text-[#A0A0A0]' : 'text-[#C9A96E]'}`}>
+                            <p className="whitespace-pre-wrap">{msg.text}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center font-mono text-[10px] text-[#555] uppercase tracking-widest py-8">
+                        Historial no disponible
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-[#333]">
+              <Database size={40} className="mb-4 opacity-30" />
+              <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#555]">Seleccione un dataset para inspeccionar</div>
+            </div>
+          )}
+        </main>
+
       </section>
-
-      <aside className="p-5 2xl:p-6">
-        <Panel title="Estado">
-          <div className="space-y-2">
-            {Object.entries(STATUS_LABEL).map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => onStatusChange(value as LeadStatus)}
-                className={[
-                  'flex h-10 w-full items-center justify-between border px-3 text-left text-xs transition',
-                  lead.status === value
-                    ? 'border-amber-400/35 bg-amber-400/10 text-amber-200'
-                    : 'border-zinc-800 bg-[#111214] text-zinc-400 hover:border-zinc-700 hover:text-zinc-100',
-                ].join(' ')}
-              >
-                {label}
-                {lead.status === value && <CheckCircle2 size={14} />}
-              </button>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel title="Origen" className="mt-5">
-          <div className="space-y-3 text-xs text-zinc-400">
-            <Row label="IP" value={lead.ip || 'No disponible'} />
-            <Row label="Sesión" value={lead.sessionId} />
-            <Row label="Última actividad" value={new Date(lead.lastSeenAt).toLocaleString('es-MX')} />
-            <Row label="User agent" value={lead.userAgent || 'No disponible'} />
-          </div>
-        </Panel>
-      </aside>
     </div>
   );
 }
 
-function Stat({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+// ─── COMPONENTES SECUNDARIOS ───
+
+function Property({ label, value, highlight = false }: { label: string; value: string | null | undefined; highlight?: boolean }) {
+  const displayValue = value || 'N/A';
   return (
-    <div className="border border-zinc-800 bg-[#17181B] px-4 py-3">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">{label}</div>
-          <div className="mt-1 font-serif text-2xl text-zinc-50">{value}</div>
-        </div>
-        <Icon size={17} className="text-amber-300" />
+    <div className="flex flex-col gap-1.5 border border-[#1A1A1A] bg-[#050505] p-3 rounded-sm">
+      <div className="font-mono text-[8.5px] uppercase tracking-[0.15em] text-[#555]">{label}</div>
+      <div className={`font-mono text-[12px] truncate ${highlight ? 'text-[#C9A96E] font-bold' : 'text-[#F5F5F5]'}`} title={displayValue}>
+        {displayValue}
       </div>
     </div>
   );
-}
-
-function Info({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
-  return (
-    <div className="border border-zinc-800 bg-[#17181B] p-4">
-      <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-zinc-500">
-        <Icon size={14} className="text-amber-300" />
-        {label}
-      </div>
-      <div className="mt-2 text-sm font-medium text-zinc-100">{value || 'No detectado'}</div>
-    </div>
-  );
-}
-
-function Panel({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
-  return (
-    <article className={`border border-zinc-800 bg-[#17181B] p-4 ${className}`}>
-      <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">{title}</div>
-      {children}
-    </article>
-  );
-}
-
-function Badge({ label, className = 'border-zinc-700 bg-zinc-900 text-zinc-400' }: { label: string; className?: string }) {
-  return (
-    <span className={`inline-flex border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] ${className}`}>
-      {label}
-    </span>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border-b border-zinc-800 pb-3">
-      <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-600">{label}</div>
-      <div className="mt-1 break-words text-zinc-300">{value}</div>
-    </div>
-  );
-}
-
-function Select({
-  value,
-  onChange,
-  children,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  children: ReactNode;
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="h-10 border border-zinc-800 bg-[#17181B] px-3 text-[11px] uppercase tracking-[0.12em] text-zinc-300 outline-none transition focus:border-amber-400/40"
-    >
-      {children}
-    </select>
-  );
-}
-
-function EmptyState({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
-  return (
-    <div className="border border-zinc-800 bg-[#17181B] p-6 text-center">
-      <Icon className="mx-auto text-zinc-600" size={34} />
-      <div className="mt-3 text-sm font-semibold text-zinc-300">{title}</div>
-      <p className="mx-auto mt-1 max-w-sm text-xs leading-5 text-zinc-500">{text}</p>
-    </div>
-  );
-}
-
-function formatRelative(value: string) {
-  const diff = Date.now() - new Date(value).getTime();
-  const minutes = Math.max(0, Math.floor(diff / 60000));
-
-  if (minutes < 1) return 'ahora';
-  if (minutes < 60) return `${minutes}m`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-
-  return `${Math.floor(hours / 24)}d`;
 }

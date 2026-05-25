@@ -295,23 +295,100 @@ function buildDiagnosticEmail(diagnostico) {
   return { subject, text, html };
 }
 
-function buildMailtoUrl(to, subject, text) {
-  return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+function diagnosticFileName(diagnostico) {
+  const company = String(diagnostico.contact?.company || 'prospecto')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+
+  return `diagnostico-oracle-${company || 'prospecto'}.doc`;
 }
 
-async function sendDiagnosticEmail(diagnostico) {
-  const { subject, text, html } = buildDiagnosticEmail(diagnostico);
+function buildDiagnosticWordDocument(diagnostico) {
+  const contact = diagnostico.contact || {};
+  const result = diagnostico.result || {};
+  const answers = Array.isArray(diagnostico.answers) ? diagnostico.answers : [];
+  const answerRows = answers
+    .map((item) => `
+      <tr>
+        <td style="border:1px solid #d9d9d9;padding:8px;">${escapeHtml(item.question)}</td>
+        <td style="border:1px solid #d9d9d9;padding:8px;"><strong>${escapeHtml(item.answer)}</strong></td>
+        <td style="border:1px solid #d9d9d9;padding:8px;text-align:center;">+${Number(item.score || 0)}</td>
+      </tr>
+    `)
+    .join('');
+
+  return `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="utf-8" />
+        <title>Diagnostico Oracle FABRIC</title>
+        <style>
+          body { font-family: Arial, sans-serif; color: #111111; line-height: 1.45; }
+          h1 { color: #111111; font-size: 28px; margin-bottom: 4px; }
+          h2 { color: #222222; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #cccccc; padding-bottom: 6px; }
+          .muted { color: #666666; font-size: 12px; }
+          .summary { border: 1px solid #d9d9d9; padding: 14px; margin: 18px 0; background: #f7f7f7; }
+          table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+          th { border: 1px solid #d9d9d9; padding: 8px; background: #eeeeee; text-align: left; }
+        </style>
+      </head>
+      <body>
+        <h1>Diagnostico Oracle FABRIC</h1>
+        <p class="muted">Documento ejecutivo generado desde el panel administrativo FABRIC.</p>
+
+        <h2>Prospecto</h2>
+        <p><strong>Empresa:</strong> ${escapeHtml(contact.company)}</p>
+        <p><strong>Contacto:</strong> ${escapeHtml(contact.name)}</p>
+        <p><strong>Cargo:</strong> ${escapeHtml(contact.role)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(contact.email)}</p>
+        <p><strong>Telefono:</strong> ${escapeHtml(contact.phone || 'No capturado')}</p>
+
+        <h2>Resultado tecnico</h2>
+        <div class="summary">
+          <p><strong>Nivel:</strong> ${escapeHtml(result.level)}</p>
+          <p><strong>Score tecnico:</strong> ${Number(result.totalScore || 0)}</p>
+          <p><strong>Patron principal:</strong> ${escapeHtml(result.pattern)}</p>
+          <p><strong>Accion recomendada:</strong> ${escapeHtml(result.action)}</p>
+          <p><strong>Inversion tipica:</strong> ${escapeHtml(result.investment)}</p>
+          <p><strong>ROI esperado:</strong> ${escapeHtml(result.roi)}</p>
+        </div>
+        <p>${escapeHtml(result.description)}</p>
+
+        <h2>Preguntas y respuestas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pregunta</th>
+              <th>Respuesta</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>${answerRows}</tbody>
+        </table>
+
+        <p class="muted">Este diagnostico es orientativo y no sustituye una evaluacion tecnica formal, un SOW ni una propuesta comercial.</p>
+      </body>
+    </html>
+  `;
+}
+
+async function sendDiagnosticEmail(diagnostico, options = {}) {
+  const defaultEmail = buildDiagnosticEmail(diagnostico);
+  const subject = String(options.subject || defaultEmail.subject).trim().slice(0, 180);
+  const text = String(options.message || defaultEmail.text).trim().slice(0, 5000);
+  const html = options.message
+    ? `<div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#111111;white-space:pre-wrap;">${escapeHtml(text)}</div>`
+    : defaultEmail.html;
   const to = diagnostico.contact?.email;
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.DIAGNOSTIC_FROM_EMAIL || process.env.RESEND_FROM_EMAIL || 'FABRIC <onboarding@resend.dev>';
+  const wordContent = buildDiagnosticWordDocument(diagnostico);
 
   if (!apiKey) {
-    return {
-      emailStatus: 'preview',
-      subject,
-      text,
-      mailtoUrl: buildMailtoUrl(to, subject, text),
-    };
+    throw new Error('Falta RESEND_API_KEY para enviar correos automaticos con documento Word.');
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -326,6 +403,12 @@ async function sendDiagnosticEmail(diagnostico) {
       subject,
       html,
       text,
+      attachments: [
+        {
+          filename: diagnosticFileName(diagnostico),
+          content: Buffer.from(wordContent, 'utf8').toString('base64'),
+        },
+      ],
     }),
   });
 
@@ -474,40 +557,10 @@ exports.enviarDiagnostico = async (req, res) => {
       });
     }
 
-    if (req.body?.mode === 'manual') {
-      const defaultEmail = buildDiagnosticEmail(current);
-      const subject = String(req.body.subject || defaultEmail.subject).trim().slice(0, 180);
-      const message = String(req.body.message || defaultEmail.text).trim().slice(0, 5000);
-      const attachmentName = String(req.body.attachmentName || '').trim().slice(0, 180);
-      const body = attachmentName
-        ? `${message}\n\nArchivo para adjuntar manualmente: ${attachmentName}`
-        : message;
-      const nextStatus = current.status === 'en_revision' ? 'contactado' : current.status;
-
-      const diagnostico = await DiagnosticoOracle.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: {
-            status: nextStatus,
-            emailStatus: 'preview',
-            emailSentAt: new Date(),
-            emailError: attachmentName
-              ? `Adjuntar manualmente el archivo: ${attachmentName}`
-              : 'Correo preparado manualmente desde admin.',
-          },
-        },
-        { returnDocument: 'after', runValidators: true }
-      ).lean();
-
-      return res.status(200).json({
-        success: true,
-        diagnostico,
-        emailStatus: 'preview',
-        mailtoUrl: buildMailtoUrl(current.contact.email, subject, body),
-      });
-    }
-
-    const emailResult = await sendDiagnosticEmail(current);
+    const emailResult = await sendDiagnosticEmail(current, {
+      subject: req.body?.subject,
+      message: req.body?.message,
+    });
     const sentAt = emailResult.emailStatus === 'sent' ? new Date() : current.emailSentAt || null;
     const nextStatus = emailResult.emailStatus === 'sent' && current.status === 'en_revision'
       ? 'contactado'
@@ -520,9 +573,7 @@ exports.enviarDiagnostico = async (req, res) => {
           status: nextStatus,
           emailStatus: emailResult.emailStatus,
           emailSentAt: sentAt,
-          emailError: emailResult.emailStatus === 'preview'
-            ? 'Configura RESEND_API_KEY para envio automatico. Se genero enlace mailto.'
-            : '',
+          emailError: '',
         },
       },
       { returnDocument: 'after', runValidators: true }
@@ -532,7 +583,6 @@ exports.enviarDiagnostico = async (req, res) => {
       success: true,
       diagnostico,
       emailStatus: emailResult.emailStatus,
-      mailtoUrl: emailResult.mailtoUrl,
     });
   } catch (error) {
     console.error('Error enviando diagnostico Oracle:', error);
