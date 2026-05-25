@@ -122,27 +122,31 @@ export default function AdminLeads() {
   }
 
   return (
-      <>
-      {/* Header */}
-      <div style={{ padding: '28px 36px 24px', borderBottom: '1px solid #1e1e1e', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.26em', color: '#5A5A5A', textTransform: 'uppercase', marginBottom: 6 }}>
-            FABRIC · ADMIN · LEADS
+    <div className="fabric-admin-page">
+      {/* Hero */}
+      <div className="fabric-admin-hero">
+        <div className="fabric-admin-hero-inner">
+          <div>
+            <div className="fabric-admin-eyebrow">FABRIC · ADMIN · LEADS</div>
+            <h1 className="fabric-admin-title">Leads</h1>
+            <div className="fabric-admin-subtitle">
+              Prospectos calificados · scoring automático · pipeline de admisión
+            </div>
           </div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--serif, Georgia, serif)', color: '#F5F5F5' }}>
-            Leads · {total} en evaluación
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span className="fabric-admin-pill">{total} en evaluación</span>
+            <button
+              onClick={fetchLeads}
+              style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Actualizar
+            </button>
           </div>
         </div>
-        <button
-          onClick={fetchLeads}
-          style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '9px 18px', background: 'transparent', border: '1px solid #252525', color: '#8A8A8A', cursor: 'pointer', fontFamily: 'inherit' }}
-        >
-          Actualizar
-        </button>
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '20px 36px', display: 'flex', gap: 24, borderBottom: '1px solid #1a1a1a', flexWrap: 'wrap' }}>
+      <div style={{ padding: '12px 36px', display: 'flex', gap: 12, borderBottom: '1px solid #1a1a1a', flexWrap: 'wrap' }}>
         {FILTERS.map(f => {
           const count = f === 'Todos' ? leads.length : leads.filter(l => l.status === f).length;
           return (
@@ -184,7 +188,7 @@ export default function AdminLeads() {
       </div>
 
       {/* Tabla */}
-      <div style={{ padding: '0 36px 36px', overflowX: 'auto' }}>
+      <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
         {loading ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
         ) : visible.length === 0 ? (
@@ -283,7 +287,7 @@ export default function AdminLeads() {
               ))}
               {selected.queryChat && (
                 <div style={{ borderBottom: '1px solid #141414', paddingBottom: 10 }}>
-                  <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>Query AI Chat</div>
+                  <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>Consulta vía chat IA</div>
                   <div style={{ fontSize: 10, color: '#8A8A8A', fontStyle: 'italic' }}>"{selected.queryChat}"</div>
                 </div>
               )}
@@ -360,6 +364,6 @@ export default function AdminLeads() {
           </div>
         </div>
       )}
-      </>
+    </div>
   );
 }
