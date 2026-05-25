@@ -1,4 +1,4 @@
-require("dotenv").config(); // debe ser lo primero — antes de cualquier require que lea process.env
+require("dotenv").config({ path: require("path").join(__dirname, ".env") }); // debe ser lo primero — antes de cualquier require que lea process.env
 
 const express = require("express");
 const cors = require("cors");
@@ -15,7 +15,12 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 // 1. Configuración de CORS
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (origin === FRONTEND_URL) return cb(null, true);
+      if (/^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
+      cb(new Error(`CORS bloqueado: ${origin}`));
+    },
     credentials: true,
   })
 );
