@@ -30,6 +30,9 @@ const ReadinessScorePage = lazy(() => import('../pages/public/herramientas/Readi
 const RFPTemplatePage = lazy(() => import('../pages/public/herramientas/RFPTemplatePage'));
 const BenchmarkIndexPage = lazy(() => import('../pages/public/herramientas/BenchmarkIndexPage'));
 
+// Office Hours
+const OfficeHoursPage = lazy(() => import('../pages/public/office-hours/OfficeHoursPage'));
+
 // Páginas de Investigación
 const ResearchLettersPage = lazy(() => import('../pages/public/investigacion/ResearchLettersPage'));
 const PaperPage = lazy(() => import('../pages/public/investigacion/PaperPage'));
@@ -142,6 +145,9 @@ export const AppRouter = () => {
             <Route path="readiness" element={<ReadinessScorePage />} />
             <Route path="rfp-template" element={<RFPTemplatePage />} />
             <Route path="benchmark" element={<BenchmarkIndexPage />} />
+
+            {/* Office Hours */}
+            <Route path="office-hours" element={<OfficeHoursPage />} />
 
             {/* Investigación */}
             <Route path="research-letters" element={<ResearchLettersPage />} />

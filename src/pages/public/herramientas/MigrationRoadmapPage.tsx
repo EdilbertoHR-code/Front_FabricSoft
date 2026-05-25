@@ -1,24 +1,378 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
+import { api } from '../../../config/api';
+import { getInteractionTracking } from '../../../utils/tracking';
+
+const PREGUNTAS = [
+  {
+    id: 'sistema',
+    texto: '¿Qué sistema estás migrando a Oracle Fusion?',
+    opciones: ['SAP S/4 HANA', 'SAP ECC', 'Oracle EBS R12', 'Oracle JD Edwards', 'Oracle PeopleSoft', 'Microsoft Dynamics 365', 'NetSuite', 'Sin ERP — Greenfield'],
+  },
+  {
+    id: 'modulos',
+    texto: '¿Cuáles son los módulos críticos para tu operación?',
+    opciones: ['Financials / Contabilidad', 'Procurement / Compras', 'SCM / Cadena de suministro', 'HCM / Recursos Humanos', 'EPM / Planeación financiera', 'Reporting / Inteligencia de negocios'],
+    multi: true,
+  },
+  {
+    id: 'industria',
+    texto: '¿En qué industria opera tu empresa?',
+    opciones: ['Servicios Financieros / Fintech', 'Inmobiliario / Centros Comerciales', 'Logística / Distribución', 'Manufactura', 'Retail', 'Energía / Utilities', 'Otro'],
+  },
+  {
+    id: 'revenue',
+    texto: '¿Cuál es el revenue anual aproximado de tu empresa?',
+    opciones: ['Menos de USD 50M', 'USD 50M – 250M', 'USD 250M – 1B', 'Más de USD 1B'],
+  },
+  {
+    id: 'plazo',
+    texto: '¿Cuándo planeas iniciar el proyecto?',
+    opciones: ['Próximos 3 meses', 'En 3 – 6 meses', 'En 6 – 12 meses', 'Sin plazo definido aún'],
+  },
+  {
+    id: 'riesgo',
+    texto: '¿Cuál es tu mayor preocupación?',
+    opciones: ['Costos que se disparan', 'Plazos que se eternizan', 'Calidad de los consultores', 'Soporte post go-live insuficiente', 'Documentación y transferencia de conocimiento', 'Adopción de usuarios internos'],
+  },
+  {
+    id: 'patrocinio',
+    texto: '¿Tienes patrocinio ejecutivo confirmado para el proyecto?',
+    opciones: ['CFO + CTO ambos activos', 'Solo CFO o solo CTO', 'Solo IT / Director de Sistemas', 'Sin patrocinio ejecutivo aún'],
+  },
+  {
+    id: 'presupuesto',
+    texto: '¿El presupuesto para la migración está aprobado?',
+    opciones: ['Aprobado y confirmado', 'En proceso de aprobación', 'En evaluación (RFP activo)', 'Sin presupuesto definido'],
+  },
+  {
+    id: 'integraciones',
+    texto: '¿Cuántos sistemas satélite o integraciones tiene tu ERP actual?',
+    opciones: ['Ninguno — standalone', '1 a 5 integraciones', '6 a 15 integraciones', 'Más de 15 integraciones'],
+  },
+  {
+    id: 'datos',
+    texto: '¿Cómo describirías la calidad de los datos en tu sistema actual?',
+    opciones: ['Limpios y estructurados', 'Algunos problemas conocidos', 'Varios duplicados y errores', 'Sin catalogar — desconocemos la calidad'],
+  },
+  {
+    id: 'equipo',
+    texto: '¿Tienes equipo interno dedicado al proyecto?',
+    opciones: ['Sí — equipo dedicado con liberación formal', 'Parcial — algunas personas con otro trabajo paralelo', 'Solo un responsable de IT', 'Sin equipo interno asignado'],
+  },
+  {
+    id: 'experiencia',
+    texto: '¿Tu empresa ha vivido una migración ERP anteriormente?',
+    opciones: ['Sí — fue exitosa', 'Sí — fue problemática o incompleta', 'No — esta sería la primera', 'Hubo intentos pero se cancelaron'],
+  },
+];
+
+type Respuestas = Record<string, string | string[]>;
+
+function calcularRiesgo(respuestas: Respuestas): { nivel: string; descripcion: string; plazo: string; quickwins: string[] } {
+  let puntos = 0;
+
+  if (respuestas.patrocinio === 'CFO + CTO ambos activos') puntos += 2;
+  else if (respuestas.patrocinio === 'Solo CFO o solo CTO') puntos += 1;
+
+  if (respuestas.presupuesto === 'Aprobado y confirmado') puntos += 2;
+  else if (respuestas.presupuesto === 'En proceso de aprobación') puntos += 1;
+
+  if (respuestas.datos === 'Limpios y estructurados') puntos += 2;
+  else if (respuestas.datos === 'Algunos problemas conocidos') puntos += 1;
+
+  if (respuestas.equipo === 'Sí — equipo dedicado con liberación formal') puntos += 2;
+  else if (respuestas.equipo === 'Parcial — algunas personas con otro trabajo paralelo') puntos += 1;
+
+  if (respuestas.integraciones === 'Ninguno — standalone') puntos += 2;
+  else if (respuestas.integraciones === '1 a 5 integraciones') puntos += 1;
+
+  if (respuestas.experiencia === 'Sí — fue exitosa') puntos += 1;
+
+  if (puntos >= 9) return {
+    nivel: 'BAJO',
+    descripcion: 'Tu organización tiene fundamentos sólidos para una migración controlada. Patrocinio ejecutivo confirmado, datos en buen estado y equipo dedicado son las variables que más reducen riesgo en proyectos Oracle.',
+    plazo: '4 – 8 meses',
+    quickwins: ['Definir arquitectura financiera multi-entidad en semana 1', 'Quick-win de cierre contable en módulo piloto a semana 6', 'Go-live por fases para reducir riesgo operativo'],
+  };
+
+  if (puntos >= 5) return {
+    nivel: 'MEDIO',
+    descripcion: 'Hay elementos de riesgo identificados que pueden controlarse con preparación previa. FABRIC recomienda una fase de readiness antes del inicio formal del proyecto para maximizar probabilidad de éxito.',
+    plazo: '6 – 12 meses',
+    quickwins: ['Fase de diagnóstico de datos y limpieza previa (4 semanas)', 'Definición de patrocinio ejecutivo formal antes del kick-off', 'Mapeo de integraciones y plan de migración de datos en semana 2'],
+  };
+
+  return {
+    nivel: 'ALTO',
+    descripcion: 'Hay múltiples factores de riesgo que, sin atención previa, pueden comprometer la migración. FABRIC recomienda iniciar con un Oracle Readiness Assessment antes de comprometer presupuesto de implementación.',
+    plazo: '8 – 18 meses con preparación previa',
+    quickwins: ['Oracle Readiness Assessment antes de iniciar (4 semanas)', 'Programa de patrocinio ejecutivo formal', 'Plan de mejora de calidad de datos previo al proyecto'],
+  };
+}
+
 export default function MigrationRoadmapPage() {
+  const [paso, setPaso] = useState(0);
+  const [respuestas, setRespuestas] = useState<Respuestas>({});
+  const [seleccion, setSeleccion] = useState<string | string[]>('');
+  const [fase, setFase] = useState<'wizard' | 'captura' | 'resultado'>('wizard');
+  const [form, setForm] = useState({ nombre: '', cargo: '', empresa: '', email: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const pregunta = PREGUNTAS[paso];
+  const esMulti = pregunta?.multi ?? false;
+  const totalPasos = PREGUNTAS.length;
+
+  const seleccionValida = Array.isArray(seleccion)
+    ? seleccion.length > 0
+    : seleccion !== '';
+
+  const toggleMulti = (opcion: string) => {
+    setSeleccion(prev => {
+      const arr = Array.isArray(prev) ? prev : [];
+      return arr.includes(opcion) ? arr.filter(o => o !== opcion) : [...arr, opcion];
+    });
+  };
+
+  const siguiente = () => {
+    if (!seleccionValida) return;
+    setRespuestas(prev => ({ ...prev, [pregunta.id]: seleccion }));
+    if (paso + 1 < totalPasos) {
+      setPaso(p => p + 1);
+      setSeleccion('');
+    } else {
+      setFase('captura');
+    }
+  };
+
+  const enviar = async () => {
+    setError('');
+    if (!form.nombre.trim() || !form.cargo.trim() || !form.empresa.trim() || !form.email.trim()) {
+      setError('Completa todos los campos.');
+      return;
+    }
+    if (!form.email.includes('@')) { setError('Email inválido.'); return; }
+    const dominio = form.email.split('@')[1]?.split('.')[0]?.toLowerCase();
+    const publicos = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live'];
+    if (publicos.includes(dominio ?? '')) { setError('Usa tu correo corporativo.'); return; }
+
+    setLoading(true);
+    try {
+      await api.post('/leads', {
+        ...form,
+        tipo: 'migration-roadmap',
+        datos: respuestas,
+        tracking: getInteractionTracking('roadmap', 'migration-roadmap'),
+      });
+      setFase('resultado');
+    } catch {
+      setError('No se pudo registrar. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resultado = fase === 'resultado' ? calcularRiesgo({ ...respuestas }) : null;
+
   return (
-    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
+    <div style={{ background: 'var(--bg-base)', paddingTop: 100, minHeight: '100vh' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
         <BackButton />
       </div>
+
+      {/* Header */}
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Herramienta · FABRIC</div>
           <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
-            Migration Roadmap.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Wizard 12 preguntas.</em>
+            Migration Roadmap.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>12 preguntas · Ruta personalizada.</em>
           </h1>
-          <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Diagnóstico ejecutivo para estimar ruta, riesgos y fases de migración desde SAP, EBS, JDE o PeopleSoft hacia Oracle Cloud.
+          <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 640 }}>
+            Diagnóstico ejecutivo para estimar nivel de riesgo, plazo realista y quick wins de tu migración a Oracle Fusion Cloud. Resultado inmediato con roadmap de 30-60-90 días personalizado.
           </p>
-          <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Acceso temprano · Lista privada
-          </div>
         </div>
       </div>
+
+      {/* Wizard */}
+      {fase === 'wizard' && (
+        <div style={{ maxWidth: 760, margin: '0 auto', padding: '80px 56px' }}>
+          {/* Progreso */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              Pregunta {paso + 1} de {totalPasos}
+            </span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>
+              {Math.round(((paso) / totalPasos) * 100)}%
+            </span>
+          </div>
+          <div style={{ height: 1, background: 'var(--border)', marginBottom: 56, position: 'relative' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: `${((paso) / totalPasos) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 300ms ease' }} />
+          </div>
+
+          <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.4, marginBottom: 40 }}>
+            {pregunta.texto}
+          </h2>
+          {esMulti && (
+            <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 24 }}>
+              Selección múltiple permitida
+            </p>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 56 }}>
+            {pregunta.opciones.map((opt) => {
+              const activo = esMulti
+                ? Array.isArray(seleccion) && seleccion.includes(opt)
+                : seleccion === opt;
+              return (
+                <button
+                  key={opt}
+                  onClick={() => esMulti ? toggleMulti(opt) : setSeleccion(opt)}
+                  style={{
+                    background: activo ? 'rgba(201,169,110,0.08)' : 'var(--bg-panel)',
+                    border: `1px solid ${activo ? 'var(--accent)' : 'var(--border)'}`,
+                    padding: '18px 24px',
+                    textAlign: 'left',
+                    fontFamily: 'var(--sans)',
+                    fontSize: 14,
+                    color: activo ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    transition: 'all 200ms',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                  }}
+                >
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: activo ? 'var(--accent)' : 'var(--text-tertiary)', flexShrink: 0 }}>
+                    {activo ? '◆' : '◇'}
+                  </span>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {paso > 0 ? (
+              <button
+                onClick={() => { setPaso(p => p - 1); setSeleccion(respuestas[PREGUNTAS[paso - 1].id] ?? ''); }}
+                style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', background: 'transparent', border: 'none', cursor: 'pointer', letterSpacing: '0.15em', textTransform: 'uppercase' }}
+              >
+                ← Anterior
+              </button>
+            ) : <span />}
+            <button
+              onClick={siguiente}
+              disabled={!seleccionValida}
+              style={{
+                fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase',
+                color: seleccionValida ? 'var(--bg-base)' : 'var(--text-tertiary)',
+                background: seleccionValida ? 'var(--accent)' : 'var(--border)',
+                border: 'none', padding: '14px 32px', cursor: seleccionValida ? 'pointer' : 'not-allowed', transition: 'all 200ms',
+              }}
+            >
+              {paso + 1 === totalPasos ? 'Ver mi roadmap →' : 'Siguiente →'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Captura */}
+      {fase === 'captura' && (
+        <div style={{ maxWidth: 640, margin: '0 auto', padding: '80px 56px' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>
+            Último paso
+          </div>
+          <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: 12 }}>
+            Recibe tu roadmap personalizado.
+          </h2>
+          <p style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: 40 }}>
+            El roadmap muestra tu nivel de riesgo, plazo estimado y quick wins según tus respuestas. FABRIC puede contactarte para profundizar en tu caso específico.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: 32 }}>
+            {([['nombre', 'Nombre completo', 'text'], ['cargo', 'Cargo', 'text'], ['empresa', 'Empresa', 'text'], ['email', 'Email corporativo', 'email']] as const).map(([f, label, type]) => (
+              <div key={f}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 6 }}>{label}</div>
+                <input
+                  type={type}
+                  value={form[f]}
+                  onChange={e => setForm(prev => ({ ...prev, [f]: e.target.value }))}
+                  style={{ width: '100%', padding: '12px 14px', background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontFamily: 'var(--mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+            ))}
+            {error && <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: '#B85450' }}>{error}</div>}
+            <button
+              onClick={enviar}
+              disabled={loading}
+              style={{ marginTop: 4, padding: '14px 18px', background: loading ? 'rgba(201,169,110,0.5)' : 'var(--accent)', color: 'var(--bg-base)', border: 'none', fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: loading ? 'wait' : 'pointer' }}
+            >
+              {loading ? 'Generando roadmap...' : 'Ver mi roadmap →'}
+            </button>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.12em', lineHeight: 1.8 }}>
+              Correo corporativo requerido. Sin spam. NDA disponible bajo solicitud.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resultado */}
+      {fase === 'resultado' && resultado && (
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 56px' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>
+            Tu Migration Roadmap · FABRIC
+          </div>
+          <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: 40 }}>
+            Nivel de riesgo: <em style={{ color: resultado.nivel === 'BAJO' ? '#7B9E6B' : resultado.nivel === 'MEDIO' ? 'var(--accent)' : '#B85450', fontStyle: 'italic' }}>{resultado.nivel}</em>
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, marginBottom: 40 }}>
+            <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '28px 32px' }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>Plazo estimado</div>
+              <div style={{ fontFamily: 'var(--serif)', fontSize: 28, color: 'var(--accent)' }}>{resultado.plazo}</div>
+            </div>
+            <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '28px 32px' }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>Sistema de origen</div>
+              <div style={{ fontFamily: 'var(--serif)', fontSize: 24, color: 'var(--text-primary)' }}>{respuestas.sistema as string}</div>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '32px', marginBottom: 32 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 12 }}>Diagnóstico</div>
+            <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.75 }}>{resultado.descripcion}</p>
+          </div>
+
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--accent)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 20 }}>
+              Primeras acciones recomendadas
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {resultado.quickwins.map((qw, i) => (
+                <div key={i} style={{ display: 'flex', gap: 16, padding: '16px 20px', background: 'var(--bg-panel)', border: '1px solid var(--border)' }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', flexShrink: 0, marginTop: 3 }}>0{i + 1}</span>
+                  <span style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{qw}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 1.9, marginBottom: 8 }}>
+              Estimaciones basadas en benchmarks de proyectos Oracle similares. Cada caso requiere evaluación específica con un senior de FABRIC.
+            </p>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <Link to="/aplicar" style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg-base)', background: 'var(--accent)', padding: '14px 28px', textDecoration: 'none' }}>
+                Solicitar evaluación específica →
+              </Link>
+              <Link to="/office-hours" style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--accent)', border: '1px solid rgba(201,169,110,0.35)', padding: '14px 28px', textDecoration: 'none' }}>
+                Office Hours con Julio →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

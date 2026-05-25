@@ -45,7 +45,7 @@ const footerLinks: Record<string, FooterLink[]> = {
   engagement: [
     { label: 'Aplicar',                  path: '/aplicar' },
     { label: 'Founder · Wait List',      path: '/#s15' },
-    { label: 'Office Hours',             path: '/#s11' },
+    { label: 'Office Hours',             path: '/office-hours' },
     { label: 'Post-Mortem Privado *',    path: '/post-mortem' },
     { label: 'Confidential Roundtable *', path: '/roundtable' },
     { label: 'Research Letters *',        path: '/research-letters' },
