@@ -56,6 +56,24 @@ const INDUSTRY_MULTIPLIER = {
   Otra: 1,
 };
 
+const MARKET_COST_PER_USER = {
+  'SAP S/4 HANA': 4200,
+  'SAP ECC': 3900,
+  'Oracle EBS R12': 3400,
+  'Oracle JD Edwards': 3000,
+  'Oracle PeopleSoft': 3200,
+  'Microsoft Dynamics 365': 2800,
+  NetSuite: 2200,
+  'Otro / Greenfield': 2500,
+};
+
+const INDUSTRY_COST_MULTIPLIER = {
+  'Servicios financieros': 1.12,
+  'Inmobiliario / Centros comerciales': 1.07,
+  'Logistica / Distribucion / Transporte': 1.06,
+  Otra: 1,
+};
+
 const TRANSACTION_MULTIPLIER = {
   '<10K': 0.96,
   '10K-100K': 1,
@@ -100,16 +118,43 @@ function getBenchmark(erp) {
   return MARKET_BENCHMARKS[erp] || MARKET_BENCHMARKS['Otro / Greenfield'];
 }
 
+function inferTransactionVolume(users) {
+  if (users >= 1000) return '>1M';
+  if (users >= 250) return '100K-1M';
+  if (users >= 75) return '10K-100K';
+  return '<10K';
+}
+
+function inferPain(erp) {
+  if (erp === 'SAP ECC' || erp === 'Oracle JD Edwards' || erp === 'Oracle PeopleSoft') {
+    return 'Obsolescencia / riesgo de continuidad';
+  }
+
+  if (erp === 'NetSuite') return 'Reportes financieros lentos o manuales';
+  return 'Costo total demasiado alto';
+}
+
 function calculateMarketTco(payload) {
-  const benchmark = getBenchmark(payload.erp);
+  const erp = payload.erp || 'Otro / Greenfield';
+  const industry = payload.industry || 'Otra';
+  const benchmark = getBenchmark(erp);
   const users = clamp(asNumber(payload.users), 1, 50000);
   const licenseCost = asNumber(payload.licenseCost);
   const infraCost = asNumber(payload.infraCost);
   const supportCost = asNumber(payload.supportCost);
-  const totalAnnualCost = licenseCost + infraCost + supportCost;
-  const industryMultiplier = INDUSTRY_MULTIPLIER[payload.industry] || 1;
-  const transactionMultiplier = TRANSACTION_MULTIPLIER[payload.monthlyTransactions] || 1;
-  const painMultiplier = PAIN_MULTIPLIER[payload.primaryPain] || 1;
+  const knownAnnualSpend = asNumber(payload.annualErpSpend || payload.annualSpend || payload.totalAnnualCost);
+  const explicitAnnualCost = knownAnnualSpend > 0 ? knownAnnualSpend : licenseCost + infraCost + supportCost;
+  const marketCostPerUser = MARKET_COST_PER_USER[erp] || MARKET_COST_PER_USER['Otro / Greenfield'];
+  const marketAnnualCost = Math.round(users * marketCostPerUser * (INDUSTRY_COST_MULTIPLIER[industry] || 1));
+  const totalAnnualCost = explicitAnnualCost > 0 ? explicitAnnualCost : marketAnnualCost;
+  const costSource = explicitAnnualCost > 0 ? 'provided' : 'market';
+  const monthlyTransactions = payload.monthlyTransactions || inferTransactionVolume(users);
+  const primaryPain = payload.primaryPain || inferPain(erp);
+  const decisionTimeline = payload.decisionTimeline || '6-12 meses';
+  const targetScenario = payload.targetScenario || 'Oracle Fusion Cloud';
+  const industryMultiplier = INDUSTRY_MULTIPLIER[industry] || 1;
+  const transactionMultiplier = TRANSACTION_MULTIPLIER[monthlyTransactions] || 1;
+  const painMultiplier = PAIN_MULTIPLIER[primaryPain] || 1;
   const adjustedSavingsRate = clamp(
     benchmark.savings * industryMultiplier * transactionMultiplier * painMultiplier,
     0.08,
@@ -121,11 +166,11 @@ function calculateMarketTco(payload) {
   const breakeven = annualSavings > 0
     ? Math.max(6, Math.ceil((migrationInvestment / annualSavings) * 12))
     : benchmark.breakeven;
-  const urgencyScore = TIMELINE_SCORE[payload.decisionTimeline] || 0;
-  const targetScore = TARGET_SCORE[payload.targetScenario] || 0;
+  const urgencyScore = TIMELINE_SCORE[decisionTimeline] || 0;
+  const targetScore = TARGET_SCORE[targetScenario] || 0;
   const costScore = totalAnnualCost >= 1000000 ? 25 : totalAnnualCost >= 500000 ? 20 : totalAnnualCost >= 250000 ? 14 : 8;
-  const volumeScore = payload.monthlyTransactions === '>1M' ? 14 : payload.monthlyTransactions === '100K-1M' ? 10 : 5;
-  const painScore = payload.primaryPain && payload.primaryPain !== 'Solo explorando' ? 12 : 3;
+  const volumeScore = monthlyTransactions === '>1M' ? 14 : monthlyTransactions === '100K-1M' ? 10 : 5;
+  const painScore = primaryPain && primaryPain !== 'Solo explorando' ? 12 : 3;
   const qualificationScore = clamp(costScore + urgencyScore + targetScore + volumeScore + painScore, 0, 100);
 
   return {
@@ -147,11 +192,21 @@ function calculateMarketTco(payload) {
     percentReduction: adjustedSavingsRate * 100,
     qualificationScore,
     market: {
-      erp: payload.erp,
+      erp,
+      industry,
       risk: benchmark.risk,
       rationale: benchmark.rationale,
+      annualCostAssumption: marketAnnualCost,
+      costPerUserAssumption: marketCostPerUser,
+      costSource,
       savingsRateBase: benchmark.savings,
       savingsRateAdjusted: adjustedSavingsRate,
+      inferred: {
+        monthlyTransactions,
+        primaryPain,
+        decisionTimeline,
+        targetScenario,
+      },
       multipliers: {
         industry: industryMultiplier,
         transactions: transactionMultiplier,
@@ -162,8 +217,8 @@ function calculateMarketTco(payload) {
       score: qualificationScore,
       breakeven,
       annualSavings,
-      targetScenario: payload.targetScenario,
-      decisionTimeline: payload.decisionTimeline,
+      targetScenario,
+      decisionTimeline,
     }),
   };
 }
