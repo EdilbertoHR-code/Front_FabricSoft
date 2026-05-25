@@ -59,6 +59,7 @@ const AdminConversacionesIA = lazy(() => import('../pages/admin/AdminConversacio
 const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosticosOracle'));
 const AdminRescueAssessment   = lazy(() => import('../pages/admin/AdminRescueAssessment'));
 const AdminOciAudit           = lazy(() => import('../pages/admin/AdminOciAudit'));
+const AdminCloudComparator    = lazy(() => import('../pages/admin/AdminCloudComparator'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -223,6 +224,8 @@ export const AppRouter = () => {
             <Route path="diagnosticos-oracle"  element={<AdminDiagnosticosOracle />} />
             <Route path="rescue-assessment"    element={<AdminRescueAssessment />} />
             <Route path="oci-audit"           element={<AdminOciAudit />} />
+            <Route path="cloud-comparator"     element={<AdminCloudComparator />} />
+
           </Route>
 
           {/* 404 → Home */}

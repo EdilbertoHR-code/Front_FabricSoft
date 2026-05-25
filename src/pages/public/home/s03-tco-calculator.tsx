@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import { api } from "../../../config/api";
 
 type ErpSystem =
   | "SAP S/4 HANA"
@@ -13,6 +14,15 @@ type ErpSystem =
 
 type TransactionVolume = "<10K" | "10K-100K" | "100K-1M" | ">1M";
 type Industry = "Servicios financieros" | "Inmobiliario / Centros comerciales" | "Logistica / Distribucion / Transporte" | "Otra";
+type PrimaryPain =
+  | "Costo total demasiado alto"
+  | "Reportes financieros lentos o manuales"
+  | "Cierre contable complejo"
+  | "Soporte caro o poco disponible"
+  | "Obsolescencia / riesgo de continuidad"
+  | "Solo explorando";
+type DecisionTimeline = "0-3 meses" | "3-6 meses" | "6-12 meses" | "Solo explorando";
+type TargetScenario = "Oracle Fusion Cloud" | "OCI + Oracle Fusion" | "Comparar Oracle contra otras opciones" | "No definido";
 
 type FormState = {
   erp: ErpSystem;
@@ -22,6 +32,9 @@ type FormState = {
   supportCost: number;
   monthlyTransactions: TransactionVolume;
   industry: Industry;
+  primaryPain: PrimaryPain;
+  decisionTimeline: DecisionTimeline;
+  targetScenario: TargetScenario;
   company: string;
   role: string;
   email: string;
@@ -31,6 +44,35 @@ type FormState = {
 type Benchmark = {
   savings: number;
   breakeven: number;
+};
+
+type TcoResult = {
+  totalAnnualCost: number;
+  oracleAnnualCost: number;
+  currentTCO1y: number;
+  currentTCO3y: number;
+  currentTCO5y: number;
+  currentTCO10y: number;
+  oracleTCO1y: number;
+  oracleTCO3y: number;
+  oracleTCO5y: number;
+  oracleTCO10y: number;
+  annualSavings: number;
+  savings5y: number;
+  savings10y: number;
+  migrationInvestment: number;
+  breakeven: number;
+  percentReduction: number;
+  qualificationScore: number;
+  market?: {
+    rationale?: string;
+    savingsRateAdjusted?: number;
+  };
+  recommendation?: {
+    level: string;
+    nextStep: string;
+    summary: string;
+  };
 };
 
 const ERPS: ErpSystem[] = [
@@ -53,6 +95,24 @@ const INDUSTRIES: Industry[] = [
   "Otra",
 ];
 
+const PRIMARY_PAINS: PrimaryPain[] = [
+  "Costo total demasiado alto",
+  "Reportes financieros lentos o manuales",
+  "Cierre contable complejo",
+  "Soporte caro o poco disponible",
+  "Obsolescencia / riesgo de continuidad",
+  "Solo explorando",
+];
+
+const DECISION_TIMELINES: DecisionTimeline[] = ["0-3 meses", "3-6 meses", "6-12 meses", "Solo explorando"];
+
+const TARGET_SCENARIOS: TargetScenario[] = [
+  "Oracle Fusion Cloud",
+  "OCI + Oracle Fusion",
+  "Comparar Oracle contra otras opciones",
+  "No definido",
+];
+
 const BENCHMARKS: Record<ErpSystem, Benchmark> = {
   "SAP S/4 HANA": { savings: 0.3, breakeven: 18 },
   "SAP ECC": { savings: 0.35, breakeven: 16 },
@@ -72,6 +132,9 @@ const DEFAULT_FORM: FormState = {
   supportCost: 135000,
   monthlyTransactions: "100K-1M",
   industry: "Inmobiliario / Centros comerciales",
+  primaryPain: "Costo total demasiado alto",
+  decisionTimeline: "3-6 meses",
+  targetScenario: "Oracle Fusion Cloud",
   company: "",
   role: "",
   email: "",
@@ -81,8 +144,8 @@ const DEFAULT_FORM: FormState = {
 const FEATURES = [
   { id: "01", title: "ERP actual", text: "SAP, EBS, JDE, PeopleSoft, Dynamics, NetSuite u otro escenario." },
   { id: "02", title: "Costos base", text: "Licencias, infraestructura y soporte anual como base del TCO." },
-  { id: "03", title: "Benchmark Oracle", text: "Reduccion estimada por plataforma y breakeven de migracion." },
-  { id: "04", title: "Lead premium", text: "CTA para analisis personalizado con datos reales y NDA." },
+  { id: "03", title: "Mercado analizado", text: "Benchmark de ahorro ajustado por industria, volumen y dolor operativo." },
+  { id: "04", title: "Fit ejecutivo", text: "Score por urgencia, objetivo Oracle y peso financiero del caso." },
 ];
 
 const fmt = (value: number) =>
@@ -99,8 +162,13 @@ const clamp = (value: number, min = 0, max = Number.POSITIVE_INFINITY) => {
 function calculateTCO(data: FormState) {
   const totalAnnualCost = data.licenseCost + data.infraCost + data.supportCost;
   const benchmark = BENCHMARKS[data.erp];
-  const annualSavings = totalAnnualCost * benchmark.savings;
+  const painBoost = data.primaryPain === "Solo explorando" ? 0.96 : 1.05;
+  const volumeBoost = data.monthlyTransactions === ">1M" ? 1.12 : data.monthlyTransactions === "100K-1M" ? 1.06 : 1;
+  const adjustedSavings = Math.min(Math.max(benchmark.savings * painBoost * volumeBoost, 0.08), 0.42);
+  const annualSavings = totalAnnualCost * adjustedSavings;
   const oracleAnnualCost = totalAnnualCost - annualSavings;
+  const migrationInvestment = Math.max(totalAnnualCost * 0.42, data.users * 1200, 85000);
+  const breakeven = annualSavings > 0 ? Math.max(6, Math.ceil((migrationInvestment / annualSavings) * 12)) : benchmark.breakeven;
 
   return {
     totalAnnualCost,
@@ -113,10 +181,22 @@ function calculateTCO(data: FormState) {
     oracleTCO3y: oracleAnnualCost * 3,
     oracleTCO5y: oracleAnnualCost * 5,
     oracleTCO10y: oracleAnnualCost * 10,
+    annualSavings,
     savings5y: annualSavings * 5,
     savings10y: annualSavings * 10,
-    breakeven: benchmark.breakeven,
-    percentReduction: benchmark.savings * 100,
+    migrationInvestment,
+    breakeven,
+    percentReduction: adjustedSavings * 100,
+    qualificationScore: 62,
+    market: {
+      rationale: "Estimacion local preliminar mientras el benchmark de mercado responde desde backend.",
+      savingsRateAdjusted: adjustedSavings,
+    },
+    recommendation: {
+      level: "Estimacion preliminar",
+      nextStep: "Validar con endpoint de mercado.",
+      summary: "Resultado temporal calculado en cliente.",
+    },
   };
 }
 
@@ -265,7 +345,7 @@ function MetricBox({ label, value, accent = false }: { label: string; value: str
   );
 }
 
-function ComparisonTable({ tco }: { tco: ReturnType<typeof calculateTCO> }) {
+function ComparisonTable({ tco }: { tco: TcoResult }) {
   const rows = [
     { period: "Año 1", current: tco.currentTCO1y, oracle: tco.oracleTCO1y },
     { period: "Año 3", current: tco.currentTCO3y, oracle: tco.oracleTCO3y },
@@ -365,14 +445,42 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
 function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [hasUserEdited, setHasUserEdited] = useState(false);
-  const tco = useMemo(() => calculateTCO(form), [form]);
+  const fallbackTco = useMemo(() => calculateTCO(form), [form]);
+  const [tco, setTco] = useState<TcoResult>(() => calculateTCO(DEFAULT_FORM));
+  const [calculating, setCalculating] = useState(false);
 
   const update = useCallback(<K extends keyof FormState>(key: K, value: FormState[K]) => {
     setHasUserEdited(true);
     setForm((current) => ({ ...current, [key]: value }));
   }, []);
 
-  const requestAnalysis = useCallback(() => {
+  useEffect(() => {
+    if (!open) return;
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        setCalculating(true);
+        const { data } = await api.post("/erp-tco/calculate", form, {
+          signal: controller.signal,
+        });
+        setTco(data.result);
+      } catch (error: any) {
+        if (error.name !== "CanceledError" && error.code !== "ERR_CANCELED") {
+          setTco(fallbackTco);
+        }
+      } finally {
+        setCalculating(false);
+      }
+    }, 220);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [fallbackTco, form, open]);
+
+  const requestAnalysis = useCallback(async () => {
     const publicEmail = /(gmail|hotmail|outlook|yahoo)\./i.test(form.email);
 
     if (!form.company.trim() || !form.role.trim() || !form.email.trim()) {
@@ -390,7 +498,13 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
       return;
     }
 
-    toastOk("Solicitud de TCO recibida");
+    try {
+      const { data } = await api.post("/erp-tco/calculate", form);
+      setTco(data.result);
+      toastOk(`Benchmark listo: ${data.result.recommendation?.level || "TCO calculado"}`);
+    } catch {
+      toastErr("No se pudo calcular el benchmark");
+    }
   }, [form]);
 
   if (!open) return null;
@@ -432,6 +546,11 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 <div className="sm:col-span-2">
                   <SelectInput label="Industria" value={form.industry} options={INDUSTRIES} onChange={(value) => update("industry", value)} />
                 </div>
+                <div className="sm:col-span-2">
+                  <SelectInput label="Dolor principal" value={form.primaryPain} options={PRIMARY_PAINS} onChange={(value) => update("primaryPain", value)} />
+                </div>
+                <SelectInput label="Horizonte de decision" value={form.decisionTimeline} options={DECISION_TIMELINES} onChange={(value) => update("decisionTimeline", value)} />
+                <SelectInput label="Escenario objetivo" value={form.targetScenario} options={TARGET_SCENARIOS} onChange={(value) => update("targetScenario", value)} />
               </div>
 
               <div className="mt-10 border-t border-[#1A1A1A] pt-8">
@@ -464,7 +583,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
             <div className="bg-[#0A0A0A] p-8 md:p-12">
               <div className="mb-8">
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                  {hasUserEdited ? "TCO comparativo estimado" : "Ejemplo estimado"}
+                  {calculating ? "Calculando benchmark de mercado" : hasUserEdited ? "TCO comparativo estimado" : "Ejemplo estimado"}
                 </p>
                 <h4 className="font-serif text-2xl text-[#F5F5F5]">
                   {hasUserEdited
@@ -478,15 +597,24 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 <MetricBox label="Ahorro 10 años" value={fmtCompact(tco.savings10y)} accent />
                 <MetricBox label="Reduccion total" value={`${Math.round(tco.percentReduction)}%`} />
                 <MetricBox label="Breakeven migracion" value={`${tco.breakeven} meses`} />
+                <MetricBox label="Fit ejecutivo" value={`${Math.round(tco.qualificationScore)} / 100`} />
+                <MetricBox label="Inversion estimada" value={fmtCompact(tco.migrationInvestment)} />
               </div>
 
               <div className="space-y-6">
+                {tco.recommendation && (
+                  <div className="border border-[#C9A96E]/25 bg-[#C9A96E]/[0.04] p-5 rounded-sm">
+                    <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">{tco.recommendation.level}</p>
+                    <p className="font-sans text-sm leading-relaxed text-[#F5F5F5]/80">{tco.recommendation.summary}</p>
+                    <p className="mt-3 font-sans text-xs leading-relaxed text-[#888]">{tco.recommendation.nextStep}</p>
+                  </div>
+                )}
                 <ComparisonTable tco={tco} />
                 <SavingsChart currentTCO10y={tco.currentTCO10y} oracleTCO10y={tco.oracleTCO10y} />
               </div>
 
               <div className="mt-8 border-t border-[#1A1A1A] pt-6 font-sans text-xs leading-relaxed text-[#888]">
-                Estos numeros son estimaciones basadas en benchmarks de Oracle y proyectos similares. Para analisis con tus datos reales, FABRIC prepara un TCO Comparator personalizado en 7-10 dias con analisis tecnico de migracion, plazo y costo estimado.
+                Resultado calculado por backend con benchmarks de mercado por ERP, industria, volumen, dolor operativo y horizonte de decision. No consulta base de datos para calcular este comparativo.
               </div>
             </div>
           </div>

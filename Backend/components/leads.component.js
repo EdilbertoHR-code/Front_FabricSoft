@@ -7,7 +7,6 @@ const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 router.post('/solicitar',   leadsController.solicitar);
 router.post('/waitlist',    leadsController.solicitarWaitlist);
 router.post('/referencia',  leadsController.solicitarReferencia);
-router.post('/cloud-comparator', leadsController.solicitarCloudComparator);
 
 // Admin
 router.get('/admin',               ClerkExpressRequireAuth(), leadsController.listarLeads);
