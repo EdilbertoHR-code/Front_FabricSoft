@@ -21,7 +21,7 @@ const papers = [
 
 interface DaySlot { time: string; taken: boolean; }
 
-// Genera los próximos N días laborables a partir de hoy
+// Genera los próximos N días laborables a partir de mañana
 function getNextWorkDays(count: number): string[] {
   const result: string[] = [];
   const cursor = new Date();
@@ -29,12 +29,13 @@ function getNextWorkDays(count: number): string[] {
   while (result.length < count) {
     cursor.setDate(cursor.getDate() + 1);
     const dow = cursor.getDay();
-    if (dow !== 0 && dow !== 6) {
-      result.push(cursor.toISOString().split('T')[0]); // YYYY-MM-DD
-    }
+    if (dow !== 0 && dow !== 6) result.push(cursor.toISOString().split('T')[0]);
   }
   return result;
 }
+
+const TODAY_ISO = new Date().toISOString().split('T')[0];
+const NOW_HH_MM = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 function formatDayLabel(iso: string): string {
   const d = new Date(iso + 'T12:00:00');
@@ -261,12 +262,19 @@ export default function InteractionManager() {
               {!selectedSlot ? (
                 <>
                   <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
-                    {days.map((iso, i) => (
-                      <button key={iso} className={`im-day-btn${selectedDay === i ? " active" : ""}`} onClick={() => setSelectedDay(i)}
-                        style={{ padding: "8px 14px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: selectedDay === i ? "var(--accent)" : "var(--text-secondary)", cursor: "pointer", transition: "all 200ms", letterSpacing: "0.1em" }}>
-                        {formatDayLabel(iso)}
-                      </button>
-                    ))}
+                    {days.map((iso, i) => {
+                      const isPast = iso < TODAY_ISO;
+                      return (
+                        <button
+                          key={iso}
+                          disabled={isPast}
+                          className={`im-day-btn${selectedDay === i ? " active" : ""}`}
+                          onClick={() => !isPast && setSelectedDay(i)}
+                          style={{ padding: "8px 14px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: isPast ? "var(--text-tertiary)" : selectedDay === i ? "var(--accent)" : "var(--text-secondary)", cursor: isPast ? "not-allowed" : "pointer", transition: "all 200ms", letterSpacing: "0.1em", textDecoration: isPast ? "line-through" : "none", opacity: isPast ? 0.4 : 1 }}>
+                          {formatDayLabel(iso)}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12 }}>
                     {days[selectedDay] ? new Date(days[selectedDay] + 'T12:00:00').toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }).toUpperCase() : ''} · CDMX
@@ -277,13 +285,17 @@ export default function InteractionManager() {
                     </div>
                   ) : (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
-                      {slots.map((slot) => (
-                        <button key={slot.time} disabled={slot.taken} onClick={() => setSelectedSlot(slot.time)}
-                          className={`im-slot-btn${selectedSlot === slot.time ? " selected" : ""}`}
-                          style={{ padding: "12px 8px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: slot.taken ? "var(--text-tertiary)" : "var(--text-secondary)", cursor: slot.taken ? "not-allowed" : "pointer", textDecoration: slot.taken ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em" }}>
-                          {slot.time}
-                        </button>
-                      ))}
+                      {slots.map((slot) => {
+                        const isPastSlot = days[selectedDay] === TODAY_ISO && slot.time <= NOW_HH_MM;
+                        const disabled = slot.taken || isPastSlot;
+                        return (
+                          <button key={slot.time} disabled={disabled} onClick={() => setSelectedSlot(slot.time)}
+                            className={`im-slot-btn${selectedSlot === slot.time ? " selected" : ""}`}
+                            style={{ padding: "12px 8px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: disabled ? "var(--text-tertiary)" : "var(--text-secondary)", cursor: disabled ? "not-allowed" : "pointer", textDecoration: disabled ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em", opacity: isPastSlot ? 0.35 : 1 }}>
+                            {slot.time}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </>

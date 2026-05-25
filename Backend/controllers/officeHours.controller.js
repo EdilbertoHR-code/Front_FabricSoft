@@ -168,35 +168,61 @@ exports.reintentarCalendar = async (req, res) => {
   }
 };
 
+const DEFAULT_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00'];
+
 // GET /office-hours/disponibilidad/mes?year=2026&month=7
 exports.disponibilidadMes = async (req, res) => {
-  try {
-    const year  = parseInt(req.query.year)  || new Date().getFullYear();
-    const month = parseInt(req.query.month) || new Date().getMonth() + 1;
+  const year  = parseInt(req.query.year)  || new Date().getFullYear();
+  const month = parseInt(req.query.month) || new Date().getMonth() + 1;
 
+  try {
     const data = await calendarService.getMonthAvailability(year, month);
     res.json({ ok: true, data });
   } catch (err) {
     console.error('officeHours.disponibilidadMes error:', err.message);
-    // Devolver objeto vacío para no romper el frontend
-    res.json({ ok: true, data: {}, error: 'calendar_unavailable' });
+    // Fallback: weekdays del mes con disponibilidad real desde DB
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const prefix = `${year}-${String(month).padStart(2, '0')}-`;
+      const monthBookings = await Booking.find(
+        { dia: { $regex: `^${prefix}` }, status: { $ne: 'cancelado' } }, 'dia'
+      );
+      const takenByDay = {};
+      monthBookings.forEach(b => { takenByDay[b.dia] = (takenByDay[b.dia] || 0) + 1; });
+      const data = {};
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${prefix}${String(d).padStart(2, '0')}`;
+        if (dateStr <= today) continue;
+        const dow = new Date(dateStr + 'T12:00:00').getDay();
+        if (dow === 0 || dow === 6) continue;
+        const available = Math.max(0, DEFAULT_SLOTS.length - (takenByDay[dateStr] || 0));
+        if (available > 0) data[dateStr] = available;
+      }
+      res.json({ ok: true, data, error: 'calendar_unavailable' });
+    } catch {
+      res.json({ ok: true, data: {}, error: 'calendar_unavailable' });
+    }
   }
 };
 
 // GET /office-hours/disponibilidad/dia?date=2026-07-05
 exports.disponibilidadDia = async (req, res) => {
+  const { date } = req.query;
+  if (!date) return res.status(400).json({ error: 'Parámetro date requerido (YYYY-MM-DD).' });
+
+  // DB siempre se consulta primero — independiente de Calendar
+  const dbBookings = await Booking.find({ dia: date, status: { $ne: 'cancelado' } }, 'slot').catch(() => []);
+  const dbTaken    = dbBookings.map(b => b.slot);
+
   try {
-    const { date } = req.query;
-    if (!date) return res.status(400).json({ error: 'Parámetro date requerido (YYYY-MM-DD).' });
-
-    const dbBookings = await Booking.find({ dia: date, status: { $ne: 'cancelado' } }, 'slot');
-    const dbTaken    = dbBookings.map(b => b.slot);
-
     const slots = await calendarService.getDaySlots(date, dbTaken);
     res.json({ ok: true, data: slots });
   } catch (err) {
     console.error('officeHours.disponibilidadDia error:', err.message);
-    res.json({ ok: true, data: [], error: 'calendar_unavailable' });
+    // Fallback: horarios por defecto menos lo reservado en DB
+    const data = DEFAULT_SLOTS.map(time => ({ time, taken: dbTaken.includes(time) }));
+    res.json({ ok: true, data, error: 'calendar_unavailable' });
   }
 };
 
