@@ -64,6 +64,43 @@ exports.book = async (req, res) => {
   }
 };
 
+exports.solicitar = async (req, res) => {
+  try {
+    const { nombre, cargo, empresa, email, revenue, iniciativaOracle, plazo, tracking } = req.body;
+
+    if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email inválido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+
+    const booking = await Booking.create({
+      nombre:    nombre.trim(),
+      cargo:     cargo?.trim() || '',
+      empresa:   empresa.trim(),
+      email:     email.trim().toLowerCase(),
+      revenue:   revenue?.trim() || '',
+      iniciativaOracle: iniciativaOracle?.trim() || '',
+      plazo:     plazo?.trim() || '',
+      dia:       '',
+      slot:      '',
+      ipAddress: req.ip || '',
+      tracking:  sanitizeTracking(tracking),
+    });
+
+    log({
+      accion:    `SOLICITUD · Office Hours · ${booking.empresa}`,
+      categoria: 'Office Hours',
+      autor:     'system',
+      detalle:   `Sin slot · ${booking.nombre}`,
+    });
+
+    res.status(201).json({ ok: true, data: booking });
+  } catch (err) {
+    console.error('officeHours.solicitar error:', err);
+    res.status(500).json({ error: 'Error interno al guardar la solicitud.' });
+  }
+};
+
 exports.listar = async (req, res) => {
   try {
     const { status } = req.query;

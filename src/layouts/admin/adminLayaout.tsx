@@ -628,7 +628,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
   // ─── Layout principal ──────────────────────────────────────────────────────
 
   return (
-    <div style={{ minHeight: '100vh', background: '#17181B', color: '#E8E8E8' }}>
+    <div style={{ minHeight: '100vh', background: '#050505', color: '#E8E8E8' }}>
       <style>{`
         @keyframes admin-content-in {
           from { opacity: 0; transform: translateY(8px); }
@@ -758,7 +758,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
 
         {/* Área de contenido */}
         <section
-          style={{ position: 'relative', minHeight: '100vh', background: '#17181B' }}
+          style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}
         >
           {/* Línea dorada superior animada */}
           <div

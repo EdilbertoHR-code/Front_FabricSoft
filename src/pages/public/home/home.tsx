@@ -1,4 +1,3 @@
-import InteractionManager from '../../../components/InteractionManager';
 import S01Hero from './s01-hero';
 import S02bPuente from './s02b-puente';
 import RescueCounter from './s02-optimizador';
@@ -45,7 +44,6 @@ export default function Home() {
       <S13Transparencia />
       <S14Investigacion />
       <S15Founder />
-      <InteractionManager />
     </div>
   );
 }

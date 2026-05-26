@@ -289,7 +289,7 @@ export default function InteractionManager() {
             <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
           </div>
 
-          <div style={{ display: "flex", flex: 1, overflow: "hidden", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
             {/* Left panel */}
             <div style={{ width: 240, borderRight: "1px solid var(--border)", padding: "24px 20px", overflowY: "auto", flexShrink: 0 }}>
               <div style={{ width: 48, height: 48, border: "1px solid var(--accent)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--serif)", fontSize: 24, color: "var(--accent)", fontStyle: "italic", marginBottom: 16 }}>J</div>
@@ -310,7 +310,7 @@ export default function InteractionManager() {
             </div>
 
             {/* Right: slot picker */}
-            <div style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0 }}>
+            <div className="im-scroll-panel" style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0, minHeight: 0 }}>
               {!selectedSlot ? (
                 <>
                   {/* Navegación semanal */}

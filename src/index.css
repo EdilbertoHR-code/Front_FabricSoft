@@ -603,6 +603,24 @@
   background: #C9A96E44;
 }
 
+.im-scroll-panel {
+  scrollbar-width: thin;
+  scrollbar-color: #1e1e1e #050505;
+}
+.im-scroll-panel::-webkit-scrollbar {
+  width: 3px;
+}
+.im-scroll-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.im-scroll-panel::-webkit-scrollbar-thumb {
+  background: #1e1e1e;
+  border-radius: 2px;
+}
+.im-scroll-panel::-webkit-scrollbar-thumb:hover {
+  background: #C9A96E44;
+}
+
 .admin-booking-row {
   background: #0F0F0F;
   padding: 18px 24px;

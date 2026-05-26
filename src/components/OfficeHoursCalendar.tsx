@@ -25,7 +25,7 @@ function buildCalendarGrid(year: number, month: number, monthData: MonthData) {
     const dow = new Date(dateStr + 'T12:00:00').getDay();
     const isWeekend = dow === 0 || dow === 6;
     const isToday = dateStr === today;
-    const isPast = dateStr < today;
+    const isPast = dateStr <= today;
     const available = monthData[dateStr] ?? 0;
 
     let className = 'muted';
@@ -95,13 +95,8 @@ export default function OfficeHoursCalendar({ onDayClick }: Props) {
 
   const handleDayClick = (cell: typeof cells[0]) => {
     if (cell.available <= 0 || !cell.dateStr) return;
-    if (onDayClick) {
-      onDayClick(cell.dateStr);
-    } else {
-      // Dispara InteractionManager igual que en el home
-      const el = document.querySelector(`[data-date="${cell.dateStr}"]`);
-      el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    }
+    if (onDayClick) onDayClick(cell.dateStr);
+    // Sin onDayClick: el bubble nativo del click llega al InteractionManager en document
   };
 
   return (
