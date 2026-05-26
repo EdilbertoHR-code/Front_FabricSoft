@@ -129,6 +129,7 @@ export const translations = {
 
 
 
+    'footer.tagline': 'Oracle Critical Engineering',
     'footer.location': 'Mexico City · Mexico',
     'footer.access': 'Selective access · limited capacity',
     'footer.site': 'site',
