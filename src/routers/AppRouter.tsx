@@ -60,6 +60,7 @@ const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosti
 const AdminRescueAssessment     = lazy(() => import('../pages/admin/AdminRescueAssessment'));
 const AdminOciAudit             = lazy(() => import('../pages/admin/AdminOciAudit'));
 const AdminMigrationRoadmap     = lazy(() => import('../pages/admin/AdminMigrationRoadmap'));
+const AdminReadinessScore       = lazy(() => import('../pages/admin/AdminReadinessScore'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -225,6 +226,7 @@ export const AppRouter = () => {
             <Route path="rescue-assessment"    element={<AdminRescueAssessment />} />
             <Route path="oci-audit"           element={<AdminOciAudit />} />
             <Route path="migration-roadmap"   element={<AdminMigrationRoadmap />} />
+            <Route path="readiness-score"     element={<AdminReadinessScore />} />
           </Route>
 
           {/* 404 → Home */}

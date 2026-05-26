@@ -9,6 +9,7 @@ router.post('/waitlist',    leadsController.solicitarWaitlist);
 router.post('/referencia',  leadsController.solicitarReferencia);
 router.post('/cloud-comparator',    leadsController.solicitarCloudComparator);
 router.post('/migration-roadmap',   leadsController.solicitarMigrationRoadmap);
+router.post('/readiness-score',     leadsController.solicitarReadinessScore);
 
 // Admin
 router.get('/admin',               ClerkExpressRequireAuth(), leadsController.listarLeads);

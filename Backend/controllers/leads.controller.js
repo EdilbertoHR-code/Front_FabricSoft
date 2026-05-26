@@ -461,3 +461,76 @@ exports.solicitarMigrationRoadmap = async (req, res) => {
     res.status(500).json({ error: 'Error interno al guardar el roadmap.' });
   }
 };
+
+exports.solicitarReadinessScore = async (req, res) => {
+  try {
+    const {
+      nombre, cargo, empresa, email,
+      respuestas, scoreTotal, nivel,
+      tracking,
+    } = req.body;
+
+    if (!nombre?.trim())  return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!cargo?.trim())   return res.status(400).json({ error: 'Cargo requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email inválido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+    if (typeof scoreTotal !== 'number') return res.status(400).json({ error: 'Score requerido.' });
+    if (!nivel) return res.status(400).json({ error: 'Nivel requerido.' });
+
+    const iniciativa = `Oracle Readiness Score: ${scoreTotal}/100 · Nivel: ${nivel}.`;
+
+    const leadScore = calcScore({
+      revenue: '',
+      industria: '',
+      plazo: '',
+      iniciativa,
+    });
+
+    const lead = await Lead.create({
+      nombre:    nombre.trim(),
+      cargo:     cargo.trim(),
+      empresa:   empresa.trim(),
+      email:     email.trim().toLowerCase(),
+      iniciativa,
+      source:    'readiness-score',
+      score:     leadScore,
+      status:    'Nuevo',
+      ipAddress: req.ip || '',
+      historial: [{ fecha: nowLabel(), estado: 'Nuevo', autor: 'Sistema' }],
+      tracking:  sanitizeTracking(tracking),
+      readinessScore: {
+        patrocinio:    respuestas?.patrocinio    || '',
+        presupuesto:   respuestas?.presupuesto   || '',
+        procesos:      respuestas?.procesos      || '',
+        datos:         respuestas?.datos         || '',
+        equipo:        respuestas?.equipo        || '',
+        integraciones: respuestas?.integraciones || '',
+        plazo:         respuestas?.plazo         || '',
+        usuarios:      respuestas?.usuarios      || '',
+        compliance:    respuestas?.compliance    || '',
+        experiencia:   respuestas?.experiencia   || '',
+        consultora:    respuestas?.consultora    || '',
+        alcance:       respuestas?.alcance       || '',
+        gobierno:      respuestas?.gobierno      || '',
+        ciclo:         respuestas?.ciclo         || '',
+        comunicacion:  respuestas?.comunicacion  || '',
+        scoreTotal,
+        nivel,
+      },
+    });
+
+    log({
+      accion:    `CREATE · Readiness Score · ${lead.empresa}`,
+      categoria: 'Leads',
+      autor:     'system',
+      status:    'OK',
+      detalle:   `${lead.nombre} · Score: ${scoreTotal}/100 · Nivel: ${nivel}`,
+    });
+
+    res.status(201).json({ ok: true, data: lead });
+  } catch (err) {
+    console.error('leads.solicitarReadinessScore error:', err);
+    res.status(500).json({ error: 'Error interno al guardar el readiness score.' });
+  }
+};

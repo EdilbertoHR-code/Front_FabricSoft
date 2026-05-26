@@ -233,11 +233,13 @@ export default function ReadinessScorePage() {
 
     setLoading(true);
     try {
-      await api.post('/leads', {
+      const scoreTotal = calcularScore(respuestas);
+      const nivel = getNivel(scoreTotal).nivel;
+      await api.post('/leads/readiness-score', {
         ...form,
-        tipo: 'readiness-score',
-        datos: Object.fromEntries(Object.entries(respuestas).map(([k, v]) => [k, v.label])),
-        score: calcularScore(respuestas),
+        respuestas: Object.fromEntries(Object.entries(respuestas).map(([k, v]) => [k, v.label])),
+        scoreTotal,
+        nivel,
         tracking: getInteractionTracking('readiness', 'readiness-score'),
       });
       setFase('resultado');

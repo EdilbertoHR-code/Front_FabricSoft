@@ -59,6 +59,7 @@ const NAV_GROUPS: NavGroup[] = [
       { path: '/admin/rescue-assessment',   label: 'Rescue Assessment',                  icon: Activity },
       { path: '/admin/oci-audit',           label: 'OCI Cost Audit',                     icon: BarChart3 },
       { path: '/admin/migration-roadmap',   label: 'Migration Roadmap',                  icon: GitBranch },
+      { path: '/admin/readiness-score',     label: 'Readiness Score',                    icon: Gauge },
     ],
   },
   {
