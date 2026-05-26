@@ -8,6 +8,7 @@ router.post('/solicitar',   leadsController.solicitar);
 router.post('/waitlist',    leadsController.solicitarWaitlist);
 router.post('/referencia',  leadsController.solicitarReferencia);
 
+
 // Admin
 router.get('/admin',               ClerkExpressRequireAuth(), leadsController.listarLeads);
 router.patch('/admin/:id/status',  ClerkExpressRequireAuth(), leadsController.actualizarStatus);

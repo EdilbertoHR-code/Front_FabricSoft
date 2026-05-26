@@ -14,11 +14,20 @@ const powDocs = [
 
 // days se genera dinámicamente en el componente
 
-const papers = [
-  { num: "Paper 01", tag: "Research Note · Mercado", title: "Por qué fallan los go-live de Oracle Fusion", abstract: "Análisis de 47 implementaciones LATAM. Tres patrones recurrentes de fracaso, causas raíz documentadas, modelo alternativo de entrega.", meta: "8-10 pp · PDF ES · 15 min · May 2026" },
-  { num: "Paper 02", tag: "Technical Framework · IA", title: "IA aplicada a cierre contable en Fusion Cloud", abstract: "Framework FABRIC con 4 capas operativas. Casos APE Plazas + Aplazo. Benchmarks de reducción de tiempo de cierre.", meta: "10-12 pp · PDF ES · 20 min · May 2026" },
-  { num: "Paper 03", tag: "Doctrina Operativa · SOW", title: "Modelo de entrega en primer ciclo crítico", abstract: "Las 5 cláusulas doctrinales aplicadas. Redacción de RFP con criterios FABRIC. Validación post go-live documentada.", meta: "6-8 pp · PDF ES · 12 min · May 2026" },
+const FALLBACK_PAPERS = [
+  { num: "Paper 01", paperId: "01", tag: "Research Note · Mercado", title: "Por qué fallan los go-live de Oracle Fusion", abstract: "Análisis de 47 implementaciones LATAM. Tres patrones recurrentes de fracaso, causas raíz documentadas, modelo alternativo de entrega.", meta: "8-10 pp · PDF ES · 15 min · May 2026" },
+  { num: "Paper 02", paperId: "02", tag: "Technical Framework · IA", title: "IA aplicada a cierre contable en Fusion Cloud", abstract: "Framework FABRIC con 4 capas operativas. Casos APE Plazas + Aplazo. Benchmarks de reducción de tiempo de cierre.", meta: "10-12 pp · PDF ES · 20 min · May 2026" },
+  { num: "Paper 03", paperId: "03", tag: "Doctrina Operativa · SOW", title: "Modelo de entrega en primer ciclo crítico", abstract: "Las 5 cláusulas doctrinales aplicadas. Redacción de RFP con criterios FABRIC. Validación post go-live documentada.", meta: "6-8 pp · PDF ES · 12 min · May 2026" },
 ];
+
+interface PaperCatalogItem {
+  num: string;
+  paperId: string;
+  tag: string;
+  title: string;
+  abstract: string;
+  meta: string;
+}
 
 interface DaySlot { time: string; taken: boolean; }
 
@@ -63,6 +72,30 @@ export default function InteractionManager() {
   const [selectedDay, setSelectedDay] = useState<string>(() => getWorkDaysUntilEndOfNextMonth()[0]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedPaper, setSelectedPaper] = useState(0);
+  const [papersList, setPapersList] = useState<PaperCatalogItem[]>(FALLBACK_PAPERS);
+  const [paperDownloadUrl, setPaperDownloadUrl] = useState("");
+
+  useEffect(() => {
+    api.get('/papers/catalog')
+      .then(res => {
+        if (res.data?.ok && Array.isArray(res.data.data)) {
+          const filtered = res.data.data.filter((p: { visible?: boolean }) => p.visible !== false);
+          if (filtered.length > 0) {
+            setPapersList(filtered.map((p: { paperId: string; tag: string; titulo: string; abstract: string; meta?: string }) => ({
+              num: `Paper ${p.paperId}`,
+              paperId: p.paperId,
+              tag: p.tag,
+              title: p.titulo,
+              abstract: p.abstract,
+              meta: p.meta || "",
+            })));
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Error loading papers in InteractionManager:', err);
+      });
+  }, []);
   const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "", revenue: "", iniciativa: "", plazo: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -113,6 +146,7 @@ export default function InteractionManager() {
 
   useEffect(() => {
     if (active === 'office-hours' && selectedDay) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchSlots(selectedDay);
     }
   }, [active, selectedDay, fetchSlots]);
@@ -120,6 +154,7 @@ export default function InteractionManager() {
   // Cuando selectedDay cambia (ej. click desde el calendario s11), saltar a la semana correcta
   useEffect(() => {
     const idx = days.indexOf(selectedDay);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (idx !== -1) setWeekOffset(Math.floor(idx / 5));
   }, [selectedDay, days]);
 
@@ -136,15 +171,23 @@ export default function InteractionManager() {
         const clickedDate = target.getAttribute("data-date");
         setSelectedDay(clickedDate || days[0]);
       }
+      if (type === "paper") {
+        const paperIdx = target.getAttribute("data-paper-index");
+        if (paperIdx !== null) {
+          const parsedIdx = parseInt(paperIdx, 10);
+          if (!isNaN(parsedIdx)) setSelectedPaper(parsedIdx);
+        }
+      }
       setActive(type);
       setSubmitted(false);
       setSelectedSlot(null);
       setApiError("");
       setLoading(false);
+      setPaperDownloadUrl("");
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
-  }, []);
+  }, [days]);
 
   useEffect(() => {
     if (active) {
@@ -289,7 +332,7 @@ export default function InteractionManager() {
             <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
           </div>
 
-          <div style={{ display: "flex", flex: 1, overflow: "hidden", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
             {/* Left panel */}
             <div style={{ width: 240, borderRight: "1px solid var(--border)", padding: "24px 20px", overflowY: "auto", flexShrink: 0 }}>
               <div style={{ width: 48, height: 48, border: "1px solid var(--accent)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--serif)", fontSize: 24, color: "var(--accent)", fontStyle: "italic", marginBottom: 16 }}>J</div>
@@ -310,7 +353,7 @@ export default function InteractionManager() {
             </div>
 
             {/* Right: slot picker */}
-            <div style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0 }}>
+            <div className="im-scroll-panel" style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0, minHeight: 0 }}>
               {!selectedSlot ? (
                 <>
                   {/* Navegación semanal */}
@@ -629,7 +672,7 @@ export default function InteractionManager() {
           {!submitted ? (
             <>
               <div style={{ display: "flex", borderBottom: "1px solid var(--border)" }}>
-                {papers.map((p, i) => (
+                {papersList.map((p, i) => (
                   <button key={i} className={`im-paper-tab${selectedPaper === i ? " active" : ""}`} onClick={() => setSelectedPaper(i)}
                     style={{ flex: 1, padding: "12px 8px", background: "transparent", border: "none", borderBottom: selectedPaper === i ? "2px solid var(--accent)" : "2px solid transparent", fontFamily: "var(--mono)", fontSize: 10, color: selectedPaper === i ? "var(--accent)" : "var(--text-tertiary)", cursor: "pointer", letterSpacing: "0.1em", transition: "all 200ms" }}>
                     {p.num}
@@ -637,10 +680,10 @@ export default function InteractionManager() {
                 ))}
               </div>
               <div style={{ padding: "24px 28px", flex: 1, overflowY: "auto" }}>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>{papers[selectedPaper].tag}</div>
-                <div style={{ fontFamily: "var(--serif)", fontSize: 22, lineHeight: 1.15, marginBottom: 12 }}>{papers[selectedPaper].title}</div>
-                <p style={{ color: "var(--text-secondary)", fontSize: 13, lineHeight: 1.7, marginBottom: 16 }}>{papers[selectedPaper].abstract}</p>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.1em", marginBottom: 24 }}>{papers[selectedPaper].meta}</div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>{papersList[selectedPaper]?.tag}</div>
+                <div style={{ fontFamily: "var(--serif)", fontSize: 22, lineHeight: 1.15, marginBottom: 12 }}>{papersList[selectedPaper]?.title}</div>
+                <p style={{ color: "var(--text-secondary)", fontSize: 13, lineHeight: 1.7, marginBottom: 16 }}>{papersList[selectedPaper]?.abstract}</p>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.1em", marginBottom: 24 }}>{papersList[selectedPaper]?.meta}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {(["nombre", "cargo", "empresa", "email"] as const).map((field) => (
                     <div key={field}>
@@ -659,14 +702,18 @@ export default function InteractionManager() {
                   disabled={loading}
                   onClick={async () => {
                     setApiError("");
-                    const paperId = `0${selectedPaper + 1}`;
+                    const paperId = papersList[selectedPaper]?.paperId;
+                    if (!paperId) {
+                      setApiError("ID de paper no válido.");
+                      return;
+                    }
                     if (!formData.nombre || !formData.cargo || !formData.empresa || !formData.email) {
                       setApiError("Completa todos los campos.");
                       return;
                     }
                     setLoading(true);
                     try {
-                      await api.post("/papers/solicitar", {
+                      const res = await api.post("/papers/solicitar", {
                         paperId,
                         nombre:  formData.nombre,
                         cargo:   formData.cargo,
@@ -674,6 +721,9 @@ export default function InteractionManager() {
                         email:   formData.email,
                         tracking: tracking("S14", "paper"),
                       });
+                      if (res.data?.downloadUrl) {
+                        setPaperDownloadUrl(`${api.defaults.baseURL || ''}${res.data.downloadUrl}`);
+                      }
                       setSubmitted(true);
                     } catch (err: unknown) {
                       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
@@ -691,10 +741,18 @@ export default function InteractionManager() {
           ) : (
             <div style={{ padding: "48px 28px", textAlign: "center" }}>
               <div style={{ fontFamily: "var(--serif)", fontSize: 48, color: "var(--accent)", marginBottom: 16 }}>✓</div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 24, marginBottom: 12 }}>{papers[selectedPaper].num} <em>enviado.</em></div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: 24, marginBottom: 12 }}>{papersList[selectedPaper]?.num} <em>enviado.</em></div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Recibirás el PDF en {formData.email || "tu email"}.<br />Solo emails corporativos. Tiempo: minutos.
+                Datos registrados para {formData.email || "tu email"}.<br />PDF disponible para descarga inmediata.
               </div>
+              {paperDownloadUrl && (
+                <a
+                  href={paperDownloadUrl}
+                  style={{ display: "inline-block", marginTop: 22, padding: "12px 24px", background: "var(--accent)", color: "var(--bg-base)", textDecoration: "none", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}
+                >
+                  Descargar PDF →
+                </a>
+              )}
               <button onClick={close} style={{ marginTop: 24, padding: "10px 24px", background: "transparent", border: "1px solid var(--accent)", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: 10, cursor: "pointer", letterSpacing: "0.2em", textTransform: "uppercase" }}>Cerrar</button>
             </div>
           )}

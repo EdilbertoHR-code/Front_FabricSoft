@@ -64,6 +64,43 @@ exports.book = async (req, res) => {
   }
 };
 
+exports.solicitar = async (req, res) => {
+  try {
+    const { nombre, cargo, empresa, email, revenue, iniciativaOracle, plazo, tracking } = req.body;
+
+    if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email inválido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+
+    const booking = await Booking.create({
+      nombre:    nombre.trim(),
+      cargo:     cargo?.trim() || '',
+      empresa:   empresa.trim(),
+      email:     email.trim().toLowerCase(),
+      revenue:   revenue?.trim() || '',
+      iniciativaOracle: iniciativaOracle?.trim() || '',
+      plazo:     plazo?.trim() || '',
+      dia:       '',
+      slot:      '',
+      ipAddress: req.ip || '',
+      tracking:  sanitizeTracking(tracking),
+    });
+
+    log({
+      accion:    `SOLICITUD · Office Hours · ${booking.empresa}`,
+      categoria: 'Office Hours',
+      autor:     'system',
+      detalle:   `Sin slot · ${booking.nombre}`,
+    });
+
+    res.status(201).json({ ok: true, data: booking });
+  } catch (err) {
+    console.error('officeHours.solicitar error:', err);
+    res.status(500).json({ error: 'Error interno al guardar la solicitud.' });
+  }
+};
+
 exports.listar = async (req, res) => {
   try {
     const { status } = req.query;
@@ -226,7 +263,7 @@ exports.disponibilidadMes = async (req, res) => {
       const data = {};
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${prefix}${String(d).padStart(2, '0')}`;
-        if (dateStr <= today) continue;
+        if (dateStr <= today) continue; // excluir hoy y días pasados — solo desde mañana
         const dow = new Date(dateStr + 'T12:00:00').getDay();
         if (dow === 0 || dow === 6) continue;
         const taken = dbByDay[dateStr] ? dbByDay[dateStr].size : 0;
@@ -248,13 +285,22 @@ exports.disponibilidadDia = async (req, res) => {
   const dbBookings = await Booking.find({ dia: date, status: { $ne: 'cancelado' } }, 'slot').catch(() => []);
   const dbTaken    = dbBookings.map(b => b.slot);
 
+  const isToday = date === new Date().toISOString().split('T')[0];
+  const nowHHMM = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Mexico_City' });
+
+  function filterSlots(raw) {
+    return raw.map(s => ({
+      ...s,
+      taken: s.taken || (isToday && s.time <= nowHHMM),
+    }));
+  }
+
   try {
     const slots = await calendarService.getDaySlots(date, dbTaken);
-    res.json({ ok: true, data: slots });
+    res.json({ ok: true, data: filterSlots(slots) });
   } catch (err) {
     console.error('officeHours.disponibilidadDia error:', err.message);
-    // Fallback: horarios por defecto menos lo reservado en DB
-    const data = DEFAULT_SLOTS.map(time => ({ time, taken: dbTaken.includes(time) }));
+    const data = DEFAULT_SLOTS.map(time => ({ time, taken: dbTaken.includes(time) || (isToday && time <= nowHHMM) }));
     res.json({ ok: true, data, error: 'calendar_unavailable' });
   }
 };

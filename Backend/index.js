@@ -3,6 +3,10 @@ require("dotenv").config({ path: require("path").join(__dirname, ".env") }); // 
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const { validateEnv } = require("./config/validateEnv");
+
+// Validar variables de entorno antes de arrancar
+validateEnv();
 
 const appRoutes = require('./routers/app.routers.js');
 const authController = require('./controllers/auth.controller.js');

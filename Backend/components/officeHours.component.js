@@ -5,6 +5,7 @@ const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 
 // Público
 router.post('/book',                       officeHoursController.book);
+router.post('/solicitar',                  officeHoursController.solicitar);
 router.get('/slots-ocupados',              officeHoursController.slotsOcupados);
 router.get('/disponibilidad/mes',          officeHoursController.disponibilidadMes);
 router.get('/disponibilidad/dia',          officeHoursController.disponibilidadDia);

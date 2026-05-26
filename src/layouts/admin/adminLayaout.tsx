@@ -12,6 +12,7 @@ import {
   Eye,
   FileText,
   Gauge,
+  GitBranch,
   LayoutDashboard,
   Link2,
   LogOut,
@@ -58,6 +59,8 @@ const NAV_GROUPS: NavGroup[] = [
       { path: '/admin/diagnosticos-oracle', label: 'Diagnósticos Oracle',                icon: ClipboardList },
       { path: '/admin/rescue-assessment',   label: 'Rescue Assessment',                  icon: Activity },
       { path: '/admin/oci-audit',           label: 'OCI Cost Audit',                     icon: BarChart3 },
+      { path: '/admin/migration-roadmap',   label: 'Migration Roadmap',                  icon: GitBranch },
+      { path: '/admin/readiness-score',     label: 'Readiness Score',                    icon: Gauge },
     ],
   },
   {
@@ -627,7 +630,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
   // ─── Layout principal ──────────────────────────────────────────────────────
 
   return (
-    <div style={{ minHeight: '100vh', background: '#17181B', color: '#E8E8E8' }}>
+    <div style={{ minHeight: '100vh', background: '#050505', color: '#E8E8E8' }}>
       <style>{`
         @keyframes admin-content-in {
           from { opacity: 0; transform: translateY(8px); }
@@ -757,7 +760,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
 
         {/* Área de contenido */}
         <section
-          style={{ position: 'relative', minHeight: '100vh', background: '#17181B' }}
+          style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}
         >
           {/* Línea dorada superior animada */}
           <div

@@ -317,7 +317,7 @@ export default function S06bFixedPrice() {
     ref={containerRef}
     className="
       parte8-section relative w-full overflow-hidden
-      bg-[#0A0A0A]
+      bg-[#050203]
       flex items-center justify-center
       border-t border-[#2A2A2A]/50
       py-24 md:py-36
@@ -329,8 +329,8 @@ export default function S06bFixedPrice() {
     </div>
 
     {/* Sombras de integración */}
-    <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0A0A0A_72%)] pointer-events-none" />
-    <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0A0A0A] via-transparent to-[#0A0A0A] pointer-events-none" />
+    <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050203_72%)] pointer-events-none" />
+    <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#050203] via-transparent to-[#050203] pointer-events-none" />
 
     {/* 2. CONTENIDO */}
     <div
@@ -362,7 +362,7 @@ export default function S06bFixedPrice() {
           className="
             relative flex flex-col justify-between
             border-b border-[#2A2A2A] lg:border-b-0 lg:border-r
-            bg-[#0A0A0A]/55
+            bg-[#080706]/55
             px-8 py-9 md:px-10 md:py-12
           "
         >

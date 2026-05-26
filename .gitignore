@@ -27,13 +27,21 @@ dist-ssr
 .env.local
 .env.production
 
-# AI / Claude tooling — no util en el repo
+# AI / Claude tooling y maquetado — no útil en el repo
 .claude/
 .vite/
 documentacion/
-maquetado/zip_extracted/uploads/
+design/
+maquetado/
 SESION_*.md
 CONTEXTO_*.md
+docs/SESSION_CONTEXT.md
+docs/SESION_*.md
+docs/Brief*.md
+docs/CHECKLIST_*.md
+docs/ESTRUCTURA_*.md
+docs/PENDIENTES_JULIO.md
+docs/brief*.md
 
 # Caché de Next.js
 frontend/.next/
@@ -68,6 +76,5 @@ oval-botany*.json
 
 # Permitir documentos del proyecto en docs/
 !docs/*.pdf
-!docs/*.docx
 .vercel
 .env*

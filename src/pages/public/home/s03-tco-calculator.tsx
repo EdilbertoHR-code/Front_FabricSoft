@@ -188,7 +188,7 @@ function calculateTCO(data: FormState) {
 
 const toastBase = {
   style: {
-    background: "#0A0A0A",
+    background: "#080706",
     borderRadius: "4px",
     fontFamily: "'JetBrains Mono', monospace",
     fontSize: "11px",
@@ -247,7 +247,7 @@ function Btn({ children, onClick, disabled = false, className = "" }: {
 }
 
 const inputBase =
-  "w-full bg-[#0A0A0A] px-4 py-3.5 font-mono text-sm text-[#F5F5F5] outline-none border border-[#2A2A2A] transition-all duration-200 focus:border-[#C9A96E]/60 focus:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm";
+  "w-full bg-[#080706] px-4 py-3.5 font-mono text-sm text-[#F5F5F5] outline-none border border-[#2A2A2A] transition-all duration-200 focus:border-[#C9A96E]/60 focus:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm";
 
 function FieldLabel({ children }: { children: ReactNode }) {
   return <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-[#888]">{children}</span>;
@@ -267,7 +267,7 @@ function NumberInput({ label, value, onChange, min = 0, max, prefix, suffix, pla
   return (
     <label className="block">
       <FieldLabel>{label}</FieldLabel>
-      <div className="flex items-center border border-[#2A2A2A] bg-[#0A0A0A] px-4 py-3.5 transition-all duration-200 focus-within:border-[#C9A96E]/60 focus-within:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm">
+      <div className="flex items-center border border-[#2A2A2A] bg-[#080706] px-4 py-3.5 transition-all duration-200 focus-within:border-[#C9A96E]/60 focus-within:shadow-[0_0_12px_rgba(201,169,110,0.15)] rounded-sm">
         {prefix && <span className="mr-2 font-mono text-sm text-[#888]">{prefix}</span>}
         <input
           type="number"
@@ -295,7 +295,7 @@ function SelectInput<T extends string>({ label, value, options, onChange }: {
       <FieldLabel>{label}</FieldLabel>
       <select value={value} onChange={(event) => onChange(event.target.value as T)} className={`${inputBase} cursor-pointer appearance-none`}>
         {options.map((option) => (
-          <option key={option} value={option} className="bg-[#0A0A0A]">
+          <option key={option} value={option} className="bg-[#080706]">
             {option}
           </option>
         ))}
@@ -338,7 +338,7 @@ function EmptySignalPanel() {
   const rows = ["TCO anual", "Ahorro potencial", "Breakeven"];
 
   return (
-    <div className="grid min-h-[460px] place-items-center border border-[#1A1A1A] bg-[#050505] p-8 rounded-sm">
+    <div className="grid min-h-[460px] place-items-center border border-[#1A1A1A] bg-[#080706] p-8 rounded-sm">
       <div className="w-full max-w-[430px]">
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Lectura pendiente</p>
         <p className="font-serif text-3xl leading-tight text-[#F5F5F5]">Tus numeros aparecen despues de calcular.</p>
@@ -348,7 +348,7 @@ function EmptySignalPanel() {
 
         <div className="mt-8 space-y-4">
           {rows.map((row, index) => (
-            <div key={row} className="border border-[#1A1A1A] bg-[#0A0A0A] p-4 rounded-sm">
+            <div key={row} className="border border-[#1A1A1A] bg-[#060606] p-4 rounded-sm">
               <div className="mb-3 flex items-center justify-between">
                 <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#888]">{row}</span>
                 <span className="font-mono text-[10px] text-[#C9A96E]">Pendiente</span>
@@ -369,13 +369,13 @@ function OpportunityMeter({ tco }: { tco: TcoResult }) {
   const reduction = Math.round(tco.percentReduction);
 
   return (
-    <div className="mb-6 grid gap-4 border border-[#1A1A1A] bg-[#050505] p-5 sm:grid-cols-[170px_minmax(0,1fr)] rounded-sm">
+    <div className="mb-6 grid gap-4 border border-[#1A1A1A] bg-[#080706] p-5 sm:grid-cols-[170px_minmax(0,1fr)] rounded-sm">
       <div
         className="grid h-[150px] w-[150px] place-items-center justify-self-center rounded-full"
         style={{ background: `conic-gradient(#C9A96E ${score * 3.6}deg, #171717 0deg)` }}
         aria-label={`Fit ejecutivo ${score} de 100`}
       >
-        <div className="grid h-[118px] w-[118px] place-items-center rounded-full bg-[#050505] text-center">
+        <div className="grid h-[118px] w-[118px] place-items-center rounded-full bg-[#080706] text-center">
           <div>
             <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Fit</p>
             <p className="font-mono text-3xl text-[#F5F5F5]">{score}</p>
@@ -405,7 +405,7 @@ function ComparisonTable({ tco }: { tco: TcoResult }) {
   ];
 
   return (
-    <div className="overflow-hidden border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm">
+    <div className="overflow-hidden border border-[#1A1A1A] bg-[#080706] rounded-sm">
       <div className="grid grid-cols-[0.8fr_1fr_1fr] border-b border-[#1A1A1A] bg-[#111111] px-4 py-3 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">
         <span>Periodo</span>
         <span>Situacion actual</span>
@@ -430,7 +430,7 @@ function SavingsChart({ currentTCO10y, oracleTCO10y }: { currentTCO10y: number; 
   ];
 
   return (
-    <div className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+    <div className="border border-[#1A1A1A] bg-[#080706] p-6 rounded-sm">
       <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Grafico simple de ahorro acumulado</p>
       <div className="space-y-5">
         {bars.map((bar) => (
@@ -453,7 +453,7 @@ function BreakEvenChart({ tco }: { tco: TcoResult }) {
   const width = `${clamp((tco.breakeven / 36) * 100, 12, 100)}%`;
 
   return (
-    <div className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+    <div className="border border-[#1A1A1A] bg-[#080706] p-6 rounded-sm">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Punto de retorno</p>
@@ -487,7 +487,7 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
   ];
 
   return (
-    <article className="relative w-full max-w-[460px] border border-[#2A2A2A] bg-[#0A0A0A] p-8 shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(201,169,110,0.1)] md:p-10 rounded-sm">
+    <article className="relative w-full max-w-[460px] border border-[#2A2A2A] bg-[#080706] p-8 shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(201,169,110,0.1)] md:p-10 rounded-sm">
       <div className="mb-8 border-b border-[#1A1A1A] pb-6">
         <div className="mb-2 flex items-center gap-2">
           <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
@@ -583,11 +583,11 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl">
       <div className="h-full overflow-y-auto overscroll-contain px-4 py-6 md:px-6 md:py-10">
-        <div className="relative mx-auto w-full max-w-[1160px] overflow-hidden border border-[#2A2A2A] bg-[#050505]/95 shadow-[0_0_80px_rgba(0,0,0,0.9),0_0_20px_rgba(201,169,110,0.1)] rounded-sm">
+        <div className="relative mx-auto w-full max-w-[1160px] overflow-hidden border border-[#2A2A2A] bg-[#050203]/95 shadow-[0_0_80px_rgba(0,0,0,0.9),0_0_20px_rgba(201,169,110,0.1)] rounded-sm">
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center border border-[#2A2A2A] bg-[#050505]/80 text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:bg-[#C9A96E]/10 hover:text-[#C9A96E] rounded-sm"
+            className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center border border-[#2A2A2A] bg-[#080706]/80 text-[#888] transition-all duration-300 hover:border-[#C9A96E] hover:bg-[#C9A96E]/10 hover:text-[#C9A96E] rounded-sm"
             aria-label="Cerrar calculadora"
           >
             <CloseIcon />
@@ -633,7 +633,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 </p>
               </div>
 
-              <div className="mt-5 border border-[#2A2A2A] bg-[#0A0A0A] p-4 rounded-sm">
+              <div className="mt-5 border border-[#2A2A2A] bg-[#080706] p-4 rounded-sm">
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div>
                     <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Base usada</p>
@@ -686,7 +686,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               </div>
             </div>
 
-            <div className="bg-[#0A0A0A] p-8 md:p-12">
+            <div className="bg-[#080706] p-8 md:p-12">
               <div className="mb-8">
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
                   {calculating ? "Leyendo oportunidad" : hasCalculated ? "Lectura ejecutiva inicial" : "Lectura pendiente"}
@@ -749,7 +749,7 @@ export default function S03TcoCalculator() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section id="tco" className="relative overflow-hidden bg-[#050505] px-6 py-24 md:px-12 md:py-32">
+    <section id="tco" className="relative overflow-hidden bg-[#050203] px-6 py-24 md:px-12 md:py-32">
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute left-0 right-0 top-0 -z-10 m-auto h-[400px] w-[400px] bg-[#C9A96E] opacity-[0.05] blur-[120px]" />
 
@@ -782,7 +782,7 @@ export default function S03TcoCalculator() {
 
             <div className="mt-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:hidden">
               {FEATURES.map((feature) => (
-                <article key={feature.id} className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+                <article key={feature.id} className="border border-[#1A1A1A] bg-[#080706] p-6 rounded-sm">
                   <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">{feature.id}</p>
                   <h3 className="mb-2 font-serif text-lg text-[#F5F5F5]">{feature.title}</h3>
                   <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>
@@ -799,7 +799,7 @@ export default function S03TcoCalculator() {
 
         <div className="mt-24 hidden grid-cols-1 gap-6 sm:grid-cols-2 lg:grid lg:grid-cols-4">
           {FEATURES.map((feature) => (
-            <article key={feature.id} className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 transition-all duration-300 hover:border-[#C9A96E]/40 rounded-sm">
+            <article key={feature.id} className="border border-[#1A1A1A] bg-[#080706] p-6 transition-all duration-300 hover:border-[#C9A96E]/40 rounded-sm">
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">{feature.id}</p>
               <h3 className="mb-2 font-serif text-lg text-[#F5F5F5]">{feature.title}</h3>
               <p className="font-sans text-[13px] leading-relaxed text-[#888]">{feature.text}</p>

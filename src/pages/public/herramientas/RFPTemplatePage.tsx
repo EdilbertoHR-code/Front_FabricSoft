@@ -92,9 +92,11 @@ export default function RFPTemplatePage() {
 
     setLoading(true);
     try {
-      await api.post('/leads', {
+      await api.post('/leads/solicitar', {
         ...form,
-        tipo: 'rfp-template',
+        iniciativa: 'Descarga RFP Template — 47 preguntas Oracle.',
+        plazo: 'sin-plazo',
+        source: 'rfp-template',
         tracking: getInteractionTracking('rfp-template', 'rfp-template'),
       });
       setSent(true);

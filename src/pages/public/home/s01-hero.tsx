@@ -235,7 +235,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
               ${label.className}
               ${selected
                 ? "border-[#C9A96E] bg-[#C9A96E]/10 shadow-[0_0_34px_rgba(201,169,110,0.12)]"
-                : "border-[#353535] bg-[#0A0A0A]/90 hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[#111111]/95"
+                : "border-[#353535] bg-[#080706]/90 hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[#111111]/95"
               }
             `}
           >
@@ -316,7 +316,7 @@ export default function S01Hero() {
     <section
       id="inicio"
       data-no-translate
-      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
+      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050203] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
     >
       <style>{`
         @keyframes fabricStar {
@@ -361,8 +361,8 @@ export default function S01Hero() {
       <BackgroundParticles />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(201,169,110,0.12),transparent_28%),radial-gradient(circle_at_78%_55%,rgba(201,169,110,0.09),transparent_36%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-60" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#050203] to-transparent" />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1460px] grid-cols-1 items-center gap-12 lg:grid-cols-[1.16fr_0.84fr] lg:gap-10">
         <div className="relative z-20 max-w-5xl">
@@ -409,7 +409,7 @@ export default function S01Hero() {
           </p>
 
           <div
-            className="mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border border-[#2A2A2A] bg-[#0A0A0A]/70"
+            className="mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border border-[#2A2A2A] bg-[#080706]/70"
             style={{
               animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .56s both",
             }}
@@ -451,15 +451,15 @@ export default function S01Hero() {
               }`}
           >
             <Link
-              to="/contacto"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)] max-sm:w-full max-sm:min-w-0 max-sm:px-5 max-sm:text-[9px]"
+              to="/aplicar"
+              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)] max-sm:min-w-0 max-sm:w-full max-sm:px-5 max-sm:text-[9px]"
             >
               <span className="relative z-10">{t("cta.start")}</span>
               <span className="relative z-10 ml-3">-&gt;</span>
             </Link>
 
             <Link
-              to="/#fabric-ai"
+              to="/optimizador-oci"
               className="btn-primary min-w-[250px] max-sm:min-w-0"
             >
               {t("cta.audit")} <span className="text-[#C9A96E]">-&gt;</span>

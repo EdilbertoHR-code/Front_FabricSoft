@@ -13,6 +13,12 @@ interface Publicada {
   valor: string;
   unidad: string;
   metodologia: string;
+  definicion: string;
+  universo: string;
+  n: string;
+  formula: string;
+  validacion: string;
+  auditoria: string;
   periodo: string;
   fuente: { tipo: string; descripcion: string };
   verificadoPor: string;
@@ -34,6 +40,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '01', label: 'Go-live APE Plazas en fecha contractual',
     valor: '✓', unidad: 'Verificable',
     metodologia: 'Go-live planeado 06 abril 2026 · Ejecutado 06 abril 2026 · Verificable bajo NDA',
+    definicion: 'Cumplimiento del hito contractual de salida a producción en la fecha planeada para APE Plazas.',
+    universo: 'Proyecto APE Plazas · Implementación Oracle Fusion Cloud · Abril 2026.',
+    n: '1 proyecto',
+    formula: 'Go-live ejecutado en fecha contractual = Sí/No.',
+    validacion: 'Acta de go-live y bitácora de despliegue disponibles bajo NDA mutuo.',
+    auditoria: 'Revisión interna formal FABRIC + validación del responsable financiero del cliente.',
     periodo: 'abr 2026',
     fuente: { tipo: 'cliente', descripcion: 'CFO APE Plazas' },
     verificadoPor: 'CFO APE Plazas',
@@ -43,6 +55,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '02', label: 'Primer cierre contable APE Plazas',
     valor: '✓', unidad: 'Verificable',
     metodologia: 'Cierre planeado abril 2026 · Ejecutado 30 abril 2026 · Acta en firma mayo 2026',
+    definicion: 'Ejecución del primer cierre contable completo en producción después del go-live.',
+    universo: 'Primer ciclo contable de APE Plazas operado en Oracle Fusion Cloud.',
+    n: '1 cierre contable',
+    formula: 'Cierre ejecutado dentro del mes operativo comprometido = Sí/No.',
+    validacion: 'Acta de transición, evidencia de cierre y confirmación ejecutiva disponibles bajo NDA.',
+    auditoria: 'Revisión interna formal FABRIC + validación del responsable financiero del cliente.',
     periodo: 'abr–may 2026',
     fuente: { tipo: 'cliente', descripcion: 'CFO APE Plazas' },
     verificadoPor: 'CFO APE Plazas',
@@ -52,6 +70,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '03', label: 'Sin incidencias críticas post go-live',
     valor: '✓', unidad: 'APE Plazas',
     metodologia: 'Cero incidencias bloqueantes al cierre del primer ciclo · Verificable bajo NDA',
+    definicion: 'Ausencia de incidencias críticas bloqueantes abiertas al completar el primer ciclo contable.',
+    universo: 'Incidencias clasificadas como críticas durante la fase STABILIZE de APE Plazas.',
+    n: '1 proyecto / fase STABILIZE abril 2026',
+    formula: 'Incidencias críticas bloqueantes abiertas al cierre del ciclo = 0.',
+    validacion: 'Bitácora operativa de incidencias y reporte FABRIC del ciclo disponibles bajo NDA.',
+    auditoria: 'Revisión interna formal FABRIC + validación del responsable financiero del cliente.',
     periodo: 'abr 2026',
     fuente: { tipo: 'cliente', descripcion: 'CFO APE Plazas' },
     verificadoPor: 'CFO APE Plazas',
@@ -61,6 +85,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '04', label: 'Experiencia Oracle promedio del equipo',
     valor: '15+', unidad: 'años',
     metodologia: 'Promedio de años de experiencia Oracle por consultor senior facturable',
+    definicion: 'Experiencia promedio mínima documentada del equipo senior facturable asignado a proyectos Oracle.',
+    universo: 'Consultores senior facturables FABRIC activos al cierre de enero 2026.',
+    n: 'Plantilla senior facturable vigente',
+    formula: 'Suma de años documentados de experiencia Oracle / total de consultores senior facturables.',
+    validacion: 'CVs, historial de proyectos y perfiles profesionales verificables.',
+    auditoria: 'Revisión interna formal de Dirección FABRIC.',
     periodo: 'auditado',
     fuente: { tipo: 'interna', descripcion: 'Currículum + certificaciones verificadas' },
     verificadoPor: 'Dirección FABRIC',
@@ -70,6 +100,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '05', label: 'Plantilla 100% senior Oracle',
     valor: '100%', unidad: 'del equipo',
     metodologia: 'Cero juniors facturables · Condición contractual en cada SOW · Verificable',
+    definicion: 'Porcentaje de personal facturable de proyecto que cumple criterio senior FABRIC.',
+    universo: 'Roles facturables incluidos en SOWs Oracle activos.',
+    n: 'SOWs vigentes bajo doctrina FABRIC',
+    formula: '(Roles senior facturables / total roles facturables de proyecto) × 100.',
+    validacion: 'SOWs y staffing plan por proyecto disponibles bajo NDA.',
+    auditoria: 'Revisión interna formal de Dirección FABRIC.',
     periodo: 'SOW',
     fuente: { tipo: 'interna', descripcion: 'Contratos SOW vigentes' },
     verificadoPor: 'Dirección FABRIC',
@@ -79,6 +115,12 @@ const FALLBACK_PUBLICADAS: Publicada[] = [
     id: '06', label: 'Certificaciones Oracle vigentes',
     valor: '100%', unidad: 'del equipo',
     metodologia: 'Certificaciones activas verificables por consultor facturable',
+    definicion: 'Porcentaje de consultores facturables con certificaciones Oracle vigentes o evidencia equivalente validada.',
+    universo: 'Consultores facturables asignables a proyectos Oracle.',
+    n: 'Plantilla facturable vigente',
+    formula: '(Consultores con certificación vigente / total consultores facturables Oracle) × 100.',
+    validacion: 'Oracle Certification Portal y evidencia individual verificable.',
+    auditoria: 'Revisión interna formal de Dirección FABRIC.',
     periodo: 'vigente',
     fuente: { tipo: 'interna', descripcion: 'Oracle Certification Portal' },
     verificadoPor: 'Dirección FABRIC',
@@ -113,6 +155,10 @@ function formatFecha(iso: string): string {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+}
+
+function metricDetail(m: Publicada, key: keyof Pick<Publicada, 'definicion' | 'universo' | 'n' | 'formula' | 'validacion' | 'auditoria'>, fallback: string): string {
+  return String(m[key] || fallback).trim();
 }
 
 // ---------------------------------------------------------------------------
@@ -186,7 +232,7 @@ export default function TransparenciaPage() {
 
           <div style={{ borderTop: '1px solid var(--border)' }}>
             {publicadas.map(m => (
-              <div key={m.id} style={{ display: 'grid', gridTemplateColumns: '56px 1fr 160px 1fr', gap: '0 40px', padding: '28px 0', borderBottom: '1px solid var(--border)', alignItems: 'start' }}>
+              <div key={m.id} style={{ display: 'grid', gridTemplateColumns: '56px minmax(220px, 0.9fr) minmax(180px, 0.55fr) minmax(320px, 1.45fr)', gap: '0 36px', padding: '32px 0', borderBottom: '1px solid var(--border)', alignItems: 'start' }}>
                 <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em' }}>{m.id}</div>
                 <div>
                   <div style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.5 }}>{m.label}</div>
@@ -203,10 +249,31 @@ export default function TransparenciaPage() {
                     <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.1em', marginTop: 4 }}>{m.periodo}</div>
                   )}
                 </div>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.06em', lineHeight: 1.6 }}>
-                  {m.metodologia}
+                <div>
+                  <div style={{ marginBottom: 14, fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.06em', lineHeight: 1.6 }}>
+                    {m.metodologia}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    {[
+                      ['Definición', metricDetail(m, 'definicion', m.metodologia)],
+                      ['Universo', metricDetail(m, 'universo', 'Universo documentado por fuente y período.')],
+                      ['N', metricDetail(m, 'n', 'N documentado bajo NDA')],
+                      ['Fórmula', metricDetail(m, 'formula', m.metodologia)],
+                      ['Validación', metricDetail(m, 'validacion', 'Evidencia disponible bajo NDA mutuo.')],
+                      ['Auditoría', metricDetail(m, 'auditoria', 'Revisión interna formal FABRIC.')],
+                    ].map(([label, value]) => (
+                      <div key={label} style={{ border: '1px solid var(--border)', background: 'rgba(255,255,255,0.012)', padding: '10px 12px' }}>
+                        <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--accent)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 5 }}>
+                          {label}
+                        </div>
+                        <div style={{ fontFamily: 'var(--sans)', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                   {m.verificadoPor && (
-                    <div style={{ marginTop: 8, fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em' }}>
+                    <div style={{ marginTop: 12, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em' }}>
                       Verificado por · {m.verificadoPor}
                     </div>
                   )}
@@ -216,7 +283,8 @@ export default function TransparenciaPage() {
           </div>
 
           <div style={{ marginTop: 32, padding: '16px 24px', border: '1px solid var(--border)', borderLeft: '2px solid var(--accent)', fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em', lineHeight: 1.8 }}>
-            Universo: APE Plazas (abril 2026) y Aplazo (Q1 2026). Ambos proyectos bajo Doctrina FABRIC V4.0 con acta de primer ciclo firmada. Verificable bajo NDA con los clientes.
+            Universo actual: métricas verificadas por caso publicado y datos factuales del equipo FABRIC. La evidencia respaldatoria se comparte bajo NDA mutuo con prospectos calificados.
+            {' '}Consultas sobre metodología: <a href="mailto:metodologia@fabricsoft.com.mx" style={{ color: 'var(--accent)' }}>metodologia@fabricsoft.com.mx</a>
           </div>
         </div>
       </section>

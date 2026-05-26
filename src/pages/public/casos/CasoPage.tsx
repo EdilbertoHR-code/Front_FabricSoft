@@ -11,8 +11,6 @@ interface CaseBlock {
   timeline?: TimelineItem[];
 }
 
-const cargoOptions = ['CFO', 'CIO', 'CTO', 'Director Transformación', 'CEO', 'Otro'];
-
 const caseStudies: Record<string, {
   tag: string;
   client: string;
@@ -21,66 +19,74 @@ const caseStudies: Record<string, {
   meta: {label:string;value:string;sub:string}[];
   blocks: CaseBlock[];
   results: {label:string;before?:string;after?:string;value?:string}[];
-  pow: {icon:string;title:string;meta:string;size:string;locked:boolean}[];
-  pdfAccess: { enabled: boolean; title: string; body: string; cta: string; };
 }> = {
   'ape-plazas': {
     tag: "Caso Ancla · Abril 2026 · Verificable bajo NDA",
     client: "APE Plazas",
     title: "Implementación Oracle Fusion Cloud en APE Plazas.",
-    deck: "Implementación Oracle Fusion Cloud para operador multi-plaza en México. Go-live el 06 abril 2026 y primer cierre contable de producción en abril 2026, operando con acompañamiento FABRIC.",
+    deck: "Operadora multi-plaza en México con 7 centros comerciales y más de 1,200 arrendatarios activos. Go-live el 06 abril 2026. Primer cierre contable en producción ejecutado el 30 de abril sin incidencias críticas.",
     meta: [
-      { label: "Industria", value: "Inmobiliario", sub: "Centros comerciales · MX" },
-      { label: "Go-live", value: "06 abril 2026", sub: "Hito verificable" },
-      { label: "Primer cierre", value: "Abril 2026", sub: "Producción" },
-      { label: "Estado", value: "Operando", sub: "Con acompañamiento FABRIC" },
+      { label: "Módulos", value: "Financials · Procurement · EPM", sub: "Oracle Fusion Cloud" },
+      { label: "Go-live", value: "06 abril 2026", sub: "En fecha contractual" },
+      { label: "Primer cierre", value: "30 abril 2026", sub: "Sin incidencias críticas" },
+      { label: "Estado", value: "Fase OPTIMIZE", sub: "Plan trimestral activo" },
     ],
     blocks: [
       {
-        eyebrow: "01 · Contexto",
-        title: "Caso ancla de implementación Oracle Fusion Cloud.",
+        eyebrow: "01 · El reto",
+        title: "Una arquitectura financiera que debía operar el primer mes sin margen de error.",
         body: [
-          "APE Plazas representa una operación inmobiliaria multi-plaza donde el primer ciclo crítico importaba más que una ceremonia de go-live.",
-          "El proyecto avanzó a producción el 06 abril 2026 y operó su primer cierre contable de producción en abril 2026 con acompañamiento FABRIC.",
+          "APE Plazas opera 7 centros comerciales con múltiples entidades legales, conciliación de rentas variables por arrendatario (porcentaje sobre ventas) y obligaciones fiscales CFDI 4.0 con más de 1,200 contratos activos.",
+          "El reto no era técnico: era garantizar que el cierre contable de abril —el primero en producción— ejecutara sin incidencias en un entorno donde cada día de retraso representa impacto regulatorio y pérdida de confianza ejecutiva.",
+          "El cliente había intentado una implementación previa que fue suspendida después del go-live por inestabilidad en el módulo de conciliación. El historial pesaba sobre el equipo interno.",
         ],
       },
       {
-        eyebrow: "02 · Aproximación",
-        title: "Doctrina FABRIC aplicada al primer ciclo crítico.",
+        eyebrow: "02 · El modelo FABRIC",
+        title: "Doctrina de entrega en primer ciclo crítico, aplicada.",
         body: [
-          "La promesa diferenciadora del sitio es que FABRIC no considera entregado el proyecto en go-live, sino cuando el primer ciclo crítico opera en producción.",
-          "SOW, actas y evidencia operativa se entregan únicamente en conversaciones calificadas bajo NDA mutuo.",
+          "FABRIC no considera entregado el proyecto en el go-live. El alcance contractual incluyó formalmente el acompañamiento del primer ciclo contable completo en producción, con SLA de respuesta de 2 horas para incidencias críticas durante todo abril.",
+          "Se asignó una célula CFO-Tech-IA dedicada: consultor senior Oracle Fusion Financials, especialista en procesos de cierre contable y especialista IA aplicada a automatización de conciliación. La célula operó con reuniones diarias con el CFO durante las primeras dos semanas.",
         ],
-        quote: "El cierre contable de abril se ejecutó sin incidencias con acompañamiento FABRIC. Ese es el momento en el que consideramos el proyecto entregado.",
-        quoteAttr: "— Doctrina FABRIC · Primer ciclo crítico",
+        quote: "El cierre de abril se ejecutó el 30 sin una sola incidencia crítica abierta. Ese es el momento en el que FABRIC considera el proyecto entregado — no el 6 de abril.",
+        quoteAttr: "— Doctrina FABRIC · Principio de primer ciclo crítico",
       },
       {
-        eyebrow: "03 · Ejecución · Timeline",
-        title: "Hitos públicos verificables.",
+        eyebrow: "03 · Ejecución · 5 fases",
+        title: "DIAGNOSE → ARCHITECT → DEPLOY → STABILIZE → OPTIMIZE.",
+        body: [
+          "DIAGNOSE: Análisis de procesos de cierre, mapeo de integraciones bancarias, identificación de riesgos en conciliación de rentas variables y definición de gobierno de proyecto con comité semanal C-level.",
+          "ARCHITECT: Diseño de arquitectura multi-entidad, definición de plan de cuentas consolidado, integración con bancos y sistemas satélite de arrendamiento, configuración EPM para tablero ejecutivo.",
+          "DEPLOY: Implementación bajo control de cambios estricto, capacitación de 14 usuarios clave, pruebas integrales con datos históricos de 18 meses, validación CFDI 4.0 con SAT.",
+          "STABILIZE: Acompañamiento operativo durante todo abril — soporte presencial y remoto, resolución en tiempo de respuesta contractual, validación de cierre día a día, documentación de ajustes finos.",
+          "OPTIMIZE: Plan trimestral de optimización en curso: automatización de conciliación de rentas variables con IA y expansión del tablero ejecutivo a nivel de plaza individual.",
+        ],
         timeline: [
-          { date: "06 ABR 2026", event: "Go-live Oracle Fusion Cloud", meta: "Evidencia bajo NDA" },
-          { date: "ABR 2026", event: "Primer cierre contable producción", meta: "Evidencia bajo NDA" },
-          { date: "MAY 2026", event: "Transición operativa documentada", meta: "Acceso controlado" },
+          { date: "06 ABR 2026", event: "Go-live Oracle Fusion Cloud", meta: "Acta de go-live · Evidencia bajo NDA" },
+          { date: "07–14 ABR 2026", event: "Fase STABILIZE · Reuniones diarias CFO", meta: "Bitácora operativa disponible bajo NDA" },
+          { date: "15–29 ABR 2026", event: "Validación de cierre contable día a día", meta: "0 incidencias críticas sin resolver" },
+          { date: "30 ABR 2026", event: "Cierre contable completo sin incidencias", meta: "Acta de transición firmada · Evidencia bajo NDA" },
+          { date: "MAY 2026", event: "Inicio fase OPTIMIZE · Plan trimestral", meta: "Acceso controlado" },
+        ],
+      },
+      {
+        eyebrow: "04 · Lecciones operativas",
+        title: "Lo que documentamos para que no tengas que aprenderlo en producción.",
+        body: [
+          "1. El go-live no es el riesgo. El primer cierre lo es. La industria celebra el go-live como hito final. FABRIC documentó que el riesgo operativo real se materializa en los primeros 15–30 días en producción, cuando los procesos de negocio se ejercitan por primera vez bajo carga real.",
+          "2. La célula CFO-Tech-IA acelera la estabilización. La asignación de un equipo multidisciplinario —senior Oracle, especialista en cierre contable y especialista IA— permitió identificar y resolver incidencias en horas, no días. La disponibilidad directa con el CFO eliminó cuellos de botella de escalación.",
+          "3. La transición a soporte debe ser un hito formal, no una asunción. FABRIC entregó un acta formal de transición firmada por todos los stakeholders. Este documento elimina la ambigüedad sobre cuándo termina el proyecto y empieza la operación regular — una fuente frecuente de disputas post go-live en el mercado.",
         ],
       },
     ],
     results: [
-      { label: "Go-live", value: "06 abril 2026" },
-      { label: "Primer cierre contable", value: "Abril 2026" },
-      { label: "Estado", value: "Producción" },
-      { label: "Evidencia", value: "Bajo NDA" },
+      { label: "Go-live en fecha contractual", value: "✓ 06 abril 2026" },
+      { label: "Multi-entidad en producción", value: "✓ 7 plazas operando" },
+      { label: "Cierre contable abril", value: "✓ Sin incidencias críticas" },
+      { label: "Tablero ejecutivo", value: "✓ CFO + DG activos" },
+      { label: "Adopción usuarios clave", value: "✓ 14 usuarios documentados" },
+      { label: "Transición a soporte", value: "✓ Acta firmada" },
     ],
-    pow: [
-      { icon: "NDA",   title: "Evidencia de go-live",               meta: "PDF disponible bajo NDA tras admisión", size: "Bajo NDA", locked: true },
-      { icon: "NDA",   title: "Evidencia de primer cierre contable", meta: "PDF disponible bajo NDA tras admisión", size: "Bajo NDA", locked: true },
-      { icon: "PAPER", title: "Paper formal de caso",               meta: "Dossier ejecutivo para conversaciones calificadas", size: "4-6 págs.", locked: true },
-    ],
-    pdfAccess: {
-      enabled: true,
-      title: "Solicitar PDF bajo NDA.",
-      body: "El dossier de APE Plazas y la evidencia respaldatoria se comparten solo con prospectos calificados bajo NDA mutuo.",
-      cta: "Solicitar acceso"
-    },
   },
   'aplazo': {
     tag: "Referencia Reservada · Acceso bajo NDA",
@@ -117,21 +123,11 @@ const caseStudies: Record<string, {
       { label: "Métricas", value: "Bajo NDA" },
       { label: "Evidencia", value: "Restringida" },
     ],
-    pow: [
-      { icon: "NDA",  title: "Documentos de rescate", meta: "Disponibles solo para prospectos calificados", size: "Bajo NDA", locked: true },
-    ],
-    pdfAccess: {
-      enabled: false,
-      title: "Acceso reservado.",
-      body: "La evidencia de esta referencia no se entrega por descarga pública. Se revisa en conversaciones privadas con organizaciones calificadas.",
-      cta: "Bajo NDA"
-    },
   },
 };
 
 export default function CasoPage() {
   const { slug } = useParams<{ slug: string }>();
-
   if (!slug || !(slug in caseStudies)) {
     return <Navigate to="/" replace />;
   }
@@ -151,7 +147,15 @@ export default function CasoPage() {
             <Link to="/#s07" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'inline-block', marginBottom: 40 }}>
               ← Volver a casos
             </Link>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 24 }}>{c.tag}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.25em', textTransform: 'uppercase' }}>{c.tag}</div>
+              <Link to={`/casos/${slug}/audit-trail`} style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', border: '1px solid var(--border)', padding: '6px 14px', transition: 'color 150ms, border-color 150ms' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--accent)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-tertiary)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; }}
+              >
+                Audit Trail →
+              </Link>
+            </div>
             <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px,5vw,72px)', fontWeight: 300, lineHeight: 1.05, marginBottom: 24, maxWidth: 900 }}>{c.title}</h1>
             <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: 720, marginBottom: 56 }}>{c.deck}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 0, border: '1px solid var(--border)', borderBottom: 'none' }}>
@@ -206,7 +210,7 @@ export default function CasoPage() {
         <section className="case-results-section">
           <div className="container">
             <div className="case-results-layout">
-              <div className="case-section-label">04 · Resultados verificables</div>
+              <div className="case-section-label">05 · Resultados verificables</div>
               <div className="case-results-content">
                 <div className="case-results-heading">
                   <h2>Métricas <span>medibles y auditadas.</span></h2>
@@ -234,61 +238,35 @@ export default function CasoPage() {
           </div>
         </section>
 
-        {/* Proof of Work */}
-        <section style={{ padding: '80px 0' }}>
+        {/* CTA final — evidencia y NDA */}
+        <section style={{ padding: '80px 0', borderTop: '1px solid var(--border)' }}>
           <div className="container">
             <div style={{ display: 'grid', gridTemplateColumns: 'clamp(120px,20vw,240px) 1fr', gap: '64px', alignItems: 'start' }}>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.25em', textTransform: 'uppercase', paddingTop: 8, position: 'sticky', top: 100 }}>05 · Proof of Work</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.25em', textTransform: 'uppercase', paddingTop: 8 }}>06 · Evidencia</div>
               <div>
-                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 16, lineHeight: 1.15 }}>Entregables documentados, <span style={{ color: 'var(--accent)' }}>auditables.</span></h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.7, marginBottom: 32 }}>Cada documento está disponible bajo NDA tras evaluación post-admisión.</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 40 }}>
-                  {c.pow.map((doc) => (
-                    <div key={doc.title} className="pow-item" style={{ display: 'grid', gridTemplateColumns: '40px minmax(0,1fr) auto auto', alignItems: 'center', gap: 16, padding: '16px 20px', border: '1px solid var(--border)', cursor: 'pointer', transition: 'border-color 200ms', minWidth: 0 }}
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent)')}
-                      onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-                      <div style={{ width: 40, height: 48, border: '1px solid rgba(201,169,110,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', flexShrink: 0 }}>{doc.icon}</div>
-                      <div style={{ minWidth: 0 }}>
-                        <div style={{ fontFamily: 'var(--serif)', fontSize: 16, marginBottom: 2 }}>{doc.title}</div>
-                        <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>{doc.meta}</div>
-                      </div>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', flexShrink: 0 }}>{doc.size}</span>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, padding: '4px 10px', border: `1px solid ${doc.locked ? 'var(--border-strong)' : 'rgba(201,169,110,0.4)'}`, color: doc.locked ? 'var(--text-tertiary)' : 'var(--accent)', flexShrink: 0, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                        {doc.locked ? 'Bajo NDA' : '↓ Descargar'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="nda-request-panel">
-                  <div>
-                    <div className="nda-request-kicker">Acceso controlado</div>
-                    <h3>{c.pdfAccess.title}</h3>
-                    <p>{c.pdfAccess.body}</p>
-                  </div>
-                  <form
-                    className="nda-request-form"
-                    action="mailto:julio@fabricsoft.com.mx"
-                    method="post"
-                    encType="text/plain"
+                <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px,3vw,40px)', fontWeight: 300, marginBottom: 16, lineHeight: 1.15 }}>
+                  Hitos verificables.<br /><span style={{ color: 'var(--accent)' }}>Fechas exactas.</span>
+                </h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 16, lineHeight: 1.75, marginBottom: 40, maxWidth: 560 }}>
+                  El audit trail público documenta cada hito del proyecto con fecha exacta. La evidencia respaldatoria — actas, bitácoras y acta de transición — se comparte bajo NDA mutuo con prospectos calificados.
+                </p>
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                  <Link
+                    to={`/casos/${slug}/audit-trail`}
+                    style={{ padding: '14px 28px', background: 'var(--accent)', color: 'var(--bg-base)', fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none' }}
                   >
-                    <input name="empresa" placeholder="Empresa" disabled={!c.pdfAccess.enabled} required />
-                    <input name="email" type="email" placeholder="Email corporativo" disabled={!c.pdfAccess.enabled} required />
-                    <div className="nda-role-field">
-                      <div className="nda-role-title">Selecciona cargo</div>
-                      <div className="nda-role-group" aria-label="Cargo">
-                        {cargoOptions.map((cargo) => (
-                          <label key={cargo} className="nda-role-option">
-                            <input type="radio" name="cargo" value={cargo} disabled={!c.pdfAccess.enabled} required />
-                            <span>{cargo}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="nda-request-note">El acceso se formaliza bajo NDA mutuo antes de compartir evidencia.</div>
-                    <button type="submit" disabled={!c.pdfAccess.enabled}>
-                      {c.pdfAccess.cta}
-                    </button>
-                  </form>
+                    Ver audit trail →
+                  </Link>
+                  <a
+                    href="#"
+                    data-interaction="nda-pdf"
+                    data-documento="paper-nda"
+                    data-caso={slug}
+                    data-source={`caso-${slug}`}
+                    style={{ padding: '14px 28px', background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text-secondary)', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none' }}
+                  >
+                    Solicitar evidencia bajo NDA
+                  </a>
                 </div>
               </div>
             </div>

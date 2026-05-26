@@ -131,7 +131,7 @@ export default function S15Founder() {
   const proximaVentana = quarters.find(q => q.status === 'open')?.quarter ?? 'Q3 2026';
 
   return (
-    <section ref={ref} id="s15" className={`demo-section s15 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s15" className={`demo-section s15 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="founder-manifesto">
           <div className="label" style={{ marginBottom: 24 }}>Manifiesto del Fundador</div>

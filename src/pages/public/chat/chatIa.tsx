@@ -182,7 +182,7 @@ export default function ChatIa() {
 
       const reply =
         data?.reply ||
-        'Puedo ayudarte a evaluar el caso, pero necesito un poco mas de contexto: industria, sistema actual y bloqueo principal.';
+        'Puedo ayudarte a evaluar el caso, pero necesito un poco más de contexto: industria, sistema actual y bloqueo principal.';
       const score = Number(data?.score || 0);
       const cta = data?.cta
         ? {
@@ -196,7 +196,7 @@ export default function ChatIa() {
     } catch (error: any) {
       const fallbackReply =
         error.response?.data?.error ||
-        'Ahora mismo el agente no pudo responder. Intenta de nuevo en unos segundos o comparte tu industria, sistema actual y bloqueo principal para retomar el diagnostico.';
+        'Ahora mismo el agente no pudo responder. Intenta de nuevo en unos segundos o comparte tu industria, sistema actual y bloqueo principal para retomar el diagnóstico.';
 
       setChatHistory(prev => [...prev, { role: 'agent', text: fallbackReply }]);
     } finally {
@@ -238,7 +238,7 @@ export default function ChatIa() {
   };
 
   return (
-    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] border-t border-[#111] md:py-32">
+    <section id="fabric-ai" className="relative w-full overflow-hidden bg-[#050203] py-24 text-[#F5F5F5] border-t border-[#111] md:py-32">
       
       {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
@@ -300,15 +300,15 @@ export default function ChatIa() {
             <div className="chat-console relative flex flex-col rounded-sm shadow-[0_24px_80px_rgba(0,0,0,0.66)] group">
               
               {/* === LA LÍNEA ANIMADA DORADA QUE RECORRE EL BORDE === */}
-              <div className="absolute inset-0 z-0 overflow-hidden rounded-sm bg-[#161616]">
+              <div className="absolute inset-0 z-0 overflow-hidden rounded-sm bg-[#080706]">
                 <div className="absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(transparent_270deg,#C9A96E_360deg)] animate-[spin_3s_linear_infinite]" />
               </div>
 
               {/* El interior que enmascara el centro, dejando solo un borde de 1px visible */}
-              <div className="absolute inset-[1px] z-10 flex flex-col bg-[#0A0A0A] rounded-sm transition-shadow duration-500 focus-within:shadow-[inset_0_0_40px_rgba(201,169,110,0.05)]">
+              <div className="absolute inset-[1px] z-10 flex flex-col bg-[#080706] rounded-sm transition-shadow duration-500 focus-within:shadow-[inset_0_0_40px_rgba(201,169,110,0.05)]">
                 
                 {/* Cabecera del chat */}
-                <div className="flex items-center justify-between border-b border-[#1A1A1A] bg-[#050505] px-5 py-4 shrink-0">
+                <div className="flex items-center justify-between border-b border-[#1A1A1A] bg-[#050203] px-5 py-4 shrink-0">
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-7 w-7 items-center justify-center border border-[#C9A96E]/20 bg-[#C9A96E]/5 text-[#C9A96E] rounded-sm">
                       <SparkIcon />
@@ -340,7 +340,7 @@ export default function ChatIa() {
                           {/* Burbuja mejorada: Textos a 12px y padding ajustado */}
                           <div className={`px-5 py-4 rounded-sm ${
                             isAgent 
-                              ? 'bg-[#050505] border border-[#1A1A1A]' 
+                              ? 'bg-[#050203] border border-[#1A1A1A]' 
                               : 'bg-[#C9A96E]/5 border border-[#C9A96E]/20 text-[#E0E0E0] font-sans text-[12px]'
                           }`}>
                             {animateText ? (
@@ -380,7 +380,7 @@ export default function ChatIa() {
                             FABRIC AI
                           </span>
                         </div>
-                        <div className="bg-[#050505] border border-[#1A1A1A] px-5 py-4 rounded-sm">
+                        <div className="bg-[#050203] border border-[#1A1A1A] px-5 py-4 rounded-sm">
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#666]">
                               Analizando
@@ -396,7 +396,7 @@ export default function ChatIa() {
                 </div>
 
                 {/* Controles Inferiores */}
-                <div className="border-t border-[#1A1A1A] bg-[#050505] p-4 shrink-0">
+                <div className="border-t border-[#1A1A1A] bg-[#050203] p-4 shrink-0">
                   
                   {/* Escenarios predeterminados */}
                   <div className="mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -410,7 +410,7 @@ export default function ChatIa() {
                           alignItems: 'center',
                           gap: 6,
                           border: '1px solid #2A2A2A',
-                          background: '#0D0D0D',
+                          background: '#050203',
                           padding: '8px 14px',
                           fontFamily: 'var(--mono)',
                           fontSize: 10,
@@ -421,8 +421,8 @@ export default function ChatIa() {
                           cursor: 'pointer',
                           whiteSpace: 'nowrap' as const,
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.5)'; e.currentTarget.style.color = '#C9A96E'; e.currentTarget.style.background = 'rgba(201,169,110,0.04)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#666'; e.currentTarget.style.background = '#0D0D0D'; }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201, 169, 110, 0.5)'; e.currentTarget.style.color = '#C9A96E'; e.currentTarget.style.background = 'rgba(201, 169, 110, 0.04)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#666'; e.currentTarget.style.background = '#050203'; }}
                       >
                         <span style={{ color: 'rgba(201,169,110,0.4)', fontSize: 11 }}>›</span>
                         {scen.shortLabel}
@@ -439,7 +439,7 @@ export default function ChatIa() {
                       onChange={(e) => setInputValue(e.target.value)}
                       disabled={isTyping}
                       placeholder={isTyping ? "Diagnosticando..." : "Describe tu escenario técnico..."}
-                      className="w-full bg-[#0A0A0A] border border-[#1A1A1A] rounded-sm py-3.5 pl-9 pr-12 font-mono text-xs text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
+                      className="w-full bg-[#050203] border border-[#1A1A1A] rounded-sm py-3.5 pl-9 pr-12 font-mono text-xs text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
                     />
                     <button 
                       type="submit" 

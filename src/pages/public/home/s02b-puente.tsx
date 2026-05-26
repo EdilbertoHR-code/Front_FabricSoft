@@ -42,7 +42,7 @@ export default function S02bPuente() {
         position: 'relative',
         overflow: 'hidden',
         background:
-          'radial-gradient(circle at 18% 14%, rgba(201,169,110,0.055), transparent 32%), radial-gradient(circle at 84% 72%, rgba(201,169,110,0.045), transparent 34%), #050505',
+          'radial-gradient(circle at 18% 14%, rgba(201,169,110,0.055), transparent 32%), radial-gradient(circle at 84% 72%, rgba(201,169,110,0.045), transparent 34%), #050203',
         borderTop: '1px solid rgba(255,255,255,0.075)',
         borderBottom: '1px solid rgba(255,255,255,0.075)',
         padding: 'clamp(88px, 9vw, 132px) 0',
@@ -81,8 +81,8 @@ export default function S02bPuente() {
           marginInline: 'auto',
           paddingInline: 'clamp(22px, 5vw, 56px)',
           opacity: isInView ? 1 : 0,
-          transform: isInView ? 'translateY(0)' : 'translateY(24px)',
-          transition: 'opacity 700ms ease, transform 700ms ease',
+          transform: isInView ? 'translateY(0)' : 'translateY(36px)',
+          transition: 'opacity 1000ms ease, transform 1000ms ease',
         }}
       >
         <div className="fabric-puente-grid">

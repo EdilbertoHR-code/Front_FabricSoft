@@ -111,9 +111,11 @@ export default function BenchmarkIndexPage() {
 
     setLoading(true);
     try {
-      await api.post('/leads', {
+      await api.post('/leads/solicitar', {
         ...form,
-        tipo: 'benchmark-index',
+        iniciativa: 'Descarga FABRIC Benchmark Index 2026.',
+        plazo: 'sin-plazo',
+        source: 'benchmark-index',
         tracking: getInteractionTracking('benchmark-index', 'benchmark-index'),
       });
       setSent(true);
@@ -266,10 +268,10 @@ export default function BenchmarkIndexPage() {
           <div style={{ marginTop: 12, padding: '20px 24px', border: '1px solid var(--border)' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 10 }}>También disponible</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Link to="/herramientas/rfp-template" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>
+              <Link to="/rfp-template" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>
                 RFP Template — 47 preguntas →
               </Link>
-              <Link to="/herramientas/readiness-score" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>
+              <Link to="/readiness" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none' }}>
                 Readiness Score — Evaluación →
               </Link>
             </div>

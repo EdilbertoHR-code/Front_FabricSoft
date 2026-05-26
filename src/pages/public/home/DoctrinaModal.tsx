@@ -341,7 +341,7 @@ export function DoctrineGeneratorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-[#050505]/95 px-0 backdrop-blur-2xl sm:px-6">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-[#050203]/95 px-0 backdrop-blur-2xl sm:px-6">
       <style>{`
         @keyframes fabricFadeIn {
           from { opacity: 0; }
@@ -389,7 +389,7 @@ export function DoctrineGeneratorModal({
 
         /* INYECCIÓN DEL ESTILO DEL BOTÓN BOUTIQUE (Como en la foto) */
         .btn-boutique {
-          background-color: #050505;
+          background-color: #080706;
           border: 1px solid #1A1A1A;
           color: #F5F5F5;
           transition: all 0.4s ease;
@@ -397,18 +397,18 @@ export function DoctrineGeneratorModal({
         .btn-boutique:hover:not(:disabled) {
           border-color: rgba(201, 169, 110, 0.5);
           box-shadow: 0 0 20px rgba(201, 169, 110, 0.1);
-          background-color: #0A0A0A;
+          background-color: #050203;
         }
         .btn-boutique:active:not(:disabled) {
           transform: scale(0.98);
         }
       `}</style>
 
-      <div className="relative flex h-full w-full max-w-[1080px] overflow-hidden border-y border-[#2A2A2A] bg-[#080808] shadow-[0_40px_140px_rgba(0,0,0,0.88)] sm:h-[90vh] sm:max-h-[820px] sm:rounded-[28px] sm:border">
+      <div className="relative flex h-full w-full max-w-[1080px] overflow-hidden border-y border-[#2A2A2A] bg-[#080706] shadow-[0_40px_140px_rgba(0,0,0,0.88)] sm:h-[90vh] sm:max-h-[820px] sm:rounded-[28px] sm:border">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(201,169,110,0.12),transparent_28%),radial-gradient(circle_at_90%_70%,rgba(201,169,110,0.06),transparent_30%)]" />
 
         {/* SIDEBAR DESKTOP */}
-        <aside className="relative hidden w-[305px] shrink-0 border-r border-[#1A1A1A] bg-[#050505]/72 p-7 lg:flex lg:flex-col">
+        <aside className="relative hidden w-[305px] shrink-0 border-r border-[#1A1A1A] bg-[#060606]/72 p-7 lg:flex lg:flex-col">
           <div>
             <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-[#C9A96E]/25 bg-[#C9A96E]/[0.04] px-4 py-2">
               <span className="relative flex h-2 w-2">
@@ -521,7 +521,7 @@ export function DoctrineGeneratorModal({
         {/* MAIN */}
         <main className="relative flex min-w-0 flex-1 flex-col">
           {/* HEADER */}
-          <header className="flex shrink-0 items-center justify-between border-b border-[#1A1A1A] bg-[#080808]/90 px-6 py-4 md:px-8">
+          <header className="flex shrink-0 items-center justify-between border-b border-[#1A1A1A] bg-[#080706]/90 px-6 py-4 md:px-8">
             <div>
               <div className="flex items-center gap-3">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
@@ -542,7 +542,7 @@ export function DoctrineGeneratorModal({
               className="
                 group flex h-10 w-10 items-center justify-center
                 rounded-full border border-[#2A2A2A]
-                bg-[#0A0A0A]/70
+                bg-[#080706]/70
                 text-[#8A8A8A]
                 transition-all duration-300
                 hover:border-[#C9A96E]/60
@@ -609,7 +609,7 @@ export function DoctrineGeneratorModal({
                     ["03", "minutos"],
                     ["PDF", "descargable"],
                   ].map(([value, label]) => (
-                    <div key={label} className="border border-[#1A1A1A] bg-[#050505] p-5">
+                    <div key={label} className="border border-[#1A1A1A] bg-[#050203] p-5">
                       <p className="font-serif text-3xl leading-none text-[#C9A96E]">
                         {value}
                       </p>
@@ -826,7 +826,7 @@ export function DoctrineGeneratorModal({
                   para compilar el PDF con las cláusulas recomendadas.
                 </p>
 
-                <div className="mt-8 max-w-[680px] border border-[#1A1A1A] bg-[#050505] p-5">
+                <div className="mt-8 max-w-[680px] border border-[#1A1A1A] bg-[#050203] p-5">
                   <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[#C9A96E]">
                     Perfil detectado
                   </p>
@@ -865,7 +865,7 @@ export function DoctrineGeneratorModal({
                         onChange={(event) =>
                           setFormData({ ...formData, name: event.target.value })
                         }
-                        className="w-full border border-[#1A1A1A] bg-[#050505] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]"
+                        className="w-full border border-[#1A1A1A] bg-[#050203] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]"
                       />
                     </label>
 
@@ -881,7 +881,7 @@ export function DoctrineGeneratorModal({
                         onChange={(event) =>
                           setFormData({ ...formData, company: event.target.value })
                         }
-                        className="w-full border border-[#1A1A1A] bg-[#050505] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]"
+                        className="w-full border border-[#1A1A1A] bg-[#050203] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]"
                       />
                     </label>
                   </div>
@@ -899,7 +899,7 @@ export function DoctrineGeneratorModal({
                       onChange={(event) =>
                         setFormData({ ...formData, email: event.target.value })
                       }
-                      className="w-full border border-[#1A1A1A] bg-[#050505] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors placeholder:text-[#4A4A4A] focus:border-[#C9A96E]"
+                      className="w-full border border-[#1A1A1A] bg-[#050203] px-4 py-3 text-sm text-[#F5F5F5] outline-none transition-colors placeholder:text-[#4A4A4A] focus:border-[#C9A96E]"
                     />
                   </label>
 
