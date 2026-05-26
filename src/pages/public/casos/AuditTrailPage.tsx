@@ -1,22 +1,61 @@
 import { useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 
-const CASOS: Record<string, { nombre: string; hitos: { fecha: string; titulo: string; descripcion: string; verificable: boolean; pdfLabel?: string }[] }> = {
+const CASOS: Record<string, {
+  nombre: string;
+  verificablePor: string;
+  hitos: { fecha: string; titulo: string; descripcion: string; evidencia: string; documento: string; verificable: boolean; }[];
+}> = {
   'ape-plazas': {
     nombre: 'APE Plazas',
+    verificablePor: 'Responsable financiero de APE Plazas · Accesible bajo NDA mutuo',
     hitos: [
-      { fecha: '06 Abr 2026', titulo: 'Go-live Oracle Fusion Cloud', descripcion: 'Hito de salida a producción con evidencia respaldatoria disponible bajo NDA mutuo.', verificable: true, pdfLabel: 'Acta de go-live' },
-      { fecha: 'Abr 2026', titulo: 'Primer cierre contable en producción', descripcion: 'Primer ciclo crítico operado en producción con acompañamiento FABRIC.', verificable: true, pdfLabel: 'Reporte FABRIC' },
-      { fecha: 'Abr 2026', titulo: 'Cierre ejecutado sin incidencias', descripcion: 'La documentación de soporte se revisa únicamente con prospectos calificados bajo NDA.', verificable: true, pdfLabel: 'Acta de transición' },
-      { fecha: 'May 2026', titulo: 'Dossier ejecutivo privado', descripcion: 'Resumen formal del caso preparado para conversaciones calificadas con CFO, CIO y CTO.', verificable: false },
+      {
+        fecha: '06 ABR 2026',
+        titulo: 'Go-live ejecutado',
+        descripcion: 'Salida a producción en fecha contractual. Módulos Financials, Procurement y EPM operando con datos reales. Hito intermedio — el proyecto no se considera entregado aquí.',
+        evidencia: 'Acta de go-live',
+        documento: 'acta-golive',
+        verificable: true,
+      },
+      {
+        fecha: '15 ABR 2026',
+        titulo: 'Cierre quincenal validado',
+        descripcion: 'Primer corte de validación quincenal ejecutado en producción con acompañamiento FABRIC. Cero incidencias críticas abiertas al cierre del día.',
+        evidencia: 'Reporte FABRIC',
+        documento: 'reporte-quincenal',
+        verificable: true,
+      },
+      {
+        fecha: '30 ABR 2026',
+        titulo: 'Cierre contable completo',
+        descripcion: 'Primer ciclo contable completo ejecutado en producción sin incidencias críticas. Este es el hito final contractual de FABRIC — el momento en que el proyecto se considera entregado. Acta de transición firmada por todos los stakeholders.',
+        evidencia: 'Acta de transición firmada',
+        documento: 'acta-transicion',
+        verificable: true,
+      },
     ],
   },
   'aplazo': {
     nombre: 'Aplazo',
+    verificablePor: 'Acceso restringido · Solo en conversación calificada bajo NDA',
     hitos: [
-      { fecha: 'Reservado', titulo: 'Referencia privada de rescate', descripcion: 'Caso disponible únicamente en conversación calificada por confidencialidad operativa.', verificable: false },
-      { fecha: 'Reservado', titulo: 'Métricas de rescate bajo NDA', descripcion: 'Los indicadores del rescate se comparten solo con organizaciones que atraviesan una situación comparable.', verificable: false },
-      { fecha: 'Reservado', titulo: 'Evidencia bajo NDA', descripcion: 'Los documentos respaldatorios no tienen descarga pública. El acceso requiere admisión previa.', verificable: false },
+      {
+        fecha: 'Reservado',
+        titulo: 'Referencia privada de rescate',
+        descripcion: 'Caso disponible únicamente en conversación calificada por confidencialidad operativa.',
+        evidencia: '',
+        documento: '',
+        verificable: false,
+      },
+      {
+        fecha: 'Reservado',
+        titulo: 'Métricas de rescate bajo NDA',
+        descripcion: 'Los indicadores del rescate se comparten solo con organizaciones que atraviesan una situación comparable.',
+        evidencia: '',
+        documento: '',
+        verificable: false,
+      },
     ],
   },
 };
@@ -33,28 +72,31 @@ export default function AuditTrailPage() {
     );
   }
 
+  const verificables = caso.hitos.filter(h => h.verificable).length;
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 100 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
         <BackButton />
       </div>
 
+      {/* Hero */}
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Audit Trail · {caso.nombre}</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, lineHeight: 1.02, color: 'var(--text-primary)', marginBottom: 24 }}>
-                Timeline verificable.<br />
-                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>{caso.nombre}.</em>
+                Transparencia radical.<br />
+                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Verificable.</em>
               </h1>
             </div>
             <div>
               <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-                Registro público de los hitos del proyecto: desde SOW hasta primer ciclo crítico en producción. Los hitos verificables están disponibles bajo NDA para CFO/CTO evaluando FABRIC.
+                Registro público de los hitos del proyecto con fechas exactas. La evidencia respaldatoria está disponible bajo NDA mutuo para CFO, CIO y CTO evaluando FABRIC.
               </p>
               <div style={{ marginTop: 24, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                {caso.hitos.filter(h => h.verificable).length} hitos verificables · {caso.hitos.length} hitos totales
+                {verificables} hitos verificables · {caso.hitos.length} hitos totales
               </div>
             </div>
           </div>
@@ -64,10 +106,9 @@ export default function AuditTrailPage() {
       {/* Timeline */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 56px' }}>
         <div style={{ position: 'relative', paddingLeft: 40 }}>
-          {/* Línea vertical */}
-          <div style={{ position: 'absolute', left: 7, top: 8, bottom: 8, width: 1, background: 'var(--border)' }} />
+          <div style={{ position: 'absolute', left: 7, top: 8, bottom: 8, width: 1, background: 'linear-gradient(to bottom, var(--accent) 80%, var(--border))' }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
             {caso.hitos.map((hito, i) => (
               <div key={i} style={{ position: 'relative' }}>
                 {/* Dot */}
@@ -78,47 +119,60 @@ export default function AuditTrailPage() {
                   background: hito.verificable ? 'var(--accent)' : 'var(--bg-base)',
                 }} />
 
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 10 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 16 }}>
                   {hito.fecha}
                   {hito.verificable && (
-                    <span style={{ marginLeft: 16, color: 'var(--accent)', opacity: 0.6 }}>◆ Verificable bajo NDA</span>
+                    <span style={{ color: 'var(--accent)', opacity: 0.55, fontSize: 8 }}>◆ Verificable bajo NDA</span>
                   )}
                 </div>
-                <h3 style={{ fontFamily: 'var(--serif)', fontSize: 22, fontWeight: 400, color: 'var(--text-primary)', marginBottom: 12 }}>
+                <h3 style={{ fontFamily: 'var(--serif)', fontSize: 24, fontWeight: 400, color: 'var(--text-primary)', marginBottom: 12 }}>
                   {hito.titulo}
                 </h3>
-                <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 620 }}>
                   {hito.descripcion}
                 </p>
-                {hito.pdfLabel && (
-                  <a
-                    href={`mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20${encodeURIComponent(caso.nombre)}%20-%20${encodeURIComponent(hito.pdfLabel)}`}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      marginTop: 16,
-                      border: '1px solid rgba(201,169,110,0.38)',
-                      padding: '9px 12px',
-                      color: 'var(--accent)',
-                      fontFamily: 'var(--mono)',
-                      fontSize: 10,
-                      letterSpacing: '0.14em',
-                      textTransform: 'uppercase',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    Solicitar PDF bajo NDA · {hito.pdfLabel}
-                  </a>
+                {hito.evidencia && (
+                  <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                      Evidencia: {hito.evidencia}
+                    </div>
+                    <a
+                      href="#"
+                      data-interaction="nda-pdf"
+                      data-documento={hito.documento}
+                      data-caso={slug}
+                      data-source={`audit-trail-${slug}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 8,
+                        border: '1px solid rgba(201,169,110,0.35)',
+                        padding: '7px 14px',
+                        color: 'var(--accent)',
+                        fontFamily: 'var(--mono)', fontSize: 9,
+                        letterSpacing: '0.15em', textTransform: 'uppercase',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      Solicitar bajo NDA →
+                    </a>
+                  </div>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ marginTop: 80, paddingTop: 32, borderTop: '1px solid var(--border)', fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 2 }}>
-          Los hitos marcados como verificables incluyen documentación respaldatoria disponible bajo NDA mutuo. Solicitar acceso en{' '}
-          <a href="mailto:julio@fabricsoft.com.mx" style={{ color: 'var(--accent)' }}>julio@fabricsoft.com.mx</a>
+        {/* Verificable por */}
+        <div style={{ marginTop: 64, padding: '28px 32px', border: '1px solid var(--border)', background: 'rgba(201,169,110,0.03)' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 10 }}>
+            Verificable por
+          </div>
+          <div style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            {caso.verificablePor}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 32, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 2 }}>
+          Los hitos verificables incluyen documentación respaldatoria bajo NDA mutuo. El acceso requiere evaluación previa de FABRIC.
         </div>
       </div>
     </div>

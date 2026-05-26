@@ -1,36 +1,37 @@
 import { useState } from 'react';
+import { useInViewOnce } from '../../../hooks/useInViewOnce';
 
 const layers: {
   num: string;
   name: string;
+  tag: string;
   desc: string;
-  detail: React.ReactNode;
 }[] = [
   {
     num: "04",
     name: "Agentes IA propios",
-    desc: "Capacidad técnica diferencial propia.",
-    detail: <span>Agentes de diagnóstico, lectura contractual y priorización técnica entrenados sobre doctrina FABRIC. No sustituyen al senior: aceleran la primera hipótesis y reducen ruido en la evaluación.</span>,
+    tag: "Capacidad técnica diferencial propia.",
+    desc: "Agentes de diagnóstico, lectura contractual y priorización técnica entrenados sobre doctrina FABRIC. No sustituyen al senior: aceleran la primera hipótesis y reducen ruido en la evaluación.",
   },
   {
     num: "03",
     name: "Frameworks aplicados",
-    desc: "Metodologías propias aplicadas en proyecto.",
-    detail: <span>Playbooks de rescate, estabilización y migración diseñados para operar con hitos contractuales, evidencia de avance y toma de decisiones ejecutiva.</span>,
+    tag: "Metodologías propias aplicadas en proyecto.",
+    desc: "Playbooks de rescate, estabilización y migración diseñados para operar con hitos contractuales, evidencia de avance y toma de decisiones ejecutiva.",
   },
   {
     num: "02",
     name: "FSOs paquetizados",
-    desc: "Soluciones paquetizadas reutilizables.",
-    detail: <span>Soluciones reutilizables para cierres contables, operación multi-entidad, controles fintech y migraciones legacy. Cada FSO reduce tiempo de diseño y riesgo de ejecución.</span>,
+    tag: "Soluciones paquetizadas reutilizables.",
+    desc: "Soluciones reutilizables para cierres contables, operación multi-entidad, controles fintech y migraciones legacy. Cada FSO reduce tiempo de diseño y riesgo de ejecución.",
   },
   {
     num: "01",
     name: "Doctrina de entrega",
-    desc: "Cómo trabajamos. Contractualizable.",
-    detail: <span>La entrega se mide en operación real: primer ciclo crítico, evidencia documental, ownership senior y transición formal. Go-live no es el final del proyecto.</span>,
+    tag: "Cómo trabajamos. Contractualizable.",
+    desc: "La entrega se mide en operación real: primer ciclo crítico, evidencia documental, ownership senior y transición formal. Go-live no es el final del proyecto.",
   },
-];
+] as const;
 
 const fsos = [
   ["FSO-01", "Available", "available", "Rapid GL Close", "Cierre contable acelerado · 10-15 días → 3-5 días", "Validado · APE Plazas", "v1.2"],
@@ -41,8 +42,6 @@ const fsos = [
   ["FSO-06", "Concept", "concept", "DR & Business Continuity", "Disaster Recovery · RPO/RTO contractuales", "Diseño · Q4 2026", "spec"]
 ] as const;
 
-import { useInViewOnce } from '../../../hooks/useInViewOnce';
-
 export default function S09FabricOS() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   const [openLayer, setOpenLayer] = useState<string | null>(null);
@@ -50,42 +49,61 @@ export default function S09FabricOS() {
   return (
     <section ref={ref} id="s09" className={`demo-section s09 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="container">
+
         <div className="s09-intro">
           <div className="label">FABRIC OS</div>
           <h2>El sistema operativo de <span className="text-[#C9A96E]">cada proyecto.</span></h2>
           <p>Cuatro capas integradas. IP institucionalizada. Cada proyecto opera sobre la misma arquitectura — la entrega no depende del consultor.</p>
         </div>
 
-        <div className="os-architecture">
-          {layers.map((layer) => {
-            const isOpen = openLayer === layer.num;
-            return (
-              <div
-                className={`os-layer ${isOpen ? 'os-layer-open' : ''}`}
-                key={layer.num}
-                onClick={() => setOpenLayer(isOpen ? null : layer.num)}
-                style={{ cursor: 'pointer', userSelect: 'none' }}
-              >
-                <div className="os-layer-num">{layer.num}</div>
-                <div className="os-layer-body" style={{ flex: 1 }}>
-                  <div className="os-layer-name">{layer.name}</div>
-                  <div className="os-layer-desc">{layer.desc}</div>
-                  {isOpen && (
-                    <div style={{ marginTop: 14, borderTop: '1px solid var(--border)', paddingTop: 14, animation: 'fadeIn .22s ease', fontSize: 13, lineHeight: 1.75, color: 'var(--text-secondary)' }}>
-                      {layer.detail}
+        {/* Stack architecture */}
+        <div className="os-stack-wrapper">
+          <div className="os-stack">
+            {layers.map((layer, index) => {
+              const isOpen = openLayer === layer.num;
+              const isBelow = openLayer !== null && layers.findIndex(l => l.num === openLayer) < index;
+              return (
+                <div
+                  key={layer.num}
+                  className={`os-stack-layer ${isOpen ? 'os-stack-layer--open' : ''} ${isBelow ? 'os-stack-layer--below' : ''}`}
+                  onClick={() => setOpenLayer(isOpen ? null : layer.num)}
+                  style={{ '--layer-index': index } as React.CSSProperties}
+                >
+                  {/* Left: number + accent bar */}
+                  <div className="os-stack-num-col">
+                    <span className="os-stack-num">{layer.num}</span>
+                    <div className="os-stack-spine-dot" />
+                  </div>
+
+                  {/* Center: content */}
+                  <div className="os-stack-content">
+                    <div className="os-stack-header">
+                      <div className="os-stack-name">{layer.name}</div>
+                      <div className="os-stack-tag">{layer.tag}</div>
                     </div>
-                  )}
+                    {isOpen && (
+                      <div className="os-stack-detail">
+                        {layer.desc}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: toggle */}
+                  <div className="os-stack-toggle">
+                    <span>{isOpen ? '▲ Cerrar' : '▼ Ver más'}</span>
+                  </div>
+
+                  {/* Depth shadow layers (decorative) */}
+                  <div className="os-stack-depth-1" />
+                  <div className="os-stack-depth-2" />
                 </div>
-                <div className="os-layer-meta">
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                    {isOpen ? '▲ Cerrar' : '▼ Ver más'}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
         </div>
 
+        {/* FSO Engine */}
         <div id="fso-engine" className="fso-section">
           <div className="fso-section-header">
             <div>
@@ -115,9 +133,8 @@ export default function S09FabricOS() {
               </div>
             ))}
           </div>
-
-
         </div>
+
       </div>
     </section>
   );

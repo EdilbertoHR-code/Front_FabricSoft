@@ -182,7 +182,7 @@ export default function ChatIa() {
 
       const reply =
         data?.reply ||
-        'Puedo ayudarte a evaluar el caso, pero necesito un poco mas de contexto: industria, sistema actual y bloqueo principal.';
+        'Puedo ayudarte a evaluar el caso, pero necesito un poco más de contexto: industria, sistema actual y bloqueo principal.';
       const score = Number(data?.score || 0);
       const cta = data?.cta
         ? {
@@ -196,7 +196,7 @@ export default function ChatIa() {
     } catch (error: any) {
       const fallbackReply =
         error.response?.data?.error ||
-        'Ahora mismo el agente no pudo responder. Intenta de nuevo en unos segundos o comparte tu industria, sistema actual y bloqueo principal para retomar el diagnostico.';
+        'Ahora mismo el agente no pudo responder. Intenta de nuevo en unos segundos o comparte tu industria, sistema actual y bloqueo principal para retomar el diagnóstico.';
 
       setChatHistory(prev => [...prev, { role: 'agent', text: fallbackReply }]);
     } finally {

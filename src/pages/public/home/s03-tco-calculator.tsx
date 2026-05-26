@@ -12,7 +12,7 @@ type ErpSystem =
   | "Otro / Greenfield";
 
 type TransactionVolume = "<10K" | "10K-100K" | "100K-1M" | ">1M";
-type Industry = "Servicios financieros" | "Inmobiliario / Centros comerciales" | "Logistica / Distribucion / Transporte" | "Otra";
+type Industry = "Servicios financieros" | "Inmobiliario / Centros comerciales" | "Logística / Distribución / Transporte" | "Otra";
 
 type FormState = {
   erp: ErpSystem;
@@ -49,7 +49,7 @@ const TRANSACTION_VOLUMES: TransactionVolume[] = ["<10K", "10K-100K", "100K-1M",
 const INDUSTRIES: Industry[] = [
   "Servicios financieros",
   "Inmobiliario / Centros comerciales",
-  "Logistica / Distribucion / Transporte",
+  "Logística / Distribución / Transporte",
   "Otra",
 ];
 
@@ -81,8 +81,8 @@ const DEFAULT_FORM: FormState = {
 const FEATURES = [
   { id: "01", title: "ERP actual", text: "SAP, EBS, JDE, PeopleSoft, Dynamics, NetSuite u otro escenario." },
   { id: "02", title: "Costos base", text: "Licencias, infraestructura y soporte anual como base del TCO." },
-  { id: "03", title: "Benchmark Oracle", text: "Reduccion estimada por plataforma y breakeven de migracion." },
-  { id: "04", title: "Lead premium", text: "CTA para analisis personalizado con datos reales y NDA." },
+  { id: "03", title: "Benchmark Oracle", text: "Reducción estimada por plataforma y breakeven de migración." },
+  { id: "04", title: "Lead premium", text: "CTA para análisis personalizado con datos reales y NDA." },
 ];
 
 const fmt = (value: number) =>
@@ -277,7 +277,7 @@ function ComparisonTable({ tco }: { tco: ReturnType<typeof calculateTCO> }) {
     <div className="overflow-hidden border border-[#1A1A1A] bg-[#0A0A0A] rounded-sm">
       <div className="grid grid-cols-[0.8fr_1fr_1fr] border-b border-[#1A1A1A] bg-[#111111] px-4 py-3 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">
         <span>Periodo</span>
-        <span>Situacion actual</span>
+        <span>Situación actual</span>
         <span>Oracle Fusion</span>
       </div>
       {rows.map((row) => (
@@ -300,7 +300,7 @@ function SavingsChart({ currentTCO10y, oracleTCO10y }: { currentTCO10y: number; 
 
   return (
     <div className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
-      <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Grafico simple de ahorro acumulado</p>
+      <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Gráfico simple de ahorro acumulado</p>
       <div className="space-y-5">
         {bars.map((bar) => (
           <div key={bar.label}>
@@ -324,7 +324,7 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
     { label: "ERP actual", value: DEFAULT_FORM.erp },
     { label: "Usuarios", value: String(DEFAULT_FORM.users) },
     { label: "Costo anual actual", value: fmt(DEFAULT_FORM.licenseCost + DEFAULT_FORM.infraCost + DEFAULT_FORM.supportCost) },
-    { label: "Reduccion estimada", value: `${preview.percentReduction}%` },
+    { label: "Reducción estimada", value: `${preview.percentReduction}%` },
     { label: "Ahorro 5 años", value: fmt(preview.savings5y) },
     { label: "Breakeven", value: `${preview.breakeven} meses` },
   ];
@@ -427,7 +427,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 <NumberInput label="Usuarios totales" value={form.users} min={10} max={5000} onChange={(value) => update("users", value)} />
                 <NumberInput label="Licencias anuales" value={form.licenseCost} min={10000} max={5000000} prefix="$" onChange={(value) => update("licenseCost", value)} />
                 <NumberInput label="Infraestructura anual" value={form.infraCost} min={0} max={2000000} prefix="$" onChange={(value) => update("infraCost", value)} />
-                <NumberInput label="Soporte / consultoria anual" value={form.supportCost} min={0} max={3000000} prefix="$" onChange={(value) => update("supportCost", value)} />
+                <NumberInput label="Soporte / consultoría anual" value={form.supportCost} min={0} max={3000000} prefix="$" onChange={(value) => update("supportCost", value)} />
                 <SelectInput label="Transacciones mensuales" value={form.monthlyTransactions} options={TRANSACTION_VOLUMES} onChange={(value) => update("monthlyTransactions", value)} />
                 <div className="sm:col-span-2">
                   <SelectInput label="Industria" value={form.industry} options={INDUSTRIES} onChange={(value) => update("industry", value)} />
@@ -435,7 +435,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               </div>
 
               <div className="mt-10 border-t border-[#1A1A1A] pt-8">
-                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Analisis con datos reales</p>
+                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Análisis con datos reales</p>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <TextInput label="Empresa" value={form.company} placeholder="Empresa" onChange={(value) => update("company", value)} />
                   <TextInput label="Cargo" value={form.role} placeholder="CFO / CIO / CTO" onChange={(value) => update("role", value)} />
@@ -454,7 +454,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                 </label>
                 <div className="mt-8">
                   <Btn onClick={requestAnalysis} className="w-full">
-                    Solicitar analisis con mis datos reales
+                    Solicitar análisis con mis datos reales
                     <ArrowIcon />
                   </Btn>
                 </div>
@@ -476,8 +476,8 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               <div className="mb-6 grid gap-4 sm:grid-cols-2">
                 <MetricBox label="Ahorro 5 años" value={fmt(tco.savings5y)} />
                 <MetricBox label="Ahorro 10 años" value={fmtCompact(tco.savings10y)} accent />
-                <MetricBox label="Reduccion total" value={`${Math.round(tco.percentReduction)}%`} />
-                <MetricBox label="Breakeven migracion" value={`${tco.breakeven} meses`} />
+                <MetricBox label="Reducción total" value={`${Math.round(tco.percentReduction)}%`} />
+                <MetricBox label="Breakeven migración" value={`${tco.breakeven} meses`} />
               </div>
 
               <div className="space-y-6">
@@ -486,7 +486,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               </div>
 
               <div className="mt-8 border-t border-[#1A1A1A] pt-6 font-sans text-xs leading-relaxed text-[#888]">
-                Estos numeros son estimaciones basadas en benchmarks de Oracle y proyectos similares. Para analisis con tus datos reales, FABRIC prepara un TCO Comparator personalizado en 7-10 dias con analisis tecnico de migracion, plazo y costo estimado.
+                Estos números son estimaciones basadas en benchmarks de Oracle y proyectos similares. Para análisis con tus datos reales, FABRIC prepara un TCO Comparator personalizado en 7-10 días con análisis técnico de migración, plazo y costo estimado.
               </div>
             </div>
           </div>
@@ -518,7 +518,7 @@ export default function S03TcoCalculator() {
             </h2>
 
             <p className="mt-8 max-w-2xl font-sans text-base leading-relaxed text-[#888] md:text-lg">
-              Comparativo Oracle Fusion vs tu situacion actual. Selecciona tu ERP, captura costos anuales aproximados y visualiza TCO estimado a 1, 3, 5 y 10 años.
+              Comparativo Oracle Fusion vs tu situación actual. Selecciona tu ERP, captura costos anuales aproximados y visualiza TCO estimado a 1, 3, 5 y 10 años.
             </p>
 
             <div className="mt-12 flex flex-col items-start gap-6">

@@ -12,11 +12,11 @@ interface ReferenceItem {
 }
 
 const fallbackReferences: ReferenceItem[] = [
-  { numero: '01', title: 'CFO de operadora de centros comerciales', subtitle: 'Mexico - USD 100M+ revenue - Multi-plaza', vertical: 'Inmobiliario', langs: ['ES'] },
-  { numero: '02', title: 'CTO de institucion financiera', subtitle: 'Mexico - USD 300M+ revenue - Regulada', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
-  { numero: '03', title: 'CFO Controller de fintech regulada', subtitle: 'Mexico - USD 80M+ revenue - Credito al consumo', vertical: 'Serv. Financieros', langs: ['ES'] },
-  { numero: '04', title: 'CISO / CTO de fintech de credito al consumo', subtitle: 'Mexico - USD 60M+ revenue - CNBV', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
-  { numero: '05', title: 'Director de Consultoria - Oracle ACS', subtitle: 'LATAM - Partner Oracle senior - Externo', vertical: 'Partner Oracle', langs: ['ES', 'EN'] },
+  { numero: '01', title: 'CFO de operadora de centros comerciales', subtitle: 'México - USD 100M+ revenue - Multi-plaza', vertical: 'Inmobiliario', langs: ['ES'] },
+  { numero: '02', title: 'CTO de institución financiera', subtitle: 'México - USD 300M+ revenue - Regulada', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
+  { numero: '03', title: 'CFO Controller de fintech regulada', subtitle: 'México - USD 80M+ revenue - Crédito al consumo', vertical: 'Serv. Financieros', langs: ['ES'] },
+  { numero: '04', title: 'CISO / CTO de fintech de crédito al consumo', subtitle: 'México - USD 60M+ revenue - CNBV', vertical: 'Serv. Financieros', langs: ['ES', 'EN'] },
+  { numero: '05', title: 'Director de Consultoría - Oracle ACS', subtitle: 'LATAM - Partner Oracle senior - Externo', vertical: 'Partner Oracle', langs: ['ES', 'EN'] },
 ];
 
 export default function S12Referencias() {
@@ -39,7 +39,7 @@ export default function S12Referencias() {
         <div className="s12-intro">
           <div className="label">Referencias Disponibles</div>
           <h2>Habla directamente con <span className="text-[#C9A96E]">ejecutivos</span><br />que operan con FABRIC.</h2>
-          <p>La decision de contratar Oracle Critical Engineering requiere validacion directa. Cada semana abrimos una ventana limitada de referencias para prospectos calificados:</p>
+          <p>La decisión de contratar Oracle Critical Engineering requiere validación directa. Cada semana abrimos una ventana limitada de referencias para prospectos calificados:</p>
         </div>
 
         <div className="refs-table">
@@ -63,11 +63,11 @@ export default function S12Referencias() {
         </div>
 
         <div className="refs-footnote">
-          El acceso a referencias forma parte del proceso de evaluacion post-admision inicial. La disponibilidad rota semanalmente y FABRIC realiza la introduccion tras validar el ajuste estrategico de la conversacion.
+          El acceso a referencias forma parte del proceso de evaluación post-admisión inicial. La disponibilidad rota semanalmente y FABRIC realiza la introducción tras validar el ajuste estratégico de la conversación.
         </div>
 
         <div style={{ textAlign: 'center', marginTop: 48 }}>
-          <button data-interaction="reference" className="btn-secondary">Iniciar evaluacion</button>
+          <button data-interaction="reference" className="btn-secondary">Iniciar evaluación</button>
         </div>
       </div>
     </section>

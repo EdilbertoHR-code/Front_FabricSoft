@@ -23,7 +23,6 @@ interface CaseData {
   proofHref: string;
   pdfCta: {
     label: string;
-    href?: string;
     disabled?: boolean;
   };
 }
@@ -39,7 +38,6 @@ const cases: CaseData[] = [
     proofHref: "/casos/ape-plazas/audit-trail",
     pdfCta: {
       label: "Solicitar PDF bajo NDA",
-      href: "mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20APE%20Plazas"
     },
     metrics: [
       { label: "Go-live planeado", value: "06 abril 2026", detail: "Fecha contractual", verified: true },
@@ -62,7 +60,6 @@ const cases: CaseData[] = [
     proofHref: "/casos/aplazo/audit-trail",
     pdfCta: {
       label: "Solicitar PDF bajo NDA",
-      href: "mailto:julio@fabricsoft.com.mx?subject=Solicitud%20PDF%20bajo%20NDA%20-%20Aplazo"
     },
     metrics: [
       { label: "Estado inicial", value: "Crítico", detail: "Post go-live", verified: false },
@@ -138,15 +135,19 @@ export default function S07Casos() {
                   <Link to={item.href} className="caso-action caso-action-primary">
                     Leer caso completo
                   </Link>
-                  <Link to={item.proofHref} className="caso-action" data-interaction="proof">
-                    Proof of Work
-                  </Link>
                   {item.pdfCta.disabled ? (
                     <span className="caso-action caso-action-disabled" aria-disabled="true">
                       {item.pdfCta.label}
                     </span>
                   ) : (
-                    <a href={item.pdfCta.href} className="caso-action" data-interaction="nda-pdf">
+                    <a
+                      href="#"
+                      className="caso-action"
+                      data-interaction="nda-pdf"
+                      data-documento="paper-nda"
+                      data-caso={item.id}
+                      data-source={`s07-${item.id}`}
+                    >
                       {item.pdfCta.label}
                     </a>
                   )}

@@ -11,17 +11,17 @@ type Question = {
 const defaultQuestions: Question[] = [
   {
     id: 'q1',
-    text: 'Cuantos dias tarda hoy el cierre contable mensual en Fusion?',
+    text: '¿Cuántos días tarda hoy el cierre contable mensual en Fusion?',
     options: [
-      { label: '1-5 dias', score: 0 },
-      { label: '6-10 dias', score: 1 },
-      { label: '11-20 dias', score: 2 },
-      { label: 'Mas de 20 dias', score: 3 },
+      { label: '1-5 días', score: 0 },
+      { label: '6-10 días', score: 1 },
+      { label: '11-20 días', score: 2 },
+      { label: 'Más de 20 días', score: 3 },
     ],
   },
   {
     id: 'q2',
-    text: 'Que parte del cierre sigue ocurriendo fuera de Fusion?',
+    text: '¿Qué parte del cierre sigue ocurriendo fuera de Fusion?',
     options: [
       { label: 'Nada relevante', score: 0 },
       { label: 'Solo conciliaciones menores', score: 1 },
@@ -31,29 +31,29 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q3',
-    text: 'Cuantos reportes ejecutivos o financieros se generan fuera del ERP?',
+    text: '¿Cuántos reportes ejecutivos o financieros se generan fuera del ERP?',
     options: [
       { label: 'Ninguno', score: 0 },
       { label: '1-3 reportes', score: 1 },
       { label: '4-10 reportes', score: 2 },
-      { label: 'Mas de 10 reportes', score: 3 },
+      { label: 'Más de 10 reportes', score: 3 },
     ],
   },
   {
     id: 'q4',
-    text: 'Que tan criticos son los reportes manuales que siguen activos?',
+    text: '¿Qué tan críticos son los reportes manuales que siguen activos?',
     options: [
       { label: 'No impactan decisiones', score: 0 },
       { label: 'Apoyan revisiones internas', score: 1 },
-      { label: 'Se usan para direccion o auditoria', score: 2 },
-      { label: 'La operacion depende de ellos', score: 3 },
+      { label: 'Se usan para dirección o auditoría', score: 2 },
+      { label: 'La operación depende de ellos', score: 3 },
     ],
   },
   {
     id: 'q5',
-    text: 'Que porcentaje de usuarios clave usa Fusion como sistema principal?',
+    text: '¿Qué porcentaje de usuarios clave usa Fusion como sistema principal?',
     options: [
-      { label: 'Mas del 80%', score: 0 },
+      { label: 'Más del 80%', score: 0 },
       { label: '60-80%', score: 1 },
       { label: '30-60%', score: 2 },
       { label: 'Menos del 30%', score: 3 },
@@ -61,7 +61,7 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q6',
-    text: 'Que tan frecuente es que los usuarios evadan Fusion con Excel, correo o sistemas paralelos?',
+    text: '¿Qué tan frecuente es que los usuarios evadan Fusion con Excel, correo o sistemas paralelos?',
     options: [
       { label: 'Casi nunca', score: 0 },
       { label: 'En casos puntuales', score: 1 },
@@ -71,27 +71,27 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q7',
-    text: 'Cuantas incidencias criticas bloqueantes estan abiertas hoy?',
+    text: '¿Cuántas incidencias críticas bloqueantes están abiertas hoy?',
     options: [
       { label: 'Ninguna', score: 0 },
       { label: '1-3', score: 1 },
       { label: '4-10', score: 2 },
-      { label: 'Mas de 10', score: 3 },
+      { label: 'Más de 10', score: 3 },
     ],
   },
   {
     id: 'q8',
-    text: 'Que impacto tienen esas incidencias en cierre, facturacion, compras u operacion?',
+    text: '¿Qué impacto tienen esas incidencias en cierre, facturación, compras u operación?',
     options: [
       { label: 'Sin impacto operativo', score: 0 },
       { label: 'Molestias controladas', score: 1 },
-      { label: 'Retrasan procesos criticos', score: 2 },
-      { label: 'Bloquean procesos criticos', score: 3 },
+      { label: 'Retrasan procesos críticos', score: 2 },
+      { label: 'Bloquean procesos críticos', score: 3 },
     ],
   },
   {
     id: 'q9',
-    text: 'Cual es el estado actual de la relacion con la consultora implementadora anterior?',
+    text: '¿Cuál es el estado actual de la relación con la consultora implementadora anterior?',
     options: [
       { label: 'Soporte activo y funcional', score: 0 },
       { label: 'Soporte parcial o lento', score: 1 },
@@ -101,7 +101,7 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q10',
-    text: 'Que tan transferido quedo el conocimiento de la consultora al equipo interno?',
+    text: '¿Qué tan transferido quedó el conocimiento de la consultora al equipo interno?',
     options: [
       { label: 'Documentado y transferido', score: 0 },
       { label: 'Transferencia parcial', score: 1 },
@@ -111,9 +111,9 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q11',
-    text: 'Cuanto tiempo ha pasado desde el go-live?',
+    text: '¿Cuánto tiempo ha pasado desde el go-live?',
     options: [
-      { label: 'Mas de 18 meses y estable', score: 0 },
+      { label: 'Más de 18 meses y estable', score: 0 },
       { label: '6-18 meses', score: 1 },
       { label: '1-6 meses', score: 2 },
       { label: 'Menos de 1 mes o go-live reciente', score: 3 },
@@ -121,7 +121,7 @@ const defaultQuestions: Question[] = [
   },
   {
     id: 'q12',
-    text: 'Que tan activo esta el patrocinio ejecutivo para resolver la situacion?',
+    text: '¿Qué tan activo está el patrocinio ejecutivo para resolver la situación?',
     options: [
       { label: 'CFO/CTO activos y alineados', score: 0 },
       { label: 'Sponsor activo pero parcial', score: 1 },
@@ -157,22 +157,22 @@ const ESCENARIOS: { id: Escenario; label: string; desc: string; tag: string }[] 
 
 const SEVERITY_COPY: Record<Escenario, Record<SeverityLevel, { desc: string; action: string }>> = {
   'fusion-fallando': {
-    BAJO:     { desc: 'Tu implementacion muestra senales de estabilidad relativa. Los problemas detectados son gestionables sin intervencion de emergencia.', action: 'FABRIC recomienda una revision de optimizacion en los proximos 60 dias.' },
-    MODERADO: { desc: 'Hay friccion operativa visible. Sin atencion en las proximas semanas, los problemas actuales pueden bloquear el proximo cierre contable.', action: 'Diagnostico tecnico FABRIC recomendado: inicio en 2-4 semanas.' },
-    ALTO:     { desc: 'Tu Fusion presenta patrones clasicos de abandono post go-live. El riesgo operativo es documentable y el costo de inaccion crece cada semana.', action: 'Rescate FABRIC estimado: 8-12 semanas · Inversion tipica: USD 150-300K.' },
-    'CRÍTICO':{ desc: 'Crisis operativa activa. Tu implementacion Oracle requiere intervencion inmediata de ingenieros senior especializados en rescate.', action: 'Rescate de emergencia FABRIC: inicio en 72 horas · Inversion tipica: USD 200-500K.' },
+    BAJO:     { desc: 'Tu implementación muestra señales de estabilidad relativa. Los problemas detectados son gestionables sin intervención de emergencia.', action: 'FABRIC recomienda una revisión de optimización en los próximos 60 días.' },
+    MODERADO: { desc: 'Hay fricción operativa visible. Sin atención en las próximas semanas, los problemas actuales pueden bloquear el próximo cierre contable.', action: 'Diagnóstico técnico FABRIC recomendado: inicio en 2-4 semanas.' },
+    ALTO:     { desc: 'Tu Fusion presenta patrones clásicos de abandono post go-live. El riesgo operativo es documentable y el costo de inacción crece cada semana.', action: 'Rescate FABRIC estimado: 8-12 semanas · Inversión típica: USD 150-300K.' },
+    'CRÍTICO':{ desc: 'Crisis operativa activa. Tu implementación Oracle requiere intervención inmediata de ingenieros senior especializados en rescate.', action: 'Rescate de emergencia FABRIC: inicio en 72 horas · Inversión típica: USD 200-500K.' },
   },
   'migrando': {
-    BAJO:     { desc: 'Tu migracion muestra indicadores saludables. El ritmo actual sugiere que puedes llegar al go-live sin desviaciones criticas.', action: 'FABRIC puede acompanar como validador independiente en los hitos clave.' },
-    MODERADO: { desc: 'Hay senales de que la migracion acumulara deuda tecnica antes del go-live. Algunos procesos criticos aun no estan cubiertos correctamente.', action: 'FABRIC recomienda revision de arquitectura y plan de pruebas antes del siguiente hito.' },
-    ALTO:     { desc: 'La migracion presenta riesgos estructurales que comprometen el go-live. El patron detectado es comun en proyectos que terminan en rescate 6 meses despues.', action: 'Intervencion FABRIC recomendada antes del go-live · Inversion tipica: USD 100-250K.' },
-    'CRÍTICO':{ desc: 'La migracion esta en riesgo severo de fracasar o requerir rescate inmediato post go-live. Los indicadores apuntan a una implementacion sin base solida.', action: 'FABRIC recomienda pausa tecnica y auditoria urgente · Contacto en menos de 48 horas.' },
+    BAJO:     { desc: 'Tu migración muestra indicadores saludables. El ritmo actual sugiere que puedes llegar al go-live sin desviaciones críticas.', action: 'FABRIC puede acompañar como validador independiente en los hitos clave.' },
+    MODERADO: { desc: 'Hay señales de que la migración acumulará deuda técnica antes del go-live. Algunos procesos críticos aún no están cubiertos correctamente.', action: 'FABRIC recomienda revisión de arquitectura y plan de pruebas antes del siguiente hito.' },
+    ALTO:     { desc: 'La migración presenta riesgos estructurales que comprometen el go-live. El patrón detectado es común en proyectos que terminan en rescate 6 meses después.', action: 'Intervención FABRIC recomendada antes del go-live · Inversión típica: USD 100-250K.' },
+    'CRÍTICO':{ desc: 'La migración está en riesgo severo de fracasar o requerir rescate inmediato post go-live. Los indicadores apuntan a una implementación sin base sólida.', action: 'FABRIC recomienda pausa técnica y auditoría urgente · Contacto en menos de 48 horas.' },
   },
   'greenfield': {
-    BAJO:     { desc: 'Tu punto de partida es solido. Tienes claridad en objetivos y el contexto organizacional favorece una implementacion exitosa.', action: 'FABRIC puede estructurar el RFP y los criterios de seleccion de consultora.' },
-    MODERADO: { desc: 'Hay vacios en la definicion que, si no se abordan antes de comenzar, se convierten en los problemas tipicos de los primeros 6 meses post go-live.', action: 'FABRIC recomienda un workshop de arquitectura antes de seleccionar consultora.' },
-    ALTO:     { desc: 'El contexto organizacional presenta factores de riesgo altos para una implementacion Oracle. Sin intervencion en el diseno, el proyecto tendra problemas predecibles.', action: 'FABRIC recomienda un programa de gobierno y arquitectura desde el inicio · USD 80-150K.' },
-    'CRÍTICO':{ desc: 'Las condiciones actuales hacen que una implementacion Oracle sin acompanamiento especializado tenga probabilidad muy alta de fracaso en los primeros 12 meses.', action: 'FABRIC debe ser parte del equipo desde el dia uno · Contacto prioritario recomendado.' },
+    BAJO:     { desc: 'Tu punto de partida es sólido. Tienes claridad en objetivos y el contexto organizacional favorece una implementación exitosa.', action: 'FABRIC puede estructurar el RFP y los criterios de selección de consultora.' },
+    MODERADO: { desc: 'Hay vacíos en la definición que, si no se abordan antes de comenzar, se convierten en los problemas típicos de los primeros 6 meses post go-live.', action: 'FABRIC recomienda un workshop de arquitectura antes de seleccionar consultora.' },
+    ALTO:     { desc: 'El contexto organizacional presenta factores de riesgo altos para una implementación Oracle. Sin intervención en el diseño, el proyecto tendrá problemas predecibles.', action: 'FABRIC recomienda un programa de gobierno y arquitectura desde el inicio · USD 80-150K.' },
+    'CRÍTICO':{ desc: 'Las condiciones actuales hacen que una implementación Oracle sin acompañamiento especializado tenga probabilidad muy alta de fracaso en los primeros 12 meses.', action: 'FABRIC debe ser parte del equipo desde el día uno · Contacto prioritario recomendado.' },
   },
 };
 
@@ -250,7 +250,7 @@ export default function S07bRescueAssessment() {
     try {
       await api.post('/rescue-assessment/submit', { email, nombre, empresa, escenario: escenario ?? 'fusion-fallando', answers: answersPayload });
     } catch {
-      // El resultado publico no se bloquea si el email o el CRM fallan.
+      // El resultado público no se bloquea si el email o el CRM fallan.
     } finally {
       setSeverity(getSeverity(totalScore, escenario ?? 'fusion-fallando'));
       setStep('result');
@@ -281,13 +281,13 @@ export default function S07bRescueAssessment() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 0, maxWidth: 820, marginInline: 'auto' }}>
           <div className="label">Oracle Fusion Rescue Assessment</div>
           <h2>
-            Que tan grave esta <span className="text-[#C9A96E]">tu implementacion?</span>
+            ¿Qué tan grave está <span className="text-[#C9A96E]">tu implementación?</span>
           </h2>
 
           {!started && (
             <>
               <p style={{ color: 'var(--text-secondary)', fontSize: 17, lineHeight: 1.7, marginTop: 24 }}>
-                12 preguntas · 3 minutos · Diagnostico de severidad inmediato.
+                12 preguntas · 3 minutos · Diagnóstico de severidad inmediato.
               </p>
 
               {/* Selector de escenario */}
@@ -357,7 +357,7 @@ export default function S07bRescueAssessment() {
                     transition: 'all .2s ease',
                   }}
                 >
-                  Iniciar diagnostico →
+                  Iniciar diagnóstico →
                 </button>
               </div>
             </>
@@ -483,7 +483,7 @@ export default function S07bRescueAssessment() {
                   transition: 'all .2s ease',
                 }}
               >
-                {isLast ? 'Ver diagnostico →' : 'Siguiente →'}
+                {isLast ? 'Ver diagnóstico →' : 'Siguiente →'}
               </button>
             </div>
           </div>
@@ -492,10 +492,10 @@ export default function S07bRescueAssessment() {
         {step === 'capture' && (
           <div style={{ marginTop: 48, maxWidth: 520, marginInline: 'auto', animation: 'fadeIn .3s ease' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.24em', textTransform: 'uppercase', marginBottom: 16 }}>
-              Un paso mas
+              Un paso más
             </div>
             <p style={{ fontSize: 17, color: 'var(--text-primary)', lineHeight: 1.6, marginBottom: 32 }}>
-              Ingresa tu correo para ver el diagnostico y recibir el resultado.
+              Ingresa tu correo para ver el diagnóstico y recibir el resultado.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
               <input type="email" placeholder="correo@empresa.com" value={email} onChange={(event) => setEmail(event.target.value)} style={{ padding: '13px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontFamily: 'var(--mono)', fontSize: 13, outline: 'none' }} />
@@ -519,7 +519,7 @@ export default function S07bRescueAssessment() {
                 opacity: sending ? 0.7 : 1,
               }}
             >
-              {sending ? 'Procesando...' : 'Ver diagnostico →'}
+              {sending ? 'Procesando...' : 'Ver diagnóstico →'}
             </button>
           </div>
         )}
@@ -539,6 +539,9 @@ export default function S07bRescueAssessment() {
             <div style={{ fontFamily: 'var(--mono)', fontSize: 36, fontWeight: 900, letterSpacing: '0.1em', color: severity.color, marginBottom: 24 }}>
               {severity.level}
             </div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: severity.color, marginBottom: 24 }}>
+              Severidad {totalScore}/36
+            </div>
             <p style={{ fontSize: 17, lineHeight: 1.75, color: 'var(--text-primary)', marginBottom: 20, maxWidth: 680 }}>
               {severity.desc}
             </p>
@@ -546,13 +549,13 @@ export default function S07bRescueAssessment() {
               {severity.action}
             </div>
             <div className="rescue-result-ctas">
-              <a href="#aplicar" className="btn-primary" data-interaction="rescue-assessment">
-                Solicitar evaluacion detallada →
+              <a href="/office-hours" className="btn-primary" data-interaction="office-hours">
+                Solicitar evaluación detallada →
               </a>
               <button onClick={handleReset} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '12px 20px', cursor: 'pointer' }}>
                 Reiniciar
               </button>
-              <span className="nda-seal">Conversacion bajo NDA mutuo</span>
+              <span className="nda-seal">Conversación bajo NDA mutuo</span>
             </div>
           </div>
         ) : null}

@@ -3,7 +3,7 @@ import { api } from "../../../config/api";
 import { getInteractionTracking } from "../../../utils/tracking";
 
 type CloudProvider = "AWS" | "Google Cloud (GCP)" | "Microsoft Azure" | "OCI" | "Otro / On-premise";
-type AnalysisPeriod = "Ultimo mes" | "Ultimos 3 meses" | "Ultimos 12 meses";
+type AnalysisPeriod = "Último mes" | "Últimos 3 meses" | "Últimos 12 meses";
 type CriticalApplication =
   | "SAP S/4 HANA"
   | "SAP ECC"
@@ -19,7 +19,7 @@ type AnalysisObjective =
   | "Comparar OCI"
   | "Preparar business case"
   | "Migrar desde AWS/GCP/Azure"
-  | "Validar si pagamos de mas";
+  | "Validar si pagamos de más";
 
 type CloudForm = {
   name: string;
@@ -50,9 +50,9 @@ const DEFAULT_FORM: CloudForm = {
   phone: "",
   cloudProvider: "AWS",
   monthlySpend: 28500,
-  analysisPeriod: "Ultimos 12 meses",
+  analysisPeriod: "Últimos 12 meses",
   criticalApplication: "SAP S/4 HANA",
-  objective: "Validar si pagamos de mas",
+  objective: "Validar si pagamos de más",
   workload: "",
   hasBreakdown: false,
   computeSpend: 12400,
@@ -64,7 +64,7 @@ const DEFAULT_FORM: CloudForm = {
 };
 
 const CLOUD_PROVIDERS: CloudProvider[] = ["AWS", "Google Cloud (GCP)", "Microsoft Azure", "OCI", "Otro / On-premise"];
-const PERIODS: AnalysisPeriod[] = ["Ultimo mes", "Ultimos 3 meses", "Ultimos 12 meses"];
+const PERIODS: AnalysisPeriod[] = ["Último mes", "Últimos 3 meses", "Últimos 12 meses"];
 const CRITICAL_APPS: CriticalApplication[] = [
   "SAP S/4 HANA",
   "SAP ECC",
@@ -77,7 +77,7 @@ const CRITICAL_APPS: CriticalApplication[] = [
   "Otro",
 ];
 const OBJECTIVES: AnalysisObjective[] = [
-  "Validar si pagamos de mas",
+  "Validar si pagamos de más",
   "Reducir costos",
   "Comparar OCI",
   "Preparar business case",
@@ -85,10 +85,10 @@ const OBJECTIVES: AnalysisObjective[] = [
 ];
 
 const bullets = [
-  "Revision ejecutiva de gasto cloud actual",
+  "Revisión ejecutiva de gasto cloud actual",
   "Comparativo estimado contra Oracle Cloud Infrastructure",
   "ROI, breakeven y rango de oportunidad",
-  "Riesgos principales antes de hablar de migracion",
+  "Riesgos principales antes de hablar de migración",
 ];
 
 const fmt = (value: number) =>
@@ -134,7 +134,7 @@ const inputClass =
 
 function getSubmitErrorMessage(error: any) {
   if (!error?.response) {
-    return "No hay conexion con el backend. Inicia o reinicia el servidor en http://localhost:4000 y vuelve a intentar.";
+    return "No hay conexión con el backend. Inicia o reinicia el servidor en http://localhost:4000 y vuelve a intentar.";
   }
 
   if (error.response.status === 404) {
@@ -243,7 +243,7 @@ function SubmitButton({ submitting }: { submitting: boolean }) {
       {submitting && (
         <span className="absolute inset-y-0 left-0 w-1/3 animate-[sendSweep_900ms_ease-in-out_infinite] bg-white/25" />
       )}
-      <span className="relative">{submitting ? "Enviando aplicacion" : "Aplicar a revision"}</span>
+      <span className="relative">{submitting ? "Enviando aplicación" : "Aplicar a revisión"}</span>
       {submitting ? (
         <span className="relative h-4 w-4 animate-spin border border-black/30 border-t-black rounded-full" />
       ) : (
@@ -262,7 +262,7 @@ function ReportPreview({ form }: { form: CloudForm }) {
     { label: "Periodo", value: form.analysisPeriod },
     { label: "Gasto mensual", value: fmt(estimate.monthlySpend) },
     { label: "Gasto anual", value: fmt(estimate.annualSpend) },
-    { label: "Aplicacion critica", value: form.criticalApplication },
+    { label: "Aplicación crítica", value: form.criticalApplication },
     { label: "Objetivo", value: form.objective },
     { label: "Equivalente OCI mensual", value: fmt(estimate.ociMonthly), accent: true },
   ];
@@ -314,9 +314,9 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const [step, setStep] = useState(0);
   const estimate = useMemo(() => estimateCloudComparison(form), [form]);
   const steps = [
-    { label: "Perfil", title: "Quien solicita la revision" },
-    { label: "Gasto", title: "Cloud, gasto y aplicacion critica" },
-    { label: "Caso", title: "Workload y autorizacion NDA" },
+    { label: "Perfil", title: "Quién solicita la revisión" },
+    { label: "Gasto", title: "Cloud, gasto y aplicación crítica" },
+    { label: "Caso", title: "Workload y autorización NDA" },
   ];
 
   if (!isOpen) return null;
@@ -333,14 +333,14 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       }
 
       if (isPublicEmail(form.email) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        setError("Usa un correo corporativo para aplicar a la revision.");
+        setError("Usa un correo corporativo para aplicar a la revisión.");
         return false;
       }
     }
 
     if (targetStep === 1) {
       if (!form.cloudProvider || form.monthlySpend <= 0 || !form.criticalApplication || !form.objective) {
-        setError("Completa cloud actual, gasto mensual, aplicacion critica y objetivo.");
+        setError("Completa cloud actual, gasto mensual, aplicación crítica y objetivo.");
         return false;
       }
     }
@@ -352,7 +352,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
       }
 
       if (!form.ndaAccepted) {
-        setError("Acepta la revision bajo NDA para continuar.");
+        setError("Acepta la revisión bajo NDA para continuar.");
         return false;
       }
     }
@@ -448,11 +448,11 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
               <div className="min-w-0 p-5 sm:p-8">
                 <div className="pr-10">
                   <span className="mb-3 inline-flex border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
-                    Aplicacion privada
+                    Aplicación privada
                   </span>
                   <h3 className="font-serif text-3xl tracking-tight text-[#F5F5F5] md:text-4xl">Cloud Cost Comparator</h3>
                   <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-[#F5F5F5]/60">
-                    Tres pasos. Solo pedimos lo necesario para decidir si tu caso merece revision senior.
+                    Tres pasos. Solo pedimos lo necesario para decidir si tu caso merece revisión senior.
                   </p>
                 </div>
 
@@ -475,7 +475,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                       <TextInput label="Empresa" value={form.company} onChange={(value) => update("company", value)} />
                       <TextInput label="Cargo" value={form.role} placeholder="CFO / CIO / CTO" onChange={(value) => update("role", value)} />
                       <TextInput label="Email corporativo" type="email" value={form.email} onChange={(value) => update("email", value)} />
-                      <TextInput label="Telefono opcional" type="tel" value={form.phone} placeholder="+52" required={false} onChange={(value) => update("phone", value)} />
+                      <TextInput label="Teléfono opcional" type="tel" value={form.phone} placeholder="+52" required={false} onChange={(value) => update("phone", value)} />
                     </div>
                   )}
 
@@ -484,7 +484,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                       <SelectInput label="Cloud actual" value={form.cloudProvider} options={CLOUD_PROVIDERS} onChange={(value) => update("cloudProvider", value)} />
                       <NumberInput label="Gasto mensual aproximado" value={form.monthlySpend} onChange={(value) => update("monthlySpend", value)} />
                       <SelectInput label="Periodo analizado" value={form.analysisPeriod} options={PERIODS} onChange={(value) => update("analysisPeriod", value)} />
-                      <SelectInput label="Aplicacion critica" value={form.criticalApplication} options={CRITICAL_APPS} onChange={(value) => update("criticalApplication", value)} />
+                      <SelectInput label="Aplicación crítica" value={form.criticalApplication} options={CRITICAL_APPS} onChange={(value) => update("criticalApplication", value)} />
                       <SelectInput label="Objetivo principal" value={form.objective} options={OBJECTIVES} onChange={(value) => update("objective", value)} />
                     </div>
                   )}
@@ -530,7 +530,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                           onChange={(event) => update("ndaAccepted", event.target.checked)}
                           className="mt-1 h-4 w-4 accent-[#C9A96E]"
                         />
-                        Acepto que FABRIC revise esta informacion bajo NDA. No se pide acceso operativo ni instrucciones tecnicas de migracion.
+                        Acepto que FABRIC revise esta información bajo NDA. No se pide acceso operativo ni instrucciones técnicas de migración.
                       </label>
                     </div>
                   )}
@@ -564,7 +564,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   </div>
                 </div>
                 <p className="mt-6 font-sans text-xs leading-relaxed text-[#F5F5F5]/45">
-                  Estimacion preliminar. El analisis final depende de validacion senior y supuestos financieros.
+                  Estimación preliminar. El análisis final depende de validación senior y supuestos financieros.
                 </p>
               </aside>
             </div>
@@ -600,9 +600,9 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">Aplicacion recibida</h3>
+            <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">Aplicación recibida</h3>
             <p className="mt-4 font-sans text-base leading-relaxed text-[#F5F5F5]/60">
-              FABRIC revisara si tu caso califica para el Cloud Cost Comparator. Si hay encaje, prepararemos el analisis inicial en 5-7 dias.
+              FABRIC revisará si tu caso califica para el Cloud Cost Comparator. Si hay encaje, prepararemos el análisis inicial en 5-7 días.
             </p>
             <button onClick={onClose} className="mt-10 border-b border-[#C9A96E]/50 pb-1 font-mono text-[11px] uppercase tracking-[0.2em] text-[#C9A96E] transition-colors duration-300 hover:border-[#F5F5F5] hover:text-[#F5F5F5]">
               Cerrar ventana
@@ -633,10 +633,10 @@ export default function S04TcoWaitlist() {
           </div>
 
           <h2 className="font-serif text-[clamp(36px,5vw,64px)] leading-[1.05] tracking-tight text-[#F5F5F5]">
-            Cuanto pagas <span className="text-[#C9A96E]">realmente</span> en AWS, GCP o Azure?
+            ¿Cuánto pagas <span className="text-[#C9A96E]">realmente</span> en AWS, GCP o Azure?
           </h2>
           <p className="mx-auto mt-6 max-w-[680px] font-sans text-lg leading-relaxed text-[#F5F5F5]/60">
-            Aplica a una revision ejecutiva sin costo. FABRIC compara tu gasto cloud actual contra OCI y define si existe un caso financiero serio antes de hablar de migracion.
+            Aplica a una revisión ejecutiva sin costo. FABRIC compara tu gasto cloud actual contra OCI y define si existe un caso financiero serio antes de hablar de migración.
           </p>
         </div>
 
@@ -659,17 +659,17 @@ export default function S04TcoWaitlist() {
 
             <div className="my-10">
               <h3 className="mb-3 font-serif text-[26px] leading-tight text-[#F5F5F5]">
-                No todos los casos califican para revision.
+                No todos los casos califican para revisión.
               </h3>
               <p className="mb-8 font-sans text-[15px] leading-relaxed text-[#F5F5F5]/60">
-                Si el gasto, workload y aplicacion critica tienen suficiente peso, FABRIC prepara un comparativo inicial en 5-7 dias. Sin acceso operativo. Sin auditoria pesada.
+                Si el gasto, workload y aplicación crítica tienen suficiente peso, FABRIC prepara un comparativo inicial en 5-7 días. Sin acceso operativo. Sin auditoría pesada.
               </p>
 
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="flex w-full items-center justify-center gap-3 bg-[#C9A96E] px-8 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-[0_0_20px_-5px_rgba(201,169,110,0.4)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_35px_-5px_rgba(201,169,110,0.7)] active:scale-[0.98] sm:w-auto rounded-sm"
               >
-                Aplicar a revision
+                Aplicar a revisión
                 <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12H19M13 6L19 12L13 18" />
                 </svg>
@@ -688,7 +688,7 @@ export default function S04TcoWaitlist() {
                 </div>
                 <div>
                   <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.1em] text-[#F5F5F5]/40">Entrega si califica</p>
-                  <p className="font-mono text-[14px] font-bold tracking-[0.1em] text-[#C9A96E]">5-7 dias</p>
+                  <p className="font-mono text-[14px] font-bold tracking-[0.1em] text-[#C9A96E]">5-7 días</p>
                 </div>
               </div>
             </div>

@@ -12,7 +12,7 @@ type MetricItem = {
 const mainMetric: MetricItem = {
   id: "01",
   value: 2,
-  label: "Oracle Fusion Implementations Rescued",
+  label: "Implementaciones Oracle Fusion rescatadas",
   icon: "rescue",
   pad: true,
 };
@@ -21,20 +21,20 @@ const metrics: MetricItem[] = [
   {
     id: "02",
     value: 12000,
-    label: "Hours saved for clients",
+    label: "Horas recuperadas para clientes",
     icon: "time",
     prefix: "~",
   },
   {
     id: "03",
     value: 7,
-    label: "Manual reports eliminated",
+    label: "Reportes manuales eliminados",
     icon: "reports",
   },
   {
     id: "04",
     value: 2,
-    label: "Critical closes stabilized",
+    label: "Cierres críticos estabilizados",
     icon: "close",
   },
 ];
@@ -246,11 +246,13 @@ export default function S02Optimizador() {
             ))}
           </div>
 
-          <div className="mt-3 flex items-center gap-3 border-t border-border pt-3">
+          <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
             <p className="font-technical text-[7.5px] font-black uppercase tracking-[0.2em] text-text-tertiary md:text-[8px]">
-              All numbers verifiable under NDA
+              Proyectos documentados · 2022–2026
             </p>
-            <span className="hidden h-px flex-1 bg-gradient-to-r from-border to-transparent sm:block" />
+            <p className="font-technical text-[7.5px] font-black uppercase tracking-[0.2em] text-text-tertiary md:text-[8px]">
+              Números verificables bajo NDA
+            </p>
           </div>
         </div>
       </div>

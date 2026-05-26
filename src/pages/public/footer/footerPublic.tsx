@@ -29,7 +29,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
     { label: 'Rescue Assessment',        path: '/#fabric-ai' },
-    { label: 'Apply Reverse *',          path: '/rechazados' },
+    { label: 'Apply Reverse',             path: '/rechazados' },
   ],
   herramientas: [
     { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
