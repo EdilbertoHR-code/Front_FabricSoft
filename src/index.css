@@ -6,9 +6,9 @@
 
 @theme {
   /* ── Tokens con prefijo fabric- ── */
-  --color-fabric-base: #0A0A0A;
-  --color-fabric-panel: #161616;
-  --color-fabric-elevated: #1A1A1A;
+  --color-fabric-base: #050203;
+  --color-fabric-panel: #080706;
+  --color-fabric-elevated: #060606;
 
   --color-fabric-text: #F5F5F5;
   --color-fabric-text-muted: #8A8A8A;
@@ -22,9 +22,12 @@
   --color-fabric-danger: #B85450;
 
   /* ── Tokens alternativos bg-*, text-*, accent-* ── */
-  --color-bg-base: #0A0A0A;
-  --color-bg-panel: #161616;
-  --color-bg-elevated: #1A1A1A;
+  --color-bg-base: #050203;
+  --color-bg-panel: #080706;
+  --color-bg-elevated: #060606;
+  --color-bg-vampiro: #0F0404;
+  --color-bg-arana: #040200;
+  --color-bg-obsidiana: #020403;
 
   --color-text-primary: #F5F5F5;
   --color-text-secondary: #8A8A8A;
@@ -48,9 +51,13 @@
 
 /* Variables CSS globales */
 :root {
-  --bg-base: #0A0A0A;
-  --bg-panel: #161616;
-  --bg-elevated: #1A1A1A;
+  --bg-base: #050203;
+  --bg-panel: #080706;
+  --bg-elevated: #060606;
+  
+  --bg-vampiro: #0F0404;
+  --bg-arana: #040200;
+  --bg-obsidiana: #020403;
 
   --text-primary: #F5F5F5;
   --text-secondary: #8A8A8A;
@@ -1071,3 +1078,4 @@
   text-transform: none !important;
   letter-spacing: normal !important;
 }
+
