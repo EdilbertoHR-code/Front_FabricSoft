@@ -49,6 +49,9 @@ const leadSchema = new mongoose.Schema({
     riskLevel:      { type: String, default: '' },
     estimatedTimeline: { type: String, default: '' },
   },
+  officeHours: {
+    iniciativaOracle: { type: String, default: '' },
+  },
   readinessScore: {
     patrocinio:    { type: String, default: '' },
     presupuesto:   { type: String, default: '' },

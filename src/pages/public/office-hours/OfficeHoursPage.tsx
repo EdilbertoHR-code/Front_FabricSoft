@@ -46,13 +46,12 @@ export default function OfficeHoursPage() {
 
     setLoading(true);
     try {
-      await api.post('/leads', {
+      await api.post('/leads/office-hours', {
         nombre: form.nombre,
         cargo: form.cargo,
         empresa: form.empresa,
         email: form.email,
-        notas: form.situacion,
-        tipo: 'office-hours',
+        iniciativaOracle: form.situacion,
         tracking: getInteractionTracking('office-hours', 'office-hours-page'),
       });
       setSent(true);

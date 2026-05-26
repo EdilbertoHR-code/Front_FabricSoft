@@ -462,6 +462,52 @@ exports.solicitarMigrationRoadmap = async (req, res) => {
   }
 };
 
+exports.solicitarOfficeHours = async (req, res) => {
+  try {
+    const { nombre, cargo, empresa, email, iniciativaOracle, tracking } = req.body;
+
+    if (!nombre?.trim())  return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!cargo?.trim())   return res.status(400).json({ error: 'Cargo requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email inválido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+
+    const iniciativa = iniciativaOracle?.trim()
+      ? `Office Hours: ${iniciativaOracle.trim()}`
+      : 'Office Hours: solicitud de sesión.';
+
+    const score = calcScore({ revenue: '', industria: '', plazo: '', iniciativa });
+
+    const lead = await Lead.create({
+      nombre:    nombre.trim(),
+      cargo:     cargo.trim(),
+      empresa:   empresa.trim(),
+      email:     email.trim().toLowerCase(),
+      iniciativa,
+      source:    'office-hours',
+      score,
+      status:    'Nuevo',
+      ipAddress: req.ip || '',
+      historial: [{ fecha: nowLabel(), estado: 'Nuevo', autor: 'Sistema' }],
+      tracking:  sanitizeTracking(tracking),
+      officeHours: { iniciativaOracle: iniciativaOracle?.trim() || '' },
+    });
+
+    log({
+      accion:    `CREATE · Office Hours · ${lead.empresa}`,
+      categoria: 'Leads',
+      autor:     'system',
+      status:    'OK',
+      detalle:   `${lead.nombre} · ${lead.email}`,
+    });
+
+    res.status(201).json({ ok: true, data: lead });
+  } catch (err) {
+    console.error('leads.solicitarOfficeHours error:', err);
+    res.status(500).json({ error: 'Error interno al guardar la solicitud.' });
+  }
+};
+
 exports.solicitarReadinessScore = async (req, res) => {
   try {
     const {
