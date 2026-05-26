@@ -107,7 +107,7 @@ export default function S13Transparencia() {
     <section
       ref={ref}
       id="s13"
-      className={`demo-section s13 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      className={`demo-section s13 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
     >
       <div className="container">
         <div className="s13-intro">

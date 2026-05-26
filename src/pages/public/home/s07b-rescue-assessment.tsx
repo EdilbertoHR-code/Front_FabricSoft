@@ -274,7 +274,7 @@ export default function S07bRescueAssessment() {
     <section
       ref={ref}
       id="rescue-assessment"
-      className={`demo-section transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      className={`demo-section transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
       style={{ borderTop: '1px solid var(--border)' }}
     >
       <div className="container">

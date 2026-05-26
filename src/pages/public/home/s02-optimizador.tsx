@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../../config/api";
+import { useInViewOnce } from "../../../hooks/useInViewOnce";
 
 type MetricItem = {
   id: string;
@@ -38,36 +40,6 @@ const metrics: MetricItem[] = [
     icon: "close",
   },
 ];
-
-function useInViewOnce<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || isInView) return;
-
-    if (typeof IntersectionObserver === "undefined") {
-      setIsInView(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35, rootMargin: "-90px" },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [isInView]);
-
-  return [ref, isInView] as const;
-}
 
 function useCountUp(value: number, active: boolean, duration = 950) {
   const [count, setCount] = useState(0);
@@ -194,6 +166,21 @@ function SmallMetricCard({ metric, active, index }: { metric: MetricItem; active
 
 export default function S02Optimizador() {
   const [sectionRef, isInView] = useInViewOnce<HTMLElement>();
+  const [rescueValue, setRescueValue] = useState(mainMetric.value);
+
+  useEffect(() => {
+    api.get("/metricas")
+      .then((res) => {
+        const list = res.data.data;
+        if (Array.isArray(list)) {
+          const m = list.find((item: any) => item.id === "rescue");
+          if (m && typeof m.value === "number") {
+            setRescueValue(m.value);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="optimizador" ref={sectionRef} className="pre-dossier-section p2-dossier-aligned relative w-full overflow-hidden bg-bg-base py-7 text-text-primary md:py-9">
@@ -235,7 +222,7 @@ export default function S02Optimizador() {
               </div>
 
               <p className="font-technical text-[clamp(42px,5.2vw,68px)] font-black leading-none tracking-[-0.08em] text-accent drop-shadow-[0_0_14px_rgba(201,169,110,0.16)]">
-                <AnimatedValue value={mainMetric.value} active={isInView} pad={mainMetric.pad} />
+                <AnimatedValue value={rescueValue} active={isInView} pad={mainMetric.pad} />
               </p>
             </div>
           </article>

@@ -88,7 +88,7 @@ export default function S14Investigacion() {
   }, []);
 
   return (
-    <section ref={ref} id="s14" className={`demo-section s14 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s14" className={`demo-section s14 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="s14-intro">
           <div className="label">Investigación</div>

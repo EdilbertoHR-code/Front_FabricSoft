@@ -34,7 +34,7 @@ export default function S12Referencias() {
   }, []);
 
   return (
-    <section ref={ref} id="s12" className={`demo-section s12 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s12" className={`demo-section s12 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="s12-intro">
           <div className="label">Referencias Disponibles</div>

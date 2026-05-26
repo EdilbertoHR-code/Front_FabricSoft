@@ -81,8 +81,8 @@ export default function S02bPuente() {
           marginInline: 'auto',
           paddingInline: 'clamp(22px, 5vw, 56px)',
           opacity: isInView ? 1 : 0,
-          transform: isInView ? 'translateY(0)' : 'translateY(24px)',
-          transition: 'opacity 700ms ease, transform 700ms ease',
+          transform: isInView ? 'translateY(0)' : 'translateY(36px)',
+          transition: 'opacity 1000ms ease, transform 1000ms ease',
         }}
       >
         <div className="fabric-puente-grid">

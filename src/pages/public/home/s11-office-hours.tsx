@@ -5,7 +5,7 @@ export default function S11OfficeHours() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
 
   return (
-    <section ref={ref} id="s11" className={`demo-section s11 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s11" className={`demo-section s11 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="office-hours">
           <div className="office-hours-text">

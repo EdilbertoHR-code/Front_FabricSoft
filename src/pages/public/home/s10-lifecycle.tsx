@@ -73,7 +73,7 @@ import { useInViewOnce } from '../../../hooks/useInViewOnce';
 export default function S10Lifecycle() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section ref={ref} id="s10" className={`demo-section s10 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s10" className={`demo-section s10 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="s10-intro">
           <div className="label">Cómo Entregamos</div>
