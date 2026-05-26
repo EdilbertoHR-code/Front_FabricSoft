@@ -6,6 +6,7 @@ import {
   BarChart3,
   Bot,
   CalendarClock,
+  Cloud,
   ChevronRight,
   ClipboardList,
   Eye,
@@ -68,6 +69,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { path: '/admin/office-hours', label: 'Office Hours', icon: CalendarClock },
       { path: '/admin/capacidad',    label: 'Capacidad',    icon: Gauge },
+      { path: '/admin/cloud-comparator', label: 'Cloud Comparator', icon: Cloud },
       { path: '/admin/referencias',  label: 'Referencias',  icon: Link2 },
     ],
   },

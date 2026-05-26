@@ -57,10 +57,11 @@ const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
 const AdminAgenteIA = lazy(() => import('../pages/admin/AdminAgenteIA'));
 const AdminConversacionesIA = lazy(() => import('../pages/admin/AdminConversacionesIA'));
 const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosticosOracle'));
-const AdminRescueAssessment     = lazy(() => import('../pages/admin/AdminRescueAssessment'));
-const AdminOciAudit             = lazy(() => import('../pages/admin/AdminOciAudit'));
-const AdminMigrationRoadmap     = lazy(() => import('../pages/admin/AdminMigrationRoadmap'));
-const AdminReadinessScore       = lazy(() => import('../pages/admin/AdminReadinessScore'));
+const AdminRescueAssessment   = lazy(() => import('../pages/admin/AdminRescueAssessment'));
+const AdminOciAudit           = lazy(() => import('../pages/admin/AdminOciAudit'));
+const AdminMigrationRoadmap   = lazy(() => import('../pages/admin/AdminMigrationRoadmap'));
+const AdminReadinessScore     = lazy(() => import('../pages/admin/AdminReadinessScore'));
+const AdminCloudComparator    = lazy(() => import('../pages/admin/AdminCloudComparator'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -227,6 +228,7 @@ export const AppRouter = () => {
             <Route path="oci-audit"           element={<AdminOciAudit />} />
             <Route path="migration-roadmap"   element={<AdminMigrationRoadmap />} />
             <Route path="readiness-score"     element={<AdminReadinessScore />} />
+            <Route path="cloud-comparator"     element={<AdminCloudComparator />} />
           </Route>
 
           {/* 404 → Home */}

@@ -76,5 +76,5 @@ oval-botany*.json
 
 # Permitir documentos del proyecto en docs/
 !docs/*.pdf
-!docs/*.docx
 .vercel
+.env*

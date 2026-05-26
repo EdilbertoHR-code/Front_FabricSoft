@@ -377,7 +377,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
 
     try {
       setSubmitting(true);
-      await api.post("/leads/cloud-comparator", {
+      await api.post("/cloud-comparator/submit", {
         nombre: form.name,
         empresa: form.company,
         cargo: form.role,

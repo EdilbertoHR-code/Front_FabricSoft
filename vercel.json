@@ -1,4 +1,15 @@
 {
+  "experimentalServices": {
+    "frontend": {
+      "routePrefix": "/",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "Backend",
+      "entrypoint": "index.js",
+      "routePrefix": "/_/backend"
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
