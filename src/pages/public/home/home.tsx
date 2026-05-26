@@ -26,15 +26,18 @@ export default function Home() {
     <div className="w-full flex flex-col">
       <SectionNavigator />
       <S01Hero />
-      <RescueCounter />
+    
       <S02bPuente />
       <S03TcoCalculator />
       <S04TcoWaitlist />
       <ChatIa />
       <S05AnalisisFallas />
       <S06Doctrina />
+     
       <S06bFixedPrice />
+      
       <S07Casos />
+         <RescueCounter />
       <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />

@@ -228,7 +228,7 @@ function buildRecommendation({ score, breakeven, annualSavings, targetScenario, 
     return {
       level: 'Alta prioridad',
       nextStep: 'Preparar TCO Comparator privado con supuestos financieros y arquitectura objetivo.',
-      summary: `Caso fuerte: ahorro anual estimado de USD ${Math.round(annualSavings).toLocaleString('en-US')} y breakeven aproximado de ${breakeven} meses.`,
+      summary: `Caso fuerte: ahorro anual potencial de USD ${Math.round(annualSavings).toLocaleString('en-US')} y breakeven aproximado de ${breakeven} meses.`,
     };
   }
 
@@ -242,7 +242,7 @@ function buildRecommendation({ score, breakeven, annualSavings, targetScenario, 
 
   return {
     level: 'Exploratorio',
-    nextStep: 'Mantener como benchmark preliminar y pedir mas contexto antes de una sesion senior.',
+    nextStep: 'Mantener como lectura inicial y pedir mas contexto antes de una sesion senior.',
     summary: 'El caso todavia necesita mas urgencia, costo o claridad de objetivo para justificar una revision profunda.',
   };
 }

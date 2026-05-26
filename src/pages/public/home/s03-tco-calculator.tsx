@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { api } from "../../../config/api";
 
@@ -123,7 +123,7 @@ const FEATURES = [
   { id: "01", title: "ERP actual", text: "SAP, EBS, JDE, PeopleSoft, Dynamics, NetSuite u otro escenario." },
   { id: "02", title: "Usuarios", text: "Escala operativa para estimar costo anual cuando no hay desglose." },
   { id: "03", title: "Industria", text: "Ajuste por complejidad financiera, integraciones y control." },
-  { id: "04", title: "Mercado", text: "Benchmark interno por ERP para simular TCO y ahorro Oracle." },
+  { id: "04", title: "Documento", text: "El prospecto deja sus datos para recibir una lectura ejecutiva mas detallada." },
 ];
 
 const fmt = (value: number) =>
@@ -173,13 +173,13 @@ function calculateTCO(data: FormState) {
     percentReduction: adjustedSavings * 100,
     qualificationScore: Math.min(costScore + userScore + industryScore + 24, 100),
     market: {
-      rationale: "Estimacion local con benchmark por ERP, industria y numero de usuarios.",
+      rationale: "Lectura local con referencias por ERP, industria y numero de usuarios.",
       savingsRateAdjusted: adjustedSavings,
       annualCostAssumption: marketAnnualCost,
       costSource: data.annualErpSpend > 0 ? "provided" : "market",
     },
     recommendation: {
-      level: "Estimacion preliminar",
+      level: "Lectura inicial",
       nextStep: "Validar con endpoint de mercado.",
       summary: "Resultado temporal calculado en cliente.",
     },
@@ -334,6 +334,68 @@ function MetricBox({ label, value, accent = false }: { label: string; value: str
   );
 }
 
+function EmptySignalPanel() {
+  const rows = ["TCO anual", "Ahorro potencial", "Breakeven"];
+
+  return (
+    <div className="grid min-h-[460px] place-items-center border border-[#1A1A1A] bg-[#050505] p-8 rounded-sm">
+      <div className="w-full max-w-[430px]">
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Lectura pendiente</p>
+        <p className="font-serif text-3xl leading-tight text-[#F5F5F5]">Tus numeros aparecen despues de calcular.</p>
+        <p className="mt-4 font-sans text-sm leading-relaxed text-[#888]">
+          Captura 4 datos y revela una lectura ejecutiva: costo anual, rango de ahorro, breakeven y fit para Oracle.
+        </p>
+
+        <div className="mt-8 space-y-4">
+          {rows.map((row, index) => (
+            <div key={row} className="border border-[#1A1A1A] bg-[#0A0A0A] p-4 rounded-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#888]">{row}</span>
+                <span className="font-mono text-[10px] text-[#C9A96E]">Pendiente</span>
+              </div>
+              <div className="h-1.5 overflow-hidden bg-[#161616] rounded-full">
+                <div className="h-full bg-[#2A2A2A]" style={{ width: `${36 + index * 18}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OpportunityMeter({ tco }: { tco: TcoResult }) {
+  const score = clamp(Math.round(tco.qualificationScore), 0, 100);
+  const reduction = Math.round(tco.percentReduction);
+
+  return (
+    <div className="mb-6 grid gap-4 border border-[#1A1A1A] bg-[#050505] p-5 sm:grid-cols-[170px_minmax(0,1fr)] rounded-sm">
+      <div
+        className="grid h-[150px] w-[150px] place-items-center justify-self-center rounded-full"
+        style={{ background: `conic-gradient(#C9A96E ${score * 3.6}deg, #171717 0deg)` }}
+        aria-label={`Fit ejecutivo ${score} de 100`}
+      >
+        <div className="grid h-[118px] w-[118px] place-items-center rounded-full bg-[#050505] text-center">
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Fit</p>
+            <p className="font-mono text-3xl text-[#F5F5F5]">{score}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-center">
+        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Oportunidad detectada</p>
+        <p className="mt-2 font-serif text-2xl leading-tight text-[#F5F5F5]">
+          {reduction}% de reduccion potencial frente al TCO actual.
+        </p>
+        <p className="mt-3 font-sans text-sm leading-relaxed text-[#888]">
+          El score combina ERP, industria, usuarios y costo anual para priorizar si merece una revision senior.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function ComparisonTable({ tco }: { tco: TcoResult }) {
   const rows = [
     { period: "Año 1", current: tco.currentTCO1y, oracle: tco.oracleTCO1y },
@@ -387,13 +449,39 @@ function SavingsChart({ currentTCO10y, oracleTCO10y }: { currentTCO10y: number; 
   );
 }
 
+function BreakEvenChart({ tco }: { tco: TcoResult }) {
+  const width = `${clamp((tco.breakeven / 36) * 100, 12, 100)}%`;
+
+  return (
+    <div className="border border-[#1A1A1A] bg-[#0A0A0A] p-6 rounded-sm">
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Punto de retorno</p>
+          <p className="mt-2 font-serif text-2xl text-[#F5F5F5]">{tco.breakeven} meses</p>
+        </div>
+        <p className="max-w-[190px] text-right font-sans text-xs leading-relaxed text-[#888]">
+          Lectura rapida para saber si el caso amerita documento ejecutivo.
+        </p>
+      </div>
+      <div className="h-2 overflow-hidden bg-[#161616] rounded-full">
+        <div className="h-full bg-[#C9A96E] rounded-full" style={{ width }} />
+      </div>
+      <div className="mt-3 flex justify-between font-mono text-[9px] uppercase tracking-[0.12em] text-[#666]">
+        <span>0</span>
+        <span>18m</span>
+        <span>36m</span>
+      </div>
+    </div>
+  );
+}
+
 function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
   const preview = calculateTCO(DEFAULT_FORM);
   const rows = [
     { label: "ERP actual", value: DEFAULT_FORM.erp },
     { label: "Usuarios", value: String(DEFAULT_FORM.users) },
     { label: "Costo anual mercado", value: fmt(preview.totalAnnualCost) },
-    { label: "Reduccion estimada", value: `${Math.round(preview.percentReduction)}%` },
+    { label: "Reduccion potencial", value: `${Math.round(preview.percentReduction)}%` },
     { label: "Ahorro 5 años", value: fmt(preview.savings5y) },
     { label: "Breakeven", value: `${preview.breakeven} meses` },
   ];
@@ -403,7 +491,7 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
       <div className="mb-8 border-b border-[#1A1A1A] pb-6">
         <div className="mb-2 flex items-center gap-2">
           <span className="h-1.5 w-1.5 bg-[#C9A96E] animate-pulse rounded-full" />
-          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Ejemplo estimado</p>
+          <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C9A96E]">Lectura ejemplo</p>
         </div>
         <p className="font-serif text-2xl text-[#F5F5F5]">ERP TCO <span className="text-[#C9A96E]">Comparator</span></p>
       </div>
@@ -421,7 +509,7 @@ function LeadPreviewCard({ onOpen }: { onOpen: () => void }) {
         className="group mt-8 w-full border border-[#C9A96E]/20 bg-[#C9A96E]/5 p-6 text-left transition-all duration-300 hover:border-[#C9A96E]/60 hover:bg-[#C9A96E]/10 hover:shadow-[0_0_20px_rgba(201,169,110,0.15)] rounded-sm"
       >
         <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] transition-colors duration-300">
-          Ahorro 10 años estimado
+          Oportunidad a 10 años
         </p>
         <p className="font-serif text-4xl text-[#F5F5F5] transition-colors duration-300 group-hover:text-[#C9A96E]">
           {fmtCompact(preview.savings10y)}
@@ -464,7 +552,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
     const publicEmail = /(gmail|hotmail|outlook|yahoo)\./i.test(form.email);
 
     if (!hasCalculated) {
-      toastErr("Primero calcula tu benchmark");
+      toastErr("Primero calcula tu lectura");
       return;
     }
 
@@ -484,9 +572,9 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
     }
 
     try {
-      toastOk(`Benchmark listo: ${tco?.recommendation?.level || "TCO calculado"}`);
+      toastOk(`Documento solicitado: ${tco?.recommendation?.level || "lectura ejecutiva lista"}`);
     } catch {
-      toastErr("No se pudo calcular el benchmark");
+      toastErr("No se pudo solicitar el documento");
     }
   }, [form, hasCalculated, tco]);
 
@@ -510,12 +598,12 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               <div className="mb-8">
                 <div className="mb-5 inline-flex border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 rounded-sm">
                   <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                    4 preguntas · resultado dinamico
+                    4 datos · lectura privada
                   </span>
                 </div>
-                <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">Simula tu TCO con mercado</h3>
+                <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl">Descubre tu fuga de TCO</h3>
                 <p className="mt-3 font-sans text-sm leading-relaxed text-[#888]">
-                  El comparativo parte de benchmarks por ERP, industria y escala. Si ya conoces tu gasto anual, puedes reemplazar el supuesto de mercado.
+                  Usa tus datos reales cuando los tengas. Si todavia no tienes el gasto exacto, FABRIC completa la primera lectura con referencias de mercado por ERP, industria y escala.
                 </p>
               </div>
 
@@ -537,11 +625,11 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Btn onClick={calculateBenchmark} disabled={calculating} className="w-full sm:w-auto">
-                  {calculating ? "Calculando benchmark" : hasCalculated ? "Recalcular benchmark" : "Calcular benchmark"}
+                  {calculating ? "Leyendo oportunidad" : hasCalculated ? "Actualizar lectura" : "Ver oportunidad"}
                   <ArrowIcon />
                 </Btn>
                 <p className="font-sans text-xs leading-relaxed text-[#888]">
-                  Los resultados se muestran solo despues de calcular, usando tus datos y supuestos de mercado.
+                  La lectura aparece despues de pulsar el boton. Asi el prospecto siente que el resultado nace de sus datos.
                 </p>
               </div>
 
@@ -550,7 +638,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                   <div>
                     <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Base usada</p>
                     <p className="font-mono text-sm text-[#F5F5F5]">
-                      {hasCalculated && tco ? (tco.market?.costSource === "provided" ? "Dato capturado" : "Benchmark mercado") : "Pendiente"}
+                      {hasCalculated && tco ? (tco.market?.costSource === "provided" ? "Dato capturado" : "Referencia mercado") : "Pendiente"}
                     </p>
                   </div>
                   <div>
@@ -558,7 +646,7 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                     <p className="font-mono text-sm text-[#C9A96E]">{hasCalculated && tco ? fmt(tco.totalAnnualCost) : "--"}</p>
                   </div>
                   <div>
-                    <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Supuesto mercado</p>
+                    <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.14em] text-[#888]">Referencia mercado</p>
                     <p className="font-mono text-sm text-[#F5F5F5]">
                       {hasCalculated && tco ? fmt(tco.market?.annualCostAssumption || tco.totalAnnualCost) : "--"}
                     </p>
@@ -567,7 +655,12 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
               </div>
 
               <div className="mt-10 border-t border-[#1A1A1A] pt-8">
-                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Analisis con datos reales</p>
+                <div className="mb-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Recibe el documento ejecutivo</p>
+                  <p className="mt-2 font-sans text-xs leading-relaxed text-[#888]">
+                    Deja tus datos corporativos para recibir una lectura con mas detalle, supuestos y siguiente paso recomendado.
+                  </p>
+                </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <TextInput label="Empresa" value={form.company} placeholder="Empresa" onChange={(value) => update("company", value)} />
                   <TextInput label="Cargo" value={form.role} placeholder="CFO / CIO / CTO" onChange={(value) => update("role", value)} />
@@ -582,11 +675,11 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                     onChange={(event) => update("ndaAccepted", event.target.checked)}
                     className="mt-1 h-4 w-4 accent-[#C9A96E]"
                   />
-                  Acepto que FABRIC contacte a mi empresa para preparar un TCO Comparator personalizado bajo NDA. El cargado de facturas, reportes de licencias o contratos se solicita en el siguiente paso.
+                  Acepto que FABRIC use esta informacion para preparar un documento ejecutivo bajo NDA. Si el caso califica, el detalle de facturas, licencias o contratos se solicita en el siguiente paso.
                 </label>
                 <div className="mt-8">
                   <Btn onClick={requestAnalysis} className="w-full">
-                    Solicitar analisis con mis datos reales
+                    Recibir documento ejecutivo
                     <ArrowIcon />
                   </Btn>
                 </div>
@@ -596,26 +689,28 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
             <div className="bg-[#0A0A0A] p-8 md:p-12">
               <div className="mb-8">
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                  {calculating ? "Calculando benchmark de mercado" : hasCalculated ? "TCO comparativo estimado" : "Resultado pendiente"}
+                  {calculating ? "Leyendo oportunidad" : hasCalculated ? "Lectura ejecutiva inicial" : "Lectura pendiente"}
                 </p>
                 <h4 className="font-serif text-2xl text-[#F5F5F5]">
                   {hasCalculated
                     ? `${form.erp}, ${form.users.toLocaleString("en-US")} usuarios`
                     : hasUserEdited
-                      ? "Pulsa calcular para revelar el benchmark"
-                      : "Completa los datos y calcula el benchmark"}
+                      ? "Pulsa ver oportunidad para revelar la lectura"
+                      : "Completa los datos y revela la oportunidad"}
                 </h4>
               </div>
 
               {hasCalculated && tco ? (
                 <>
+                  <OpportunityMeter tco={tco} />
+
                   <div className="mb-6 grid gap-4 sm:grid-cols-2">
                     <MetricBox label="Ahorro 5 años" value={fmt(tco.savings5y)} />
                     <MetricBox label="Ahorro 10 años" value={fmtCompact(tco.savings10y)} accent />
                     <MetricBox label="Reduccion total" value={`${Math.round(tco.percentReduction)}%`} />
                     <MetricBox label="Breakeven migracion" value={`${tco.breakeven} meses`} />
                     <MetricBox label="Fit ejecutivo" value={`${Math.round(tco.qualificationScore)} / 100`} />
-                    <MetricBox label="Inversion estimada" value={fmtCompact(tco.migrationInvestment)} />
+                    <MetricBox label="Inversion guia" value={fmtCompact(tco.migrationInvestment)} />
                   </div>
 
                   <div className="space-y-6">
@@ -627,27 +722,20 @@ function CalculatorModal({ open, onClose }: { open: boolean; onClose: () => void
                       </div>
                     )}
                     <ComparisonTable tco={tco} />
-                    <SavingsChart currentTCO10y={tco.currentTCO10y} oracleTCO10y={tco.oracleTCO10y} />
+                    <div className="grid gap-6 xl:grid-cols-2">
+                      <SavingsChart currentTCO10y={tco.currentTCO10y} oracleTCO10y={tco.oracleTCO10y} />
+                      <BreakEvenChart tco={tco} />
+                    </div>
                   </div>
                 </>
               ) : (
-                <div className="grid min-h-[460px] place-items-center border border-[#1A1A1A] bg-[#050505] p-8 text-center rounded-sm">
-                  <div className="max-w-sm">
-                    <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                      Sin resultado todavia
-                    </p>
-                    <p className="font-serif text-2xl text-[#F5F5F5]">Primero calcula el benchmark</p>
-                    <p className="mt-4 font-sans text-sm leading-relaxed text-[#888]">
-                      Al pulsar calcular apareceran el TCO anual, ahorro estimado, breakeven, fit ejecutivo, tabla comparativa y grafico.
-                    </p>
-                  </div>
-                </div>
+                <EmptySignalPanel />
               )}
 
               <div className="mt-8 border-t border-[#1A1A1A] pt-6 font-sans text-xs leading-relaxed text-[#888]">
                 {hasCalculated
-                  ? "Resultado calculado por backend con benchmarks de mercado por ERP, industria y escala. No consulta base de datos para calcular este comparativo."
-                  : "Los resultados permanecen ocultos hasta que el usuario pulse Calcular benchmark."}
+                  ? "Lectura calculada por backend con referencias de mercado por ERP, industria y escala. No consulta base de datos para calcular este comparativo."
+                  : "La lectura permanece oculta hasta que el usuario pulse Ver oportunidad."}
               </div>
             </div>
           </div>
@@ -670,16 +758,16 @@ export default function S03TcoCalculator() {
           <div className="relative flex flex-col justify-center">
             <div className="mb-8 inline-flex w-fit items-center gap-2 border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-4 py-2 rounded-sm">
               <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">
-                Lead Magnet · ERP TCO Comparator
+                Documento privado · ERP TCO Comparator
               </span>
             </div>
 
             <h2 className="font-serif text-[38px] leading-[1.1] tracking-[-0.04em] text-[#F5F5F5] md:text-[52px] lg:text-[60px]">
-              ¿Cuánto te está costando realmente tu ERP actual?
+              Tu ERP puede estar filtrando presupuesto cada año.
             </h2>
 
             <p className="mt-8 max-w-2xl font-sans text-base leading-relaxed text-[#888] md:text-lg">
-              Comparativo Oracle Fusion vs tu situacion actual. Selecciona tu ERP, usuarios e industria para ver un TCO estimado a 1, 3, 5 y 10 años con benchmark de mercado.
+              En menos de un minuto, FABRIC cruza tu ERP, usuarios, industria y gasto anual para detectar si existe una oportunidad real frente a Oracle Fusion.
             </p>
 
             <div className="mt-12 flex flex-col items-start gap-6">
@@ -688,7 +776,7 @@ export default function S03TcoCalculator() {
                 <ArrowIcon />
               </Btn>
               <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]/70">
-                4 preguntas · benchmark por ERP · resultados dinamicos
+                4 datos · lectura privada · documento ejecutivo
               </p>
             </div>
 
