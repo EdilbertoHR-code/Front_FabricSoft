@@ -101,7 +101,7 @@ export default function Header() {
           fixed top-0 left-0 right-0 z-50
           flex justify-center px-6 md:px-12
           transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${scrolled ? 'bg-[#0A0A0A]/90 backdrop-blur-xl border-b border-[#2A2A2A] shadow-md py-2' : 'bg-transparent border-b border-transparent py-3'}
+          ${scrolled ? 'bg-[#050203]/90 backdrop-blur-xl border-b border-[#2A2A2A] shadow-md py-2' : 'bg-transparent border-b border-transparent py-3'}
           ${mounted ? 'opacity-100' : 'opacity-0'}
         `}
       >
@@ -153,7 +153,7 @@ export default function Header() {
         onClick={() => setMobileOpen(false)}
         className={`fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm lg:hidden transition-opacity duration-500 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
       />
-      <aside className={`fixed right-0 top-0 bottom-0 z-[110] w-full sm:w-[380px] bg-[#0A0A0A]/95 backdrop-blur-2xl border-l border-[#2A2A2A] flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:hidden`}>
+      <aside className={`fixed right-0 top-0 bottom-0 z-[110] w-full sm:w-[380px] bg-[#050203]/95 backdrop-blur-2xl border-l border-[#2A2A2A] flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:hidden`}>
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
           <div className="flex items-center">
             <img src={logoImg} alt="FABRIC" className="h-8 w-auto object-contain opacity-90" style={{ transform: 'scale(4.2)', transformOrigin: 'left center' }} />

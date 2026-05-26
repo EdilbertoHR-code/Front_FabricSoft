@@ -1,10 +1,13 @@
 import BackButton from '../../../components/BackButton';
 export default function RechazadosPage() {
   const proyectos = [
-    { id: 'E-2026-01', industria: 'Servicios Financieros', razon: 'Presupuesto insuficiente para doctrina de primer ciclo crítico', trimestre: 'Q1 2026', modulos: 'Fusion Financials · HCM' },
-    { id: 'E-2026-02', industria: 'Logística / Distribución', razon: 'Plazo irreal: cliente exigía go-live en 8 semanas sin fase de diseño', trimestre: 'Q1 2026', modulos: 'SCM · WMS' },
-    { id: 'E-2026-03', industria: 'Inmobiliario', razon: 'Patrocinio ejecutivo insuficiente: sin CFO ni CTO activos en el programa', trimestre: 'Q2 2026', modulos: 'Fusion Financials · EPM' },
-    { id: 'E-2026-04', industria: 'Servicios Financieros', razon: 'Alcance de upgrade sin sponsor ejecutivo ni ventana operativa realista', trimestre: 'Q2 2026', modulos: 'Oracle EBS Upgrade' },
+    { id: 'E-2026-01', industria: 'Retail Nacional', razon: 'Sin patrocinio CFO directo. El programa era operado por TI sin visibilidad ejecutiva.', trimestre: 'Q1 2026', modulos: 'Fusion Financials · HCM' },
+    { id: 'E-2026-02', industria: 'Manufactura', razon: 'Definición de alcance imposible de fijar. Tres iteraciones de SOW sin acuerdo interno del cliente.', trimestre: 'Q1 2026', modulos: 'SCM · Manufacturing' },
+    { id: 'E-2026-03', industria: 'Fintech', razon: 'Plazo de 12 semanas no permite primer ciclo crítico estabilizado. Riesgo operativo inaceptable.', trimestre: 'Q2 2026', modulos: 'Fusion Financials · CNBV Compliance' },
+    { id: 'E-2026-04', industria: 'Centros Comerciales', razon: 'Migración EBS sin compromiso de capacitación interna. Dependencia perpetua de consultoría externa.', trimestre: 'Q2 2026', modulos: 'Oracle EBS → Fusion' },
+    { id: 'E-2026-05', industria: 'Logística / Distribución', razon: 'Presupuesto insuficiente para cubrir fase STABILIZE. Cliente quería entregar en go-live.', trimestre: 'Q1 2026', modulos: 'SCM · WMS · Transportación' },
+    { id: 'E-2026-06', industria: 'Servicios Financieros', razon: 'Alcance de upgrade sin ventana operativa realista. Cierre regulatorio en conflicto con timeline propuesto.', trimestre: 'Q2 2026', modulos: 'Oracle EBS Upgrade · HCM' },
+    { id: 'E-2026-07', industria: 'Inmobiliario', razon: 'Patrocinio ejecutivo insuficiente: CTO delegó a coordinador sin autoridad de decisión.', trimestre: 'Q2 2026', modulos: 'Fusion Financials · EPM · Real Estate' },
   ];
 
   return (
@@ -27,7 +30,7 @@ export default function RechazadosPage() {
                 Publicamos los proyectos que evaluamos y no aceptamos, con las razones de rechazo. La selectividad es parte de nuestra doctrina: no todos los proyectos son adecuados para el modelo FABRIC.
               </p>
               <div style={{ marginTop: 24, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-                {proyectos.length} proyectos evaluados · {proyectos.length} rechazados · YTD 2026
+                23 evaluados · {proyectos.length} rechazados · YTD 2026
               </div>
             </div>
           </div>
@@ -38,9 +41,9 @@ export default function RechazadosPage() {
       <div style={{ borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
           {[
-            { num: `${proyectos.length}`, label: 'Proyectos evaluados YTD' },
-            { num: '100%', label: 'Razón de rechazo documentada' },
-            { num: '3', label: 'Criterios de evaluación aplicados' },
+            { num: '23', label: 'Proyectos evaluados YTD' },
+            { num: '30%', label: 'Tasa de rechazo · 7 de 23' },
+            { num: '4', label: 'Criterios de evaluación aplicados' },
           ].map((s, i) => (
             <div key={i} style={{ padding: '48px 0', borderRight: i < 2 ? '1px solid var(--border)' : 'none', paddingRight: i < 2 ? 48 : 0, paddingLeft: i > 0 ? 48 : 0 }}>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 56, fontWeight: 300, color: 'var(--accent)', lineHeight: 1, marginBottom: 8 }}>{s.num}</div>

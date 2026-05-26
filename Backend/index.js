@@ -3,6 +3,10 @@ require("dotenv").config({ path: require("path").join(__dirname, ".env") }); // 
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const { validateEnv } = require("./config/validateEnv");
+
+// Validar variables de entorno antes de arrancar
+validateEnv();
 
 const appRoutes = require('./routers/app.routers.js');
 const authController = require('./controllers/auth.controller.js');
@@ -16,9 +20,23 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 app.use(
   cors({
     origin: (origin, cb) => {
+      // Creamos una lista de todos los dominios permitidos
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        "http://localhost:5173",
+        "https://equipo-a-v2.vercel.app" // <-- ¡Aquí le damos acceso a tu Vercel!
+      ];
+
+      // Si no hay origen (postman, etc) lo dejamos pasar
       if (!origin) return cb(null, true);
-      if (origin === FRONTEND_URL) return cb(null, true);
+      
+      // Si el origen está en nuestra lista, lo dejamos pasar
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      
+      // Si es cualquier otro localhost, también lo dejamos pasar
       if (/^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
+      
+      // Si no es ninguno de los anteriores, lo bloqueamos
       cb(new Error(`CORS bloqueado: ${origin}`));
     },
     credentials: true,

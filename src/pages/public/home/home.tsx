@@ -1,4 +1,3 @@
-import InteractionManager from '../../../components/InteractionManager';
 import S01Hero from './s01-hero';
 import S02bPuente from './s02b-puente';
 import RescueCounter from './s02-optimizador';
@@ -26,15 +25,18 @@ export default function Home() {
     <div className="w-full flex flex-col">
       <SectionNavigator />
       <S01Hero />
-      <RescueCounter />
+    
       <S02bPuente />
       <S03TcoCalculator />
       <S04TcoWaitlist />
       <ChatIa />
       <S05AnalisisFallas />
       <S06Doctrina />
+     
       <S06bFixedPrice />
+      
       <S07Casos />
+         <RescueCounter />
       <S07bRescueAssessment />
       <S08Industrias />
       <S09FabricOS />
@@ -45,7 +47,6 @@ export default function Home() {
       <S13Transparencia />
       <S14Investigacion />
       <S15Founder />
-      <InteractionManager />
     </div>
   );
 }

@@ -9,6 +9,8 @@ import { useInViewOnce } from '../../../hooks/useInViewOnce';
 interface Publicada {
   id: string;
   label: string;
+  valor: string;
+  unidad: string;
   periodo: string;
 }
 
@@ -24,17 +26,22 @@ interface Compromiso {
   cuerpo: string;
 }
 
+function metricMeta(p: Publicada) {
+  const value = p.valor?.trim() === '✓' ? '' : `${p.valor} `;
+  return `${value}${p.unidad} · ${p.periodo}`.trim();
+}
+
 // ---------------------------------------------------------------------------
 // Fallback editorial — refleja el contenido hardcodeado original.
 // Se usa si la API no responde.
 // ---------------------------------------------------------------------------
 
 const FALLBACK_PUBLICADAS: Publicada[] = [
-  { id: '01', label: 'Caso APE Plazas · métricas bajo NDA',          periodo: 'abr 2026' },
-  { id: '02', label: 'Equipo 100% senior, 15+ años promedio',         periodo: 'auditado' },
-  { id: '03', label: 'Certificaciones Oracle vigentes',               periodo: 'vigente'  },
-  { id: '04', label: 'Plantilla 100% senior por contrato',            periodo: 'SOW'      },
-  { id: '05', label: 'Caso Aplazo · rescate documentado',             periodo: 'Q1 2026'  },
+  { id: '01', label: 'Go-live APE Plazas en fecha contractual',       valor: '✓',   unidad: 'Verificable', periodo: 'abr 2026' },
+  { id: '02', label: 'Primer cierre contable APE Plazas',             valor: '✓',   unidad: 'Verificable', periodo: 'abr–may 2026' },
+  { id: '03', label: 'Sin incidencias críticas post go-live',         valor: '✓',   unidad: 'APE Plazas',   periodo: 'abr 2026' },
+  { id: '04', label: 'Experiencia Oracle promedio del equipo',        valor: '15+', unidad: 'años',         periodo: 'auditado' },
+  { id: '05', label: 'Plantilla 100% senior Oracle',                  valor: '100%', unidad: 'del equipo',  periodo: 'SOW' },
 ];
 
 const FALLBACK_PROXIMAS: Proxima[] = [
@@ -69,9 +76,11 @@ export default function S13Transparencia() {
         if (!d) return;
 
         if (Array.isArray(d.publicadas) && d.publicadas.length) {
-          setPublicadas(d.publicadas.map((p: { id: string; label: string; periodo: string }) => ({
+          setPublicadas(d.publicadas.map((p: { id: string; label: string; valor: string; unidad: string; periodo: string }) => ({
             id:     p.id,
             label:  p.label,
+            valor:  p.valor,
+            unidad: p.unidad,
             periodo: p.periodo,
           })));
         }
@@ -98,7 +107,7 @@ export default function S13Transparencia() {
     <section
       ref={ref}
       id="s13"
-      className={`demo-section s13 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      className={`demo-section s13 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
     >
       <div className="container">
         <div className="s13-intro">
@@ -119,13 +128,16 @@ export default function S13Transparencia() {
               {publicadas.map(p => (
                 <li key={p.id}>
                   <span>{p.label}</span>
-                  <span className="meta verified">{p.periodo}</span>
+                  <span className="meta verified">
+                    {metricMeta(p)}
+                  </span>
                 </li>
               ))}
             </ul>
             <div className="methodology-note">
               <strong>Metodología</strong>
-              Métricas verificables bajo NDA con auditor externo. Cifras consolidadas con CFO de cada cliente.
+              Métricas verificables bajo NDA con revisión interna formal. Auditoría externa para métricas agregadas a partir de Q4 2026.
+              <a href="/transparencia" className="methodology-link">Metodología pública: /transparencia</a>
             </div>
           </div>
 
@@ -143,7 +155,7 @@ export default function S13Transparencia() {
             </ul>
             <div className="methodology-note">
               <strong>Plazo de publicación</strong>
-              Cada métrica se publica con metodología, periodo medido, método de cálculo y auditor que firma.
+              Cada métrica se publica con metodología, periodo medido, método de cálculo y responsable de validación.
             </div>
           </div>
 

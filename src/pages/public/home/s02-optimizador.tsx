@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../../config/api";
+import { useInViewOnce } from "../../../hooks/useInViewOnce";
 
 type MetricItem = {
   id: string;
@@ -12,7 +14,7 @@ type MetricItem = {
 const mainMetric: MetricItem = {
   id: "01",
   value: 2,
-  label: "Oracle Fusion Implementations Rescued",
+  label: "Implementaciones Oracle Fusion rescatadas",
   icon: "rescue",
   pad: true,
 };
@@ -21,53 +23,23 @@ const metrics: MetricItem[] = [
   {
     id: "02",
     value: 12000,
-    label: "Hours saved for clients",
+    label: "Horas recuperadas para clientes",
     icon: "time",
     prefix: "~",
   },
   {
     id: "03",
     value: 7,
-    label: "Manual reports eliminated",
+    label: "Reportes manuales eliminados",
     icon: "reports",
   },
   {
     id: "04",
     value: 2,
-    label: "Critical closes stabilized",
+    label: "Cierres críticos estabilizados",
     icon: "close",
   },
 ];
-
-function useInViewOnce<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || isInView) return;
-
-    if (typeof IntersectionObserver === "undefined") {
-      setIsInView(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35, rootMargin: "-90px" },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [isInView]);
-
-  return [ref, isInView] as const;
-}
 
 function useCountUp(value: number, active: boolean, duration = 950) {
   const [count, setCount] = useState(0);
@@ -164,7 +136,7 @@ function MetricIcon({ type }: { type: MetricItem["icon"] }) {
 function SmallMetricCard({ metric, active, index }: { metric: MetricItem; active: boolean; index: number }) {
   return (
     <article
-      className={`group relative min-h-[106px] overflow-hidden border border-border bg-bg-panel/72 p-3.5 transition duration-700 hover:-translate-y-1 hover:border-accent/55 hover:bg-bg-elevated/75 md:min-h-[116px] md:p-4 ${
+      className={`group relative min-h-[106px] overflow-hidden border border-border bg-bg-panel p-3.5 transition duration-700 hover:-translate-y-1 hover:border-accent/55 hover:bg-bg-elevated md:min-h-[116px] md:p-4 ${
         active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
       style={{ transitionDelay: `${120 + index * 90}ms` }}
@@ -194,6 +166,21 @@ function SmallMetricCard({ metric, active, index }: { metric: MetricItem; active
 
 export default function S02Optimizador() {
   const [sectionRef, isInView] = useInViewOnce<HTMLElement>();
+  const [rescueValue, setRescueValue] = useState(mainMetric.value);
+
+  useEffect(() => {
+    api.get("/metricas")
+      .then((res) => {
+        const list = res.data.data;
+        if (Array.isArray(list)) {
+          const m = list.find((item: any) => item.id === "rescue");
+          if (m && typeof m.value === "number") {
+            setRescueValue(m.value);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section id="optimizador" ref={sectionRef} className="pre-dossier-section p2-dossier-aligned relative w-full overflow-hidden bg-bg-base py-7 text-text-primary md:py-9">
@@ -204,19 +191,17 @@ export default function S02Optimizador() {
         }
       `}</style>
 
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-12" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(201,169,110,0.06),transparent_28%),radial-gradient(circle_at_82%_55%,rgba(201,169,110,0.045),transparent_30%)]" />
+
 
       <div className="relative z-10 mx-auto max-w-[980px] px-6 md:px-12">
         <div
-          className={`fabric-panel relative overflow-hidden bg-bg-panel/64 p-3.5 backdrop-blur-sm transition duration-700 md:p-4 ${
+          className={`relative overflow-hidden border border-border bg-fabric-base p-3.5 transition duration-700 md:p-4 ${
             isInView ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
           }`}
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-          <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-accent/10 blur-3xl" style={{ animation: "p2-soft-pulse 4.8s ease-in-out infinite" }} />
 
-          <article className="relative mb-2.5 overflow-hidden border border-border bg-bg-base/72 px-4 py-3.5 md:px-5 md:py-4">
+          <article className="relative mb-2.5 overflow-hidden border border-border bg-fabric-base px-4 py-3.5 md:px-5 md:py-4">
             <div className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-accent/75" />
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -235,7 +220,7 @@ export default function S02Optimizador() {
               </div>
 
               <p className="font-technical text-[clamp(42px,5.2vw,68px)] font-black leading-none tracking-[-0.08em] text-accent drop-shadow-[0_0_14px_rgba(201,169,110,0.16)]">
-                <AnimatedValue value={mainMetric.value} active={isInView} pad={mainMetric.pad} />
+                <AnimatedValue value={rescueValue} active={isInView} pad={mainMetric.pad} />
               </p>
             </div>
           </article>
@@ -246,11 +231,13 @@ export default function S02Optimizador() {
             ))}
           </div>
 
-          <div className="mt-3 flex items-center gap-3 border-t border-border pt-3">
+          <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
             <p className="font-technical text-[7.5px] font-black uppercase tracking-[0.2em] text-text-tertiary md:text-[8px]">
-              All numbers verifiable under NDA
+              Proyectos documentados · 2022–2026
             </p>
-            <span className="hidden h-px flex-1 bg-gradient-to-r from-border to-transparent sm:block" />
+            <p className="font-technical text-[7.5px] font-black uppercase tracking-[0.2em] text-text-tertiary md:text-[8px]">
+              Números verificables bajo NDA
+            </p>
           </div>
         </div>
       </div>

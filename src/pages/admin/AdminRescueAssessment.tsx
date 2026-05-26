@@ -3,12 +3,27 @@ import { useAuthApi } from '../../config/api';
 
 type Severity = 'BAJO' | 'MODERADO' | 'ALTO' | 'CRÍTICO';
 
+type Escenario = 'fusion-fallando' | 'migrando' | 'greenfield';
+
+const ESCENARIO_LABEL: Record<Escenario, string> = {
+  'fusion-fallando': 'Fusion fallando',
+  'migrando':        'Migrando',
+  'greenfield':      'Greenfield',
+};
+
+const ESCENARIO_COLOR: Record<Escenario, string> = {
+  'fusion-fallando': '#ef4444',
+  'migrando':        '#60a5fa',
+  'greenfield':      '#4ade80',
+};
+
 interface AssessmentItem {
   _id: string;
   email: string;
   nombre: string;
   empresa: string;
   cargo: string;
+  escenario?: Escenario;
   totalScore: number;
   severity: Severity;
   emailSent: boolean;
@@ -337,10 +352,24 @@ export default function AdminRescueAssessment() {
         ) : (
           <div style={{ borderTop: '1px solid #1E1E1E' }}>
             {items.map((item) => (
-              <div key={item._id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 100px 88px', gap: 16, alignItems: 'center', padding: '20px 0', borderBottom: '1px solid #111' }}>
+              <div key={item._id} style={{ display: 'grid', gridTemplateColumns: '1fr 140px 100px 88px', gap: 16, alignItems: 'center', padding: '20px 0', borderBottom: '1px solid #111' }}>
                 <div>
-                  <div style={{ ...S, fontSize: 11, color: '#F5F5F5', marginBottom: 4 }}>
-                    {item.empresa || <span style={{ color: '#3A3A3A' }}>Sin empresa</span>}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                    <div style={{ ...S, fontSize: 11, color: '#F5F5F5' }}>
+                      {item.empresa || <span style={{ color: '#3A3A3A' }}>Sin empresa</span>}
+                    </div>
+                    {item.escenario && (
+                      <span style={{
+                        ...S, fontSize: 7, letterSpacing: '0.18em', textTransform: 'uppercase',
+                        padding: '2px 8px',
+                        border: `1px solid ${ESCENARIO_COLOR[item.escenario]}44`,
+                        color: ESCENARIO_COLOR[item.escenario],
+                        background: `${ESCENARIO_COLOR[item.escenario]}0D`,
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {ESCENARIO_LABEL[item.escenario]}
+                      </span>
+                    )}
                   </div>
                   <div style={{ ...S, fontSize: 10, color: '#8A8A8A' }}>
                     {item.nombre || item.email}

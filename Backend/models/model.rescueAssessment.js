@@ -12,6 +12,11 @@ const rescueAssessmentSchema = new mongoose.Schema(
     nombre: { type: String, trim: true, default: '' },
     empresa: { type: String, trim: true, default: '' },
     cargo: { type: String, trim: true, default: '' },
+    escenario: {
+      type: String,
+      enum: ['fusion-fallando', 'migrando', 'greenfield'],
+      default: 'fusion-fallando',
+    },
     answers: { type: [answerSchema], required: true },
     totalScore: { type: Number, required: true },
     severity: {

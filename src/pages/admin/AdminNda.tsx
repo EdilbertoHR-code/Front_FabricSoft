@@ -115,7 +115,7 @@ export default function AdminNda() {
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                {['Fecha', 'Caso', 'Empresa', 'Contacto', 'Cargo', 'Email', 'Origen', 'Estado', 'Acciones'].map(h => (
+                {['Fecha', 'Caso', 'Documento', 'Empresa', 'Contacto', 'Cargo', 'Email', 'Origen', 'Estado', 'Acciones'].map(h => (
                   <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>{h}</th>
                 ))}
               </tr>
@@ -125,6 +125,7 @@ export default function AdminNda() {
                 <tr key={r._id} style={{ borderBottom: '1px solid #111' }}>
                   <td style={{ padding: '12px 16px', fontSize: 10, color: '#5A5A5A', whiteSpace: 'nowrap' }}>{fmt(r.createdAt)}</td>
                   <td style={{ padding: '12px 16px', fontSize: 10, color: '#C9A96E', letterSpacing: '0.08em' }}>{r.caso}</td>
+                  <td style={{ padding: '12px 16px', fontSize: 9, color: '#8A8A8A', letterSpacing: '0.08em', fontFamily: 'var(--mono, monospace)' }}>{r.documento}</td>
                   <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{r.empresa}</td>
                   <td style={{ padding: '12px 16px', fontSize: 11, color: '#F5F5F5' }}>{r.nombre}</td>
                   <td style={{ padding: '12px 16px', fontSize: 10, color: '#8A8A8A' }}>{r.cargo}</td>

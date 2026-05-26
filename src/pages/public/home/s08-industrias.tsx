@@ -45,7 +45,7 @@ import { useInViewOnce } from '../../../hooks/useInViewOnce';
 export default function S08Industrias() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
   return (
-    <section ref={ref} id="s08" className={`demo-section s08 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section ref={ref} id="s08" className={`demo-section s08 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
       <div className="container">
         <div className="s08-intro">
           <div className="label">Industrias Focales</div>

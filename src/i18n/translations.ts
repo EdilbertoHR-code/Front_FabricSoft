@@ -16,23 +16,40 @@ export const translations = {
     'nav.apply': 'Aplicar →',
     'cta.start': 'Iniciar conversación',
     'cta.audit': 'Auditoría OCI gratuita',
-    'hero.badge': 'Oracle Certified Partner · Critical Engineering',
-    'hero.h1': 'No entregamos en go-live.',
-    'hero.h2.before': 'Entregamos cuando tu primer ciclo ',
-    'hero.h2.gold': 'crítico opera.',
-    'hero.body': 'El 73% de las implementaciones Oracle Fusion celebran el go-live y abandonan al cliente con cierres pesados e incidencias abiertas.',
-    'hero.migrations': 'Migraciones: SAP · EBS · JD Edwards · PeopleSoft · Greenfield',
-    'hero.type.1.base': 'Garantizamos la estabilización del primer ciclo crítico. ',
-    'hero.type.1.gold': 'Por contrato.',
-    'hero.type.2.base': 'Nos quedamos hasta el primer cierre contable operado en producción. ',
-    'hero.type.2.gold': 'Sin sorpresas.',
-    'hero.type.3.base': 'Transición a soporte sin incidencias bloqueantes abiertas. ',
-    'hero.type.3.gold': 'Cero abandono post go-live.',
-    'hero.orb.1': 'Rescate Fusion',
-    'hero.orb.2': 'Migración SAP/EBS',
-    'hero.orb.3': 'Greenfield Oracle',
-    'hero.orb.caption': 'Operaciones ERP sin dependencia manual.',
-    'footer.tagline': 'Oracle Critical Engineering',
+   'hero.badge': 'Oracle Critical Engineering · Acceso selectivo',
+
+'hero.h1': 'Oracle no se cae en código.',
+'hero.h2.before': 'Se cae en ',
+'hero.h2.gold': 'operación.',
+
+'hero.body': 'FABRIC rescata, estabiliza y blinda proyectos Oracle cuando el riesgo ya afecta cierres financieros, reportes ejecutivos y continuidad del negocio.',
+
+'hero.migrations': 'Fusion Cloud · SAP/EBS/JDE Migration · Rescue · Stabilization',
+
+'hero.type.1.base': 'No vendemos horas. ',
+'hero.type.1.gold': 'asumimos responsabilidad operativa.',
+
+'hero.type.2.base': 'No entregamos pantallas. ',
+'hero.type.2.gold': 'entregamos ciclos críticos funcionando.',
+
+'hero.type.3.base': 'Si queda operación manual atribuible a FABRIC, ',
+'hero.type.3.gold': 'la corregimos sin costo.',
+
+'hero.orb.1': 'Riesgo post go-live',
+'hero.orb.2': 'Migración crítica',
+'hero.orb.3': 'Estabilización Oracle',
+'hero.orb.caption': 'Oracle operations engineered for the first critical cycle.',
+'hero.stat.1.number': '90d',
+'hero.stat.1.label': 'estabilización post go-live',
+
+'hero.stat.2.number': '0',
+'hero.stat.2.label': 'juniors facturables',
+
+'hero.stat.3.number': '100%',
+'hero.stat.3.label': 'responsabilidad contractual',
+
+
+'footer.tagline': 'Oracle Critical Engineering',
     'footer.location': 'Ciudad de México · México',
     'footer.access': 'Acceso selectivo · cupos limitados',
     'footer.site': 'sitio',
@@ -77,22 +94,41 @@ export const translations = {
     'nav.apply': 'Apply →',
     'cta.start': 'Start conversation',
     'cta.audit': 'Free OCI audit',
-    'hero.badge': 'Oracle Certified Partner · Critical Engineering',
-    'hero.h1': 'We do not deliver at go-live.',
-    'hero.h2.before': 'We deliver when your first critical cycle ',
-    'hero.h2.gold': 'is running.',
-    'hero.body': '73% of Oracle Fusion implementations celebrate go-live and leave clients with heavy close cycles and open incidents.',
-    'hero.migrations': 'Migrations: SAP · EBS · JD Edwards · PeopleSoft · Greenfield',
-    'hero.type.1.base': 'We guarantee stabilization of the first critical cycle. ',
-    'hero.type.1.gold': 'By contract.',
-    'hero.type.2.base': 'We stay until the first accounting close runs in production. ',
-    'hero.type.2.gold': 'No surprises.',
-    'hero.type.3.base': 'Support transition with no open blocking incidents. ',
-    'hero.type.3.gold': 'No post-go-live abandonment.',
-    'hero.orb.1': 'Fusion rescue',
-    'hero.orb.2': 'SAP/EBS migration',
-    'hero.orb.3': 'Oracle greenfield',
-    'hero.orb.caption': 'ERP operations without manual dependency.',
+'hero.badge': 'Oracle Critical Engineering · Selective access',
+
+'hero.h1': 'Oracle does not fail in code.',
+'hero.h2.before': 'It fails in ',
+'hero.h2.gold': 'operations.',
+
+'hero.body': 'FABRIC rescues, stabilizes and protects Oracle projects when risk already impacts financial close, executive reporting and business continuity.',
+
+'hero.migrations': 'Fusion Cloud · SAP/EBS/JDE Migration · Rescue · Stabilization',
+
+'hero.type.1.base': 'We do not sell hours. ',
+'hero.type.1.gold': 'we assume operational responsibility.',
+
+'hero.type.2.base': 'We do not deliver screens. ',
+'hero.type.2.gold': 'we deliver critical cycles running.',
+
+'hero.type.3.base': 'If manual operation remains attributable to FABRIC, ',
+'hero.type.3.gold': 'we fix it at no cost.',
+
+'hero.orb.1': 'Post go-live risk',
+'hero.orb.2': 'Critical migration',
+'hero.orb.3': 'Oracle stabilization',
+'hero.orb.caption': 'Oracle operations engineered for the first critical cycle.',
+
+'hero.stat.1.number': '90d',
+'hero.stat.1.label': 'post go-live stabilization',
+
+'hero.stat.2.number': '0',
+'hero.stat.2.label': 'billable juniors',
+
+'hero.stat.3.number': '100%',
+'hero.stat.3.label': 'contractual accountability',
+
+
+
     'footer.tagline': 'Oracle Critical Engineering',
     'footer.location': 'Mexico City · Mexico',
     'footer.access': 'Selective access · limited capacity',

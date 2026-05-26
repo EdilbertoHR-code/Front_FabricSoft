@@ -591,9 +591,9 @@ exports.sendConfirmacionOciAudit = ({ empresa, cargo, email, gastoOci }) =>
 
 exports.sendPaperEntrega = ({ empresa, email, paperId }) => {
   const paperTitle = PAPER_TITLES[paperId] || `Paper ${paperId}`;
-  const pdfPath    = path.join(__dirname, '..', 'assets', 'papers', `paper-${paperId}.pdf`);
+  const { ensureSimulatedPaperPdf } = require('../utils/simulatedPaperPdf');
+  const pdfPath    = ensureSimulatedPaperPdf(paperId);
 
-  // Lanza si el PDF no existe — el controller lo captura antes de llamar esta función
   const content = fs.readFileSync(pdfPath);
 
   return sendEmail({

@@ -6,33 +6,23 @@ export function useInViewOnce<T extends HTMLElement>() {
 
   useEffect(() => {
     const node = ref.current;
-    if (!node || isInView) return;
+    if (!node) return;
 
     if (typeof IntersectionObserver === 'undefined') {
       setIsInView(true);
       return;
     }
 
-    // Si ya está visible al cargar, mostrar inmediatamente sin animar
-    const rect = node.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      setIsInView(true);
-      return;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          observer.disconnect();
-        }
+        setIsInView(entry.isIntersecting);
       },
-      { threshold: 0.1, rootMargin: '-40px' },
+      { threshold: 0.1, rootMargin: '150px 0px 0px 0px' },
     );
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [isInView]);
+  }, []);
 
   return [ref, isInView] as const;
 }

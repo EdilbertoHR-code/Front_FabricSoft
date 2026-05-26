@@ -29,7 +29,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
     { label: 'Rescue Assessment',        path: '/#fabric-ai' },
-    { label: 'Apply Reverse *',          path: '/rechazados' },
+    { label: 'Apply Reverse',             path: '/rechazados' },
   ],
   herramientas: [
     { label: 'FABRIC AI Diagnostic',     path: '/#fabric-ai' },
@@ -108,7 +108,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="fabric-footer bg-[#050505] text-[#F5F5F5]/90 border-t border-[#2A2A2A] pt-24 pb-12 font-sans">
+    <footer className="fabric-footer bg-[#050203] text-[#F5F5F5]/90 border-t border-[#2A2A2A] pt-24 pb-12 font-sans">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(5,minmax(0,1fr))] gap-12 lg:gap-8 mb-24">
           <div className="sm:col-span-2 lg:col-span-1 flex flex-col">

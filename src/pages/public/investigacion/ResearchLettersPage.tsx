@@ -51,13 +51,13 @@ export default function ResearchLettersPage() {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Editorial · FABRIC</div>
           <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
-            Research Letters.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Membresia editorial cerrada.</em>
+            Research Letters.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Membresía editorial cerrada.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 560 }}>
-            Cartas ejecutivas para CFO, CIO y CTO evaluando rescates, migraciones y gobierno Oracle. Cupo cerrado, distribucion privada y acceso solo con correo corporativo.
+            Cartas ejecutivas para CFO, CIO y CTO evaluando rescates, migraciones y gobierno Oracle. Cupo cerrado, distribución privada y acceso solo con correo corporativo.
           </p>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Membresia cerrada · Solicitud calificada
+            Membresía cerrada · Solicitud calificada
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function ResearchLettersPage() {
             Acceso por perfil operativo.
           </div>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.8, margin: 0 }}>
-            La solicitud registra datos de calificacion para que el admin pueda aprobar, rechazar o mantener en espera sin perder contexto: cargo, tamano de compania, tipo de iniciativa Oracle e industria.
+            La solicitud registra datos de calificación para que el admin pueda aprobar, rechazar o mantener en espera sin perder contexto: cargo, tamaño de compañía, tipo de iniciativa Oracle e industria.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function ResearchLettersPage() {
                   <option>No especificado</option>
                   <option>USD 50M-250M</option>
                   <option>USD 250M-1B</option>
-                  <option>Mas de USD 1B</option>
+                  <option>Más de USD 1B</option>
                 </select>
                 <select value={form.iniciativaOracle} onChange={e => setForm(prev => ({ ...prev, iniciativaOracle: e.target.value }))}
                   style={{ padding: '12px 14px', background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontFamily: 'var(--mono)', fontSize: 12 }}>
@@ -119,7 +119,7 @@ export default function ResearchLettersPage() {
             <div style={{ textAlign: 'center', padding: '24px 0' }}>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 32, color: 'var(--accent)', marginBottom: 12 }}>Solicitud recibida.</div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                El admin revisara el perfil y respondera en {form.email || 'tu email corporativo'}.
+                El admin revisará el perfil y responderá en {form.email || 'tu email corporativo'}.
               </div>
             </div>
           )}
