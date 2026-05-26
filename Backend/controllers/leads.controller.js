@@ -375,3 +375,89 @@ exports.solicitarReferencia = async (req, res) => {
     res.status(500).json({ error: 'Error interno al guardar solicitud.' });
   }
 };
+
+exports.solicitarMigrationRoadmap = async (req, res) => {
+  try {
+    const {
+      nombre, cargo, empresa, email,
+      sistema, modulos, industria, geografia, plazo, compliance,
+      patrocinio, presupuesto, integraciones, datos, equipo, experiencia,
+      riskLevel, estimatedTimeline,
+      tracking,
+    } = req.body;
+
+    if (!nombre?.trim()) return res.status(400).json({ error: 'Nombre requerido.' });
+    if (!cargo?.trim())  return res.status(400).json({ error: 'Cargo requerido.' });
+    if (!empresa?.trim()) return res.status(400).json({ error: 'Empresa requerida.' });
+    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email inválido.' });
+    if (isPublicEmail(email)) return res.status(400).json({ error: 'Usa tu correo corporativo.' });
+    if (!sistema) return res.status(400).json({ error: 'Sistema de origen requerido.' });
+    if (!riskLevel) return res.status(400).json({ error: 'Nivel de riesgo requerido.' });
+
+    const industriaMap = {
+      'Servicios Financieros / Fintech': 'financiero',
+      'Inmobiliario / Centros Comerciales': 'inmobiliario',
+      'Logística / Distribución': 'logistica',
+    };
+    const industriaNorm = industriaMap[industria] || '';
+
+    const iniciativa = [
+      `Migration Roadmap: ${sistema}.`,
+      industria ? `Industria: ${industria}.` : '',
+      modulos?.length ? `Módulos: ${Array.isArray(modulos) ? modulos.join(', ') : modulos}.` : '',
+      `Riesgo: ${riskLevel}. Plazo estimado: ${estimatedTimeline}.`,
+    ].filter(Boolean).join(' ');
+
+    const score = calcScore({
+      revenue:    '',
+      industria:  industriaNorm,
+      plazo:      plazo === 'Próximos 3 meses' ? '<3 meses' : plazo === 'En 3 – 6 meses' ? '3-6 meses' : '6-12 meses',
+      iniciativa,
+    });
+
+    const lead = await Lead.create({
+      nombre:    nombre.trim(),
+      cargo:     cargo.trim(),
+      empresa:   empresa.trim(),
+      email:     email.trim().toLowerCase(),
+      industria: industriaNorm,
+      iniciativa,
+      plazo:     plazo || '',
+      source:    'migration-roadmap',
+      score,
+      status:    'Nuevo',
+      ipAddress: req.ip || '',
+      historial: [{ fecha: nowLabel(), estado: 'Nuevo', autor: 'Sistema' }],
+      tracking:  sanitizeTracking(tracking),
+      migrationRoadmap: {
+        sistema:       sistema || '',
+        modulos:       Array.isArray(modulos) ? modulos : [],
+        industria:     industria || '',
+        geografia:     geografia || '',
+        plazo:         plazo || '',
+        compliance:    compliance || '',
+        patrocinio:    patrocinio || '',
+        presupuesto:   presupuesto || '',
+        integraciones: integraciones || '',
+        datos:         datos || '',
+        equipo:        equipo || '',
+        experiencia:   experiencia || '',
+        riskLevel:     riskLevel || '',
+        estimatedTimeline: estimatedTimeline || '',
+      },
+    });
+
+    log({
+      accion:    `CREATE · Migration Roadmap · ${lead.empresa}`,
+      categoria: 'Leads',
+      autor:     'system',
+      status:    'OK',
+      detalle:   `${lead.nombre} · ${sistema} → Fusion · Riesgo: ${riskLevel}`,
+    });
+
+    res.status(201).json({ ok: true, data: lead });
+  } catch (err) {
+    console.error('leads.solicitarMigrationRoadmap error:', err);
+    res.status(500).json({ error: 'Error interno al guardar el roadmap.' });
+  }
+};

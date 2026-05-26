@@ -57,8 +57,9 @@ const AdminLogs = lazy(() => import('../pages/admin/AdminLogs'));
 const AdminAgenteIA = lazy(() => import('../pages/admin/AdminAgenteIA'));
 const AdminConversacionesIA = lazy(() => import('../pages/admin/AdminConversacionesIA'));
 const AdminDiagnosticosOracle = lazy(() => import('../pages/admin/AdminDiagnosticosOracle'));
-const AdminRescueAssessment   = lazy(() => import('../pages/admin/AdminRescueAssessment'));
-const AdminOciAudit           = lazy(() => import('../pages/admin/AdminOciAudit'));
+const AdminRescueAssessment     = lazy(() => import('../pages/admin/AdminRescueAssessment'));
+const AdminOciAudit             = lazy(() => import('../pages/admin/AdminOciAudit'));
+const AdminMigrationRoadmap     = lazy(() => import('../pages/admin/AdminMigrationRoadmap'));
 
 // =========================================================================
 // UTILIDADES Y COMPONENTES GLOBALES
@@ -223,6 +224,7 @@ export const AppRouter = () => {
             <Route path="diagnosticos-oracle"  element={<AdminDiagnosticosOracle />} />
             <Route path="rescue-assessment"    element={<AdminRescueAssessment />} />
             <Route path="oci-audit"           element={<AdminOciAudit />} />
+            <Route path="migration-roadmap"   element={<AdminMigrationRoadmap />} />
           </Route>
 
           {/* 404 → Home */}

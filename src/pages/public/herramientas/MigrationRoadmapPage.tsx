@@ -1,8 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import { api } from '../../../config/api';
 import { getInteractionTracking } from '../../../utils/tracking';
+
+const PRINT_STYLES = `
+@media print {
+  body * { visibility: hidden !important; }
+  #roadmap-pdf, #roadmap-pdf * { visibility: visible !important; }
+  #roadmap-pdf { position: absolute; inset: 0; padding: 40px; background: #fff !important; color: #000 !important; }
+  #roadmap-pdf .pdf-hide { display: none !important; }
+  #roadmap-pdf h2, #roadmap-pdf h3 { color: #000 !important; }
+  #roadmap-pdf [style*="color: var(--accent)"] { color: #8B6914 !important; }
+  #roadmap-pdf [style*="color: var(--text-secondary)"] { color: #444 !important; }
+  #roadmap-pdf [style*="color: var(--text-tertiary)"] { color: #888 !important; }
+  #roadmap-pdf [style*="background: var(--bg-panel)"] { background: #f8f8f8 !important; border-color: #ddd !important; }
+  #roadmap-pdf [style*="background: var(--bg-base)"] { background: #fff !important; }
+  @page { margin: 20mm; size: A4; }
+}
+`;
 
 const PREGUNTAS = [
   {
@@ -22,9 +38,14 @@ const PREGUNTAS = [
     opciones: ['Servicios Financieros / Fintech', 'Inmobiliario / Centros Comerciales', 'Logística / Distribución', 'Manufactura', 'Retail', 'Energía / Utilities', 'Otro'],
   },
   {
-    id: 'revenue',
-    texto: '¿Cuál es el revenue anual aproximado de tu empresa?',
-    opciones: ['Menos de USD 50M', 'USD 50M – 250M', 'USD 250M – 1B', 'Más de USD 1B'],
+    id: 'geografia',
+    texto: '¿En cuántos países opera tu empresa?',
+    opciones: [
+      'Solo México',
+      '2 – 3 países de LATAM',
+      '4 o más países',
+      'Operación global (incluyendo fuera de LATAM)',
+    ],
   },
   {
     id: 'plazo',
@@ -32,9 +53,14 @@ const PREGUNTAS = [
     opciones: ['Próximos 3 meses', 'En 3 – 6 meses', 'En 6 – 12 meses', 'Sin plazo definido aún'],
   },
   {
-    id: 'riesgo',
-    texto: '¿Cuál es tu mayor preocupación?',
-    opciones: ['Costos que se disparan', 'Plazos que se eternizan', 'Calidad de los consultores', 'Soporte post go-live insuficiente', 'Documentación y transferencia de conocimiento', 'Adopción de usuarios internos'],
+    id: 'compliance',
+    texto: '¿Tu empresa opera bajo regulaciones financieras o fiscales específicas?',
+    opciones: [
+      'Sí — con mapa de requerimientos documentado (CNBV, SAT avanzado, CFDI 4.0, regulación bancaria)',
+      'Sí — regulaciones conocidas pero sin mapa documentado',
+      'Solo regulaciones estándar (SAT, IMSS, INFONAVIT)',
+      'No conocemos los requerimientos de compliance aplicables',
+    ],
   },
   {
     id: 'patrocinio',
@@ -70,7 +96,14 @@ const PREGUNTAS = [
 
 type Respuestas = Record<string, string | string[]>;
 
-function calcularRiesgo(respuestas: Respuestas): { nivel: string; descripcion: string; plazo: string; quickwins: string[] } {
+function calcularRiesgo(respuestas: Respuestas): {
+  nivel: 'BAJO' | 'MEDIO' | 'ALTO';
+  descripcion: string;
+  plazo: string;
+  fases: { label: string; hitos: string[] }[];
+  recursos: string[];
+  quickwins: string[];
+} {
   let puntos = 0;
 
   if (respuestas.patrocinio === 'CFO + CTO ambos activos') puntos += 2;
@@ -90,44 +123,207 @@ function calcularRiesgo(respuestas: Respuestas): { nivel: string; descripcion: s
 
   if (respuestas.experiencia === 'Sí — fue exitosa') puntos += 1;
 
-  if (puntos >= 9) return {
+  if (respuestas.geografia === 'Solo México') puntos += 2;
+  else if (respuestas.geografia === '2 – 3 países de LATAM') puntos += 1;
+
+  const c = respuestas.compliance as string ?? '';
+  if (c.startsWith('Sí — con mapa')) puntos += 2;
+  else if (c.startsWith('Sí — regulaciones conocidas')) puntos += 1;
+  else if (c.startsWith('Solo regulaciones estándar')) puntos += 2;
+
+  if (puntos >= 13) return {
     nivel: 'BAJO',
     descripcion: 'Tu organización tiene fundamentos sólidos para una migración controlada. Patrocinio ejecutivo confirmado, datos en buen estado y equipo dedicado son las variables que más reducen riesgo en proyectos Oracle.',
     plazo: '4 – 8 meses',
-    quickwins: ['Definir arquitectura financiera multi-entidad en semana 1', 'Quick-win de cierre contable en módulo piloto a semana 6', 'Go-live por fases para reducir riesgo operativo'],
+    fases: [
+      {
+        label: '30 días — Diagnóstico y arquitectura',
+        hitos: [
+          'Kick-off formal con comité ejecutivo',
+          'Diagnóstico técnico de arquitectura actual y gaps vs Fusion',
+          'Mapeo de datos maestros y plan de migración',
+          'Definición de módulos prioritarios (phase 1)',
+        ],
+      },
+      {
+        label: '60 días — Configuración core',
+        hitos: [
+          'Configuración de módulos Financials y Procurement en ambiente de desarrollo',
+          'Migración de datos piloto (cuentas contables, catálogo de proveedores)',
+          'Integración de sistemas satélite prioritarios',
+          'Capacitación inicial de usuarios clave',
+        ],
+      },
+      {
+        label: '90 días — UAT y go-live',
+        hitos: [
+          'User Acceptance Testing con usuarios clave liberados',
+          'Corrección de hallazgos críticos del UAT',
+          'Go-live planificado (módulos phase 1)',
+          'Inicio de fase STABILIZE — acompañamiento FABRIC',
+        ],
+      },
+      {
+        label: '180 días — Primer ciclo crítico',
+        hitos: [
+          'Primer cierre contable en producción con acompañamiento FABRIC',
+          'Activación de módulos restantes (phase 2)',
+          'Tablero ejecutivo de estabilización entregado',
+          'Acta formal de transición a soporte firmada',
+        ],
+      },
+    ],
+    recursos: [
+      '1 Senior Architect Oracle (8+ años)',
+      '1 Senior Functional Consultant — módulo core',
+      '1 Data Migration Specialist',
+      'PMO interno con dedicación ≥50%',
+      'Comité de proyecto activo (reuniones semanales)',
+    ],
+    quickwins: [
+      'Definir arquitectura financiera multi-entidad en semana 1',
+      'Quick-win de cierre contable en módulo piloto a semana 6',
+      'Go-live por fases para reducir riesgo operativo',
+    ],
   };
 
-  if (puntos >= 5) return {
+  if (puntos >= 7) return {
     nivel: 'MEDIO',
-    descripcion: 'Hay elementos de riesgo identificados que pueden controlarse con preparación previa. FABRIC recomienda una fase de readiness antes del inicio formal del proyecto para maximizar probabilidad de éxito.',
+    descripcion: 'Hay elementos de riesgo identificados que pueden controlarse con preparación previa. FABRIC recomienda una fase de readiness antes del inicio formal del proyecto para maximizar la probabilidad de éxito.',
     plazo: '6 – 12 meses',
-    quickwins: ['Fase de diagnóstico de datos y limpieza previa (4 semanas)', 'Definición de patrocinio ejecutivo formal antes del kick-off', 'Mapeo de integraciones y plan de migración de datos en semana 2'],
+    fases: [
+      {
+        label: '30 días — Readiness y diagnóstico de brechas',
+        hitos: [
+          'Oracle Readiness Assessment (4 semanas)',
+          'Diagnóstico de brechas críticas por área (datos, equipo, patrocinio)',
+          'Plan de corrección priorizado con responsables y fechas',
+          'Validación de presupuesto y aprobación formal',
+        ],
+      },
+      {
+        label: '60 días — Cierre de brechas + kick-off',
+        hitos: [
+          'Cierre de brechas críticas identificadas en la fase anterior',
+          'Kick-off formal del proyecto (si se superaron las brechas)',
+          'Definición de arquitectura técnica con FSO Engine FABRIC',
+          'Mapeo de integraciones y plan de migración de datos',
+        ],
+      },
+      {
+        label: '90 días — Configuración e integración',
+        hitos: [
+          'Configuración de módulos core en ambiente de desarrollo',
+          'Migración de datos (cuentas maestras, históricos críticos)',
+          'Integración de sistemas satélite documentados',
+          'Capacitación de usuarios clave (primera ronda)',
+        ],
+      },
+      {
+        label: '180 días — UAT, go-live y primer ciclo',
+        hitos: [
+          'User Acceptance Testing completo',
+          'Go-live con acompañamiento FABRIC presencial',
+          'Primer cierre contable en producción documentado',
+          'Acta de transición a soporte con tablero ejecutivo',
+        ],
+      },
+    ],
+    recursos: [
+      '1 Senior Architect + 1 Senior Functional (ambos 8+ años Oracle)',
+      '1 Data Migration Specialist',
+      '1 Integration Specialist (si hay 6+ integraciones)',
+      'PMO interno con dedicación exclusiva (recomendado)',
+      'Change Management Lead (interno o externo)',
+      'Pre-readiness: 4 – 6 semanas previas al kick-off formal',
+    ],
+    quickwins: [
+      'Fase de diagnóstico de datos y limpieza previa (4 semanas)',
+      'Definición de patrocinio ejecutivo formal antes del kick-off',
+      'Mapeo de integraciones y plan de migración de datos en semana 2',
+    ],
   };
 
   return {
     nivel: 'ALTO',
     descripcion: 'Hay múltiples factores de riesgo que, sin atención previa, pueden comprometer la migración. FABRIC recomienda iniciar con un Oracle Readiness Assessment antes de comprometer presupuesto de implementación.',
     plazo: '8 – 18 meses con preparación previa',
-    quickwins: ['Oracle Readiness Assessment antes de iniciar (4 semanas)', 'Programa de patrocinio ejecutivo formal', 'Plan de mejora de calidad de datos previo al proyecto'],
+    fases: [
+      {
+        label: '30 días — Readiness Assessment',
+        hitos: [
+          'Oracle Readiness Assessment completo por FABRIC',
+          'Identificación de brechas críticas por área (datos, equipo, patrocinio, compliance)',
+          'Reporte ejecutivo de riesgos con plan de corrección',
+          'Decisión: iniciar corrección o diferir el proyecto',
+        ],
+      },
+      {
+        label: '60 días — Programa de corrección de brechas',
+        hitos: [
+          'Programa formal de patrocinio ejecutivo (CFO + CTO)',
+          'Plan de mejora de calidad de datos (catalogación y limpieza)',
+          'Asignación y liberación formal de equipo interno',
+          'Validación de compliance y mapa de requerimientos regulatorios',
+        ],
+      },
+      {
+        label: '90 días — Validación de readiness',
+        hitos: [
+          'Re-evaluación del readiness score tras corrección de brechas',
+          'Kick-off formal del proyecto solo si se superaron brechas críticas',
+          'Definición de arquitectura técnica y FSO Engine',
+          'Primer go-live parcial (módulo piloto de menor riesgo)',
+        ],
+      },
+      {
+        label: '180 días — Implementación core',
+        hitos: [
+          'Configuración de módulos core con datos migrados y validados',
+          'Go-live principal con acompañamiento FABRIC intensivo',
+          'Acompañamiento del primer ciclo crítico en producción',
+          'Tablero de estabilización y acta formal de transición',
+        ],
+      },
+    ],
+    recursos: [
+      'Oracle Readiness Consultant (antes del proyecto)',
+      '1 Senior Architect + 1 Senior Functional + 1 Data + 1 Integration Specialist',
+      'PMO interno con dedicación exclusiva (no negociable)',
+      'Programa formal de patrocinio ejecutivo (CFO + CTO)',
+      'Change Management y comunicación interna intensiva',
+    ],
+    quickwins: [
+      'Oracle Readiness Assessment antes de iniciar (4 semanas)',
+      'Programa de patrocinio ejecutivo formal',
+      'Plan de mejora de calidad de datos previo al proyecto',
+    ],
   };
 }
 
+const RISK_COLOR = { BAJO: '#7B9E6B', MEDIO: 'var(--accent)', ALTO: '#B85450' } as const;
+
 export default function MigrationRoadmapPage() {
-  const [paso, setPaso] = useState(0);
+  useEffect(() => {
+    const tag = document.createElement('style');
+    tag.id = 'roadmap-print-styles';
+    tag.textContent = PRINT_STYLES;
+    document.head.appendChild(tag);
+    return () => document.getElementById('roadmap-print-styles')?.remove();
+  }, []);
+
+  const [paso, setPaso]         = useState(0);
   const [respuestas, setRespuestas] = useState<Respuestas>({});
-  const [seleccion, setSeleccion] = useState<string | string[]>('');
-  const [fase, setFase] = useState<'wizard' | 'captura' | 'resultado'>('wizard');
-  const [form, setForm] = useState({ nombre: '', cargo: '', empresa: '', email: '' });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [seleccion, setSeleccion]   = useState<string | string[]>('');
+  const [fase, setFase]         = useState<'wizard' | 'captura' | 'resultado'>('wizard');
+  const [form, setForm]         = useState({ nombre: '', cargo: '', empresa: '', email: '' });
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
 
-  const pregunta = PREGUNTAS[paso];
-  const esMulti = pregunta?.multi ?? false;
-  const totalPasos = PREGUNTAS.length;
-
-  const seleccionValida = Array.isArray(seleccion)
-    ? seleccion.length > 0
-    : seleccion !== '';
+  const pregunta       = PREGUNTAS[paso];
+  const esMulti        = pregunta?.multi ?? false;
+  const totalPasos     = PREGUNTAS.length;
+  const seleccionValida = Array.isArray(seleccion) ? seleccion.length > 0 : seleccion !== '';
 
   const toggleMulti = (opcion: string) => {
     setSeleccion(prev => {
@@ -158,12 +354,27 @@ export default function MigrationRoadmapPage() {
     const publicos = ['gmail', 'hotmail', 'yahoo', 'outlook', 'icloud', 'live'];
     if (publicos.includes(dominio ?? '')) { setError('Usa tu correo corporativo.'); return; }
 
+    const finalRespuestas = { ...respuestas };
+    const resultado = calcularRiesgo(finalRespuestas);
+
     setLoading(true);
     try {
-      await api.post('/leads', {
+      await api.post('/leads/migration-roadmap', {
         ...form,
-        tipo: 'migration-roadmap',
-        datos: respuestas,
+        sistema:       finalRespuestas.sistema,
+        modulos:       finalRespuestas.modulos,
+        industria:     finalRespuestas.industria,
+        geografia:     finalRespuestas.geografia,
+        plazo:         finalRespuestas.plazo,
+        compliance:    finalRespuestas.compliance,
+        patrocinio:    finalRespuestas.patrocinio,
+        presupuesto:   finalRespuestas.presupuesto,
+        integraciones: finalRespuestas.integraciones,
+        datos:         finalRespuestas.datos,
+        equipo:        finalRespuestas.equipo,
+        experiencia:   finalRespuestas.experiencia,
+        riskLevel:         resultado.nivel,
+        estimatedTimeline: resultado.plazo,
         tracking: getInteractionTracking('roadmap', 'migration-roadmap'),
       });
       setFase('resultado');
@@ -187,10 +398,10 @@ export default function MigrationRoadmapPage() {
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Herramienta · FABRIC</div>
           <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
-            Migration Roadmap.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>12 preguntas · Ruta personalizada.</em>
+            Migration Roadmap.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>12 preguntas · Ruta 30-60-90-180 días.</em>
           </h1>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: 640 }}>
-            Diagnóstico ejecutivo para estimar nivel de riesgo, plazo realista y quick wins de tu migración a Oracle Fusion Cloud. Resultado inmediato con roadmap de 30-60-90 días personalizado.
+            Diagnóstico ejecutivo para estimar nivel de riesgo, plazo realista y roadmap de hitos para tu migración a Oracle Fusion Cloud.
           </p>
         </div>
       </div>
@@ -198,17 +409,16 @@ export default function MigrationRoadmapPage() {
       {/* Wizard */}
       {fase === 'wizard' && (
         <div style={{ maxWidth: 760, margin: '0 auto', padding: '80px 56px' }}>
-          {/* Progreso */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               Pregunta {paso + 1} de {totalPasos}
             </span>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>
-              {Math.round(((paso) / totalPasos) * 100)}%
+              {Math.round((paso / totalPasos) * 100)}%
             </span>
           </div>
           <div style={{ height: 1, background: 'var(--border)', marginBottom: 56, position: 'relative' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: `${((paso) / totalPasos) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 300ms ease' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, width: `${(paso / totalPasos) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 300ms ease' }} />
           </div>
 
           <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.4, marginBottom: 40 }}>
@@ -288,7 +498,7 @@ export default function MigrationRoadmapPage() {
             Recibe tu roadmap personalizado.
           </h2>
           <p style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75, marginBottom: 40 }}>
-            El roadmap muestra tu nivel de riesgo, plazo estimado y quick wins según tus respuestas. FABRIC puede contactarte para profundizar en tu caso específico.
+            El roadmap muestra nivel de riesgo, plazo estimado, fases 30-60-90-180 días y recursos necesarios según tus respuestas.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: 32 }}>
@@ -320,15 +530,21 @@ export default function MigrationRoadmapPage() {
 
       {/* Resultado */}
       {fase === 'resultado' && resultado && (
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 56px' }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>
-            Tu Migration Roadmap · FABRIC
-          </div>
-          <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: 40 }}>
-            Nivel de riesgo: <em style={{ color: resultado.nivel === 'BAJO' ? '#7B9E6B' : resultado.nivel === 'MEDIO' ? 'var(--accent)' : '#B85450', fontStyle: 'italic' }}>{resultado.nivel}</em>
-          </h2>
+        <div id="roadmap-pdf" style={{ maxWidth: 960, margin: '0 auto', padding: '80px 56px' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, marginBottom: 40 }}>
+          {/* Encabezado de resultado */}
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>
+              Tu Migration Roadmap · FABRIC
+            </div>
+            <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: 0 }}>
+              Nivel de riesgo:{' '}
+              <em style={{ color: RISK_COLOR[resultado.nivel], fontStyle: 'italic' }}>{resultado.nivel}</em>
+            </h2>
+          </div>
+
+          {/* Métricas top */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, marginBottom: 48 }}>
             <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '28px 32px' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>Plazo estimado</div>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 28, color: 'var(--accent)' }}>{resultado.plazo}</div>
@@ -339,13 +555,54 @@ export default function MigrationRoadmapPage() {
             </div>
           </div>
 
-          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '32px', marginBottom: 32 }}>
+          {/* Diagnóstico */}
+          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '32px', marginBottom: 48 }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 12 }}>Diagnóstico</div>
-            <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.75 }}>{resultado.descripcion}</p>
+            <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.75, margin: 0 }}>{resultado.descripcion}</p>
           </div>
 
+          {/* Roadmap 30-60-90-180 días */}
           <div style={{ marginBottom: 48 }}>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--accent)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 20 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24 }}>
+              Roadmap de hitos
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {resultado.fases.map((fase, i) => (
+                <div key={i} style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '24px 28px' }}>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16 }}>
+                    {fase.label}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {fase.hitos.map((hito, j) => (
+                      <div key={j} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--accent)', flexShrink: 0, marginTop: 4 }}>→</span>
+                        <span style={{ fontFamily: 'var(--sans)', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}>{hito}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recursos necesarios */}
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>
+              Recursos necesarios típicos
+            </div>
+            <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {resultado.recursos.map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', flexShrink: 0, marginTop: 4 }}>◇</span>
+                  <span style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{r}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick wins */}
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--accent)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16 }}>
               Primeras acciones recomendadas
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -358,11 +615,22 @@ export default function MigrationRoadmapPage() {
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 40, display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 1.9, marginBottom: 8 }}>
+          {/* Disclaimer + descarga */}
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 40 }}>
+            <p style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 1.9, marginBottom: 24 }}>
               Estimaciones basadas en benchmarks de proyectos Oracle similares. Cada caso requiere evaluación específica con un senior de FABRIC.
             </p>
-            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+
+            {/* Botón PDF */}
+            <button
+              onClick={() => window.print()}
+              style={{ marginBottom: 16, padding: '13px 28px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer' }}
+            >
+              ↓ Descargar PDF
+            </button>
+
+            {/* CTAs — ocultos al imprimir */}
+            <div className="pdf-hide" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link to="/aplicar" style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg-base)', background: 'var(--accent)', padding: '14px 28px', textDecoration: 'none' }}>
                 Solicitar evaluación específica →
               </Link>

@@ -11,6 +11,7 @@ import {
   Eye,
   FileText,
   Gauge,
+  GitBranch,
   LayoutDashboard,
   Link2,
   LogOut,
@@ -57,6 +58,7 @@ const NAV_GROUPS: NavGroup[] = [
       { path: '/admin/diagnosticos-oracle', label: 'Diagnósticos Oracle',                icon: ClipboardList },
       { path: '/admin/rescue-assessment',   label: 'Rescue Assessment',                  icon: Activity },
       { path: '/admin/oci-audit',           label: 'OCI Cost Audit',                     icon: BarChart3 },
+      { path: '/admin/migration-roadmap',   label: 'Migration Roadmap',                  icon: GitBranch },
     ],
   },
   {
