@@ -361,7 +361,7 @@ export default function S01Hero() {
       <BackgroundParticles />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(201,169,110,0.12),transparent_28%),radial-gradient(circle_at_78%_55%,rgba(201,169,110,0.09),transparent_36%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-60" />
+      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#050203] to-transparent" />
 
       <div className="relative z-10 mx-auto grid w-full max-w-[1460px] grid-cols-1 items-center gap-12 lg:grid-cols-[1.16fr_0.84fr] lg:gap-10">

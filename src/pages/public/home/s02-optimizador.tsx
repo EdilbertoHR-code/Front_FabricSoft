@@ -136,7 +136,7 @@ function MetricIcon({ type }: { type: MetricItem["icon"] }) {
 function SmallMetricCard({ metric, active, index }: { metric: MetricItem; active: boolean; index: number }) {
   return (
     <article
-      className={`group relative min-h-[106px] overflow-hidden border border-border bg-bg-panel/72 p-3.5 transition duration-700 hover:-translate-y-1 hover:border-accent/55 hover:bg-bg-elevated/75 md:min-h-[116px] md:p-4 ${
+      className={`group relative min-h-[106px] overflow-hidden border border-border bg-bg-panel p-3.5 transition duration-700 hover:-translate-y-1 hover:border-accent/55 hover:bg-bg-elevated md:min-h-[116px] md:p-4 ${
         active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
       style={{ transitionDelay: `${120 + index * 90}ms` }}
@@ -191,19 +191,17 @@ export default function S02Optimizador() {
         }
       `}</style>
 
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-12" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(201,169,110,0.06),transparent_28%),radial-gradient(circle_at_82%_55%,rgba(201,169,110,0.045),transparent_30%)]" />
+
 
       <div className="relative z-10 mx-auto max-w-[980px] px-6 md:px-12">
         <div
-          className={`fabric-panel relative overflow-hidden bg-bg-panel/64 p-3.5 backdrop-blur-sm transition duration-700 md:p-4 ${
+          className={`relative overflow-hidden border border-border bg-fabric-base p-3.5 transition duration-700 md:p-4 ${
             isInView ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
           }`}
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-          <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-accent/10 blur-3xl" style={{ animation: "p2-soft-pulse 4.8s ease-in-out infinite" }} />
 
-          <article className="relative mb-2.5 overflow-hidden border border-border bg-bg-base/72 px-4 py-3.5 md:px-5 md:py-4">
+          <article className="relative mb-2.5 overflow-hidden border border-border bg-fabric-base px-4 py-3.5 md:px-5 md:py-4">
             <div className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-accent/75" />
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
