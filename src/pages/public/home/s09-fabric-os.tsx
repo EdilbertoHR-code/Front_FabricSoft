@@ -33,14 +33,86 @@ const layers: {
   },
 ] as const;
 
-const fsos = [
-  ["FSO-01", "Available", "available", "Rapid GL Close", "Cierre contable acelerado · 10-15 días → 3-5 días", "Validado · APE Plazas", "v1.2"],
-  ["FSO-02", "Available", "available", "Multi-Entity Retail Ops", "Operación multi-plaza · Consolidación multi-entidad", "Validado · APE Plazas", "v1.0"],
-  ["FSO-03", "Building", "building", "Fintech Controls Pack", "Compliance regulatorio · CNBV / CONDUSEF", "Aplicado · Aplazo", "v0.9 beta"],
-  ["FSO-04", "Building", "building", "Legacy Migration Engine", "Migración SAP / EBS / JDE / PS · Zero-downtime", "En desarrollo", "v0.7 beta"],
-  ["FSO-05", "Concept", "concept", "Logistics Multi-CD Ops", "Operación multi-CD multi-país · Trazabilidad fiscal", "Diseño · Q3 2026", "spec"],
-  ["FSO-06", "Concept", "concept", "DR & Business Continuity", "Disaster Recovery · RPO/RTO contractuales", "Diseño · Q4 2026", "spec"]
-] as const;
+interface FSOItem {
+  id: string;
+  status: string;
+  statusClass: string;
+  name: string;
+  desc: string;
+  validation: string;
+  version: string;
+  tiempo: string;
+  costo: string;
+}
+
+const fsos: FSOItem[] = [
+  {
+    id: "FSO-01",
+    status: "Available",
+    statusClass: "available",
+    name: "Rapid GL Close",
+    desc: "Cierre contable acelerado · 10-15 días → 3-5 días",
+    validation: "Validado · APE Plazas",
+    version: "v1.2",
+    tiempo: "4 semanas",
+    costo: "USD 35K"
+  },
+  {
+    id: "FSO-02",
+    status: "Available",
+    statusClass: "available",
+    name: "Multi-Entity Retail Ops",
+    desc: "Operación multi-plaza · Consolidación multi-entidad",
+    validation: "Validado · APE Plazas",
+    version: "v1.0",
+    tiempo: "6 semanas",
+    costo: "USD 45K"
+  },
+  {
+    id: "FSO-03",
+    status: "Building",
+    statusClass: "building",
+    name: "Fintech Controls Pack",
+    desc: "Compliance regulatorio · CNBV / CONDUSEF",
+    validation: "Aplicado · Aplazo",
+    version: "v0.9 beta",
+    tiempo: "8 semanas",
+    costo: "USD 55K"
+  },
+  {
+    id: "FSO-04",
+    status: "Building",
+    statusClass: "building",
+    name: "Legacy Migration Engine",
+    desc: "Migración SAP / EBS / JDE / PS · Zero-downtime",
+    validation: "En desarrollo",
+    version: "v0.7 beta",
+    tiempo: "12 semanas",
+    costo: "USD 85K"
+  },
+  {
+    id: "FSO-05",
+    status: "Concept",
+    statusClass: "concept",
+    name: "Logistics Multi-CD Ops",
+    desc: "Operación multi-CD multi-país · Trazabilidad fiscal",
+    validation: "Diseño · Q3 2026",
+    version: "spec",
+    tiempo: "10 semanas",
+    costo: "USD 75K"
+  },
+  {
+    id: "FSO-06",
+    status: "Concept",
+    statusClass: "concept",
+    name: "DR & Business Continuity",
+    desc: "Disaster Recovery · RPO/RTO contractuales",
+    validation: "Diseño · Q4 2026",
+    version: "spec",
+    tiempo: "6 semanas",
+    costo: "USD 40K"
+  }
+];
 
 export default function S09FabricOS() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();
@@ -118,17 +190,29 @@ export default function S09FabricOS() {
           </div>
 
           <div className="fso-grid">
-            {fsos.map(([id, status, statusClass, name, desc, left, right]) => (
-              <div className="fso-card" key={id}>
+            {fsos.map((fso) => (
+              <div className="fso-card" key={fso.id}>
                 <div className="fso-card-head">
-                  <span className="fso-num">{id}</span>
-                  <span className={`status-badge ${statusClass}`}>{status}</span>
+                  <span className="fso-num">{fso.id}</span>
+                  <span className={`status-badge ${fso.statusClass}`}>{fso.status}</span>
                 </div>
-                <div className="fso-name">{name}</div>
-                <div className="fso-desc">{desc}</div>
+                <div className="fso-name">{fso.name}</div>
+                <div className="fso-desc">{fso.desc}</div>
+                
+                {/* Plazo e Inversión Estimados */}
+                <div style={{ display: 'flex', gap: 12, marginTop: 12, marginBottom: 12, fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--text-tertiary)', borderTop: '1px dashed var(--border)', borderBottom: '1px dashed var(--border)', padding: '6px 0' }}>
+                  <div>
+                    <span style={{ color: 'var(--text-secondary)' }}>Plazo:</span> {fso.tiempo}
+                  </div>
+                  <div style={{ width: 1, background: 'var(--border)' }} />
+                  <div>
+                    <span style={{ color: 'var(--text-secondary)' }}>Costo:</span> {fso.costo}
+                  </div>
+                </div>
+
                 <div className="fso-card-foot">
-                  <span>{left}</span>
-                  <span>{right}</span>
+                  <span>{fso.validation}</span>
+                  <span>{fso.version}</span>
                 </div>
               </div>
             ))}
