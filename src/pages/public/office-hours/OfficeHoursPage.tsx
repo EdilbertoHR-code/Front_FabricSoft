@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
+import OfficeHoursCalendar from '../../../components/OfficeHoursCalendar';
 import { api } from '../../../config/api';
 import { getInteractionTracking } from '../../../utils/tracking';
 
@@ -140,24 +141,12 @@ export default function OfficeHoursPage() {
             </div>
           </div>
 
-          {/* Disponibilidad en el calendario */}
+          {/* Calendario de disponibilidad */}
           <div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24 }}>
               Disponibilidad actual
             </div>
-            <div style={{ padding: '28px 32px', border: '1px solid var(--border)', background: 'var(--bg-panel)', display: 'flex', alignItems: 'center', gap: 32 }}>
-              <div>
-                <div style={{ fontFamily: 'var(--sans)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>
-                  El calendario con fechas disponibles se encuentra en la página principal. Puedes revisar los slots abiertos del mes actual antes de solicitar tu sesión.
-                </div>
-                <a
-                  href="/#s11"
-                  style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', borderBottom: '1px solid rgba(201,169,110,0.3)', paddingBottom: 2 }}
-                >
-                  Ver calendario de disponibilidad →
-                </a>
-              </div>
-            </div>
+            <OfficeHoursCalendar />
           </div>
         </div>
 
