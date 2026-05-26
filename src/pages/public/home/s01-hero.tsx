@@ -235,7 +235,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
               ${label.className}
               ${selected
                 ? "border-[#C9A96E] bg-[#C9A96E]/10 shadow-[0_0_34px_rgba(201,169,110,0.12)]"
-                : "border-[#353535] bg-[#0A0A0A]/90 hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[#111111]/95"
+                : "border-[#353535] bg-[#080706]/90 hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[#111111]/95"
               }
             `}
           >
@@ -316,7 +316,7 @@ export default function S01Hero() {
     <section
       id="inicio"
       data-no-translate
-      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050505] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
+      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050203] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
     >
       <style>{`
         @keyframes fabricStar {
@@ -409,7 +409,7 @@ export default function S01Hero() {
           </p>
 
           <div
-            className="mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border border-[#2A2A2A] bg-[#0A0A0A]/70"
+            className="mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border border-[#2A2A2A] bg-[#080706]/70"
             style={{
               animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .56s both",
             }}

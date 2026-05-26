@@ -270,12 +270,12 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         }
       `}</style>
 
-      <div className="relative flex flex-col w-full max-w-[700px] min-h-[550px] max-h-[90vh] overflow-hidden bg-[#0A0A0A] border border-[#2A2A2A] shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-xl">
+      <div className="relative flex flex-col w-full max-w-[700px] min-h-[550px] max-h-[90vh] overflow-hidden bg-[#080706] border border-[#2A2A2A] shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-xl">
         
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[#C9A96E] opacity-[0.03] blur-[100px]" />
 
         {/* Header del Modal */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]/60 bg-[#050505]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]/60 bg-[#050203]">
           <div className="flex items-center gap-3">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C9A96E] opacity-75"></span>
@@ -453,28 +453,28 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre directivo</span>
-                    <input required type="text" value={contact.name} onChange={(e) => setContact(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.name} onChange={(e) => setContact(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Cargo (Ej. CFO / CIO)</span>
-                    <input required type="text" value={contact.role} onChange={(e) => setContact(prev => ({ ...prev, role: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.role} onChange={(e) => setContact(prev => ({ ...prev, role: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Correo corporativo oficial</span>
-                    <input required type="email" value={contact.email} onChange={(e) => setContact(prev => ({ ...prev, email: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="email" value={contact.email} onChange={(e) => setContact(prev => ({ ...prev, email: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre de la Empresa</span>
-                    <input required type="text" value={contact.company} onChange={(e) => setContact(prev => ({ ...prev, company: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" value={contact.company} onChange={(e) => setContact(prev => ({ ...prev, company: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                 </div>
 
                 <label className="block">
                   <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Teléfono (opcional)</span>
-                  <input type="tel" value={contact.phone} onChange={(e) => setContact(prev => ({ ...prev, phone: e.target.value }))} className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  <input type="tel" value={contact.phone} onChange={(e) => setContact(prev => ({ ...prev, phone: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                 </label>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_140px] sm:items-end bg-[#111]/30 p-4 border border-[#2A2A2A] rounded-sm">
@@ -482,7 +482,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                     <span className="block font-mono text-[9px] uppercase tracking-[0.15em] text-[#C9A96E]">Protocolo Anti-Bot</span>
                     <p className="mt-1 text-sm text-[#F5F5F5]/65">Autenticación requerida: <span className="font-mono font-bold text-[#F5F5F5]">{captcha.a} + {captcha.b}</span></p>
                   </div>
-                  <input required type="number" inputMode="numeric" value={captchaAnswer} onChange={(e) => setCaptchaAnswer(e.target.value)} placeholder="Suma" className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-sm px-4 py-3 text-center text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] transition-all" />
+                  <input required type="number" inputMode="numeric" value={captchaAnswer} onChange={(e) => setCaptchaAnswer(e.target.value)} placeholder="Suma" className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3 text-center text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] transition-all" />
                 </div>
 
                 <label className="flex items-start gap-4 p-2 cursor-pointer group">
@@ -556,7 +556,7 @@ export default function Parte5Home() {
   ];
 
   return (
-    <section id="rescue-diagnostic" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
+    <section id="rescue-diagnostic" className="relative w-full overflow-hidden bg-[#050203] py-24 text-[#F5F5F5] md:py-32">
       
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="pointer-events-none absolute right-0 top-1/2 -z-10 h-[600px] w-[600px] -translate-y-1/2 translate-x-1/4 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
@@ -610,7 +610,7 @@ export default function Parte5Home() {
 
           {/* ================= RIGHT: LIVE PREVIEW ================= */}
           <div ref={previewRef} className={`relative flex-col justify-center lg:flex transition-all duration-1000 delay-300 ${previewInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
-            <div className="relative border border-[#2A2A2A] bg-[#0A0A0A] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.8)] md:p-8 rounded-xl hover:border-[#C9A96E]/30 transition-colors duration-500">
+            <div className="relative border border-[#2A2A2A] bg-[#080706] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.8)] md:p-8 rounded-xl hover:border-[#C9A96E]/30 transition-colors duration-500">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent" />
 
               <div className="mb-6 flex items-center justify-between border-b border-[#2A2A2A]/60 pb-4">

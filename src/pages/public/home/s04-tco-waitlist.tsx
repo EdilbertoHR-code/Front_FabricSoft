@@ -219,7 +219,7 @@ function SelectInput<T extends string>({
       <FieldLabel>{label}</FieldLabel>
       <select value={value} onChange={(event) => onChange(event.target.value as T)} className={`${inputClass} cursor-pointer appearance-none`}>
         {options.map((option) => (
-          <option key={option} value={option} className="bg-[#0A0A0A]">
+          <option key={option} value={option} className="bg-[#080706]">
             {option}
           </option>
         ))}
@@ -268,7 +268,7 @@ function ReportPreview({ form }: { form: CloudForm }) {
   ];
 
   return (
-    <div className="relative border border-[#2A2A2A] bg-[#0A0A0A] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] transition-colors duration-500 hover:border-[#C9A96E]/40 md:p-8 rounded-sm">
+    <div className="relative border border-[#2A2A2A] bg-[#080706] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] transition-colors duration-500 hover:border-[#C9A96E]/40 md:p-8 rounded-sm">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/50 to-transparent opacity-50" />
 
       <div className="mb-6 flex items-center justify-between border-b border-[#2A2A2A]/60 pb-4">
@@ -296,7 +296,7 @@ function ReportPreview({ form }: { form: CloudForm }) {
             <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]/80">Ahorro anual estimado</p>
             <p className="mt-2 font-serif text-3xl tracking-tight text-[#C9A96E]">{fmt(estimate.annualSavings)}</p>
           </div>
-          <div className="border border-[#2A2A2A]/60 bg-[#0A0A0A] p-5 text-center rounded-sm">
+          <div className="border border-[#2A2A2A]/60 bg-[#080706] p-5 text-center rounded-sm">
             <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#F5F5F5]/45">Breakeven</p>
             <p className="mt-2 font-serif text-3xl tracking-tight text-[#F5F5F5]">{estimate.breakeven} meses</p>
           </div>
@@ -431,7 +431,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
           to { opacity: 1; transform: translateX(0); }
         }
       `}</style>
-      <div className="relative w-full max-w-[980px] overflow-hidden border border-[#2A2A2A] bg-[#0D0D0D] shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-[modalRise_220ms_ease-out] rounded-sm">
+      <div className="relative w-full max-w-[980px] overflow-hidden border border-[#2A2A2A] bg-[#080706] shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-[modalRise_220ms_ease-out] rounded-sm">
         <button
           onClick={onClose}
           className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center border border-[#2A2A2A] bg-[#111] text-[#F5F5F5]/60 transition-all duration-300 hover:border-[#C9A96E]/50 hover:text-[#C9A96E] rounded-sm"
@@ -543,7 +543,7 @@ function CloudComparatorModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 </div>
               </div>
 
-              <aside className="border-t border-[#2A2A2A] bg-[#080808] p-5 lg:border-l lg:border-t-0 sm:p-6">
+              <aside className="border-t border-[#2A2A2A] bg-[#060606] p-5 lg:border-l lg:border-t-0 sm:p-6">
                 <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.15em] text-[#C9A96E]">Vista previa</p>
                 <div className="space-y-4">
                   <div className="flex justify-between gap-4 border-b border-[#2A2A2A]/50 pb-3">
@@ -619,7 +619,7 @@ export default function S04TcoWaitlist() {
   const preview = estimateCloudComparison(DEFAULT_FORM);
 
   return (
-    <section id="cloud-tco" className="relative w-full overflow-hidden bg-[#050505] py-24 text-[#F5F5F5] md:py-32">
+    <section id="cloud-tco" className="relative w-full overflow-hidden bg-[#050203] py-24 text-[#F5F5F5] md:py-32">
       <div className="pointer-events-none absolute left-0 right-0 top-1/2 -z-10 m-auto h-[600px] w-[600px] -translate-y-1/2 bg-[#C9A96E] opacity-[0.03] blur-[150px]" />
 
       <div className="relative z-10 mx-auto max-w-[1280px] px-6 md:px-12">

@@ -99,7 +99,7 @@ export default function S06Doctrina() {
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
   return (
-    <section id="doctrina" className="relative w-full bg-[#050505] py-24 md:py-32 border-t border-[#111]">
+    <section id="doctrina" className="relative w-full bg-[#050203] py-24 md:py-32 border-t border-[#111]">
 
       {/* --- FONDOS Y EFECTOS --- */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-[0.05]" />
@@ -170,14 +170,14 @@ export default function S06Doctrina() {
                   ${isInView ? "opacity-100 translate-x-0 scale-100" : "opacity-30 translate-x-12 scale-[0.96]"}`}
               >
                 {/* Número flotante (Timeline node) */}
-                <div className="hidden sm:flex absolute left-0 top-6 w-[76px] justify-center bg-[#050505] py-2">
+                <div className="hidden sm:flex absolute left-0 top-6 w-[76px] justify-center bg-[#050203] py-2">
                   <span className={`font-mono text-3xl font-light transition-colors duration-500 ${isInView ? 'text-[#C9A96E]' : 'text-[#2A2A2A]'}`}>
                     {clause.id}
                   </span>
                 </div>
 
                 {/* Tarjeta de Cláusula */}
-                <div className={`p-8 md:p-10 border rounded-xl transition-all duration-500 bg-[#0A0A0A]/80 backdrop-blur-sm
+                <div className={`p-8 md:p-10 border rounded-xl transition-all duration-500 bg-[#080706]/80 backdrop-blur-sm
                   ${isInView ? 'border-[#C9A96E]/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'border-[#1A1A1A] shadow-none'}`}
                 >
                   <div className="flex flex-col gap-6">
