@@ -15,6 +15,7 @@ const app = express();
 
 const PORT = process.env.PORT || 4000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const BACKEND_ROUTE_PREFIX = "/_/backend";
 
 
 app.use(
@@ -45,18 +46,34 @@ app.use(
 
 
 app.post('/api/auth/webhook', express.raw({ type: 'application/json' }), authController.webhookRegistro);
+app.post(`${BACKEND_ROUTE_PREFIX}/api/auth/webhook`, express.raw({ type: 'application/json' }), authController.webhookRegistro);
 
 
 app.use(express.json()); 
 
 app.use('/api', appRoutes);
+app.use(`${BACKEND_ROUTE_PREFIX}/api`, appRoutes);
 
 
-app.get("/health", (req, res) => {
+const healthHandler = (req, res) => {
   res.json({
     ok: true,
     status: "healthy",
     database: "MongoDB Atlas",
+  });
+};
+
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
+app.get(`${BACKEND_ROUTE_PREFIX}/health`, healthHandler);
+app.get(`${BACKEND_ROUTE_PREFIX}/api/health`, healthHandler);
+
+app.get([BACKEND_ROUTE_PREFIX, `${BACKEND_ROUTE_PREFIX}/`], (req, res) => {
+  res.json({
+    ok: true,
+    message: "Backend FABRIC funcionando.",
+    health: `${BACKEND_ROUTE_PREFIX}/health`,
+    api: `${BACKEND_ROUTE_PREFIX}/api`,
   });
 });
 
