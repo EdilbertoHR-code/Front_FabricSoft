@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const SITE_URL = 'https://fabricsoft.com.mx';
+const SITE_URL = 'https://equipo-a-v2.vercel.app';
 const SITE_NAME = 'FABRIC';
 const DEFAULT_IMAGE = `${SITE_URL}/julio_alvarez.png`;
 
@@ -33,6 +33,12 @@ const seoByPath: Record<string, SeoConfig> = {
     description:
       'Metodologia, criterios y metricas publicas de FABRIC para proyectos Oracle criticos, con datos verificables bajo NDA.',
     path: '/transparencia',
+  },
+  '/rechazados': {
+    title: 'Proyectos rechazados | Transparencia FABRIC',
+    description:
+      'Consulta los criterios por los que FABRIC rechaza proyectos Oracle cuando no existe ajuste operativo, financiero o tecnico suficiente.',
+    path: '/rechazados',
   },
   '/aplicar': {
     title: 'Aplicar a FABRIC | Diagnostico Oracle ejecutivo',
@@ -178,6 +184,15 @@ function resolveSeo(pathname: string): SeoConfig {
     };
   }
 
+  if (pathname.startsWith('/verificar-acceso')) {
+    return {
+      title: 'Verificacion de acceso | FABRIC',
+      description: 'Verificacion privada de acceso a FABRIC.',
+      path: pathname,
+      noIndex: true,
+    };
+  }
+
   return seoByPath[normalizedPath] ?? defaultSeo;
 }
 
@@ -243,6 +258,10 @@ export default function SeoManager() {
     upsertMeta('meta[property="og:site_name"]', {
       property: 'og:site_name',
       content: SITE_NAME,
+    });
+    upsertMeta('meta[property="og:locale"]', {
+      property: 'og:locale',
+      content: 'es_MX',
     });
     upsertMeta('meta[property="og:title"]', {
       property: 'og:title',

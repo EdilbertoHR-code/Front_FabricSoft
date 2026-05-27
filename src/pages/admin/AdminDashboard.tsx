@@ -99,7 +99,7 @@ function AdminHeader({
   const hasActiveFilters = period !== '7d' || industry !== 'Todas' || status !== 'Todos';
 
   return (
-    <header className="border-b border-border bg-bg-base px-4 py-5 sm:px-6 lg:px-8">
+    <header className="fabric-admin-hero">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -107,15 +107,15 @@ function AdminHeader({
               <Sparkles size={12} />
               FABRIC · Admin
             </div>
-            <h1 className="font-serif text-3xl leading-tight text-text-primary sm:text-4xl">
+            <h1 className="fabric-admin-title">
               Dashboard operativo
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            <p className="fabric-admin-subtitle">
               Pipeline, capacidad, revenue y admisión en una vista filtrable.
             </p>
           </div>
 
-          <div className="border border-border bg-bg-panel px-4 py-3 text-left lg:text-right">
+          <div className="fabric-admin-pill flex-col items-start gap-1 lg:items-end">
             <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
               Sincronizado
             </div>
@@ -123,7 +123,7 @@ function AdminHeader({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-md border border-border bg-bg-panel">
+        <div className="admin-main-panel overflow-hidden rounded-md">
           <div className="grid gap-3 px-4 py-3 lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="flex min-w-0 items-start gap-3 sm:items-center">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-border bg-bg-elevated text-accent">
@@ -260,7 +260,7 @@ function FilterPill({ label }: { label: string }) {
 
 function Panel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <article className={`rounded-md border border-border bg-bg-panel shadow-[0_18px_44px_rgba(0,0,0,0.16)] ${className}`}>
+    <article className={`admin-main-panel rounded-md border border-border bg-bg-panel shadow-[0_18px_44px_rgba(0,0,0,0.16)] ${className}`}>
       {children}
     </article>
   );
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
   const maxSource = Math.max(...sourceData.map((item) => item.value), 1);
 
   return (
-    <>
+    <div className="fabric-admin-page">
       <AdminHeader
         period={period}
         setPeriod={setPeriod}
@@ -348,7 +348,7 @@ export default function AdminDashboard() {
         setFiltersOpen={setFiltersOpen}
       />
 
-      <div className="space-y-5 px-4 py-5 sm:px-6 lg:px-8">
+      <div className="fabric-admin-content space-y-5">
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {kpis.map(({ label, scope, value, delta, icon: Icon, progress }) => (
             <Panel key={label} className="p-4 transition hover:border-border-strong hover:bg-bg-elevated">
@@ -620,7 +620,7 @@ export default function AdminDashboard() {
           </div>
         </Panel>
       </div>
-    </>
+    </div>
   );
 }
 

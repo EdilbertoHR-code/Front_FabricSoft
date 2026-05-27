@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /acceso
 Disallow: /crear-cuenta
 
-Sitemap: https://fabricsoft.com.mx/sitemap.xml
+Sitemap: https://equipo-a-v2.vercel.app/sitemap.xml
