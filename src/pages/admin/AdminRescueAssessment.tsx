@@ -202,37 +202,49 @@ export default function AdminRescueAssessment() {
       </div>
 
       <div className="fabric-admin-content">
-        <div className="fabric-admin-panel" style={{ marginBottom: 28 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.4fr) minmax(280px, .8fr)', gap: 28, alignItems: 'stretch' }}>
-            <div>
+        <div className="fabric-admin-panel ara-info-panel" style={{ marginBottom: 28 }}>
+          <div className="ara-info-grid">
+            <div className="ara-info-desc">
               <div className="fabric-admin-eyebrow">METODOLOGÍA</div>
-              <div style={{ ...S, color: '#C9A96E', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: 10 }}>
+              <div className="ara-info-subtitle">
                 12 preguntas · 7 dimensiones operativas · score 0-36
               </div>
-              <h2 style={{ margin: '10px 0 12px', color: '#F5F5F5', fontFamily: 'var(--serif)', fontSize: 34, fontWeight: 400 }}>
+              <h2 className="ara-info-title">
                 Diagnóstico en 12 preguntas.
               </h2>
-              <p style={{ color: '#9A9A9A', lineHeight: 1.7, maxWidth: 760 }}>
+              <p className="ara-info-text">
                 El assessment evalúa cierre contable, reportes manuales, adopción de usuarios,
                 incidencias críticas, relación con la consultora anterior, tiempo desde go-live
                 y patrocinio ejecutivo.
               </p>
             </div>
-            <div style={{ border: '1px solid #1E1E1E', padding: 22, background: 'rgba(255,255,255,0.018)' }}>
-              <div style={{ ...S, color: '#C9A96E', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>
+            
+            <div className="ara-severity-box">
+              <div className="ara-severity-title">
                 Escala de severidad
               </div>
-              {[
-                ['0-8', 'BAJO'],
-                ['9-16', 'MODERADO'],
-                ['17-24', 'ALTO'],
-                ['25-36', 'CRÍTICO'],
-              ].map(([range, label]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #171717', padding: '10px 0', ...S, fontSize: 10, color: '#8A8A8A' }}>
-                  <span>{range} puntos</span>
-                  <span style={{ color: SEVERITY_COLOR[label] }}>{label}</span>
-                </div>
-              ))}
+              <div className="ara-severity-list">
+                {[
+                  ['0-8', 'BAJO'],
+                  ['9-16', 'MODERADO'],
+                  ['17-24', 'ALTO'],
+                  ['25-36', 'CRÍTICO'],
+                ].map(([range, label]) => (
+                  <div key={label} className="ara-severity-row">
+                    <span className="ara-severity-range">{range} puntos</span>
+                    <span
+                      className="ara-severity-badge"
+                      style={{
+                        color: SEVERITY_COLOR[label],
+                        border: `1px solid ${SEVERITY_COLOR[label]}33`,
+                        background: `${SEVERITY_COLOR[label]}0D`
+                      }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -253,7 +265,7 @@ export default function AdminRescueAssessment() {
         </div>
 
         <section className="fabric-admin-panel" style={{ marginBottom: 36 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 22 }}>
+          <div className="ara-section-header">
             <div>
               <div className="fabric-admin-eyebrow">CONFIGURACIÓN DEL FORMULARIO</div>
               <h2 style={{ margin: '8px 0 0', color: '#F5F5F5', fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 400 }}>
@@ -263,7 +275,7 @@ export default function AdminRescueAssessment() {
                 {questions.length} preguntas activas · edita el texto o las opciones y guarda para publicar.
               </p>
             </div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <div className="ara-section-actions">
               <button
                 onClick={restaurarPreguntas}
                 disabled={savingQuestions || questionsLoading}
@@ -293,7 +305,7 @@ export default function AdminRescueAssessment() {
             <div style={{ display: 'grid', gap: 14 }}>
               {questions.map((question, index) => (
                 <article key={question.id} style={{ border: '1px solid #1b1b1b', background: 'rgba(0,0,0,.18)', padding: 18 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '70px minmax(0, 1fr)', gap: 12, alignItems: 'center', marginBottom: 14 }}>
+                  <div className="ara-question-row">
                     <div style={{ ...S, color: '#C9A96E', letterSpacing: '0.18em', fontSize: 10 }}>{String(index + 1).padStart(2, '0')}</div>
                     <textarea
                       value={question.text}
@@ -303,7 +315,7 @@ export default function AdminRescueAssessment() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10 }}>
+                  <div className="ara-options-grid">
                     {question.options.map((option, optionIndex) => (
                       <div key={`${question.id}-${optionIndex}`} style={{ border: '1px solid #171717', padding: 10, background: 'rgba(255,255,255,.015)' }}>
                         <div style={{ ...S, color: '#5A5A5A', fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8 }}>
@@ -352,9 +364,9 @@ export default function AdminRescueAssessment() {
         ) : (
           <div style={{ borderTop: '1px solid #1E1E1E' }}>
             {items.map((item) => (
-              <div key={item._id} style={{ display: 'grid', gridTemplateColumns: '1fr 140px 100px 88px', gap: 16, alignItems: 'center', padding: '20px 0', borderBottom: '1px solid #111' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <div key={item._id} className="ara-result-row">
+                <div className="ara-result-main">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
                     <div style={{ ...S, fontSize: 11, color: '#F5F5F5' }}>
                       {item.empresa || <span style={{ color: '#3A3A3A' }}>Sin empresa</span>}
                     </div>
@@ -380,14 +392,16 @@ export default function AdminRescueAssessment() {
                     {[item.tracking?.sourceSection, item.tracking?.interactionType].filter(Boolean).join(' · ') || (item.emailSent ? 'Resultado enviado' : 'Email pendiente')}
                   </div>
                 </div>
-                <div style={{ ...S, fontSize: 9, color: '#5A5A5A' }}>{fmt(item.createdAt)}</div>
-                <div style={{ ...S, fontSize: 10, color: '#8A8A8A' }}>
-                  <span style={{ color: SEVERITY_COLOR[item.severity] }}>{item.totalScore}</span>
-                  <span style={{ color: '#3A3A3A' }}> / 36</span>
+                <div className="ara-result-meta">
+                  <div style={{ ...S, fontSize: 9, color: '#5A5A5A' }}>{fmt(item.createdAt)}</div>
+                  <div style={{ ...S, fontSize: 10, color: '#8A8A8A' }}>
+                    <span style={{ color: SEVERITY_COLOR[item.severity] }}>{item.totalScore}</span>
+                    <span style={{ color: '#3A3A3A' }}> / 36</span>
+                  </div>
+                  <span style={{ ...S, fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '3px 10px', border: `1px solid ${SEVERITY_COLOR[item.severity]}44`, color: SEVERITY_COLOR[item.severity], background: `${SEVERITY_COLOR[item.severity]}10`, whiteSpace: 'nowrap', alignSelf: 'center' }}>
+                    {item.severity}
+                  </span>
                 </div>
-                <span style={{ ...S, fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', padding: '3px 10px', border: `1px solid ${SEVERITY_COLOR[item.severity]}44`, color: SEVERITY_COLOR[item.severity], background: `${SEVERITY_COLOR[item.severity]}10`, whiteSpace: 'nowrap' }}>
-                  {item.severity}
-                </span>
               </div>
             ))}
           </div>

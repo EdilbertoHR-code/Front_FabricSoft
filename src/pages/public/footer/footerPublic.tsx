@@ -36,7 +36,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Optimizador OCI',          path: '/optimizador-oci' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
-    { label: 'Doctrine Generator *',     path: '/doctrina/generator' },
+    { label: 'Doctrine Generator *',     path: '/#doctrina' },
     { label: 'Migration Roadmap *',      path: '/roadmap' },
     { label: 'Readiness Score *',        path: '/readiness' },
     { label: 'RFP Template *',           path: '/rfp-template' },
@@ -59,10 +59,10 @@ const footerLinks: Record<string, FooterLink[]> = {
 
 function FooterNavItem({ link }: { link: FooterLink }) {
   const className =
-    'text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-center gap-2 group text-left bg-transparent border-0 p-0 m-0 cursor-pointer font-sans leading-normal outline-none';
+    'min-w-0 text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-start gap-2 group text-left bg-transparent border-0 p-0 m-0 cursor-pointer font-sans leading-normal outline-none';
   const content = (
     <>
-      <span className="transform group-hover:translate-x-1 transition-transform duration-300">
+      <span className="min-w-0 break-words transform group-hover:translate-x-1 transition-transform duration-300">
         {link.label}
       </span>
       {link.isFuture && (
@@ -108,18 +108,18 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="fabric-footer bg-[#050203] text-[#F5F5F5]/90 border-t border-[#2A2A2A] pt-24 pb-12 font-sans">
+    <footer className="fabric-footer bg-[#050203] text-[#F5F5F5]/90 border-t border-[#2A2A2A] pt-16 pb-10 font-sans md:pt-24 md:pb-12">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(5,minmax(0,1fr))] gap-12 lg:gap-8 mb-24">
-          <div className="sm:col-span-2 lg:col-span-1 flex flex-col">
-            <h2 className="text-[#F5F5F5] font-serif text-5xl tracking-wide mb-4 transition-colors duration-300 hover:text-[#C9A96E]">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(5,minmax(0,1fr))] lg:gap-8 mb-16 md:mb-24">
+          <div className="min-w-0 sm:col-span-2 lg:col-span-1 flex flex-col">
+            <h2 className="text-[#F5F5F5] font-serif text-4xl tracking-wide mb-4 transition-colors duration-300 hover:text-[#C9A96E] md:text-5xl">
               FABRIC
             </h2>
             <p className="text-[#C9A96E] text-xs font-bold tracking-[0.2em] uppercase mb-10">
               Oracle Critical Engineering
             </p>
 
-            <div className="space-y-3 font-mono text-sm mb-8 text-[#F5F5F5]/80">
+            <div className="space-y-3 font-mono text-sm mb-8 text-[#F5F5F5]/80 break-words">
               <p>Ciudad de México · México</p>
               <a href="mailto:contacto@fabricsoft.com.mx" className="block text-[#C9A96E] hover:text-[#C9A96E]/80 transition-colors duration-300">
                 contacto@fabricsoft.com.mx
@@ -145,14 +145,14 @@ export default function Footer() {
             </div>
 
             <div className="pt-6 border-t border-[#2A2A2A]">
-              <p className="text-xs text-[#F5F5F5]/40 flex items-center gap-2">
+              <p className="text-xs text-[#F5F5F5]/40 flex items-start gap-2">
                 <span className="text-[#C9A96E]/60 animate-pulse">◆</span> Acceso selectivo · cupos limitados
               </p>
             </div>
           </div>
 
           {Object.entries(footerLinks).map(([title, links]) => (
-            <div className="flex flex-col" key={title}>
+            <div className="min-w-0 flex flex-col" key={title}>
               <h3 className="text-[#C9A96E] text-[10px] font-bold tracking-[0.2em] uppercase mb-8">
                 {title}
               </h3>

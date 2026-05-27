@@ -512,26 +512,30 @@ export default function AdminDiagnosticosOracle() {
             </div>
           </div>
 
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 border-t border-zinc-800 p-3">
-            <button
-              type="button"
-              onClick={() => setPage((current) => Math.max(1, current - 1))}
-              disabled={currentPage <= 1}
-              className="h-9 border border-zinc-800 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Anterior
-            </button>
-            <div className="text-center font-mono text-[10px] text-zinc-500">
-              Pagina {currentPage}/{totalPages}
+          <div className="flex items-center justify-between border-t border-zinc-800 p-3 px-4">
+            <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">
+              Pág <span className="text-amber-300 font-bold">{currentPage}</span> / <span className="text-amber-300 font-bold">{totalPages}</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-              disabled={currentPage >= totalPages}
-              className="h-9 border border-zinc-800 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Siguiente
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                disabled={currentPage <= 1}
+                className="group flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 transition-colors hover:text-amber-300 disabled:opacity-20 disabled:hover:text-zinc-400 disabled:cursor-not-allowed"
+              >
+                <span className="transition-transform duration-300 group-hover:-translate-x-0.5">←</span>
+                <span>Anterior</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                disabled={currentPage >= totalPages}
+                className="group flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 transition-colors hover:text-amber-300 disabled:opacity-20 disabled:hover:text-zinc-400 disabled:cursor-not-allowed"
+              >
+                <span>Siguiente</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+              </button>
+            </div>
           </div>
         </aside>
 

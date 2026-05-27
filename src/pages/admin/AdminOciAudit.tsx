@@ -164,7 +164,7 @@ export default function AdminOciAudit() {
       )}
 
       {/* Filtros */}
-      <div style={{ padding: '12px 36px', borderBottom: '1px solid #1a1a1a', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div className="admin-oci-filters">
         {FILTROS.map(f => (
           <button
             key={f}
@@ -186,8 +186,8 @@ export default function AdminOciAudit() {
         ))}
       </div>
 
-      {/* Tabla */}
-      <div className="fabric-admin-content">
+      {/* Tabla e Tarjetas */}
+      <div className="fabric-admin-content admin-oci-content-container">
         {loading ? (
           <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.16em', padding: '40px 0' }}>
             Cargando solicitudes...
@@ -198,69 +198,127 @@ export default function AdminOciAudit() {
           </div>
         ) : (
           <>
-            {/* Cabecera */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 160px 180px 80px 120px 80px',
-              gap: '0 16px',
-              padding: '8px 16px',
-              borderBottom: '1px solid #1a1a1a',
-              fontSize: 8,
-              letterSpacing: '0.18em',
-              color: '#3A3A3A',
-              textTransform: 'uppercase',
-            }}>
-              <span>Empresa · Cargo</span>
-              <span>Email</span>
-              <span>Gasto OCI</span>
-              <span>Score</span>
-              <span>Estado</span>
-              <span>Fecha</span>
-            </div>
-
-            {solicitudes.map(s => (
-              <div
-                key={s._id}
-                onClick={() => abrirDetalle(s)}
-                style={{
+            {/* Tabla (Desktop/Tablet grande) */}
+            <div className="admin-oci-table-wrap">
+              <div className="admin-oci-table-grid">
+                {/* Cabecera */}
+                <div style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 160px 180px 80px 120px 80px',
                   gap: '0 16px',
-                  padding: '14px 16px',
-                  borderBottom: '1px solid #141414',
-                  cursor: 'pointer',
-                  background: selected?._id === s._id ? 'rgba(201,169,110,0.05)' : savedId === s._id ? 'rgba(74,222,128,0.04)' : 'transparent',
-                  transition: 'background 0.2s',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 12, color: '#F5F5F5', lineHeight: 1.3 }}>{s.empresa}</div>
-                  <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.1em', marginTop: 3 }}>{s.cargo}</div>
+                  padding: '8px 16px',
+                  borderBottom: '1px solid #1a1a1a',
+                  fontSize: 8,
+                  letterSpacing: '0.18em',
+                  color: '#3A3A3A',
+                  textTransform: 'uppercase',
+                }}>
+                  <span>Empresa · Cargo</span>
+                  <span>Email</span>
+                  <span>Gasto OCI</span>
+                  <span>Score</span>
+                  <span>Estado</span>
+                  <span>Fecha</span>
                 </div>
-                <div style={{ fontSize: 10, color: '#8A8A8A', alignSelf: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {s.email}
-                </div>
-                <div style={{ fontSize: 10, color: '#8A8A8A', alignSelf: 'center' }}>
-                  {s.gastoOci}
-                </div>
-                <div style={{ alignSelf: 'center' }}>
-                  <ScoreBadge score={s.score} />
-                </div>
-                <div style={{ alignSelf: 'center' }}>
-                  <span style={{
-                    fontSize: 9,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: STATUS_COLOR[s.status],
-                  }}>
-                    {s.status}
-                  </span>
-                </div>
-                <div style={{ fontSize: 9, color: '#3A3A3A', alignSelf: 'center' }}>
-                  {fmt(s.createdAt)}
-                </div>
+
+                {solicitudes.map(s => (
+                  <div
+                    key={s._id}
+                    onClick={() => abrirDetalle(s)}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 160px 180px 80px 120px 80px',
+                      gap: '0 16px',
+                      padding: '14px 16px',
+                      borderBottom: '1px solid #141414',
+                      cursor: 'pointer',
+                      background: selected?._id === s._id ? 'rgba(201,169,110,0.05)' : savedId === s._id ? 'rgba(74,222,128,0.04)' : 'transparent',
+                      transition: 'background 0.2s',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 12, color: '#F5F5F5', lineHeight: 1.3 }}>{s.empresa}</div>
+                      <div style={{ fontSize: 9, color: '#5A5A5A', letterSpacing: '0.1em', marginTop: 3 }}>{s.cargo}</div>
+                    </div>
+                    <div style={{ fontSize: 10, color: '#8A8A8A', alignSelf: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {s.email}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#8A8A8A', alignSelf: 'center' }}>
+                      {s.gastoOci}
+                    </div>
+                    <div style={{ alignSelf: 'center' }}>
+                      <ScoreBadge score={s.score} />
+                    </div>
+                    <div style={{ alignSelf: 'center' }}>
+                      <span style={{
+                        fontSize: 9,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        color: STATUS_COLOR[s.status],
+                      }}>
+                        {s.status}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 9, color: '#3A3A3A', alignSelf: 'center' }}>
+                      {fmt(s.createdAt)}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Tarjetas (Móvil/Tablet pequeña) */}
+            <div className="admin-oci-cards">
+              {solicitudes.map(s => (
+                <div
+                  key={s._id}
+                  className="admin-oci-card"
+                  onClick={() => abrirDetalle(s)}
+                >
+                  <div className="admin-oci-card-header">
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <span className="admin-oci-card-date">{fmt(s.createdAt)}</span>
+                      <h3 className="admin-oci-card-empresa">{s.empresa}</h3>
+                      <p className="admin-oci-card-nombre">{s.cargo}</p>
+                    </div>
+                    <div className="admin-oci-card-score">
+                      <span className="score-label">SCORE</span>
+                      <ScoreBadge score={s.score} />
+                    </div>
+                  </div>
+
+                  <div className="admin-oci-card-body">
+                    <div className="admin-oci-card-meta">
+                      <span className="meta-label">Email:</span>
+                      <span className="meta-val" style={{ wordBreak: 'break-all' }}>{s.email}</span>
+                    </div>
+                    <div className="admin-oci-card-meta">
+                      <span className="meta-label">Gasto OCI:</span>
+                      <span className="meta-val">{s.gastoOci}</span>
+                    </div>
+                    <div className="admin-oci-card-meta">
+                      <span className="meta-label">NDA Aceptado:</span>
+                      <span className="meta-val">{s.ndaAceptado ? 'Sí' : 'No'}</span>
+                    </div>
+                  </div>
+
+                  <div className="admin-lead-card-footer" style={{ borderTop: '1px solid #111', paddingTop: 10, marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{
+                      fontSize: 8,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: STATUS_COLOR[s.status],
+                      border: `1px solid ${STATUS_COLOR[s.status]}44`,
+                      padding: '4px 10px',
+                      background: `${STATUS_COLOR[s.status]}10`,
+                    }}>
+                      {s.status}
+                    </span>
+                    <span style={{ fontSize: 9, color: '#C9A96E', fontFamily: 'var(--mono, "JetBrains Mono", monospace)' }}>Detalle →</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </>
         )}
       </div>

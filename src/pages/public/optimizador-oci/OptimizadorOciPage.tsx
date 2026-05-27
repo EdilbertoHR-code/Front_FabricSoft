@@ -252,14 +252,15 @@ export default function OptimizadorOciPage() {
                     </select>
                   </div>
 
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+                  <label className="oci-audit-consent" style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
                     <input
+                      className="oci-audit-checkbox"
                       type="checkbox"
                       checked={form.ndaAceptado}
                       onChange={e => setForm(p => ({ ...p, ndaAceptado: e.target.checked }))}
-                      style={{ marginTop: 2, accentColor: 'var(--accent)', flexShrink: 0 }}
+                      style={{ marginTop: 2, flexShrink: 0 }}
                     />
-                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em', lineHeight: 1.7 }}>
+                    <span className="oci-audit-consent-text" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em', lineHeight: 1.7 }}>
                       Acepto que el diagnóstico se realiza bajo NDA mutuo desde el primer contacto.
                     </span>
                   </label>
@@ -269,6 +270,7 @@ export default function OptimizadorOciPage() {
                   )}
 
                   <button
+                    className="oci-audit-submit"
                     onClick={enviar}
                     disabled={loading}
                     style={{ marginTop: 4, padding: '13px 18px', background: loading ? 'rgba(201,169,110,0.5)' : 'var(--accent)', color: 'var(--bg-base)', border: 'none', fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: loading ? 'wait' : 'pointer' }}

@@ -426,12 +426,12 @@ export default function AplicarPage() {
         <BackButton />
       </div>
       {/* Header de la página */}
-      <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 48, marginBottom: 64, textAlign: 'center' }}>
+      <div className="apply-page-header" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 48, marginBottom: 64, textAlign: 'center' }}>
         <div className="label" style={{ marginBottom: 20 }}>Wait List · FABRIC</div>
-        <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, lineHeight: 1.05, color: 'var(--text-primary)', marginBottom: 20 }}>
+        <h1 className="apply-page-title" style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, lineHeight: 1.05, color: 'var(--text-primary)', marginBottom: 20 }}>
           Aplicar a FABRIC
         </h1>
-        <p style={{ fontFamily: 'var(--sans)', fontSize: 16, color: 'var(--text-secondary)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
+        <p className="apply-page-copy" style={{ fontFamily: 'var(--sans)', fontSize: 16, color: 'var(--text-secondary)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
           Operamos con un máximo de 12 proyectos simultáneos. Si tu organización califica, conversamos.
         </p>
       </div>

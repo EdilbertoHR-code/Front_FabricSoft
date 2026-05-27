@@ -223,6 +223,24 @@ export default function InteractionManager() {
         .im-day-btn.active { color: var(--accent) !important; border-color: var(--accent) !important; }
         .im-ref-row:hover { border-color: var(--accent) !important; background: rgba(201,169,110,0.04) !important; }
         .im-paper-tab.active { border-bottom: 2px solid var(--accent) !important; color: var(--accent) !important; }
+        /* Office Hours modal — responsive */
+        .im-oh-body { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+        .im-oh-left { width: 240px; border-right: 1px solid var(--border); padding: 24px 20px; overflow-y: auto; flex-shrink: 0; }
+        .im-oh-left-inner { display: flex; flex-direction: column; gap: 0; }
+        .im-oh-left-avatar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .im-oh-right { flex: 1; padding: 24px 20px; overflow-y: auto; min-width: 0; min-height: 0; }
+        @media (max-width: 600px) {
+          .im-oh-body { flex-direction: column; overflow-y: auto; overflow-x: hidden; min-height: 0; }
+          .im-oh-left { width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--border); padding: 18px; overflow-y: visible; flex-shrink: 0; }
+          .im-oh-left-inner { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+          .im-oh-left-avatar { width: 100%; margin-bottom: 0; }
+          .im-oh-left-criteria { width: 100%; margin-bottom: 0; }
+          .im-oh-right { padding: 18px; flex: none; overflow-y: visible; min-height: 0; }
+          .im-oh-day-row { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+          .im-slot-btn { padding: 14px 8px !important; font-size: 13px !important; }
+          .im-oh-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .im-oh-selects { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* ── PROOF OF WORK (I02) ── */}
@@ -332,32 +350,38 @@ export default function InteractionManager() {
             <button onClick={close} style={{ width: 36, height: 36, border: "1px solid var(--border-strong)", background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--mono)", fontSize: 18, cursor: "pointer" }}>×</button>
           </div>
 
-          <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
+          <div className="im-oh-body">
             {/* Left panel */}
-            <div style={{ width: 240, borderRight: "1px solid var(--border)", padding: "24px 20px", overflowY: "auto", flexShrink: 0 }}>
-              <div style={{ width: 48, height: 48, border: "1px solid var(--accent)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--serif)", fontSize: 24, color: "var(--accent)", fontStyle: "italic", marginBottom: 16 }}>J</div>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 18, marginBottom: 4 }}>Julio Álvarez</div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-secondary)", letterSpacing: "0.1em", marginBottom: 20 }}>Founder · FABRIC</div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 10 }}>30 min · Video call</div>
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 10 }}>Criterios de acceso</div>
-                {["USD 50M+ revenue anual", "CFO / CIO / CTO / Dir. Transformación", "Iniciativa Oracle activa o planeada", "Decisión en menos de 12 meses"].map(c => (
-                  <div key={c} style={{ display: "flex", gap: 8, marginBottom: 8, fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.4 }}>
-                    <span style={{ color: "var(--accent)", flexShrink: 0 }}>·</span>{c}
+            <div className="im-oh-left">
+              <div className="im-oh-left-inner">
+                <div className="im-oh-left-avatar">
+                  <div style={{ width: 48, height: 48, border: "1px solid var(--accent)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--serif)", fontSize: 24, color: "var(--accent)", fontStyle: "italic", flexShrink: 0 }}>J</div>
+                  <div>
+                    <div style={{ fontFamily: "var(--serif)", fontSize: 18, marginBottom: 2 }}>Julio Álvarez</div>
+                    <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-secondary)", letterSpacing: "0.1em" }}>Founder · FABRIC</div>
                   </div>
-                ))}
-              </div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", padding: "8px 12px", border: "1px solid var(--border)", letterSpacing: "0.05em", lineHeight: 1.5 }}>
-                Confidencial · NDA mutuo al confirmar
+                </div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.15em", textTransform: "uppercase", width: "100%", marginTop: 4 }}>30 min · Video call</div>
+                <div className="im-oh-left-criteria" style={{ marginBottom: 4 }}>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--accent)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 10 }}>Criterios de acceso</div>
+                  {["USD 50M+ revenue anual", "CFO / CIO / CTO / Dir. Transformación", "Iniciativa Oracle activa o planeada", "Decisión en menos de 12 meses"].map(c => (
+                    <div key={c} style={{ display: "flex", gap: 8, marginBottom: 8, fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.4 }}>
+                      <span style={{ color: "var(--accent)", flexShrink: 0 }}>·</span>{c}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", padding: "8px 12px", border: "1px solid var(--border)", letterSpacing: "0.05em", lineHeight: 1.5, width: "100%", boxSizing: "border-box" }}>
+                  Confidencial · NDA mutuo al confirmar
+                </div>
               </div>
             </div>
 
             {/* Right: slot picker */}
-            <div className="im-scroll-panel" style={{ flex: 1, padding: "24px 20px", overflowY: "auto", minWidth: 0, minHeight: 0 }}>
+            <div className="im-oh-right">
               {!selectedSlot ? (
                 <>
                   {/* Navegación semanal */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
+                  <div className="im-oh-day-row" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
                     <button
                       onClick={() => setWeekOffset(w => Math.max(0, w - 1))}
                       disabled={weekOffset === 0}
@@ -404,7 +428,7 @@ export default function InteractionManager() {
                       </p>
                     </div>
                   ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+                    <div className="im-oh-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
                       {slots.map((slot) => {
                         const isPastSlot = selectedDay === TODAY_ISO && slot.time <= NOW_HH_MM;
                         const disabled = slot.taken || isPastSlot;
@@ -434,7 +458,7 @@ export default function InteractionManager() {
                               style={{ width: "100%", padding: "12px 14px", background: "var(--bg-base)", border: "1px solid var(--border)", color: "var(--text-primary)", fontFamily: "var(--mono)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
                           </div>
                         ))}
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                        <div className="im-oh-selects" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                           <div>
                             <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>Revenue</div>
                             <select value={formData.revenue} onChange={e => setFormData(p => ({ ...p, revenue: e.target.value }))}

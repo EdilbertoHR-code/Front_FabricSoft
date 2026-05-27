@@ -144,7 +144,7 @@ export default function AdminMigrationRoadmap() {
               Leads calificados con diagnóstico de riesgo y roadmap 30-60-90-180 días
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span className="fabric-admin-pill">{leads.length} evaluaciones</span>
             <button
               onClick={fetchLeads}
@@ -157,9 +157,9 @@ export default function AdminMigrationRoadmap() {
       </div>
 
       {/* Métricas */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, padding: '0 36px 0', borderBottom: '1px solid #1a1a1a' }}>
+      <div className="amr-metrics-strip">
         {(['BAJO', 'MEDIO', 'ALTO'] as RiskLevel[]).map(level => (
-          <div key={level} style={{ padding: '24px 28px', background: '#0A0A0A', borderRight: level !== 'ALTO' ? '1px solid #1a1a1a' : undefined }}>
+          <div key={level} className="amr-metric-cell">
             <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 8 }}>Riesgo {level}</div>
             <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 40, fontStyle: 'italic', color: RISK_COLOR[level], lineHeight: 1 }}>{counts[level]}</div>
           </div>
@@ -167,14 +167,14 @@ export default function AdminMigrationRoadmap() {
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '12px 36px', display: 'flex', gap: 12, borderBottom: '1px solid #1a1a1a' }}>
+      <div className="amr-filters">
         {(['Todos', 'BAJO', 'MEDIO', 'ALTO'] as const).map(f => (
           <button key={f} onClick={() => setRiskFilter(f)} style={{
             fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '6px 14px',
             background: riskFilter === f ? `${f === 'Todos' ? '#C9A96E' : RISK_COLOR[f]}15` : 'transparent',
             border: `1px solid ${riskFilter === f ? (f === 'Todos' ? '#C9A96E' : RISK_COLOR[f]) : '#252525'}`,
             color: riskFilter === f ? (f === 'Todos' ? '#C9A96E' : RISK_COLOR[f]) : '#5A5A5A',
-            cursor: 'pointer', fontFamily: 'inherit',
+            cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
           }}>
             {f === 'Todos' ? `Todos · ${leads.length}` : `${f} · ${counts[f]}`}
           </button>
@@ -182,13 +182,14 @@ export default function AdminMigrationRoadmap() {
       </div>
 
       {/* Tabla */}
-      <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
+      <div className="fabric-admin-content">
         {loading ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
         ) : visible.length === 0 ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Sin evaluaciones con este filtro.</div>
         ) : (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <div className="amr-table-wrap">
+          <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 700 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
                 {['Fecha', 'Empresa', 'Cargo', 'Sistema → Fusion', 'Geografía', 'Riesgo', 'Plazo estimado', 'Estado', ''].map(h => (
@@ -240,6 +241,7 @@ export default function AdminMigrationRoadmap() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
@@ -266,19 +268,19 @@ export default function AdminMigrationRoadmap() {
             </div>
 
             {/* Métricas superiores */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 1fr', marginBottom: 40, border: '1px solid #141414' }}>
+            <div className="amr-detail-metrics">
               <div style={{ padding: '20px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 8 }}>Nivel de riesgo</div>
                 <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 32, fontStyle: 'italic', color: RISK_COLOR[selected.migrationRoadmap?.riskLevel] ?? '#C9A96E', lineHeight: 1 }}>
                   {selected.migrationRoadmap?.riskLevel ?? '—'}
                 </div>
               </div>
-              <div style={{ background: '#141414' }} />
+              <div className="amr-detail-divider" />
               <div style={{ padding: '20px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 8 }}>Plazo estimado</div>
                 <div style={{ fontSize: 13, color: '#C9A96E', lineHeight: 1.4 }}>{selected.migrationRoadmap?.estimatedTimeline ?? '—'}</div>
               </div>
-              <div style={{ background: '#141414' }} />
+              <div className="amr-detail-divider" />
               <div style={{ padding: '20px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase' }}>Estado</div>
                 <span style={{ fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '5px 14px', border: `1px solid ${STATUS_COLOR[selected.status]}55`, color: STATUS_COLOR[selected.status], background: `${STATUS_COLOR[selected.status]}0D` }}>
@@ -288,7 +290,7 @@ export default function AdminMigrationRoadmap() {
             </div>
 
             {/* Cuerpo */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
+            <div className="amr-detail-body">
 
               {/* Izquierda — datos del roadmap */}
               <div>

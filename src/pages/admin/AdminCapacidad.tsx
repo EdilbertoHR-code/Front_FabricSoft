@@ -122,18 +122,17 @@ export default function AdminCapacidad() {
           )}
         </div>
       </div>
-
-      <div className="fabric-admin-content" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <div className="fabric-admin-content admin-cap-main-grid">
 
         {/* Grid de slots */}
-        <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '28px 32px' }}>
-          <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div className="fabric-admin-panel admin-cap-slots-panel">
+          <div className="admin-cap-slots-title">
             Slots · capacidad Q3 2026
           </div>
-          <div style={{ fontSize: 8, color: '#5A5A5A', letterSpacing: '0.14em', marginBottom: 24 }}>
+          <div className="admin-cap-slots-subtitle">
             Click para rotar estado: Disponible → Activo → Reservado. Se sincroniza con S15.
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+          <div className="admin-cap-slots-grid">
             {loading ? (
               <div style={{ fontSize: 9, color: '#5A5A5A' }}>Cargando slots...</div>
             ) : slots.map(s => (
@@ -147,11 +146,11 @@ export default function AdminCapacidad() {
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: 24 }}>
+          <div className="admin-cap-slots-legend">
             {(['activo', 'reservado', 'disponible'] as const).map(st => (
-              <div key={st} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 10, height: 10, background: SLOT_BG[st], border: `1px solid ${SLOT_BORDER[st]}` }} />
-                <span style={{ fontSize: 8, letterSpacing: '0.16em', color: '#5A5A5A', textTransform: 'uppercase' }}>
+              <div key={st}>
+                <div style={{ width: 10, height: 10, background: SLOT_BG[st], border: `1px solid ${SLOT_BORDER[st]}`, flexShrink: 0 }} />
+                <span>
                   {st.charAt(0).toUpperCase() + st.slice(1)} · {slots.filter(x => x.status === st).length}
                 </span>
               </div>
@@ -163,62 +162,114 @@ export default function AdminCapacidad() {
         <div className="admin-cap-grid">
 
           {/* Wait list real */}
-          <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px' }}>
-            <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase', marginBottom: 20 }}>
+          <div className="fabric-admin-panel admin-cap-waitlist-panel">
+            <div className="admin-cap-waitlist-title">
               Wait list · {waitlist.length} leads en espera
             </div>
-            <div className="admin-table-wrap">
-              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                    {['Empresa', 'Contacto', 'Sector', 'Score', 'Desde', 'Accion'].map(h => (
-                      <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 7, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
-                        {h}
-                      </th>
+
+            <div className="admin-cap-waitlist-container">
+              {/* Tabla (Desktop/Tablet grande) */}
+              <div className="admin-cap-table-wrap">
+                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
+                      {['Empresa', 'Contacto', 'Sector', 'Score', 'Desde', 'Accion'].map(h => (
+                        <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 7, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {waitlist.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} style={{ padding: '20px 12px', fontSize: 9, color: '#5A5A5A' }}>
+                          Sin leads en WaitList.
+                        </td>
+                      </tr>
+                    ) : waitlist.map(w => (
+                      <tr key={w._id} style={{ borderBottom: '1px solid #111' }}>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.empresa}</div>
+                        </td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.nombre}</div>
+                          <div style={{ fontSize: 9, color: '#5A5A5A' }}>{w.cargo}</div>
+                        </td>
+                        <td style={{ padding: '10px 12px', fontSize: 9, color: '#8A8A8A' }}>{w.industria}</td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <span style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 16, fontStyle: 'italic', color: '#C9A96E' }}>
+                            {w.score}
+                          </span>
+                        </td>
+                        <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{fmt(w.createdAt)}</td>
+                        <td style={{ padding: '10px 12px' }}>
+                          <button
+                            onClick={() => assignLeadToSlot(w)}
+                            disabled={!slots.some(s => s.status === 'disponible')}
+                            style={{ fontSize: 8, padding: '5px 10px', background: 'transparent', border: '1px solid #252525', color: slots.some(s => s.status === 'disponible') ? '#C9A96E' : '#3A3A3A', cursor: slots.some(s => s.status === 'disponible') ? 'pointer' : 'default', fontFamily: 'inherit', letterSpacing: '0.1em' }}
+                          >
+                            Reservar slot
+                          </button>
+                        </td>
+                      </tr>
                     ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {waitlist.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} style={{ padding: '20px 12px', fontSize: 9, color: '#5A5A5A' }}>
-                        Sin leads en WaitList.
-                      </td>
-                    </tr>
-                  ) : waitlist.map(w => (
-                    <tr key={w._id} style={{ borderBottom: '1px solid #111' }}>
-                      <td style={{ padding: '10px 12px' }}>
-                        <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.empresa}</div>
-                      </td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <div style={{ fontSize: 11, color: '#F5F5F5' }}>{w.nombre}</div>
-                        <div style={{ fontSize: 9, color: '#5A5A5A' }}>{w.cargo}</div>
-                      </td>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#8A8A8A' }}>{w.industria}</td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <span style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 16, fontStyle: 'italic', color: '#C9A96E' }}>
-                          {w.score}
-                        </span>
-                      </td>
-                      <td style={{ padding: '10px 12px', fontSize: 9, color: '#5A5A5A' }}>{fmt(w.createdAt)}</td>
-                      <td style={{ padding: '10px 12px' }}>
-                        <button
-                          onClick={() => assignLeadToSlot(w)}
-                          disabled={!slots.some(s => s.status === 'disponible')}
-                          style={{ fontSize: 8, padding: '5px 10px', background: 'transparent', border: '1px solid #252525', color: slots.some(s => s.status === 'disponible') ? '#C9A96E' : '#3A3A3A', cursor: slots.some(s => s.status === 'disponible') ? 'pointer' : 'default', fontFamily: 'inherit', letterSpacing: '0.1em' }}
-                        >
-                          Reservar slot
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Tarjetas (Móvil/Tablet pequeña) */}
+              <div className="admin-cap-waitlist-cards">
+                {waitlist.length === 0 ? (
+                  <div style={{ padding: '20px 0', fontSize: 9, color: '#5A5A5A', textAlign: 'center' }}>
+                    Sin leads en WaitList.
+                  </div>
+                ) : waitlist.map(w => (
+                  <div key={w._id} className="admin-cap-waitlist-card">
+                    <div className="admin-cap-waitlist-card-header">
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <span className="admin-cap-waitlist-card-date">Desde: {fmt(w.createdAt)}</span>
+                        <h3 className="admin-cap-waitlist-card-empresa">{w.empresa}</h3>
+                        <p className="admin-cap-waitlist-card-nombre">{w.nombre} · {w.cargo}</p>
+                      </div>
+                      <div className="admin-cap-waitlist-card-score">
+                        <span className="score-label">SCORE</span>
+                        <span className="score-val">{w.score}</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-cap-waitlist-card-body">
+                      <div className="admin-cap-waitlist-card-meta">
+                        <span className="meta-label">Sector / Industria:</span>
+                        <span className="meta-val">{w.industria}</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-cap-waitlist-card-footer">
+                      <button
+                        onClick={() => assignLeadToSlot(w)}
+                        disabled={!slots.some(s => s.status === 'disponible')}
+                        className="admin-cap-reserve-btn"
+                        style={{
+                          fontSize: 8, padding: '7px 14px', background: 'transparent',
+                          border: `1px solid ${slots.some(s => s.status === 'disponible') ? '#C9A96E' : '#252525'}`,
+                          color: slots.some(s => s.status === 'disponible') ? '#C9A96E' : '#5A5A5A',
+                          cursor: slots.some(s => s.status === 'disponible') ? 'pointer' : 'default',
+                          fontFamily: 'inherit', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 600,
+                          width: '100%'
+                        }}
+                      >
+                        Reservar slot
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Ciclo de admisión + deadline editable */}
-          <div className="fabric-admin-panel" style={{ background: '#0F0F0F', border: '1px solid #1e1e1e', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="fabric-admin-panel admin-cap-admission-panel">
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#C9A96E', textTransform: 'uppercase' }}>
               Ciclo de admisión 2026
             </div>

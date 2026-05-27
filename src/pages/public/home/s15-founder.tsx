@@ -140,11 +140,11 @@ export default function S15Founder() {
             Construimos <span className="text-[#C9A96E]">la firma de Oracle Critical Engineering</span><br />
             más seria de México y LATAM.
           </blockquote>
-          <cite>— Julio Álvarez</cite>
+          <cite className="notranslate" translate="no">— Julio Álvarez</cite>
         </div>
 
         {/* ── Bloque Founder ── */}
-        <div style={{
+        <div className="founder-profile-grid" style={{
           display: "grid",
           gridTemplateColumns: "340px 1fr",
           gap: 80,
@@ -155,7 +155,7 @@ export default function S15Founder() {
         }}>
 
           {/* Foto */}
-          <div style={{ position: "relative" }}>
+          <div className="founder-profile-photo" style={{ position: "relative" }}>
             {/* Línea decorativa izquierda */}
             <div style={{
               position: "absolute",
@@ -179,7 +179,7 @@ export default function S15Founder() {
               }}
             />
             {/* Caption bajo la foto */}
-            <div style={{
+            <div className="notranslate" translate="no" data-no-translate style={{
               marginTop: 16,
               paddingTop: 16,
               borderTop: "1px solid var(--border)",
@@ -197,7 +197,7 @@ export default function S15Founder() {
           </div>
 
           {/* Bio */}
-          <div style={{ paddingTop: 8 }}>
+          <div className="founder-profile-bio" style={{ paddingTop: 8 }}>
             {/* Eyebrow */}
             <div style={{
               fontFamily: "var(--mono)",
@@ -257,7 +257,7 @@ export default function S15Founder() {
             </div>
 
             {/* Credenciales */}
-            <div style={{
+            <div className="founder-profile-credentials" style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
               borderTop: "1px solid var(--border)",
@@ -267,7 +267,7 @@ export default function S15Founder() {
                 { num: "100%", lbl: "Senior team" },
                 { num: "15+", lbl: "Certificaciones vigentes" },
               ].map((c, i) => (
-                <div key={i} style={{
+                <div key={i} className="founder-profile-credential" style={{
                   padding: "28px 0",
                   borderRight: i < 2 ? "1px solid var(--border)" : "none",
                   paddingRight: i < 2 ? 32 : 0,

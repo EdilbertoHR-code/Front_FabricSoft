@@ -2295,6 +2295,12 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   margin-bottom: 32px;
 }
 
+/* S11 Office Hours — visibilidad desktop vs mobile */
+.s11-heading-desktop { display: block; }
+.s11-heading-mobile  { display: none; }
+.s11-para-desktop    { display: block; }
+.s11-para-mobile     { display: none; }
+
 .criteria-list {
   list-style: none;
   border-top: 1px solid var(--border);
@@ -3410,6 +3416,13 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .office-hours { grid-template-columns: 1fr; }
   .founder-grid { grid-template-columns: 1fr; gap: 48px; }
   .julio-portrait { max-width: 320px; }
+
+  /* Office Hours: ajuste de padding y visibilidad desktop/mobile */
+  .office-hours-text { padding: 36px; }
+  .s11-heading-desktop { display: block; }
+  .s11-heading-mobile { display: none; }
+  .s11-para-desktop { display: block; }
+  .s11-para-mobile { display: none; }
 }
 
 @media (max-width: 968px) {
@@ -3455,9 +3468,150 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .dossier-bar-progress { display: none; }
   .demo-section { padding: 64px 24px; }
   .caso-card { padding: 32px 28px; }
+
+  /* Office Hours mobile: padding reducido + versión corta del texto */
+  .office-hours-text { padding: 28px 20px; width: 100%; box-sizing: border-box; overflow: hidden; }
+  .office-hours-text > p { font-size: 14px; margin-bottom: 20px; }
+  .office-hours { width: 100%; box-sizing: border-box; overflow: hidden; }
+  .s11-heading-desktop { display: none; }
+  .s11-heading-mobile { display: block; }
+  .s11-para-desktop { display: none; }
+  .s11-para-mobile { display: block; }
+  .criteria-list li { font-size: 13px; word-break: break-word; overflow-wrap: break-word; }
+  .office-hours { gap: 24px; }
+
+  /* Calendario responsive mobile */
+  .calendar { padding: 20px 16px; width: 100%; box-sizing: border-box; overflow: hidden; }
+  .calendar-month { font-size: 17px; }
+  .calendar-grid { gap: 3px; }
+  .cal-day { font-size: 11px; }
+  /* Ocultar el texto "Disponible" debajo del número — desborda en móvil */
+  .cal-day.slot::after { display: none; }
+  /* Indicador compacto: solo un punto de color */
+  .cal-day.slot { border-color: var(--accent); background: rgba(201,169,110,0.08); }
+  .calendar-legend { font-size: 9px; gap: 10px; margin-top: 16px; padding-top: 14px; }
+}
+
+@media (max-width: 820px) {
+  .founder-profile-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    margin-bottom: 56px !important;
+  }
+
+  .founder-profile-photo {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .founder-profile-photo > div[style*="position: absolute"] {
+    display: none;
+  }
+
+  .founder-profile-bio {
+    padding-top: 0 !important;
+  }
+
+  .founder-profile-credentials {
+    grid-template-columns: 1fr !important;
+  }
+
+  .founder-profile-credential {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0 !important;
+  }
+
+  .founder-profile-credential:last-child {
+    border-bottom: none;
+  }
 }
 
 @media (max-width: 768px) {
+  .s09-intro {
+    margin-bottom: 48px;
+  }
+
+  .s09-intro p {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .os-stack-wrapper {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .os-stack-layer {
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-areas:
+      "num content"
+      "toggle toggle";
+    overflow: hidden;
+  }
+
+  .os-stack-depth-1,
+  .os-stack-depth-2 {
+    display: none !important;
+  }
+
+  .os-stack-num-col {
+    grid-area: num;
+    padding: 24px 0;
+  }
+
+  .os-stack-content {
+    grid-area: content;
+    min-width: 0;
+    padding: 24px 22px;
+  }
+
+  .os-stack-name {
+    font-size: 26px;
+    overflow-wrap: anywhere;
+  }
+
+  .os-stack-tag,
+  .os-stack-detail {
+    overflow-wrap: anywhere;
+  }
+
+  .os-stack-toggle {
+    grid-area: toggle;
+    justify-content: flex-start;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 14px 22px 16px 64px;
+  }
+
+  .os-stack-toggle span {
+    white-space: normal;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+  }
+
+  .os-stack-layer:hover .os-stack-toggle,
+  .os-stack-layer--open .os-stack-toggle {
+    border-top-color: var(--accent);
+  }
+
+  .fso-section {
+    margin-top: 64px;
+    padding-top: 48px;
+  }
+
+  .fso-legend {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .fso-card-foot {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .os-layer {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -3476,6 +3630,40 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   }
   .rescue-result-card {
     padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .os-stack-layer {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .os-stack-num-col {
+    padding: 22px 0;
+  }
+
+  .os-stack-num {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  .os-stack-content {
+    padding: 22px 18px;
+  }
+
+  .os-stack-name {
+    font-size: 24px;
+    line-height: 1.12;
+  }
+
+  .os-stack-tag {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .os-stack-toggle {
+    padding-left: 52px;
+    padding-right: 18px;
   }
 }
 
@@ -3509,5 +3697,13 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
     justify-self: start;
     margin-top: 4px;
   }
+
+  /* Calendario en pantallas muy pequeñas */
+  .calendar { padding: 16px 12px; }
+  .calendar-month { font-size: 15px; }
+  .calendar-grid { gap: 2px; }
+  .cal-day { font-size: 10px; }
+  .office-hours-prep { padding: 14px 16px; font-size: 10px; }
+  .office-hours-text { padding: 20px 16px; }
 }
 

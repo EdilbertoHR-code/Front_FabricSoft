@@ -169,17 +169,17 @@ export default function AdminReadinessScore() {
       </div>
 
       {/* Métricas */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, padding: '0 36px 0', borderBottom: '1px solid #1a1a1a' }}>
+      <div className="admin-readiness-metrics">
         {(['LISTO', 'PREPARACIÓN PREVIA', 'ESPERAR'] as NivelScore[]).map(nivel => (
-          <div key={nivel} style={{ padding: '24px 28px', background: '#0A0A0A', borderRight: nivel !== 'ESPERAR' ? '1px solid #1a1a1a' : undefined }}>
-            <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 8 }}>{nivelShort(nivel)}</div>
-            <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 40, fontStyle: 'italic', color: NIVEL_COLOR[nivel], lineHeight: 1 }}>{counts[nivel]}</div>
+          <div key={nivel}>
+            <div className="readiness-metric-label">{nivelShort(nivel)}</div>
+            <div className="readiness-metric-value" style={{ color: NIVEL_COLOR[nivel] }}>{counts[nivel]}</div>
           </div>
         ))}
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '12px 36px', display: 'flex', gap: 12, borderBottom: '1px solid #1a1a1a', flexWrap: 'wrap' }}>
+      <div className="admin-readiness-filters">
         {(['Todos', 'LISTO', 'PREPARACIÓN PREVIA', 'ESPERAR'] as const).map(f => (
           <button key={f} onClick={() => setNivelFilter(f)} style={{
             fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '6px 14px',
@@ -195,63 +195,124 @@ export default function AdminReadinessScore() {
         ))}
       </div>
 
-      {/* Tabla */}
-      <div className="fabric-admin-content" style={{ overflowX: 'auto' }}>
+      {/* Tabla e Tarjetas */}
+      <div className="fabric-admin-content admin-readiness-content-container">
         {loading ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Cargando...</div>
         ) : visible.length === 0 ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Sin evaluaciones con este filtro.</div>
         ) : (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
-                {['Fecha', 'Empresa', 'Cargo', 'Score', 'Nivel', 'Estado', ''].map(h => (
-                  <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            {/* Tabla (Desktop/Tablet grande) */}
+            <div className="admin-readiness-table-wrap">
+              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #1a1a1a' }}>
+                    {['Fecha', 'Empresa', 'Cargo', 'Score', 'Nivel', 'Estado', ''].map(h => (
+                      <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', fontWeight: 400 }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map(lead => {
+                    const rs = lead.readinessScore ?? {};
+                    const color = NIVEL_COLOR[rs.nivel] ?? '#5A5A5A';
+                    return (
+                      <tr
+                        key={lead._id}
+                        style={{ borderBottom: '1px solid #111', cursor: 'pointer', transition: 'background .15s' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#0F0F0F')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        onClick={() => { setSelected(lead); setNotasEdit(lead.notas ?? ''); }}
+                      >
+                        <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A', whiteSpace: 'nowrap' }}>{fmt(lead.createdAt)}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 11, color: '#F5F5F5', fontWeight: 500 }}>{lead.empresa}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{lead.cargo}</td>
+                        <td style={{ padding: '13px 16px' }}>
+                          <span style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 20, fontStyle: 'italic', color }}>{rs.scoreTotal ?? '—'}</span>
+                          <span style={{ fontSize: 9, color: '#3A3A3A' }}>/100</span>
+                        </td>
+                        <td style={{ padding: '13px 16px' }}>
+                          {rs.nivel ? (
+                            <span style={{
+                              fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 10px',
+                              border: `1px solid ${color}44`, color, background: `${color}10`,
+                            }}>{nivelShort(rs.nivel)}</span>
+                          ) : '—'}
+                        </td>
+                        <td style={{ padding: '13px 16px' }}>
+                          <span style={{
+                            fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px',
+                            border: `1px solid ${STATUS_COLOR[lead.status]}44`,
+                            color: STATUS_COLOR[lead.status], background: `${STATUS_COLOR[lead.status]}10`,
+                          }}>{lead.status}</span>
+                        </td>
+                        <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A' }}>Abrir →</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Tarjetas (Móvil/Tablet pequeña) */}
+            <div className="admin-readiness-cards">
               {visible.map(lead => {
                 const rs = lead.readinessScore ?? {};
                 const color = NIVEL_COLOR[rs.nivel] ?? '#5A5A5A';
                 return (
-                  <tr
+                  <div
                     key={lead._id}
-                    style={{ borderBottom: '1px solid #111', cursor: 'pointer', transition: 'background .15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#0F0F0F')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    className="admin-readiness-card"
                     onClick={() => { setSelected(lead); setNotasEdit(lead.notas ?? ''); }}
                   >
-                    <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A', whiteSpace: 'nowrap' }}>{fmt(lead.createdAt)}</td>
-                    <td style={{ padding: '13px 16px', fontSize: 11, color: '#F5F5F5', fontWeight: 500 }}>{lead.empresa}</td>
-                    <td style={{ padding: '13px 16px', fontSize: 10, color: '#8A8A8A' }}>{lead.cargo}</td>
-                    <td style={{ padding: '13px 16px' }}>
-                      <span style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 20, fontStyle: 'italic', color }}>{rs.scoreTotal ?? '—'}</span>
-                      <span style={{ fontSize: 9, color: '#3A3A3A' }}>/100</span>
-                    </td>
-                    <td style={{ padding: '13px 16px' }}>
-                      {rs.nivel ? (
-                        <span style={{
-                          fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 10px',
-                          border: `1px solid ${color}44`, color, background: `${color}10`,
-                        }}>{nivelShort(rs.nivel)}</span>
-                      ) : '—'}
-                    </td>
-                    <td style={{ padding: '13px 16px' }}>
+                    <div className="admin-readiness-card-header">
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <span className="admin-readiness-card-date">{fmt(lead.createdAt)}</span>
+                        <h3 className="admin-readiness-card-empresa">{lead.empresa}</h3>
+                        <p className="admin-readiness-card-nombre">{lead.nombre} · {lead.cargo}</p>
+                      </div>
+                      <div className="admin-readiness-card-score">
+                        <span className="score-label">SCORE</span>
+                        <span className="score-val" style={{ color }}>{rs.scoreTotal ?? '—'}</span>
+                        <span style={{ fontSize: 8, color: '#3A3A3A' }}>/100</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-readiness-card-body">
+                      <div className="admin-readiness-card-meta">
+                        <span className="meta-label">Email:</span>
+                        <span className="meta-val" style={{ wordBreak: 'break-all' }}>{lead.email}</span>
+                      </div>
+                      {rs.nivel && (
+                        <div className="admin-readiness-card-meta">
+                          <span className="meta-label">Nivel de preparación:</span>
+                          <span className="meta-val" style={{ color, fontWeight: 500 }}>{rs.nivel}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="admin-lead-card-footer" style={{ borderTop: '1px solid #111', paddingTop: 10, marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{
-                        fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px',
+                        fontSize: 8,
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        color: STATUS_COLOR[lead.status],
                         border: `1px solid ${STATUS_COLOR[lead.status]}44`,
-                        color: STATUS_COLOR[lead.status], background: `${STATUS_COLOR[lead.status]}10`,
-                      }}>{lead.status}</span>
-                    </td>
-                    <td style={{ padding: '13px 16px', fontSize: 10, color: '#5A5A5A' }}>Abrir →</td>
-                  </tr>
+                        padding: '4px 10px',
+                        background: `${STATUS_COLOR[lead.status]}10`,
+                      }}>
+                        {lead.status}
+                      </span>
+                      <span style={{ fontSize: 9, color: '#C9A96E', fontFamily: 'var(--mono, "JetBrains Mono", monospace)' }}>Detalle →</span>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
 
@@ -278,7 +339,7 @@ export default function AdminReadinessScore() {
             </div>
 
             {/* Métricas superiores */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 1fr', marginBottom: 40, border: '1px solid #141414' }}>
+            <div className="admin-readiness-detail-metrics">
               <div style={{ padding: '20px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 8, letterSpacing: '0.2em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 8 }}>Score</div>
                 <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 40, fontStyle: 'italic', color: NIVEL_COLOR[selected.readinessScore?.nivel] ?? '#C9A96E', lineHeight: 1 }}>
@@ -303,7 +364,7 @@ export default function AdminReadinessScore() {
             </div>
 
             {/* Cuerpo */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
+            <div className="admin-readiness-detail-body">
 
               {/* Izquierda — respuestas por factor */}
               <div>

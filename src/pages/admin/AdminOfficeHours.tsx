@@ -116,7 +116,7 @@ export default function AdminOfficeHours() {
             <h1 className="fabric-admin-title">Office Hours</h1>
             <div className="fabric-admin-subtitle">Sesiones 30 min · Prospectos calificados · Seguimiento por email y calendar</div>
           </div>
-          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+          <div className="aoh-hero-stats">
             {[
               { label: 'Pendiente',  val: pendiente,  color: '#C9A96E' },
               { label: 'Confirmado', val: confirmado, color: '#4ade80' },
@@ -132,8 +132,8 @@ export default function AdminOfficeHours() {
       </div>
 
       {/* Banda info */}
-      <div style={{ padding: '10px 36px', borderBottom: '1px solid #1a1a1a', background: 'rgba(201,169,110,0.03)', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ width: 5, height: 5, background: '#C9A96E', borderRadius: '50%', display: 'inline-block' }} />
+      <div className="aoh-info-band">
+        <span style={{ width: 5, height: 5, background: '#C9A96E', borderRadius: '50%', display: 'inline-block', flexShrink: 0 }} />
         <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#C9A96E', textTransform: 'uppercase', fontFamily: 'var(--mono)' }}>
           Sesiones 30 min · Solo prospectos calificados · Correo corporativo obligatorio
         </span>
@@ -161,22 +161,16 @@ export default function AdminOfficeHours() {
                   <div
                     key={b._id}
                     onClick={() => setSelected(b)}
+                    className="aoh-row"
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: '120px 1fr auto',
-                      gap: '0 24px',
-                      alignItems: 'center',
-                      padding: '16px 24px',
                       background: selected?._id === b._id ? 'rgba(201,169,110,0.06)' : '#0D0D0D',
                       border: `1px solid ${savedId === b._id ? '#4ade8030' : selected?._id === b._id ? '#C9A96E40' : '#1a1a1a'}`,
-                      cursor: 'pointer',
-                      transition: 'all 150ms',
                     }}
                     onMouseEnter={e => { if (selected?._id !== b._id) (e.currentTarget as HTMLElement).style.background = '#111'; }}
                     onMouseLeave={e => { if (selected?._id !== b._id) (e.currentTarget as HTMLElement).style.background = '#0D0D0D'; }}
                   >
                     {/* Columna fecha/hora */}
-                    <div style={{ borderRight: '1px solid #1a1a1a', paddingRight: 20 }}>
+                    <div className="aoh-row-time">
                       <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: '#5A5A5A', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>
                         {b.dia ? fmtDate(b.dia) : 'Sin fecha'}
                       </div>
@@ -186,7 +180,7 @@ export default function AdminOfficeHours() {
                     </div>
 
                     {/* Columna nombre/empresa */}
-                    <div>
+                    <div className="aoh-row-info">
                       <div style={{ fontFamily: 'var(--sans)', fontSize: 13, color: '#F5F5F5', marginBottom: 3 }}>{b.nombre}</div>
                       <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: '#5A5A5A', letterSpacing: '0.06em' }}>
                         {b.empresa}{b.cargo ? ` · ${b.cargo}` : ''}
@@ -194,24 +188,24 @@ export default function AdminOfficeHours() {
                     </div>
 
                     {/* Columna estado + badges */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div className="aoh-row-status">
                       {b.status === 'confirmado' && (
-                        <>
+                        <div className="aoh-row-badges">
                           <span style={{ fontFamily: 'var(--mono)', fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${b.emailEnviado ? '#4ade8030' : '#B8545030'}`, color: b.emailEnviado ? '#4ade80' : '#B85450', background: b.emailEnviado ? '#4ade8008' : '#B8545008' }}>
                             EMAIL {b.emailEnviado ? '✓' : '✗'}
                           </span>
                           <span style={{ fontFamily: 'var(--mono)', fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${b.calendarEnviado ? '#4ade8030' : '#B8545030'}`, color: b.calendarEnviado ? '#4ade80' : '#B85450', background: b.calendarEnviado ? '#4ade8008' : '#B8545008' }}>
                             CAL {b.calendarEnviado ? '✓' : '✗'}
                           </span>
-                        </>
+                        </div>
                       )}
-                      <div style={{ textAlign: 'right', minWidth: 72 }}>
+                      <div style={{ textAlign: 'right', minWidth: 64 }}>
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: STATUS_COLOR[b.status], marginBottom: 3 }}>
                           {b.status}
                         </div>
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 7, color: '#3A3A3A', letterSpacing: '0.08em' }}>{fmtCreated(b.createdAt)}</div>
                       </div>
-                      <div style={{ width: 3, height: 32, background: STATUS_COLOR[b.status], opacity: 0.6, flexShrink: 0 }} />
+                      <div style={{ width: 3, alignSelf: 'stretch', background: STATUS_COLOR[b.status], opacity: 0.6, flexShrink: 0, minHeight: 32 }} />
                     </div>
                   </div>
                 ))}
@@ -229,11 +223,10 @@ export default function AdminOfficeHours() {
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ width: 460, background: '#080808', borderLeft: '1px solid #1a1a1a', display: 'flex', flexDirection: 'column', animation: 'slideIn 0.2s ease', overflowY: 'auto' }}
-            className="im-scroll-panel"
+            className="aoh-panel im-scroll-panel"
           >
             {/* Cabecera del panel */}
-            <div style={{ padding: '28px 32px 24px', borderBottom: '1px solid #1a1a1a', position: 'relative' }}>
+            <div className="aoh-panel-header" style={{ borderBottom: '1px solid #1a1a1a', position: 'relative' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: 3, height: '100%', background: STATUS_COLOR[selected.status] }} />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingLeft: 12 }}>
                 <div>
@@ -248,16 +241,16 @@ export default function AdminOfficeHours() {
             </div>
 
             {/* Sesión destacada */}
-            <div style={{ margin: '24px 32px', padding: '20px 24px', background: '#0D0D0D', border: '1px solid #1a1a1a' }}>
+            <div className="aoh-panel-session">
               <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: '#5A5A5A', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 12 }}>Sesión reservada</div>
-              <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
                 <div>
                   <div style={{ fontFamily: 'var(--serif, Georgia)', fontSize: 32, color: selected.slot ? '#F5F5F5' : '#C9A96E', lineHeight: 1 }}>{selected.slot || '—'}</div>
                   <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: '#5A5A5A', letterSpacing: '0.1em', marginTop: 4 }}>
                     {selected.dia ? fmtDate(selected.dia) : 'Sin fecha asignada'}
                   </div>
                 </div>
-                <div style={{ flex: 1, height: 1, background: '#1a1a1a' }} />
+                <div style={{ flex: 1, height: 1, background: '#1a1a1a', minWidth: 20 }} />
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.15em', textTransform: 'uppercase', color: STATUS_COLOR[selected.status], marginBottom: 4 }}>{selected.status}</div>
                   {selected.status === 'confirmado' && (
@@ -271,7 +264,7 @@ export default function AdminOfficeHours() {
             </div>
 
             {/* Datos del prospecto */}
-            <div style={{ padding: '0 32px', display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+            <div className="aoh-panel-data">
               {([
                 ['Email',      selected.email],
                 ['Cargo',      selected.cargo      || '—'],
@@ -280,15 +273,15 @@ export default function AdminOfficeHours() {
                 ['Iniciativa', selected.iniciativaOracle || '—'],
                 ['Origen',     [selected.tracking?.sourceSection, selected.tracking?.interactionType].filter(Boolean).join(' · ') || '—'],
               ] as [string, string][]).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '12px 0', borderBottom: '1px solid #111' }}>
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: '#3A3A3A', letterSpacing: '0.15em', textTransform: 'uppercase', flexShrink: 0, marginRight: 16 }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '12px 0', borderBottom: '1px solid #111', gap: 16 }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: '#3A3A3A', letterSpacing: '0.15em', textTransform: 'uppercase', flexShrink: 0 }}>{k}</span>
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: '#A0A0A0', textAlign: 'right', wordBreak: 'break-all' }}>{v}</span>
                 </div>
               ))}
             </div>
 
             {/* Acciones */}
-            <div style={{ padding: '24px 32px', borderTop: '1px solid #1a1a1a', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="aoh-panel-actions">
               {selected.status !== 'confirmado' && (
                 <button onClick={() => handleStatus(selected._id, 'confirmado')} disabled={saving}
                   style={{ padding: '13px', background: saving ? 'rgba(201,169,110,0.4)' : '#C9A96E', border: 'none', color: '#060606', fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer' }}>
