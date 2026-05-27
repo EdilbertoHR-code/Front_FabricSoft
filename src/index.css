@@ -564,6 +564,220 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Admin: visual system */
+.fabric-admin-shell {
+  background:
+    radial-gradient(circle at 92% 0%, rgba(201, 169, 110, 0.09), transparent 30%),
+    radial-gradient(circle at 8% 18%, rgba(120, 124, 132, 0.07), transparent 28%),
+    linear-gradient(180deg, #070707 0%, #050505 48%, #060504 100%) !important;
+}
+
+.fabric-admin-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(201, 169, 110, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(201, 169, 110, 0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 54% 20%, black, transparent 74%);
+  opacity: 0.55;
+}
+
+.fabric-admin-sidebar {
+  isolation: isolate;
+}
+
+.fabric-admin-sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(201, 169, 110, 0.055), transparent 28%),
+    radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.08), transparent 30%);
+  opacity: 0.9;
+  z-index: -1;
+}
+
+.fabric-admin-sidebar-brand {
+  min-height: 78px;
+}
+
+.fabric-admin-sidebar-logo {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 16px 36px rgba(0, 0, 0, 0.32);
+}
+
+.fabric-admin-sidebar-nav {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(201, 169, 110, 0.24) transparent !important;
+}
+
+.fabric-admin-sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.fabric-admin-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fabric-admin-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 110, 0.22);
+  border-radius: 999px;
+}
+
+.fabric-admin-sidebar-user {
+  box-shadow: 0 -18px 36px rgba(0, 0, 0, 0.26);
+}
+
+.fabric-admin-page {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(201, 169, 110, 0.08), transparent 34%),
+    radial-gradient(circle at 88% 16%, rgba(148, 163, 184, 0.055), transparent 30%),
+    linear-gradient(180deg, rgba(8, 8, 8, 0.9) 0%, rgba(5, 5, 5, 0.96) 100%) !important;
+  color: #F5F5F5;
+  padding-bottom: 64px;
+}
+
+.fabric-admin-hero {
+  position: relative;
+  padding: 46px 42px 38px;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.14);
+  background:
+    linear-gradient(180deg, rgba(12, 12, 11, 0.98), rgba(7, 7, 7, 0.9)),
+    radial-gradient(circle at 78% 18%, rgba(201, 169, 110, 0.09), transparent 34%);
+  overflow: hidden;
+}
+
+.fabric-admin-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.1), transparent),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.035), transparent 28%);
+  opacity: 0.75;
+}
+
+.fabric-admin-hero::after {
+  content: "";
+  position: absolute;
+  left: 42px;
+  right: 42px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 169, 110, 0.75), transparent 62%);
+}
+
+.fabric-admin-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.fabric-admin-eyebrow {
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #C9A96E;
+  margin-bottom: 12px;
+}
+
+.fabric-admin-title {
+  font-family: var(--serif, Georgia, serif);
+  font-size: clamp(50px, 6.2vw, 96px);
+  line-height: 0.88;
+  font-weight: 500;
+  color: #F5F5F5;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.fabric-admin-subtitle {
+  margin-top: 16px;
+  max-width: 760px;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.14em;
+  color: #7A7A7A;
+  text-transform: uppercase;
+}
+
+.fabric-admin-content {
+  max-width: 1580px;
+  margin: 0 auto;
+  padding: 34px 42px 0;
+}
+
+.fabric-admin-panel,
+.admin-main-panel {
+  background: rgba(10, 10, 10, 0.82) !important;
+  border: 1px solid rgba(201, 169, 110, 0.12) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(14px);
+}
+
+.fabric-admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  background: rgba(201, 169, 110, 0.07);
+  color: #C9A96E;
+  padding: 8px 13px;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.fabric-admin-page button,
+.fabric-admin-page a {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+.fabric-admin-page button:hover,
+.fabric-admin-page a:hover {
+  transform: translateY(-1px);
+}
+
+.fabric-admin-page table {
+  background: rgba(5, 5, 5, 0.34);
+}
+
+.fabric-admin-page th {
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.fabric-admin-page tr:hover {
+  box-shadow: inset 2px 0 0 rgba(201, 169, 110, 0.45);
+}
+
+.admin-slide-panel,
+.admin-detail-panel {
+  background:
+    radial-gradient(circle at 85% 4%, rgba(201, 169, 110, 0.07), transparent 30%),
+    #070707 !important;
+  border-left: 1px solid rgba(201, 169, 110, 0.16) !important;
+  box-shadow: -26px 0 90px rgba(0, 0, 0, 0.55);
+}
+
 .admin-table-wrap table {
   min-width: 680px;
   width: 100%;
@@ -744,82 +958,13 @@
   gap: 28px;
 }
 
-/* Scoped premium admin language for Rescue Assessment -> Metricas */
-.fabric-admin-page {
-  min-height: 100%;
-  background:
-    radial-gradient(circle at 18% 0%, rgba(201, 169, 110, 0.07), transparent 34%),
-    linear-gradient(180deg, #070707 0%, #050505 100%);
-  color: #F5F5F5;
-  padding-bottom: 56px;
-}
-
-.fabric-admin-hero {
-  position: relative;
-  padding: 42px 36px 34px;
-  border-bottom: 1px solid #1A1A1A;
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98), rgba(7, 7, 7, 0.92));
-  overflow: hidden;
-}
-
-.fabric-admin-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.08), transparent),
-    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.035), transparent 28%);
-  opacity: 0.7;
-}
-
-.fabric-admin-hero-inner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-
-.fabric-admin-eyebrow {
-  font-family: var(--mono, "JetBrains Mono", monospace);
-  font-size: 9px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: #C9A96E;
-  margin-bottom: 10px;
-}
-
-.fabric-admin-title {
-  font-family: var(--serif, Georgia, serif);
-  font-size: clamp(54px, 7vw, 104px);
-  line-height: 0.88;
-  font-weight: 300;
-  color: #F5F5F5;
-  letter-spacing: 0;
-  margin: 0;
-}
-
 .fabric-admin-hero-inner > div[style*="font-size: 22px"] {
   font-family: var(--serif, Georgia, serif) !important;
-  font-size: clamp(54px, 7vw, 104px) !important;
+  font-size: clamp(50px, 6.2vw, 96px) !important;
   line-height: 0.88 !important;
-  font-weight: 300 !important;
+  font-weight: 500 !important;
   color: #F5F5F5 !important;
   letter-spacing: 0 !important;
-}
-
-.fabric-admin-subtitle {
-  margin-top: 16px;
-  max-width: 720px;
-  font-family: var(--mono, "JetBrains Mono", monospace);
-  font-size: 10px;
-  line-height: 1.8;
-  letter-spacing: 0.14em;
-  color: #6E6E6E;
-  text-transform: uppercase;
 }
 
 .fabric-admin-actions {
@@ -830,35 +975,9 @@
   justify-content: flex-end;
 }
 
-.fabric-admin-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(201, 169, 110, 0.28);
-  background: rgba(201, 169, 110, 0.07);
-  color: #C9A96E;
-  padding: 7px 12px;
-  font-family: var(--mono, "JetBrains Mono", monospace);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.fabric-admin-content {
-  max-width: 1560px;
-  margin: 0 auto;
-  padding: 32px 36px 0;
-}
-
-.fabric-admin-panel {
-  background: rgba(10, 10, 10, 0.9) !important;
-  border: 1px solid #1F1F1F !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-}
-
 .fabric-admin-stat-card {
-  border: 1px solid #1E1E1E;
-  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(201, 169, 110, 0.12);
+  background: rgba(255, 255, 255, 0.018);
   padding: 20px 24px;
 }
 
@@ -873,6 +992,51 @@
 
   .fabric-admin-content {
     padding: 24px 18px 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  .fabric-admin-sidebar {
+    width: min(88vw, 320px) !important;
+  }
+
+  .fabric-admin-sidebar-brand {
+    min-height: 74px;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 1024px) {
+  .fabric-admin-sidebar-brand {
+    min-height: 64px;
+    padding: 12px 16px 10px !important;
+  }
+
+  .fabric-admin-sidebar-logo {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .fabric-admin-sidebar-logo img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .fabric-admin-sidebar-nav {
+    padding-top: 8px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .fabric-admin-sidebar-nav a {
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+  }
+
+  .fabric-admin-sidebar-user {
+    padding: 10px 14px !important;
+  }
+
+  .fabric-admin-sidebar-user button {
+    height: 30px !important;
   }
 }
 
@@ -898,8 +1062,17 @@
     min-width: 760px;
   }
 
+  .fabric-admin-sidebar,
   .admin-sidebar-drawer aside {
-    width: min(86vw, 320px) !important;
+    width: min(92vw, 318px) !important;
+  }
+
+  .fabric-admin-sidebar-brand {
+    padding: 14px 14px 12px !important;
+  }
+
+  .fabric-admin-sidebar-user {
+    padding: 12px 14px !important;
   }
 
   .admin-slide-panel,
