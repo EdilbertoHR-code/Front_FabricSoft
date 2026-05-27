@@ -18,7 +18,7 @@ export default function PostMortemPage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Servicio Premium · FABRIC</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col" style={{ alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, lineHeight: 1.02, color: 'var(--text-primary)', marginBottom: 24 }}>
                 Post-Mortem Privado.<br />
@@ -38,29 +38,23 @@ export default function PostMortemPage() {
       </div>
 
       {/* Por qué se cobra */}
-      <div style={{ borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 56px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
-          {[
-            { num: 'USD 25K', label: 'Precio fijo · sin sorpresas' },
-            { num: '2 días', label: 'Inmersión con tu equipo' },
-            { num: '80%', label: 'Convierten a proyecto de remediación' },
-          ].map((s, i) => (
-            <div key={i} style={{ padding: '0', borderRight: i < 2 ? '1px solid var(--border)' : 'none', paddingRight: i < 2 ? 48 : 0, paddingLeft: i > 0 ? 48 : 0 }}>
-              <div style={{ fontFamily: 'var(--serif)', fontSize: 52, fontWeight: 300, color: 'var(--accent)', lineHeight: 1, marginBottom: 8 }}>{s.num}</div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
+      <div className="postmortem-section container grid-2col" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64, gap: 0 }}>
+        {[{ num: 'USD 25K', label: 'Precio fijo · sin sorpresas' }, { num: '2 días', label: 'Inmersión con tu equipo' }, { num: '80%', label: 'Convierten a proyecto de remediación' }].map((s, i) => (
+          <div className="postmortem-card" key={i}>
+            <div className="postmortem-number">{s.num}</div>
+            <div className="postmortem-label">{s.label}</div>
+          </div>
+        ))}
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
+      <div className="container grid-2col" style={{ padding: '80px 56px', gap: '0 80px' }}>
 
         {/* Entregables */}
         <div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 40 }}>
             Entregables
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
             {entregables.map((e) => (
               <div key={e.num} style={{ padding: '32px 0', borderBottom: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>

@@ -291,31 +291,25 @@ export default function S07bRescueAssessment() {
               </p>
 
               {/* Selector de escenario */}
-              <div style={{ marginTop: 40, width: '100%', maxWidth: 820 }}>
-                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 20 }}>
+              <div className="rescue-scenario-selector">
+                <div className="rescue-scenario-kicker">
                   ¿Cuál es tu situación actual?
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <div className="rescue-scenario-grid">
                   {ESCENARIOS.map((esc) => {
                     const isSelected = escenario === esc.id;
                     return (
                       <button
                         key={esc.id}
                         onClick={() => setEscenario(esc.id)}
+                        className="rescue-scenario-card"
                         style={{
-                          textAlign: 'left',
-                          padding: '20px 22px',
                           background: isSelected ? 'rgba(201,169,110,0.08)' : 'rgba(255,255,255,0.02)',
                           border: `1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
                           color: 'var(--text-primary)',
-                          cursor: 'pointer',
-                          transition: 'all .18s ease',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 10,
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="rescue-scenario-card-top">
                           <span style={{
                             fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.18em',
                             textTransform: 'uppercase',
@@ -324,13 +318,13 @@ export default function S07bRescueAssessment() {
                             {esc.tag}
                           </span>
                           {isSelected && (
-                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
+                            <span className="rescue-scenario-dot" />
                           )}
                         </div>
-                        <div style={{ fontFamily: 'var(--serif)', fontSize: 18, lineHeight: 1.2, color: isSelected ? '#F5F5F5' : '#8A8A8A' }}>
+                        <div className="rescue-scenario-title" style={{ color: isSelected ? '#F5F5F5' : '#8A8A8A' }}>
                           {esc.label}
                         </div>
-                        <div style={{ fontFamily: 'var(--sans)', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        <div className="rescue-scenario-desc">
                           {esc.desc}
                         </div>
                       </button>

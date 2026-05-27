@@ -159,13 +159,14 @@ function NavButtons({ onBack, onNext, nextLabel, disabled, showBack }: {
         </button>
       )}
       <button onClick={onNext} disabled={disabled} style={{
-        padding: '14px 36px', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
-        letterSpacing: '0.22em', textTransform: 'uppercase',
-        background: disabled ? 'transparent' : 'var(--accent)',
-        border: disabled ? '1px solid var(--border)' : 'none',
-        color: disabled ? 'var(--text-tertiary)' : '#0A0A0A',
-        cursor: disabled ? 'not-allowed' : 'pointer', transition: 'all .2s',
-      }}>
+          padding: '14px 36px', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          background: disabled ? 'transparent' : 'var(--accent)',
+          border: disabled ? '1px solid var(--border)' : 'none',
+          color: disabled ? 'var(--text-tertiary)' : '#0A0A0A',
+          cursor: disabled ? 'not-allowed' : 'pointer', transition: 'all .2s',
+          flexWrap: 'wrap'
+        }}>
         {nextLabel ?? 'Continuar →'}
       </button>
     </div>
@@ -349,7 +350,7 @@ function SuccessState({ data }: { data: FormData }) {
       </p>
 
       <div style={{ border: '1px solid var(--border)', padding: '32px 40px', marginBottom: 40 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px 40px' }}>
           {[
             ['Nombre', data.nombre],
             ['Cargo', data.cargo],
@@ -421,22 +422,23 @@ export default function AplicarPage() {
   };
 
   return (
-    <div style={{ background: 'var(--bg-base)', paddingTop: 100 }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 56px 0' }}>
+    <div className="container" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
+      <div className="apply-back-row" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
         <BackButton />
       </div>
       {/* Header de la página */}
       <div className="apply-page-header" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 48, marginBottom: 64, textAlign: 'center' }}>
         <div className="label" style={{ marginBottom: 20 }}>Wait List · FABRIC</div>
-        <h1 className="apply-page-title" style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, lineHeight: 1.05, color: 'var(--text-primary)', marginBottom: 20 }}>
-          Aplicar a FABRIC
-        </h1>
-        <p className="apply-page-copy" style={{ fontFamily: 'var(--sans)', fontSize: 16, color: 'var(--text-secondary)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>
-          Operamos con un máximo de 12 proyectos simultáneos. Si tu organización califica, conversamos.
-        </p>
+        <div className="grid-2col" style={{ alignItems: 'end' }}>
+          <div>
+            <h1 className="apply-page-title" style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, lineHeight: 1.05, color: 'var(--text-primary)', marginBottom: 20 }}>Aplicar a FABRIC</h1>
+            <p className="apply-page-copy" style={{ fontFamily: 'var(--sans)', fontSize: 16, color: 'var(--text-secondary)', maxWidth: 560, margin: '0 auto', lineHeight: 1.7 }}>Operamos con un máximo de 12 proyectos simultáneos. Si tu organización califica, conversamos.</p>
+          </div>
+          <div></div>
+        </div>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 40px 120px', display: 'grid', gridTemplateColumns: '1fr 360px', gap: '0 80px', alignItems: 'start' }}>
+      <div className="apply-page-main grid-2col" style={{ gap: '48px' }}>
 
         {/* Formulario wizard */}
         <div>

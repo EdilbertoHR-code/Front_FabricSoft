@@ -95,7 +95,7 @@ export default function OptimizadorOciPage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>FABRIC OCI Cost Audit · Diagnóstico gratuito</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col" style={{ alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
                 Optimizador OCI.<br />

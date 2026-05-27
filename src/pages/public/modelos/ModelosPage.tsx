@@ -91,7 +91,7 @@ export default function ModelosPage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Modelos de Compromiso · FABRIC</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col">
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
                 Tres formas de<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>trabajar con FABRIC.</em>
@@ -115,7 +115,7 @@ export default function ModelosPage() {
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 32 }}>
             Compromisos en todos los modelos
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
+          <div className="grid-auto-fit">
             {comun.map((c, i) => (
               <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', flexShrink: 0, marginTop: 3 }}>◆</span>
@@ -140,7 +140,7 @@ export default function ModelosPage() {
                 <span style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', border: '1px solid var(--border)', padding: '3px 10px' }}>{m.tag}</span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
+              <div className="grid-2col">
                 {/* Izquierda */}
                 <div>
                   <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: 12 }}>
@@ -181,7 +181,7 @@ export default function ModelosPage() {
                 {/* Derecha */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
                   {/* Métricas */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, borderTop: '1px solid var(--border)', borderLeft: '1px solid var(--border)' }}>
+                  <div className="grid-3col" style={{ borderTop: '1px solid var(--border)', borderLeft: '1px solid var(--border)' }}>
                     {[
                       { label: 'Ticket típico', value: m.ticket },
                       { label: 'Plazo', value: m.plazo },
@@ -240,7 +240,7 @@ export default function ModelosPage() {
 
       {/* Footer CTA */}
       <div style={{ borderTop: '1px solid var(--border)', maxWidth: 1280, margin: '0 auto', padding: '64px 56px 96px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'center' }}>
+        <div className="grid-2col" style={{ alignItems: 'center' }}>
           <div>
             <div style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(24px, 2.5vw, 36px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: 16 }}>
               ¿No sabes cuál modelo aplica a tu situación?

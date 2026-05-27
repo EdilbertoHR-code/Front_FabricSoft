@@ -425,7 +425,7 @@ export default function ReadinessScorePage() {
             <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 20 }}>
               Score por factor evaluado
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+            <div className="grid-auto-fit" style={{ gap: 16 }}>
               {PREGUNTAS.map((p) => {
                 const r = respuestas[p.id];
                 const pct = r ? (r.puntos / 10) * 100 : 0;

@@ -544,7 +544,7 @@ export default function MigrationRoadmapPage() {
           </div>
 
           {/* Métricas top */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, marginBottom: 48 }}>
+          <div className="grid-2col" style={{ gap: 2, marginBottom: 48 }}>
             <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '28px 32px' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>Plazo estimado</div>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 28, color: 'var(--accent)' }}>{resultado.plazo}</div>

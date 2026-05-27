@@ -3707,3 +3707,275 @@ em { font-style: italic; color: var(--accent); font-weight: 400; }
   .office-hours-text { padding: 20px 16px; }
 }
 
+
+/* Responsive overrides for footer‑linked pages */
+.office-hours-main {
+  grid-template-columns: 1.3fr 0.7fr;
+}
+.apply-page-main {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0 80px;
+  align-items: start;
+}
+@media (max-width: 968px) {
+  .office-hours-main,
+  .apply-page-main {
+    grid-template-columns: 1fr;
+  }
+}
+/* ── UTILIDADES DE GRID RESPONSIVO ── */
+
+/* Grid de 2 columnas – colapsa a 1 en ≤968px */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 80px;
+  align-items: start;
+}
+
+@media (max-width: 968px) {
+  .grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Utility for 2‑column grids that only set gap and alignment (used with custom column definitions) */
+.grid-2col-gap {
+  display: grid;
+  gap: 0 80px;
+  align-items: start;
+}
+
+.grid-2col-sm { gap: 0 40px; }
+
+/* Grid de 3 columnas – colapsa a 2 → 1 col */
+.grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.grid-3col-sm { gap: 16px; }
+
+/* Grid auto‑fit para tarjetas */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+/* Footer responsive */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+}
+
+.grid-4col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* Utilidades de padding por sección */
+.section-lg { padding: 80px 56px; }
+.section-md { padding: 64px 56px; }
+.section-sm { padding: 48px 32px; }
+
+/* Media query: colapsar todo a 1 columna */
+@media (max-width: 968px) {
+  .grid-2col,
+  .grid-3col,
+  .grid-auto-fit,
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 0 !important;
+  }
+} 
+
+/* ---------- PostMortem Section & Card Styling ---------- */
+
+/* Ensure columns have generous spacing */
+.postmortem-section .grid-2col {
+  gap: 32px;
+}
+
+/* Card container for each number/label pair */
+.postmortem-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.postmortem-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Number styling – larger and responsive */
+.postmortem-number {
+  font-family: var(--serif);
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 12px;
+  font-size: 64px; /* Desktop */
+  text-align: center;
+}
+
+@media (max-width: 968px) {
+  .postmortem-number { font-size: 48px; }
+}
+@media (max-width: 600px) {
+  .postmortem-number { font-size: 36px; }
+}
+
+/* Label styling */
+.postmortem-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+
+/* PostMortem numbers styling */
+.postmortem-number {
+  font-family: var(--serif);
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 8px;
+  font-size: 52px; /* Desktop */
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 968px) {
+  .postmortem-number {
+    font-size: 40px; /* Tablet */
+  }
+}
+
+@media (max-width: 600px) {
+  .postmortem-number {
+    font-size: 28px; /* Mobile */
+  }
+}
+
+.postmortem-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.postmortem-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ---------- Rechazados – Card Layout ---------- */
+.rechazados-projects {
+  display: grid;
+  gap: 24px;
+}
+
+.rechazados-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  transition: transform .2s, box-shadow .2s;
+}
+.rechazados-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+}
+
+/* Mobile header within card */
+.rechazados-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.rechazados-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.rechazados-trimestre {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+}
+
+.rechazados-industria {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.rechazados-modulos {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+.rechazados-razon {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Desktop row layout – keep grid spacing */
+.rechazados-row-desktop {
+  gap: 16px;
+  align-items: start;
+}
+
+/* Ensure grid collapses on tablet */
+@media (max-width: 968px) {
+  .rechazados-projects { grid-template-columns: 1fr !important; }
+}
+
+/* ── Rechazados: stats 3-col → responsive ── */
+.rechazados-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+@media (max-width: 968px) {
+  .rechazados-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .rechazados-stats-grid {
+    gap: 12px !important;
+  }
+}
+

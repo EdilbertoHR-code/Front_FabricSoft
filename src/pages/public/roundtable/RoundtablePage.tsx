@@ -18,7 +18,7 @@ export default function RoundtablePage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Comunidad Ejecutiva · FABRIC</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col">
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, lineHeight: 1.02, color: 'var(--text-primary)', marginBottom: 24 }}>
                 Confidential Roundtable.<br />
@@ -39,7 +39,7 @@ export default function RoundtablePage() {
 
       {/* Stats */}
       <div style={{ borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 56px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 56px' }} className="grid-3col">
           {[
             { num: 'Trimestral', label: 'Frecuencia' },
             { num: '8–12', label: 'CFO / CTO por edición' },
@@ -53,7 +53,7 @@ export default function RoundtablePage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px' }} className="grid-2col">
 
         {/* Formato */}
         <div>

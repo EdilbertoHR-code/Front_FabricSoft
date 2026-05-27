@@ -81,8 +81,8 @@ export default function Header() {
 
   const startLink = (
     <Link
-      to="/#diagnostico"
-      onClick={(event) => handleSectionNavigation(event, 'diagnostico')}
+      to="/#fabric-ai"
+      onClick={(event) => handleSectionNavigation(event, 'fabric-ai')}
       className="hidden sm:inline-flex items-center gap-2 relative group text-[#C9A96E] font-mono font-semibold text-[10px] tracking-[0.22em] uppercase px-0 py-2 transition-colors duration-300 hover:text-[#F5F5F5] active:scale-[0.98]"
     >
       <span className="relative">
@@ -203,8 +203,8 @@ export default function Header() {
             <LanguageToggle />
           </div>
           <Link
-            to="/#diagnostico"
-            onClick={(event) => handleSectionNavigation(event, 'diagnostico')}
+            to="/#fabric-ai"
+            onClick={(event) => handleSectionNavigation(event, 'fabric-ai')}
             className="flex items-center justify-center gap-3 w-full py-3.5 relative overflow-hidden group bg-transparent border border-[#C9A96E]/30 hover:border-[#C9A96E] hover:bg-[#C9A96E]/5 text-[#C9A96E] font-mono font-bold text-[10px] tracking-[0.2em] uppercase rounded-full transition-all duration-500 active:scale-[0.98]"
           >
             <span className="relative">{t('cta.start')}</span>

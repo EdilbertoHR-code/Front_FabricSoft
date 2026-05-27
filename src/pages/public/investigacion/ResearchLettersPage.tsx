@@ -62,7 +62,7 @@ export default function ResearchLettersPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 56px 96px', display: 'grid', gridTemplateColumns: 'minmax(0, 0.9fr) minmax(360px, 0.7fr)', gap: 36 }}>
+      <div className="container grid-2col" style={{ gap: 36, padding: '48px 56px 96px' }}>
         <div style={{ border: '1px solid var(--border)', padding: 28, background: 'rgba(255,255,255,0.01)' }}>
           <div className="label" style={{ marginBottom: 18 }}>Admission Gate</div>
           <div style={{ fontFamily: 'var(--serif)', fontSize: 28, color: 'var(--text-primary)', marginBottom: 14 }}>
@@ -94,7 +94,7 @@ export default function ResearchLettersPage() {
                 </div>
               ))}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div className="grid-2col" style={{ gap: 10 }}>
                 <select value={form.revenueAprox} onChange={e => setForm(prev => ({ ...prev, revenueAprox: e.target.value }))}
                   style={{ padding: '12px 14px', background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)', fontFamily: 'var(--mono)', fontSize: 12 }}>
                   <option>No especificado</option>

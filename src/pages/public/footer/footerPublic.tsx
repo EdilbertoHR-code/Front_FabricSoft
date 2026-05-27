@@ -19,7 +19,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'FABRIC OS',         path: '/#s09' },
     { label: 'Transparencia',     path: '/transparencia' },
     { label: 'Investigación',     path: '/#s14' },
-    { label: 'Modelos *',         path: '/modelos' },
+    { label: 'Modelos',         path: '/modelos' },
     { label: 'Aplicar',           path: '/aplicar' },
   ],
   casos: [
@@ -28,7 +28,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Aplazo',                   path: '/casos/aplazo' },
     { label: 'Referencias',              path: '/#s12' },
     { label: 'Criterios de admisión',    path: '/#criterios' },
-    { label: 'Rescue Assessment',        path: '/#fabric-ai' },
+    { label: 'Rescue Assessment',        path: '/#rescue-assessment' },
     { label: 'Apply Reverse',             path: '/rechazados' },
   ],
   herramientas: [
@@ -36,24 +36,24 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Optimizador OCI',          path: '/optimizador-oci' },
     { label: 'ERP TCO Comparator',       path: '/#tco' },
     { label: 'Cloud Cost Comparator',    path: '/#cloud-tco' },
-    { label: 'Doctrine Generator *',     path: '/#doctrina' },
-    { label: 'Migration Roadmap *',      path: '/roadmap' },
-    { label: 'Readiness Score *',        path: '/readiness' },
-    { label: 'RFP Template *',           path: '/rfp-template' },
-    { label: 'Benchmark Index *',        path: '/benchmark' },
+    { label: 'Doctrine Generator',     path: '/#doctrina' },
+    { label: 'Migration Roadmap',      path: '/roadmap' },
+    { label: 'Readiness Score',        path: '/readiness' },
+    { label: 'RFP Template',           path: '/rfp-template' },
+    { label: 'Benchmark Index',        path: '/benchmark' },
   ],
   engagement: [
     { label: 'Aplicar',                  path: '/aplicar' },
     { label: 'Founder · Wait List',      path: '/#s15' },
     { label: 'Office Hours',             path: '/office-hours' },
-    { label: 'Post-Mortem Privado *',    path: '/post-mortem' },
-    { label: 'Confidential Roundtable *', path: '/roundtable' },
-    { label: 'Research Letters *',        path: '/research-letters' },
+    { label: 'Post-Mortem Privado',    path: '/post-mortem' },
+    { label: 'Confidential Roundtable', path: '/roundtable' },
+    { label: 'Research Letters',        path: '/research-letters' },
   ],
   recursos: [
-    { label: 'Paper 01 — Go-live failures *',         path: '/investigacion/paper/01' },
-    { label: 'Paper 02 — IA en Fusion *',             path: '/investigacion/paper/02' },
-    { label: 'Paper 03 — Primer ciclo crítico *',     path: '/investigacion/paper/03' },
+    { label: 'Paper 01 — Go-live failures',         path: '/investigacion/paper/01' },
+    { label: 'Paper 02 — IA en Fusion',             path: '/investigacion/paper/02' },
+    { label: 'Paper 03 — Primer ciclo crítico',     path: '/investigacion/paper/03' },
   ],
 };
 
@@ -110,7 +110,7 @@ export default function Footer() {
   return (
     <footer className="fabric-footer bg-[#050203] text-[#F5F5F5]/90 border-t border-[#2A2A2A] pt-16 pb-10 font-sans md:pt-24 md:pb-12">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(5,minmax(0,1fr))] lg:gap-8 mb-16 md:mb-24">
+        <div className="footer-grid">
           <div className="min-w-0 sm:col-span-2 lg:col-span-1 flex flex-col">
             <h2 className="text-[#F5F5F5] font-serif text-4xl tracking-wide mb-4 transition-colors duration-300 hover:text-[#C9A96E] md:text-5xl">
               FABRIC
@@ -170,7 +170,11 @@ export default function Footer() {
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/40">
           <LanguageToggle compact />
 
-          <p>© {currentYear} FABRIC SOFT MEXICO SA DE CV</p>
+          <p className="footer-copyright" aria-label={`© ${currentYear} FABRIC SOFT MEXICO SA DE CV`}>
+            <span>©</span>
+            <span>{currentYear}</span>
+            <span>FABRIC SOFT MEXICO SA DE CV</span>
+          </p>
         </div>
       </div>
     </footer>

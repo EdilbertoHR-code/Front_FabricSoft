@@ -185,7 +185,7 @@ export default function OfficeHoursPage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>FABRIC Office Hours</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col" style={{ gap: '0 80px', alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
                 Conversación directa<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>con el fundador.</em>
@@ -213,7 +213,7 @@ export default function OfficeHoursPage() {
 
       {/* Sección principal: calendario + formulario */}
       <div style={{ borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 56px', display: 'grid', gridTemplateColumns: '1.3fr 0.7fr', gap: '0 64px', alignItems: 'start' }}>
+        <div className="office-hours-main grid-2col" style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 56px', gap: '0 64px', alignItems: 'start' }}>
 
           {/* Izquierda: calendario + slots */}
           <div>
@@ -362,7 +362,7 @@ export default function OfficeHoursPage() {
                       </div>
                     ))}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div className="grid-2col" style={{ gap: 10 }}>
                       <div>
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 6 }}>Revenue</div>
                         <select value={form.revenue} onChange={e => setForm(p => ({ ...p, revenue: e.target.value }))}
@@ -447,7 +447,7 @@ export default function OfficeHoursPage() {
       </div>
 
       {/* Criterios + Qué esperar */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px' }}>
+      <div className="grid-2col" style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px' }}>
         <div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 32 }}>Criterios de acceso</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

@@ -136,7 +136,7 @@ export default function BenchmarkIndexPage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Investigación Anual · FABRIC</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col" style={{ alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
                 FABRIC Benchmark Index.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>Oracle Fusion 2026.</em>
@@ -160,7 +160,7 @@ export default function BenchmarkIndexPage() {
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 40 }}>
             Hallazgos principales — Vista previa
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
+          <div className="grid-auto-fit" style={{ gap: 2 }}>
             {HALLAZGOS.map((h) => (
               <div key={h.num} style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', padding: '32px 28px' }}>
                 <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16 }}>{h.num}</div>
@@ -175,7 +175,7 @@ export default function BenchmarkIndexPage() {
       </div>
 
       {/* Contenido + Gating */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', display: 'grid', gridTemplateColumns: '1.4fr 0.6fr', gap: '0 64px' }}>
+      <div className="grid-2col" style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', gridTemplateColumns: '1.4fr 0.6fr', gap: '0 64px' }}>
         {/* Contenido del reporte */}
         <div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 40 }}>

@@ -116,7 +116,7 @@ export default function RFPTemplatePage() {
       <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: 64 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px' }}>
           <div className="label" style={{ marginBottom: 20 }}>Recurso Ejecutivo · FABRIC</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 80px', alignItems: 'end' }}>
+          <div className="grid-2col" style={{ alignItems: 'end' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(40px, 5vw, 72px)', fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.02, marginBottom: 24 }}>
                 RFP Template Oracle.<br /><em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>47 preguntas obligatorias.</em>
@@ -134,7 +134,7 @@ export default function RFPTemplatePage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px', display: 'grid', gridTemplateColumns: '1.4fr 0.6fr', gap: '0 64px' }}>
+      <div className="grid-2col apply-page-main" style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 56px' }}>
         {/* Contenido del RFP */}
         <div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 40 }}>
