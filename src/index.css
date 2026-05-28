@@ -2646,7 +2646,11 @@
     margin-bottom: 24px;
   }
 
-  .amr-detail-metrics > div {
+  .amr-detail-divider {
+    display: none !important;
+  }
+
+  .amr-detail-metrics > div:not(.amr-detail-divider) {
     border-bottom: 1px solid #141414;
     text-align: left !important;
     display: flex;
@@ -2654,17 +2658,121 @@
     justify-content: space-between;
     padding: 14px 20px !important;
   }
-  .amr-detail-metrics > div:last-child {
+  .amr-detail-metrics > div:not(.amr-detail-divider):last-child {
     border-bottom: none;
   }
 
-  .amr-detail-metrics > div > div:first-child {
+  .amr-detail-metrics > div:not(.amr-detail-divider) > div:first-child {
     margin-bottom: 0 !important;
   }
 
   .amr-detail-body {
     grid-template-columns: 1fr;
     gap: 32px 0;
+  }
+}
+
+/* ── AMR Cards (mobile list) ── */
+.amr-cards {
+  display: none;
+}
+
+.amr-card {
+  border: 1px solid #1a1a1a;
+  background: #0A0A0A;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.amr-card:active {
+  background: #0f0f0f;
+}
+
+.amr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.amr-card-date {
+  display: block;
+  font-size: 9px;
+  color: #3A3A3A;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+}
+
+.amr-card-empresa {
+  font-size: 14px;
+  color: #F5F5F5;
+  font-weight: 500;
+  margin: 0 0 2px;
+  word-break: break-word;
+}
+
+.amr-card-cargo {
+  font-size: 10px;
+  color: #5A5A5A;
+  margin: 0;
+}
+
+.amr-card-risk {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.amr-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0;
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #111;
+  margin-bottom: 10px;
+}
+
+.amr-card-meta {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-size: 10px;
+}
+
+.amr-card-meta .meta-label {
+  color: #3A3A3A;
+  font-family: var(--mono, "JetBrains Mono", monospace);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.amr-card-meta .meta-val {
+  color: #8A8A8A;
+  word-break: break-all;
+}
+
+.amr-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .amr-table-wrap {
+    display: none;
+  }
+  .amr-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
   }
 }
 
@@ -2834,6 +2942,13 @@
     grid-template-columns: 1fr;
     gap: 32px 0;
   }
+  .admin-readiness-detail-metrics {
+    grid-template-columns: 1fr;
+  }
+  .admin-readiness-detail-metrics > div:nth-child(2),
+  .admin-readiness-detail-metrics > div:nth-child(4) {
+    display: none;
+  }
 }
 
 
@@ -2922,7 +3037,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: auto;
   padding-top: 20px;
 }
 

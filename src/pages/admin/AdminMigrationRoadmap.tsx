@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthApi } from '../../config/api';
 
 type RiskLevel = 'BAJO' | 'MEDIO' | 'ALTO';
@@ -78,8 +78,13 @@ export default function AdminMigrationRoadmap() {
   const [notasEdit, setNotasEdit] = useState('');
   const [updating, setUpdating]   = useState<string | null>(null);
   const [riskFilter, setRiskFilter] = useState<RiskLevel | 'Todos'>('Todos');
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { fetchLeads(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (selected && panelRef.current) panelRef.current.scrollTop = 0;
+  }, [selected?._id]);
 
   async function fetchLeads() {
     setLoading(true);
@@ -188,6 +193,7 @@ export default function AdminMigrationRoadmap() {
         ) : visible.length === 0 ? (
           <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 11, color: '#5A5A5A' }}>Sin evaluaciones con este filtro.</div>
         ) : (
+          <>
           <div className="amr-table-wrap">
           <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 700 }}>
             <thead>
@@ -242,6 +248,60 @@ export default function AdminMigrationRoadmap() {
             </tbody>
           </table>
           </div>
+
+          {/* Tarjetas (Mobile) */}
+          <div className="amr-cards">
+            {visible.map(lead => {
+              const rm = lead.migrationRoadmap ?? {};
+              const riskColor = RISK_COLOR[rm.riskLevel] ?? '#5A5A5A';
+              return (
+                <div
+                  key={lead._id}
+                  className="amr-card"
+                  onClick={() => { setSelected(lead); setNotasEdit(lead.notas ?? ''); }}
+                >
+                  <div className="amr-card-header">
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <span className="amr-card-date">{fmt(lead.createdAt)}</span>
+                      <h3 className="amr-card-empresa">{lead.empresa}</h3>
+                      <p className="amr-card-cargo">{lead.nombre} · {lead.cargo}</p>
+                    </div>
+                    <div className="amr-card-risk">
+                      {rm.riskLevel && (
+                        <span style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${riskColor}44`, color: riskColor, background: `${riskColor}10` }}>
+                          {rm.riskLevel}
+                        </span>
+                      )}
+                      <span style={{ fontSize: 9, color: '#3A3A3A', fontFamily: 'var(--mono, monospace)' }}>{rm.estimatedTimeline || '—'}</span>
+                    </div>
+                  </div>
+
+                  <div className="amr-card-body">
+                    <div className="amr-card-meta">
+                      <span className="meta-label">Sistema:</span>
+                      <span className="meta-val">{rm.sistema || '—'}</span>
+                    </div>
+                    <div className="amr-card-meta">
+                      <span className="meta-label">Geografía:</span>
+                      <span className="meta-val">{rm.geografia || '—'}</span>
+                    </div>
+                    <div className="amr-card-meta">
+                      <span className="meta-label">Email:</span>
+                      <span className="meta-val">{lead.email}</span>
+                    </div>
+                  </div>
+
+                  <div className="amr-card-footer">
+                    <span style={{ fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', padding: '4px 10px', border: `1px solid ${STATUS_COLOR[lead.status]}44`, color: STATUS_COLOR[lead.status], background: `${STATUS_COLOR[lead.status]}10` }}>
+                      {lead.status}
+                    </span>
+                    <span style={{ fontSize: 9, color: '#C9A96E', fontFamily: 'var(--mono, "JetBrains Mono", monospace)' }}>Detalle →</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          </>
         )}
       </div>
 
@@ -251,15 +311,15 @@ export default function AdminMigrationRoadmap() {
           style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', justifyContent: 'flex-end', background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, #050505 38%)' }}
           onClick={() => setSelected(null)}
         >
-          <div className="admin-slide-panel" onClick={e => e.stopPropagation()}>
+          <div ref={panelRef} className="admin-slide-panel" onClick={e => e.stopPropagation()}>
             {/* Cabecera */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
-              <div>
-                <div style={{ fontSize: 8, letterSpacing: '0.28em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 36 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 10, overflowWrap: 'break-word' }}>
                   FABRIC · ADMIN · MIGRATION ROADMAP · DETALLE
                 </div>
-                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 32, color: '#F5F5F5', lineHeight: 1.05 }}>{selected.empresa}</div>
-                <div style={{ fontSize: 11, color: '#5A5A5A', marginTop: 8 }}>{selected.nombre} · {selected.cargo}</div>
+                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 'clamp(22px, 5vw, 32px)', color: '#F5F5F5', lineHeight: 1.05, wordBreak: 'break-word' }}>{selected.empresa}</div>
+                <div style={{ fontSize: 11, color: '#5A5A5A', marginTop: 8, wordBreak: 'break-word' }}>{selected.nombre} · {selected.cargo}</div>
               </div>
               <button
                 onClick={() => setSelected(null)}

@@ -263,6 +263,46 @@ export default function AdminOfficeHours() {
               </div>
             </div>
 
+            {/* Acciones — arriba para acceso inmediato */}
+            <div className="aoh-panel-actions">
+              <div style={{ display: 'grid', gridTemplateColumns: selected.status === 'pendiente' ? '1fr 1fr' : '1fr', gap: 8 }}>
+                {selected.status !== 'confirmado' && (
+                  <button onClick={() => handleStatus(selected._id, 'confirmado')} disabled={saving}
+                    style={{ padding: '12px 8px', background: saving ? 'rgba(201,169,110,0.4)' : '#C9A96E', border: 'none', color: '#060606', fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer' }}>
+                    {saving ? '...' : 'Confirmar'}
+                  </button>
+                )}
+                {selected.status !== 'cancelado' && (
+                  <button onClick={() => handleStatus(selected._id, 'cancelado')} disabled={saving}
+                    style={{ padding: '12px 8px', background: 'transparent', border: '1px solid #B8545040', color: '#B85450', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
+                    Cancelar
+                  </button>
+                )}
+                {selected.status === 'cancelado' && (
+                  <button onClick={() => handleStatus(selected._id, 'pendiente')} disabled={saving}
+                    style={{ padding: '12px 8px', background: 'transparent', border: '1px solid #2a2a2a', color: '#5A5A5A', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer' }}>
+                    Restaurar pendiente
+                  </button>
+                )}
+              </div>
+              {selected.status === 'confirmado' && (!selected.calendarEnviado || !selected.emailEnviado) && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 8 }}>
+                  {!selected.calendarEnviado && (
+                    <button onClick={() => handleRetry(selected._id, 'calendar')} disabled={saving}
+                      style={{ padding: '10px 8px', background: 'transparent', border: '1px solid #C9A96E40', color: '#C9A96E', fontFamily: 'var(--mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
+                      Retry Calendar
+                    </button>
+                  )}
+                  {!selected.emailEnviado && (
+                    <button onClick={() => handleRetry(selected._id, 'email')} disabled={saving}
+                      style={{ padding: '10px 8px', background: 'transparent', border: '1px solid #2a2a2a', color: '#5A5A5A', fontFamily: 'var(--mono)', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
+                      Retry Email
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Datos del prospecto */}
             <div className="aoh-panel-data">
               {([
@@ -278,40 +318,6 @@ export default function AdminOfficeHours() {
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: '#A0A0A0', textAlign: 'right', wordBreak: 'break-all' }}>{v}</span>
                 </div>
               ))}
-            </div>
-
-            {/* Acciones */}
-            <div className="aoh-panel-actions">
-              {selected.status !== 'confirmado' && (
-                <button onClick={() => handleStatus(selected._id, 'confirmado')} disabled={saving}
-                  style={{ padding: '13px', background: saving ? 'rgba(201,169,110,0.4)' : '#C9A96E', border: 'none', color: '#060606', fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer' }}>
-                  {saving ? 'Guardando...' : 'Confirmar sesión'}
-                </button>
-              )}
-              {selected.status !== 'cancelado' && (
-                <button onClick={() => handleStatus(selected._id, 'cancelado')} disabled={saving}
-                  style={{ padding: '13px', background: 'transparent', border: '1px solid #B8545040', color: '#B85450', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
-                  Cancelar reserva
-                </button>
-              )}
-              {selected.status === 'cancelado' && (
-                <button onClick={() => handleStatus(selected._id, 'pendiente')} disabled={saving}
-                  style={{ padding: '13px', background: 'transparent', border: '1px solid #2a2a2a', color: '#5A5A5A', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer' }}>
-                  Restaurar a pendiente
-                </button>
-              )}
-              {selected.status === 'confirmado' && !selected.calendarEnviado && (
-                <button onClick={() => handleRetry(selected._id, 'calendar')} disabled={saving}
-                  style={{ padding: '13px', background: 'transparent', border: '1px solid #C9A96E40', color: '#C9A96E', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
-                  Reintentar Calendar
-                </button>
-              )}
-              {selected.status === 'confirmado' && !selected.emailEnviado && (
-                <button onClick={() => handleRetry(selected._id, 'email')} disabled={saving}
-                  style={{ padding: '13px', background: 'transparent', border: '1px solid #2a2a2a', color: '#5A5A5A', fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.5 : 1 }}>
-                  Reintentar email
-                </button>
-              )}
             </div>
           </div>
         </div>

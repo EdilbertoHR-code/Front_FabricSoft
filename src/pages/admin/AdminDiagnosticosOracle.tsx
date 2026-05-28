@@ -633,7 +633,7 @@ function ProspectDetail({
             <h2 className="break-words font-serif text-2xl leading-tight text-zinc-50 sm:text-3xl">
               {item.contact.company}
             </h2>
-            <p className="mt-2 text-sm text-zinc-400">{item.contact.name} / {item.contact.role}</p>
+            <p className="mt-2 break-all text-sm text-zinc-400">{item.contact.name} / {item.contact.role}</p>
           </div>
 
           <div className="flex items-center justify-between gap-3 lg:justify-end">
@@ -760,12 +760,12 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Info({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <div className="border border-zinc-800 bg-[#17181B] p-4">
+    <div className="min-w-0 overflow-hidden border border-zinc-800 bg-[#17181B] p-4">
       <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] text-zinc-500">
-        <Icon size={14} className="text-amber-300" />
+        <Icon size={14} className="shrink-0 text-amber-300" />
         {label}
       </div>
-      <div className="mt-2 break-words text-sm font-medium text-zinc-100">{value || 'No detectado'}</div>
+      <div className="mt-2 break-all text-sm font-medium text-zinc-100">{value || 'No detectado'}</div>
     </div>
   );
 }

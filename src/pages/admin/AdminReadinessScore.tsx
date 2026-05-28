@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthApi } from '../../config/api';
 
 type NivelScore = 'LISTO' | 'PREPARACIÓN PREVIA' | 'ESPERAR';
@@ -90,8 +90,15 @@ export default function AdminReadinessScore() {
   const [notasEdit, setNotasEdit] = useState('');
   const [updating, setUpdating]   = useState<string | null>(null);
   const [nivelFilter, setNivelFilter] = useState<NivelScore | 'Todos'>('Todos');
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { fetchLeads(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (selected && panelRef.current) {
+      panelRef.current.scrollTop = 0;
+    }
+  }, [selected?._id]);
 
   async function fetchLeads() {
     setLoading(true);
@@ -322,15 +329,15 @@ export default function AdminReadinessScore() {
           style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', justifyContent: 'flex-end', background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, #050505 38%)' }}
           onClick={() => setSelected(null)}
         >
-          <div className="admin-slide-panel" onClick={e => e.stopPropagation()}>
+          <div ref={panelRef} className="admin-slide-panel" onClick={e => e.stopPropagation()}>
             {/* Cabecera */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 36 }}>
-              <div>
-                <div style={{ fontSize: 8, letterSpacing: '0.28em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 36 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#3A3A3A', textTransform: 'uppercase', marginBottom: 10, overflowWrap: 'break-word' }}>
                   FABRIC · ADMIN · READINESS SCORE · DETALLE
                 </div>
-                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 32, color: '#F5F5F5', lineHeight: 1.05 }}>{selected.empresa}</div>
-                <div style={{ fontSize: 11, color: '#5A5A5A', marginTop: 8 }}>{selected.nombre} · {selected.cargo}</div>
+                <div style={{ fontFamily: 'var(--serif, Georgia, serif)', fontSize: 'clamp(22px, 5vw, 32px)', color: '#F5F5F5', lineHeight: 1.05, wordBreak: 'break-word' }}>{selected.empresa}</div>
+                <div style={{ fontSize: 11, color: '#5A5A5A', marginTop: 8, wordBreak: 'break-word' }}>{selected.nombre} · {selected.cargo}</div>
               </div>
               <button
                 onClick={() => setSelected(null)}

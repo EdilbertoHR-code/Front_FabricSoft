@@ -209,6 +209,16 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
       return;
     }
 
+    if (contact.name.trim().length > 80) {
+      setFormError("El nombre no puede superar 80 caracteres.");
+      return;
+    }
+
+    if (contact.phone && !/^\d{10}$/.test(contact.phone)) {
+      setFormError("El teléfono debe tener exactamente 10 dígitos.");
+      return;
+    }
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) || publicEmail) {
       setFormError("Usa un email corporativo. No se aceptan dominios públicos.");
       return;
@@ -453,7 +463,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Nombre directivo</span>
-                    <input required type="text" value={contact.name} onChange={(e) => setContact(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                    <input required type="text" maxLength={80} value={contact.name} onChange={(e) => setContact(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
                   </label>
                   <label className="block">
                     <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Cargo (Ej. CFO / CIO)</span>
@@ -474,7 +484,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
 
                 <label className="block">
                   <span className="mb-2 block font-mono text-[9px] uppercase tracking-[0.15em] text-[#F5F5F5]/50">Teléfono (opcional)</span>
-                  <input type="tel" value={contact.phone} onChange={(e) => setContact(prev => ({ ...prev, phone: e.target.value }))} className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all" />
+                  <input type="tel" inputMode="numeric" maxLength={10} value={contact.phone} onChange={(e) => setContact(prev => ({ ...prev, phone: e.target.value.replace(/\D/g, "") }))} placeholder="10 dígitos" className="w-full bg-[#050203] border border-[#2A2A2A] rounded-sm px-4 py-3.5 text-sm text-[#F5F5F5] outline-none focus:border-[#C9A96E] focus:shadow-[0_0_15px_rgba(201,169,110,0.1)] transition-all placeholder:text-[#F5F5F5]/20" />
                 </label>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_140px] sm:items-end bg-[#111]/30 p-4 border border-[#2A2A2A] rounded-sm">
