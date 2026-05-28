@@ -63,9 +63,6 @@ const AdminMigrationRoadmap   = lazy(() => import('../pages/admin/AdminMigration
 const AdminReadinessScore     = lazy(() => import('../pages/admin/AdminReadinessScore'));
 const AdminCloudComparator    = lazy(() => import('../pages/admin/AdminCloudComparator'));
 
-// =========================================================================
-// UTILIDADES Y COMPONENTES GLOBALES
-// =========================================================================
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();

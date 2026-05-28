@@ -6,8 +6,9 @@
 
 @theme {
   /* ── Tokens con prefijo fabric- ── */
-  --color-fabric-base: #050203;
-  --color-fabric-panel: #080706;
+--color-fabric-base: #0A0A0A;
+--color-bg-base: #0A0A0A;
+
   --color-fabric-elevated: #060606;
 
   --color-fabric-text: #F5F5F5;
@@ -51,7 +52,7 @@
 
 /* Variables CSS globales */
 :root {
-  --bg-base: #050203;
+--bg-base: #0A0A0A;
   --bg-panel: #080706;
   --bg-elevated: #060606;
   

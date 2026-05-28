@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logoImg from '../../../assets/logo/logo.png';
+import logoImg from '../../../assets/logo/fabric_sin_fondo_transparente.png';
 import LanguageToggle from '../../../components/LanguageToggle';
 import { useI18n } from '../../../i18n/I18nProvider';
 import type { TranslationKey } from '../../../i18n/translations';
@@ -115,12 +115,14 @@ export default function Header() {
             `}
             style={{ transitionDelay: '60ms' }}
           >
-            <img
-              src={logoImg}
-              alt="FABRIC"
-              className="h-10 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ transform: 'scale(3.2)', transformOrigin: 'left center' }}
-            />
+            {/* LOGO ESCRITORIO: Contenedor MÁS GRANDE con overflow-hidden */}
+            <div className="overflow-hidden h-10 md:h-14 w-36 md:w-48 flex items-center justify-center">
+              <img
+                src={logoImg}
+                alt="FABRIC"
+                className="h-[100px] md:h-[140px] w-auto max-w-none mix-blend-lighten opacity-90 group-hover:opacity-100 transition-all duration-500 -translate-y-[5px] md:-translate-y-[8px]"
+              />
+            </div>
           </Link>
 
           <div
@@ -155,9 +157,18 @@ export default function Header() {
       />
       <aside className={`fixed right-0 top-0 bottom-0 z-[110] w-full sm:w-[380px] bg-[#050203]/95 backdrop-blur-2xl border-l border-[#2A2A2A] flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:hidden`}>
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
+          
           <div className="flex items-center">
-            <img src={logoImg} alt="FABRIC" className="h-8 w-auto object-contain opacity-90" style={{ transform: 'scale(4.2)', transformOrigin: 'left center' }} />
+            {/* LOGO MÓVIL: Contenedor MÁS GRANDE con overflow-hidden */}
+            <div className="overflow-hidden h-10 w-36 flex items-center justify-center">
+              <img 
+                src={logoImg} 
+                alt="FABRIC" 
+                className="h-[100px] w-auto max-w-none mix-blend-lighten opacity-90 -translate-y-[5px]" 
+              />
+            </div>
           </div>
+
           <button onClick={() => setMobileOpen(false)} aria-label="Cerrar menu" className="text-[#F5F5F5]/40 hover:text-[#C9A96E] p-2 -mr-2 rounded-full transition-all duration-500 hover:rotate-90 active:scale-90">
             <svg className="w-6 h-6 stroke-[1.2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
