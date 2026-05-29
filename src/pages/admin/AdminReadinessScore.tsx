@@ -104,13 +104,16 @@ function normFactor(value: string): number {
   return 40;
 }
 
+function rsValue(rs: ReadinessLead['readinessScore'], key: keyof typeof FACTOR_LABELS): string {
+  return (rs as Record<string, unknown>)[key] as string ?? '';
+}
+
 function calculateWeightedScore(rs: ReadinessLead['readinessScore'] | undefined): number {
   if (!rs) return 0;
   let total = 0;
   for (const key of Object.keys(FACTOR_LABELS) as (keyof typeof FACTOR_LABELS)[]) {
     const weight = FACTOR_WEIGHT[key] ?? 0;
-    const value = rs[key] as unknown as string;
-    total += normFactor(value) * weight;
+    total += normFactor(rsValue(rs, key)) * weight;
   }
   return Math.round(total / WEIGHT_SUM);
 }
@@ -120,7 +123,7 @@ function getTopImprovableFactors(rs: ReadinessLead['readinessScore'] | undefined
   return (Object.keys(FACTOR_LABELS) as (keyof typeof FACTOR_LABELS)[])
     .map(key => {
       const weight = FACTOR_WEIGHT[key] ?? 0;
-      const value = rs[key] as unknown as string;
+      const value = rsValue(rs, key);
       const gain = Math.round((100 - normFactor(value)) * weight / WEIGHT_SUM);
       return { label: FACTOR_LABELS[key], gain };
     })
@@ -611,7 +614,7 @@ export default function AdminReadinessScore() {
                       </thead>
                       <tbody>
                         {(Object.entries(FACTOR_LABELS) as [keyof typeof FACTOR_LABELS, string][]).map(([key, label]) => {
-                          const txt = selected.readinessScore?.[key] as string | undefined;
+                          const txt = selected.readinessScore ? rsValue(selected.readinessScore, key) : undefined;
                           if (!txt) return null;
                           const weight = FACTOR_WEIGHT[key];
                           const norm = normFactor(txt);

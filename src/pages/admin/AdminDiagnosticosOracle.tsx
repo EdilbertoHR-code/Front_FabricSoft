@@ -22,7 +22,6 @@ import type { LucideIcon } from 'lucide-react';
 import { api } from '../../config/api';
 import { AnswerCard } from './components/AnswerCard';
 import { Tabs } from './components/Tabs';
-import { MetricCard } from './components/MetricCard';
 
 type DiagnosticStatus = 'nuevo' | 'en_revision' | 'contactado' | 'aprobado' | 'descartado';
 type EmailStatus = 'not_sent' | 'sent' | 'preview' | 'failed';
