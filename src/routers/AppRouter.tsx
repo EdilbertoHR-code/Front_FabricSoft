@@ -1,10 +1,19 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, Suspense, lazy } from 'react';
-import { SignIn, SignUp } from '@clerk/clerk-react';
 
 import PublicLayout from '../layouts/public/publicLayaout';
 import { ProtectorRoles } from '../auth/ProtecteRoles';
 import { PublicRouteProtector } from '../auth/PublicProtecte';
+
+// Limite de Clerk: provee el ClerkProvider solo a las rutas de auth/admin.
+// Lazy => la landing publica no carga el runtime de Clerk.
+const ClerkBoundary = lazy(() => import('../auth/ClerkBoundary'));
+const AccesoScreen = lazy(() =>
+  import('../auth/AuthScreens').then((m) => ({ default: m.AccesoScreen })),
+);
+const CrearCuentaScreen = lazy(() =>
+  import('../auth/AuthScreens').then((m) => ({ default: m.CrearCuentaScreen })),
+);
 
 // Páginas Públicas
 const Home = lazy(() => import('../pages/public/home/home'));
@@ -117,15 +126,9 @@ export const AppRouter = () => {
       <Suspense fallback={<GlobalLoader />}>
         <Routes>
 
-          <Route path="/verificar-acceso" element={<VerificarAcceso />} />
-
           <Route
             path="/"
-            element={
-              <PublicRouteProtector>
-                <PublicLayout />
-              </PublicRouteProtector>
-            }
+            element={<PublicLayout />}
           >
             <Route index element={<Home />} />
 
@@ -162,70 +165,61 @@ export const AppRouter = () => {
           </Route>
 
           {/* =================================================================
-              RUTAS DE AUTENTICACIÓN (CLERK)
+              RUTAS QUE REQUIEREN CLERK (auth + admin)
+              Agrupadas bajo ClerkBoundary (lazy) para que el ClerkProvider
+              y el runtime de Clerk NO carguen en las rutas publicas.
               ================================================================= */}
-          <Route
-            path="/acceso/*"
-            element={
-              <PublicRouteProtector>
-                <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
-                  <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
-                  <div className="pointer-events-none absolute -top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
-                  <div className="relative z-10">
-                    <SignIn routing="path" path="/acceso" signUpUrl="/crear-cuenta" />
-                  </div>
-                </div>
-              </PublicRouteProtector>
-            }
-          />
+          <Route element={<ClerkBoundary />}>
+            <Route path="/verificar-acceso" element={<VerificarAcceso />} />
 
-          <Route
-            path="/crear-cuenta/*"
-            element={
-              <PublicRouteProtector>
-                <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden">
-                  <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
-                  <div className="pointer-events-none absolute -bottom-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 bg-[#C9A96E] opacity-[0.03] blur-[120px]" />
-                  <div className="relative z-10">
-                    <SignUp routing="path" path="/crear-cuenta" signInUrl="/acceso" />
-                  </div>
-                </div>
-              </PublicRouteProtector>
-            }
-          />
+            <Route
+              path="/acceso/*"
+              element={
+                <PublicRouteProtector>
+                  <AccesoScreen />
+                </PublicRouteProtector>
+              }
+            />
 
-          {/* =================================================================
-              RUTAS DE ADMINISTRACIÓN — protegidas por Clerk + roles
-              ================================================================= */}
-          <Route path="/admin/login" element={<Navigate to="/acceso" replace />} />
+            <Route
+              path="/crear-cuenta/*"
+              element={
+                <PublicRouteProtector>
+                  <CrearCuentaScreen />
+                </PublicRouteProtector>
+              }
+            />
 
-          <Route
-            path="/admin"
-            element={
-              <ProtectorRoles rolesPermitidos={['admin']}>
-                <AdminLayout />
-              </ProtectorRoles>
-            }
-          >
-            <Route index element={<AdminDashboard />} />
-            <Route path="leads" element={<AdminLeads />} />
-            <Route path="papers" element={<AdminPapers />} />
-            <Route path="nda" element={<AdminNda />} />
-            <Route path="referencias" element={<AdminReferencias />} />
-            <Route path="transparencia" element={<AdminTransparencia />} />
-            <Route path="research-letters" element={<AdminResearchLetters />} />
-            <Route path="metricas" element={<AdminMetricas />} />
-            <Route path="capacidad" element={<AdminCapacidad />} />
-            <Route path="office-hours" element={<AdminOfficeHours />} />
-            <Route path="logs" element={<AdminLogs />} />
-            <Route path="agente-ia" element={<AdminAgenteIA />} />
-            <Route path="conversaciones-ia" element={<AdminConversacionesIA />} />
-            <Route path="diagnosticos-oracle"  element={<AdminDiagnosticosOracle />} />
-            <Route path="rescue-assessment"    element={<AdminRescueAssessment />} />
-            <Route path="oci-audit"           element={<AdminOciAudit />} />
-            <Route path="migration-roadmap"   element={<AdminMigrationRoadmap />} />
-            <Route path="readiness-score"     element={<AdminReadinessScore />} />
-            <Route path="cloud-comparator"     element={<AdminCloudComparator />} />
+            <Route path="/admin/login" element={<Navigate to="/acceso" replace />} />
+
+            <Route
+              path="/admin"
+              element={
+                <ProtectorRoles rolesPermitidos={['admin']}>
+                  <AdminLayout />
+                </ProtectorRoles>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="leads" element={<AdminLeads />} />
+              <Route path="papers" element={<AdminPapers />} />
+              <Route path="nda" element={<AdminNda />} />
+              <Route path="referencias" element={<AdminReferencias />} />
+              <Route path="transparencia" element={<AdminTransparencia />} />
+              <Route path="research-letters" element={<AdminResearchLetters />} />
+              <Route path="metricas" element={<AdminMetricas />} />
+              <Route path="capacidad" element={<AdminCapacidad />} />
+              <Route path="office-hours" element={<AdminOfficeHours />} />
+              <Route path="logs" element={<AdminLogs />} />
+              <Route path="agente-ia" element={<AdminAgenteIA />} />
+              <Route path="conversaciones-ia" element={<AdminConversacionesIA />} />
+              <Route path="diagnosticos-oracle"  element={<AdminDiagnosticosOracle />} />
+              <Route path="rescue-assessment"    element={<AdminRescueAssessment />} />
+              <Route path="oci-audit"           element={<AdminOciAudit />} />
+              <Route path="migration-roadmap"   element={<AdminMigrationRoadmap />} />
+              <Route path="readiness-score"     element={<AdminReadinessScore />} />
+              <Route path="cloud-comparator"     element={<AdminCloudComparator />} />
+            </Route>
           </Route>
 
           {/* 404 → Home */}
