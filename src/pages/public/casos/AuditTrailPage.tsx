@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
+import './casos-detalle.css';
 
 const CASOS: Record<string, {
   nombre: string;

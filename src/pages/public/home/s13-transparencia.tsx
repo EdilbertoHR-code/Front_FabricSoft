@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../../config/api';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+import './s13-transparencia.css';
+
 
 // ---------------------------------------------------------------------------
 // Types

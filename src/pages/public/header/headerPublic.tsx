@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logoImg from '../../../assets/logo/fabric_sin_fondo_transparente.png';
+import logoImg from '../../../assets/logo/fabric-logo.webp';
 import LanguageToggle from '../../../components/LanguageToggle';
 import { useI18n } from '../../../i18n/I18nProvider';
 import type { TranslationKey } from '../../../i18n/translations';

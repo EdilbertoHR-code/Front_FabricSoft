@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
+import './s07-casos.css';
 
 interface MetricRow {
   label: string;

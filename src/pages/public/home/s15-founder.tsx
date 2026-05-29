@@ -3,6 +3,8 @@ import { useInViewOnce } from '../../../hooks/useInViewOnce';
 import { useCapacidad, useMetrica } from '../../../store/FabricContext';
 import { countSlots, type AdmissionQuarter, type QuarterStatus, type SlotStatus } from '../../../store/fabricStore';
 import { api } from '../../../config/api';
+import './s15-founder.css';
+
 
 interface ApiSlot {
   id: number;

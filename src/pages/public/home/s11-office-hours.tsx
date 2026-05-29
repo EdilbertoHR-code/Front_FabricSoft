@@ -1,5 +1,7 @@
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
 import OfficeHoursCalendar from '../../../components/OfficeHoursCalendar';
+import './s11-office-hours.css';
+
 
 export default function S11OfficeHours() {
   const [ref, isInView] = useInViewOnce<HTMLElement>();

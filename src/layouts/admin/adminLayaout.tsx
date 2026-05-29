@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, Suspense, type ReactNode } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
@@ -93,6 +93,18 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
 ];
+
+const NestedLoader = () => (
+  <div className="flex min-h-[60vh] w-full flex-col items-center justify-center bg-transparent">
+    <div className="relative mb-4 flex h-10 w-10 items-center justify-center">
+      <div className="absolute inset-0 rounded-full border border-[#2A2A2A]" />
+      <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-[#C9A96E]" />
+    </div>
+    <div className="font-mono text-[9px] font-bold text-[#C9A96E] uppercase tracking-[0.2em] animate-pulse">
+      Cargando sección...
+    </div>
+  </div>
+);
 
 // ─── Componente principal ────────────────────────────────────────────────────
 
@@ -707,7 +719,6 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
             position: 'sticky',
             top: 0,
             zIndex: 30,
-            display: 'flex',
             height: 56,
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -716,7 +727,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
             backdropFilter: 'blur(12px)',
             padding: '0 20px',
           }}
-          className="lg:hidden"
+          className="flex lg:hidden"
         >
           <div>
             <div
@@ -794,7 +805,9 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
             }}
           />
           <div className="admin-content-shell" style={{ position: 'relative' }}>
-            {children ?? <Outlet />}
+            <Suspense fallback={<NestedLoader />}>
+              {children ?? <Outlet />}
+            </Suspense>
           </div>
         </section>
       </main>

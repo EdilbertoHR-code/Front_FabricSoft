@@ -1,4 +1,7 @@
+import './s10-lifecycle.css';
+
 interface LifecycleStep {
+
   num: string;
   name: string;
   duration: string;

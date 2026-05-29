@@ -44,7 +44,16 @@ const INDUSTRY_LABEL: Record<string, string> = {
   logistica: 'Logística',
 };
 
-type TabKey = 'aplicar' | 'waitlist' | 'rfp-template' | 'benchmark-index' | 'cloud-comparator';
+type TabKey =
+  | 'aplicar'
+  | 'waitlist'
+  | 'rfp-template'
+  | 'benchmark-index'
+  | 'cloud-comparator'
+  | 'referencia'
+  | 'migration-roadmap'
+  | 'office-hours'
+  | 'readiness-score';
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: 'aplicar',           label: 'Aplicar' },
@@ -52,6 +61,10 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: 'rfp-template',      label: 'RFP Template' },
   { key: 'benchmark-index',   label: 'Benchmark' },
   { key: 'cloud-comparator',  label: 'Cloud Comparator' },
+  { key: 'referencia',        label: 'Referencias' },
+  { key: 'migration-roadmap', label: 'Migration Roadmap' },
+  { key: 'office-hours',      label: 'Office Hours' },
+  { key: 'readiness-score',   label: 'Readiness Score' },
 ];
 
 // Columns shown per tab
@@ -61,6 +74,10 @@ const TAB_COLUMNS: Record<TabKey, string[]> = {
   'rfp-template':     ['Fecha', 'Compañía', 'Cargo', 'Email', 'Estado', ''],
   'benchmark-index':  ['Fecha', 'Compañía', 'Cargo', 'Email', 'Estado', ''],
   'cloud-comparator': ['Fecha', 'Compañía', 'Cargo', 'Email', 'Estado', ''],
+  'referencia':       ['Fecha', 'Compañía', 'Cargo', 'Email', 'Score', 'Estado', ''],
+  'migration-roadmap':['Fecha', 'Compañía', 'Cargo', 'Email', 'Score', 'Estado', ''],
+  'office-hours':     ['Fecha', 'Compañía', 'Cargo', 'Email', 'Score', 'Estado', ''],
+  'readiness-score':  ['Fecha', 'Compañía', 'Cargo', 'Email', 'Score', 'Estado', ''],
 };
 
 function fmt(iso: string) {

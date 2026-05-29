@@ -1,4 +1,6 @@
 import BackButton from '../../../components/BackButton';
+import './rechazados.css';
+
 
 export default function RechazadosPage() {
   const proyectos = [

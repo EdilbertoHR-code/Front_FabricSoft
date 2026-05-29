@@ -76,6 +76,7 @@ export default function InteractionManager() {
   const [paperDownloadUrl, setPaperDownloadUrl] = useState("");
 
   useEffect(() => {
+    if (active !== 'paper') return;
     api.get('/papers/catalog')
       .then(res => {
         if (res.data?.ok && Array.isArray(res.data.data)) {
@@ -95,7 +96,7 @@ export default function InteractionManager() {
       .catch(err => {
         console.error('Error loading papers in InteractionManager:', err);
       });
-  }, []);
+  }, [active]);
   const [formData, setFormData] = useState({ nombre: "", cargo: "", empresa: "", email: "", revenue: "", iniciativa: "", plazo: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);

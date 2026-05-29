@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useInViewOnce } from '../../../hooks/useInViewOnce';
 import { api } from '../../../config/api';
+import './s12-referencias.css';
+
 
 interface ReferenceItem {
   id?: string;

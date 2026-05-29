@@ -1,4 +1,6 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import './casos-detalle.css';
+
 
 interface TimelineItem { date: string; event: string; meta: string; }
 interface CaseBlock {

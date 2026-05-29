@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../../pages/public/header/headerPublic';
 import Footer from '../../pages/public/footer/footerPublic';
@@ -15,7 +16,16 @@ export default function PublicLayout() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
         <main className="flex flex-col w-full">
-          <Outlet />
+          <Suspense fallback={
+            <div className="flex min-h-[60vh] w-full flex-col items-center justify-center bg-transparent">
+              <div className="relative mb-4 flex h-10 w-10 items-center justify-center">
+                <div className="absolute inset-0 rounded-full border border-[#2A2A2A]" />
+                <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-[#C9A96E]" />
+              </div>
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </main>
         <Footer />
       </div>
