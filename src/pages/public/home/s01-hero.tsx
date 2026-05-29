@@ -205,15 +205,31 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         <div
           className="fabric-orb-core relative h-[225px] w-[225px] overflow-hidden rounded-full md:h-[300px] md:w-[300px] lg:h-[365px] lg:w-[365px]"
           style={{
-            backgroundImage:
-              "url('https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/globe.jpeg')",
-            backgroundSize: "cover",
-            backgroundPosition: "left center",
-            animation: "earthRotate 40s linear infinite",
-            boxShadow:
-              "0 0 54px rgba(201,169,110,.16), -10px 0 18px rgba(195,244,255,.30) inset, 24px 8px 48px rgba(0,0,0,.92) inset, -32px -6px 50px rgba(195,244,255,.12) inset, 185px 0 74px rgba(0,0,0,.72) inset, 116px 0 58px rgba(0,0,0,.84) inset",
+            // Solo el resplandor exterior (no se anima, se pinta una vez).
+            boxShadow: "0 0 54px rgba(201,169,110,.16)",
           }}
         >
+          {/* Textura de la Tierra: solo el fondo se desplaza (blit de imagen barato).
+              Las sombras costosas viven en otra capa, asi no se repintan por frame. */}
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              backgroundImage:
+                "url('https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/globe.jpeg')",
+              backgroundSize: "cover",
+              backgroundPosition: "left center",
+              animation: "earthRotate 40s linear infinite",
+            }}
+          />
+          {/* Sombreado de esfera (6 sombras inset originales) sobre la textura.
+              Estatico: se pinta una sola vez, ya no en cada frame. */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-full"
+            style={{
+              boxShadow:
+                "-10px 0 18px rgba(195,244,255,.30) inset, 24px 8px 48px rgba(0,0,0,.92) inset, -32px -6px 50px rgba(195,244,255,.12) inset, 185px 0 74px rgba(0,0,0,.72) inset, 116px 0 58px rgba(0,0,0,.84) inset",
+            }}
+          />
           <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.22),transparent_24%,transparent_100%)]" />
           <div className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,rgba(0,0,0,.76),transparent_36%,transparent_58%,rgba(0,0,0,.88))]" />
           <div className="absolute inset-0 rounded-full border border-white/10" />
@@ -330,8 +346,8 @@ export default function S01Hero() {
         }
 
         @keyframes earthRotate {
-          0% { background-position: 0 0; }
-          100% { background-position: 520px 0; }
+          0% { background-position: 0 center; }
+          100% { background-position: 520px center; }
         }
 
         @keyframes globeFloat {
@@ -428,7 +444,7 @@ export default function S01Hero() {
                   {number}
                 </p>
 
-                <p className="mt-2 font-mono text-[8px] font-bold uppercase leading-4 tracking-[0.18em] text-[#8A8A8A]">
+                <p className="mt-2 font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.16em] text-[#C2C2C2] md:text-[11px]">
                   {label}
                 </p>
               </div>
@@ -452,7 +468,7 @@ export default function S01Hero() {
           >
             <Link
               to="/#fabric-ai"
-              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#353535] bg-transparent px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.045] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.12)] max-sm:min-w-0 max-sm:w-full max-sm:px-5 max-sm:text-[9px]"
+              className="relative inline-flex min-w-[250px] items-center justify-center overflow-hidden border border-[#C9A96E]/45 bg-[#C9A96E]/[0.06] px-8 py-4 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#F5F5F5] transition-all duration-300 hover:-translate-y-1 hover:border-[#C9A96E] hover:bg-[#C9A96E]/[0.12] hover:text-[#C9A96E] hover:shadow-[0_0_28px_rgba(201,169,110,0.18)] max-sm:min-w-0 max-sm:w-full max-sm:px-5 max-sm:text-[9px]"
             >
               <span className="relative z-10">{t("cta.start")}</span>
               <span className="relative z-10 ml-3">-&gt;</span>

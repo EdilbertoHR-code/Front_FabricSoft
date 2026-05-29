@@ -1,4 +1,4 @@
-import logoFabric from '../../assets/logo/logo.png';
+import logoFabric from '../../assets/logo/logo.webp';
 
 interface LoaderProps {
   mensaje?: string;

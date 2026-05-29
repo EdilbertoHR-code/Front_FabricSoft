@@ -167,7 +167,7 @@ export default function S15Founder() {
               opacity: 0.4,
             }} />
             <img
-              src="/julio_alvarez.jpeg"
+              src="/julio_alvarez.webp"
               alt="Julio Álvarez — Founder FABRIC"
               style={{
                 width: "100%",

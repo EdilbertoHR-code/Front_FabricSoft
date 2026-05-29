@@ -23,7 +23,7 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
-import logoFabric from '../../assets/logo/logo.png';
+import logoFabric from '../../assets/logo/logo.webp';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
