@@ -120,6 +120,8 @@ export default function Header() {
               <img
                 src={logoImg}
                 alt="FABRIC"
+                width={480}
+                height={480}
                 className="h-[100px] md:h-[140px] w-auto max-w-none mix-blend-lighten opacity-90 group-hover:opacity-100 transition-all duration-500 -translate-y-[5px] md:-translate-y-[8px]"
               />
             </div>
@@ -161,10 +163,12 @@ export default function Header() {
           <div className="flex items-center">
             {/* LOGO MÓVIL: Contenedor MÁS GRANDE con overflow-hidden */}
             <div className="overflow-hidden h-10 w-36 flex items-center justify-center">
-              <img 
-                src={logoImg} 
-                alt="FABRIC" 
-                className="h-[100px] w-auto max-w-none mix-blend-lighten opacity-90 -translate-y-[5px]" 
+              <img
+                src={logoImg}
+                alt="FABRIC"
+                width={480}
+                height={480}
+                className="h-[100px] w-auto max-w-none mix-blend-lighten opacity-90 -translate-y-[5px]"
               />
             </div>
           </div>

@@ -441,8 +441,9 @@ export default function ChatIa() {
                       placeholder={isTyping ? "Diagnosticando..." : "Describe tu escenario técnico..."}
                       className="w-full bg-[#050203] border border-[#1A1A1A] rounded-sm py-3.5 pl-9 pr-12 font-mono text-xs text-[#F5F5F5] outline-none transition-colors focus:border-[#C9A96E]/40 disabled:opacity-50 placeholder:text-[#333]"
                     />
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
+                      aria-label="Enviar mensaje"
                       disabled={!inputValue.trim() || isTyping}
                       className="absolute right-4 text-[#C9A96E] disabled:text-[#333] transition-colors"
                     >
