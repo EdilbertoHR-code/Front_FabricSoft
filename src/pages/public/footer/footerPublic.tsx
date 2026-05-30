@@ -59,7 +59,7 @@ const footerLinks: Record<string, FooterLink[]> = {
 
 function FooterNavItem({ link }: { link: FooterLink }) {
   const className =
-    'min-w-0 text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-start gap-2 group text-left bg-transparent border-0 p-0 m-0 cursor-pointer font-sans leading-normal outline-none';
+    'min-w-0 text-[#F5F5F5]/60 hover:text-[#C9A96E] transition-all duration-300 text-sm flex items-start gap-2 group text-left bg-transparent border-0 p-0 m-0 cursor-pointer font-sans leading-normal focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#C9A96E]/60 focus-visible:rounded-sm';
   const content = (
     <>
       <span className="min-w-0 break-words transform group-hover:translate-x-1 transition-transform duration-300">
@@ -145,7 +145,7 @@ export default function Footer() {
             </div>
 
             <div className="pt-6 border-t border-[#2A2A2A]">
-              <p className="text-xs text-[#F5F5F5]/40 flex items-start gap-2">
+              <p className="text-xs text-[#F5F5F5]/70 flex items-start gap-2">
                 <span className="text-[#C9A96E]/60 animate-pulse">◆</span> Acceso selectivo · cupos limitados
               </p>
             </div>
@@ -167,7 +167,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/40">
+        <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/70">
           <LanguageToggle compact />
 
           <p className="footer-copyright" aria-label={`© ${currentYear} FABRIC SOFT MEXICO SA DE CV`}>
