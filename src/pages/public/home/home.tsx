@@ -1,14 +1,14 @@
 import { lazy, Suspense } from 'react';
 import S01Hero from './s01-hero';
-import S02bPuente from './s02b-puente';
-import RescueCounter from './s02-optimizador';
-import S03TcoCalculator from './s03-tco-calculator';
-import S04TcoWaitlist from './s04-tco-waitlist';
 import SectionNavigator from '../../../components/SectionNavigator';
-import ChatIa from '../chat/chatIa';
 import ViewportLoader from '../../../components/ViewportLoader';
 
-// Carga perezosa (lazy) de las secciones por debajo del pliegue
+// Carga perezosa de todo lo que está debajo del hero
+const S02bPuente = lazy(() => import('./s02b-puente'));
+const RescueCounter = lazy(() => import('./s02-optimizador'));
+const S03TcoCalculator = lazy(() => import('./s03-tco-calculator'));
+const S04TcoWaitlist = lazy(() => import('./s04-tco-waitlist'));
+const ChatIa = lazy(() => import('../chat/chatIa'));
 const S05AnalisisFallas = lazy(() => import('./s05-analisis-fallas'));
 const S06Doctrina = lazy(() => import('./s06-doctrina'));
 const S06bFixedPrice = lazy(() => import('./s06b-fixed-price'));
@@ -29,11 +29,30 @@ export default function Home() {
     <div className="w-full flex flex-col">
       <SectionNavigator />
       <S01Hero />
-    
-      <S02bPuente />
-      <S03TcoCalculator />
-      <S04TcoWaitlist />
-      <ChatIa />
+
+      <Suspense fallback={<div className="min-h-[400px]" />}>
+        <ViewportLoader height={400}>
+          <S02bPuente />
+        </ViewportLoader>
+      </Suspense>
+
+      <Suspense fallback={<div className="min-h-[600px]" />}>
+        <ViewportLoader height={600}>
+          <S03TcoCalculator />
+        </ViewportLoader>
+      </Suspense>
+
+      <Suspense fallback={<div className="min-h-[500px]" />}>
+        <ViewportLoader height={500}>
+          <S04TcoWaitlist />
+        </ViewportLoader>
+      </Suspense>
+
+      <Suspense fallback={<div className="min-h-[500px]" />}>
+        <ViewportLoader height={500}>
+          <ChatIa />
+        </ViewportLoader>
+      </Suspense>
 
       <Suspense fallback={<div className="min-h-[600px]" />}>
         <ViewportLoader height={600}>
@@ -59,7 +78,9 @@ export default function Home() {
         </ViewportLoader>
       </Suspense>
 
-      <RescueCounter />
+      <Suspense fallback={<div className="min-h-[300px]" />}>
+        <RescueCounter />
+      </Suspense>
 
       <Suspense fallback={<div className="min-h-[700px]" />}>
         <ViewportLoader height={700}>
