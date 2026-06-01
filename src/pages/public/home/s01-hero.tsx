@@ -143,7 +143,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "El riesgo real aparece después del go-live.",
         detailText:
           "Cuando empiezan cierres financieros, reportes ejecutivos, usuarios críticos y operación diaria, se revela si Oracle quedó estable o solo fue entregado.",
-        className: "left-[-7%] top-[2%]",
+        className: "left-[-3%] top-[2%]",
       },
       {
         number: "02",
@@ -152,7 +152,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "Una migración Oracle no debe depender de improvisación.",
         detailText:
           "FABRIC estructura migraciones con gobierno técnico, trazabilidad, validación operativa y responsabilidad por fase para reducir incertidumbre ejecutiva.",
-        className: "right-[-9%] top-[17%]",
+        className: "right-[7%] top-[17%]",
       },
       {
         number: "03",
@@ -161,7 +161,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "No basta con entregar. Tiene que operar.",
         detailText:
           "El proyecto se considera sólido cuando el primer ciclo crítico funciona sin reportes paralelos, dependencia manual o incidencias bloqueantes.",
-        className: "left-[-5%] bottom-[33%]",
+        className: "left-[-2%] bottom-[33%]",
       },
     ],
     [t],
@@ -189,12 +189,12 @@ const PremiumGlobe = memo(function PremiumGlobe() {
       <div className="pointer-events-none absolute left-1/2 top-[43%] h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,169,110,0.11),transparent_66%)] blur-2xl" />
 
       <div
-        className="pointer-events-none absolute left-1/2 top-[43%] h-[48%] w-[78%] rounded-full border border-[rgba(201,169,110,0.14)]"
+        className="pointer-events-none absolute left-1/2 top-[43%] h-[48%] w-[70%] rounded-full border border-[rgba(201,169,110,0.14)]"
         style={{ animation: "orbitRotate 46s linear infinite" }}
       />
 
       <div
-        className="pointer-events-none absolute left-1/2 top-[43%] h-[68%] w-[52%] rounded-full border border-[rgba(201,169,110,0.08)]"
+        className="pointer-events-none absolute left-1/2 top-[43%] h-[68%] w-[48%] rounded-full border border-[rgba(201,169,110,0.08)]"
         style={{ animation: "orbitRotate 60s linear infinite reverse" }}
       />
 
@@ -245,9 +245,9 @@ const PremiumGlobe = memo(function PremiumGlobe() {
             type="button"
             onClick={() => setActiveLabel(index)}
             className={`
-              fabric-orb-label absolute z-30 max-w-[230px] border px-4 py-3 text-left
+              fabric-orb-label absolute z-30 max-w-[210px] border px-4 py-3 text-left
               shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md
-              transition-all duration-300 md:max-w-[250px]
+              transition-all duration-300 md:max-w-[220px] xl:max-w-[240px]
               ${label.className}
               ${selected
                 ? "border-[#C9A96E] bg-[#C9A96E]/10 shadow-[0_0_34px_rgba(201,169,110,0.12)]"
@@ -259,7 +259,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
               {label.number}
             </p>
 
-            <p className="mt-1.5 truncate font-mono text-[8px] font-black uppercase leading-none tracking-[0.24em] text-[#F5F5F5] md:text-[9px] lg:text-[10px]">
+            <p className="mt-1.5 truncate font-mono text-[8px] font-black uppercase leading-none tracking-[0.2em] text-[#F5F5F5] md:text-[9px] lg:text-[10px]">
               {label.title}
             </p>
           </button>
@@ -483,7 +483,7 @@ export default function S01Hero() {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-[700px] md:mx-auto lg:ml-auto">
+        <div className="relative z-10 mx-auto w-full max-w-[660px] md:mx-auto lg:ml-auto lg:mr-20 xl:mr-24 2xl:mr-28">
           <PremiumGlobe />
         </div>
       </div>
