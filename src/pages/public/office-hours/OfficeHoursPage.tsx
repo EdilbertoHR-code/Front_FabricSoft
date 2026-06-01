@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import { api } from '../../../config/api';
 import { getInteractionTracking } from '../../../utils/tracking';
+import { applyOfficeHoursFomoToMonth, applyOfficeHoursFomoToSlots } from '../../../utils/officeHoursFomo';
 import '../../../components/office-hours-calendar.css';
 
 
 // ── tipos ──────────────────────────────────────────────────────────────────
 type MonthData = Record<string, number>;
-interface Slot { time: string; taken: boolean; }
+interface Slot { time: string; taken: boolean; fomoBlocked?: boolean; }
 
 // ── helpers ────────────────────────────────────────────────────────────────
 function localDateISO() {
@@ -73,7 +74,6 @@ export default function OfficeHoursPage() {
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [monthData,   setMonthData]   = useState<MonthData>({});
   const [monthFull,   setMonthFull]   = useState(false);
-  const [monthBooked, setMonthBooked] = useState(0);
   const [loadingCal,  setLoadingCal]  = useState(false);
 
   // Selección
@@ -102,9 +102,8 @@ export default function OfficeHoursPage() {
       .then(res => {
         setMonthData(res.data.data ?? {});
         setMonthFull(res.data.monthFull ?? false);
-        setMonthBooked(res.data.booked ?? 0);
       })
-      .catch(() => { setMonthData({}); setMonthFull(false); setMonthBooked(0); })
+      .catch(() => { setMonthData({}); setMonthFull(false); })
       .finally(() => setLoadingCal(false));
   }, [year, month]);
 
@@ -115,8 +114,8 @@ export default function OfficeHoursPage() {
     setSlots([]);
     setLoadingSlots(true);
     api.get(`/office-hours/disponibilidad/dia?date=${selectedDay}`)
-      .then(res => setSlots(res.data.data ?? []))
-      .catch(() => setSlots(['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00'].map(t => ({ time: t, taken: false }))))
+      .then(res => setSlots(applyOfficeHoursFomoToSlots(selectedDay, res.data.data ?? [])))
+      .catch(() => setSlots(applyOfficeHoursFomoToSlots(selectedDay, ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00'].map(t => ({ time: t, taken: false })))))
       .finally(() => setLoadingSlots(false));
   }, [selectedDay]);
 
@@ -128,7 +127,8 @@ export default function OfficeHoursPage() {
   const prevMonth = () => { if (isAtMin) return; month === 1 ? (setMonth(12), setYear(y => y-1)) : setMonth(m => m-1); };
   const nextMonth = () => { if (isAtMax) return; month === 12 ? (setMonth(1), setYear(y => y+1)) : setMonth(m => m+1); };
 
-  const cells = buildCalendarGrid(year, month, monthData, selectedDay);
+  const visibleMonthData = applyOfficeHoursFomoToMonth(year, month, monthData);
+  const cells = buildCalendarGrid(year, month, visibleMonthData, selectedDay);
 
   const formatDayLabel = (iso: string) =>
     new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -233,7 +233,7 @@ export default function OfficeHoursPage() {
                 <p style={{ fontFamily: 'var(--sans)', fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: 480 }}>
                   {hasSlot
                     ? 'Recibirás la confirmación y el link de videollamada en tu correo. Julio revisará tu perfil antes de la sesión.'
-                    : 'Revisaremos tu perfil y te confirmaremos disponibilidad en 24 horas hábiles.'}
+                    : 'Revisaremos tu perfil y te confirmaremos fecha en 24 horas hábiles.'}
                 </p>
                 <div style={{ marginTop: 32, display: 'flex', gap: 16 }}>
                   <Link to="/" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none' }}>
@@ -244,7 +244,7 @@ export default function OfficeHoursPage() {
             ) : (
             <>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 24 }}>
-              1 · Selecciona un día disponible
+              1 · Selecciona una ventana privada
             </div>
 
             {/* Calendario inline */}
@@ -266,7 +266,7 @@ export default function OfficeHoursPage() {
                   <div
                     key={idx}
                     className={`cal-day ${cell.className}`}
-                    style={{ cursor: cell.available > 0 ? 'pointer' : 'default', outline: cell.dateStr && cell.dateStr === selectedDay ? '2px solid var(--accent)' : 'none', outlineOffset: -2 }}
+                    style={{ cursor: cell.available > 0 ? 'pointer' : 'default', outline: cell.dateStr && cell.dateStr === selectedDay ? '1px solid var(--border-strong)' : 'none', outlineOffset: -2 }}
                     onClick={() => cell.dateStr && handleDayClick(cell.dateStr, cell.available)}
                   >
                     {cell.day ?? ''}
@@ -278,13 +278,11 @@ export default function OfficeHoursPage() {
                   SESIONES AGOTADAS · {MONTH_NAMES[month-1].toUpperCase()} · Navega al mes siguiente →
                 </div>
               ) : (
-                <div style={{ marginTop: 12, fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>
-                  {4 - monthBooked} / 4 sesiones disponibles en {MONTH_NAMES[month-1]}
-                </div>
+                null
               )}
               <div className="calendar-legend">
-                <span><span className="legend-swatch available"></span>Slot disponible</span>
-                <span><span className="legend-swatch full"></span>Sin slots</span>
+                <span><span className="legend-swatch available"></span>Disponible</span>
+                <span><span className="legend-swatch full"></span>Sin disponibilidad</span>
               </div>
             </div>
 
@@ -295,11 +293,11 @@ export default function OfficeHoursPage() {
                   2 · Elige un horario · <span style={{ color: 'var(--text-secondary)', fontWeight: 400 }}>{formatDayLabel(selectedDay)}</span>
                 </div>
                 {loadingSlots ? (
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>Consultando disponibilidad...</div>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em' }}>Consultando agenda...</div>
                 ) : (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                     {slots.length === 0 ? (
-                      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)' }}>Sin horarios disponibles para este día.</div>
+                      <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--text-tertiary)' }}>Sin horarios habilitados para este día.</div>
                     ) : slots.map(s => (
                       <button
                         key={s.time}
@@ -420,7 +418,7 @@ export default function OfficeHoursPage() {
                   <p style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
                     {hasSlot
                       ? `Tu sesión del ${formatDayLabel(selectedDay!)} a las ${selectedSlot} está registrada. Recibirás confirmación en ${form.email}.`
-                      : `Revisaremos tu perfil y confirmaremos disponibilidad en ${form.email} en 24 horas hábiles.`}
+                      : `Revisaremos tu perfil y confirmaremos fecha en ${form.email} en 24 horas hábiles.`}
                   </p>
                   <div style={{ marginTop: 24 }}>
                     <Link to="/" style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none' }}>
@@ -461,7 +459,7 @@ export default function OfficeHoursPage() {
             ))}
           </div>
           <div style={{ marginTop: 16, fontFamily: 'var(--mono)', fontSize: 8, color: 'var(--text-tertiary)', letterSpacing: '0.15em', lineHeight: 1.8 }}>
-            Si cumples los criterios, recibirás confirmación y fecha disponible en 24 horas hábiles.
+            Si cumples los criterios, recibirás confirmación de fecha en 24 horas hábiles.
           </div>
         </div>
         <div>

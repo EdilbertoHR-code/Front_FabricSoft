@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import LanguageToggle from '../../../components/LanguageToggle';
+// Traductor desactivado temporalmente por rendimiento.
+// import LanguageToggle from '../../../components/LanguageToggle';
 import { useI18n } from '../../../i18n/I18nProvider';
 import type { TranslationKey } from '../../../i18n/translations';
 
@@ -150,9 +151,10 @@ export default function Header() {
             style={{ transitionDelay: '180ms' }}
           >
             {startLink}
-            <div className="hidden translate-y-[1px] sm:flex sm:pl-8">
+            {/* Traductor desactivado temporalmente por rendimiento. */}
+            {/* <div className="hidden translate-y-[1px] sm:flex sm:pl-8">
               <LanguageToggle compact />
-            </div>
+            </div> */}
 
             <button
               onClick={() => setMobileOpen(true)}
@@ -243,9 +245,10 @@ export default function Header() {
         </nav>
 
         <div className={`px-8 py-8 border-t border-[#2A2A2A]/40 transition-all duration-700 ${mobileOpen ? 'opacity-100 translate-y-0 delay-[500ms]' : 'opacity-0 translate-y-8'}`}>
-          <div className="mb-6 flex justify-center">
+          {/* Traductor desactivado temporalmente por rendimiento. */}
+          {/* <div className="mb-6 flex justify-center">
             <LanguageToggle />
-          </div>
+          </div> */}
           <Link
             to="/#fabric-ai"
             onClick={(event) => handleSectionNavigation(event, 'fabric-ai')}

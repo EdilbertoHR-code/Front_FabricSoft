@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import LanguageToggle from '../../../components/LanguageToggle';
+// Traductor desactivado temporalmente por rendimiento.
+// import LanguageToggle from '../../../components/LanguageToggle';
 
 type FooterLink = {
   label: string;
@@ -168,7 +169,8 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/70">
-          <LanguageToggle compact />
+          {/* Traductor desactivado temporalmente por rendimiento. */}
+          {/* <LanguageToggle compact /> */}
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link to="/terminos" className="text-[#F5F5F5]/50 hover:text-[#C9A96E] transition-colors duration-300 tracking-[0.12em] uppercase text-[10px]">

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "../config/api";
+import { applyOfficeHoursFomoToMonth, applyOfficeHoursFomoToSlots, type MonthAvailability } from "../utils/officeHoursFomo";
 import { getInteractionTracking } from "../utils/tracking";
 
 type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | "nda-pdf" | null;
@@ -29,7 +30,7 @@ interface PaperCatalogItem {
   meta: string;
 }
 
-interface DaySlot { time: string; taken: boolean; }
+interface DaySlot { time: string; taken: boolean; fomoBlocked?: boolean; }
 
 // Genera los próximos N días laborables a partir de mañana
 function cursorToLocalISO(d: Date): string {
@@ -107,6 +108,7 @@ export default function InteractionManager() {
   const [slots, setSlots] = useState<DaySlot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [monthBooked, setMonthBooked] = useState<Record<string, number>>({}); // "YYYY-MM" → booked count
+  const [visibleMonthDays, setVisibleMonthDays] = useState<Record<string, MonthAvailability>>({});
   const tracking = (sourceSection: string, interactionType: string) => getInteractionTracking(sourceSection, interactionType);
 
   const MONTHLY_LIMIT = 4;
@@ -119,12 +121,15 @@ export default function InteractionManager() {
     setSlotsLoading(true);
     const monthKey = getMonthKey(dateISO);
     try {
+      let visibleDays = visibleMonthDays[monthKey];
       // Consultar disponibilidad mensual si no la tenemos aún
-      if (monthBooked[monthKey] === undefined) {
+      if (monthBooked[monthKey] === undefined || visibleDays === undefined) {
         const [year, month] = monthKey.split('-');
         const mesRes = await api.get(`/office-hours/disponibilidad/mes?year=${year}&month=${month}`);
         const booked = mesRes.data.booked ?? 0;
+        visibleDays = applyOfficeHoursFomoToMonth(Number(year), Number(month), mesRes.data.data ?? {});
         setMonthBooked(prev => ({ ...prev, [monthKey]: booked }));
+        setVisibleMonthDays(prev => ({ ...prev, [monthKey]: visibleDays ?? {} }));
         if (booked >= MONTHLY_LIMIT) {
           setSlots([]);
           setSlotsLoading(false);
@@ -135,15 +140,24 @@ export default function InteractionManager() {
         setSlotsLoading(false);
         return;
       }
+      if (!visibleDays?.[dateISO]) {
+        const nextVisibleDay = Object.keys(visibleDays ?? {}).find((date) => date >= TODAY_ISO);
+        if (nextVisibleDay && nextVisibleDay !== dateISO) {
+          setSelectedDay(nextVisibleDay);
+        }
+        setSlots([]);
+        setSlotsLoading(false);
+        return;
+      }
       const res = await api.get(`/office-hours/disponibilidad/dia?date=${dateISO}`);
-      setSlots(res.data.data ?? []);
+      setSlots(applyOfficeHoursFomoToSlots(dateISO, res.data.data ?? []));
     } catch {
-      setSlots(['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00']
-        .map(time => ({ time, taken: false })));
+      setSlots(applyOfficeHoursFomoToSlots(dateISO, ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','16:00']
+        .map(time => ({ time, taken: false }))));
     } finally {
       setSlotsLoading(false);
     }
-  }, [monthBooked]);
+  }, [monthBooked, visibleMonthDays]);
 
   useEffect(() => {
     if (active === 'office-hours' && selectedDay) {
@@ -392,13 +406,16 @@ export default function InteractionManager() {
                     <div style={{ display: "flex", gap: 6, flex: 1 }}>
                       {days.slice(weekOffset * 5, weekOffset * 5 + 5).map((iso) => {
                         const isPast = iso < TODAY_ISO;
+                        const visibleDays = visibleMonthDays[getMonthKey(iso)];
+                        const isFomoHidden = visibleDays !== undefined && !visibleDays[iso];
+                        const disabled = isPast || isFomoHidden || isMonthFull(iso);
                         return (
                           <button
                             key={iso}
-                            disabled={isPast}
+                            disabled={disabled}
                             className={`im-day-btn${selectedDay === iso ? " active" : ""}`}
-                            onClick={() => !isPast && setSelectedDay(iso)}
-                            style={{ flex: 1, padding: "8px 4px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: isPast ? "var(--text-tertiary)" : selectedDay === iso ? "var(--accent)" : "var(--text-secondary)", cursor: isPast ? "not-allowed" : "pointer", transition: "all 200ms", letterSpacing: "0.08em", textDecoration: isPast ? "line-through" : "none", opacity: isPast ? 0.4 : 1, textAlign: "center" }}>
+                            onClick={() => !disabled && setSelectedDay(iso)}
+                            style={{ flex: 1, padding: "8px 4px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 10, color: disabled ? "var(--text-tertiary)" : selectedDay === iso ? "var(--accent)" : "var(--text-secondary)", cursor: disabled ? "not-allowed" : "pointer", transition: "all 200ms", letterSpacing: "0.08em", textDecoration: disabled ? "line-through" : "none", opacity: disabled ? 0.4 : 1, textAlign: "center" }}>
                             {formatDayLabel(iso)}
                           </button>
                         );
@@ -436,7 +453,7 @@ export default function InteractionManager() {
                         return (
                           <button key={slot.time} disabled={disabled} onClick={() => setSelectedSlot(slot.time)}
                             className={`im-slot-btn${selectedSlot === slot.time ? " selected" : ""}`}
-                            style={{ padding: "12px 8px", border: "1px solid var(--border)", background: "transparent", fontFamily: "var(--mono)", fontSize: 12, color: disabled ? "var(--text-tertiary)" : "var(--text-secondary)", cursor: disabled ? "not-allowed" : "pointer", textDecoration: disabled ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em", opacity: isPastSlot ? 0.35 : 1 }}>
+                            style={{ padding: "12px 8px", border: disabled ? "1px solid rgba(255,255,255,0.06)" : "1px solid var(--border)", background: disabled ? "rgba(255,255,255,0.015)" : "transparent", fontFamily: "var(--mono)", fontSize: 12, color: disabled ? "var(--text-quaternary)" : "var(--text-secondary)", cursor: disabled ? "not-allowed" : "pointer", textDecoration: disabled ? "line-through" : "none", transition: "all 200ms", letterSpacing: "0.05em", opacity: disabled ? 0.35 : 1 }}>
                             {slot.time}
                           </button>
                         );

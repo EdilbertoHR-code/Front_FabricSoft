@@ -4,8 +4,8 @@
 
 @theme {
   /* ── Tokens con prefijo fabric- ── */
---color-fabric-base: #0A0A0A;
---color-bg-base: #0A0A0A;
+--color-fabric-base: #050203;
+--color-bg-base: #050203;
 
   --color-fabric-elevated: #060606;
 
@@ -50,7 +50,7 @@
 
 /* Variables CSS globales */
 :root {
---bg-base: #0A0A0A;
+--bg-base: #050203;
   --bg-panel: #080706;
   --bg-elevated: #060606;
   
@@ -1350,13 +1350,26 @@
 
 /* Apply page */
 .apply-back-row {
-  padding-top: 24px !important;
+  padding-top: 104px !important;
   margin-bottom: 28px !important;
+}
+
+.fabric-home-page {
+  background: var(--bg-base);
+}
+
+.fabric-home-page > section,
+.fabric-home-page > .w-full > section {
+  background: var(--bg-base) !important;
+}
+
+.fabric-back-button {
+  max-width: 100%;
 }
 
 @media (max-width: 639px) {
   .apply-back-row {
-    padding: 78px 18px 0 !important;
+    padding: 94px 18px 0 !important;
     margin-bottom: 24px !important;
   }
 

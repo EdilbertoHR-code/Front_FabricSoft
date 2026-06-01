@@ -67,19 +67,27 @@
 
 .cal-day.slot {
   color: var(--text-primary);
-  border: 1px solid var(--accent-deep);
-  background: rgba(201,169,110,0.04);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.025);
   cursor: pointer;
 }
 .cal-day.slot::after {
-  content: attr(data-slots);
-  font-family: var(--mono);
-  font-size: 8px;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  margin-top: 1px;
+  content: '';
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.55);
+  margin-top: 4px;
 }
-.cal-day.slot:hover { background: rgba(201,169,110,0.12); border-color: var(--accent); }
+.cal-day.slot:hover {
+  background: rgba(255,255,255,0.045);
+  border-color: rgba(201,169,110,0.35);
+}
+
+.cal-day.selected-day {
+  border-color: var(--border-strong);
+  background: rgba(255,255,255,0.04);
+}
 
 .cal-day.slot.full {
   color: var(--text-tertiary);
@@ -92,6 +100,7 @@
 .cal-day.today {
   color: var(--accent);
   font-weight: 500;
+  border-color: var(--accent) !important;
 }
 .cal-day.today::before {
   content: '';
@@ -118,7 +127,7 @@
 }
 .calendar-legend span { display: flex; align-items: center; gap: 6px; }
 .legend-swatch { width: 10px; height: 10px; border: 1px solid; }
-.legend-swatch.available { background: rgba(201,169,110,0.08); border-color: var(--accent-deep); }
+.legend-swatch.available { background: rgba(255,255,255,0.035); border-color: var(--border); }
 .legend-swatch.full { background: transparent; border-color: var(--text-tertiary); opacity: 0.5; }
 .legend-swatch.today { background: var(--bg-base); border-color: var(--accent); }
 
@@ -128,9 +137,7 @@
   .calendar-month { font-size: 17px; }
   .calendar-grid { gap: 3px; }
   .cal-day { font-size: 11px; }
-  /* Ocultar el texto "Disponible" debajo del número — desborda en móvil */
   .cal-day.slot::after { display: none; }
-  /* Indicador compacto: solo un punto de color */
-  .cal-day.slot { border-color: var(--accent); background: rgba(201,169,110,0.08); }
+  .cal-day.slot { border-color: var(--border); background: rgba(255,255,255,0.035); }
   .calendar-legend { font-size: 9px; gap: 10px; margin-top: 16px; padding-top: 14px; }
 }
