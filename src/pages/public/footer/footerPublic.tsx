@@ -170,11 +170,21 @@ export default function Footer() {
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/70">
           <LanguageToggle compact />
 
-          <p className="footer-copyright" aria-label={`© ${currentYear} FABRIC SOFT MEXICO SA DE CV`}>
-            <span>©</span>
-            <span>{currentYear}</span>
-            <span>FABRIC SOFT MEXICO SA DE CV</span>
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link to="/terminos" className="text-[#F5F5F5]/50 hover:text-[#C9A96E] transition-colors duration-300 tracking-[0.12em] uppercase text-[10px]">
+              Términos de uso
+            </Link>
+            <span className="text-[#2A2A2A]">·</span>
+            <Link to="/privacidad" className="text-[#F5F5F5]/50 hover:text-[#C9A96E] transition-colors duration-300 tracking-[0.12em] uppercase text-[10px]">
+              Aviso de privacidad
+            </Link>
+            <span className="text-[#2A2A2A]">·</span>
+            <p className="footer-copyright" aria-label={`© ${currentYear} FABRIC SOFT MEXICO SA DE CV`}>
+              <span>©</span>
+              <span>{currentYear}</span>
+              <span>FABRIC SOFT MEXICO SA DE CV</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
