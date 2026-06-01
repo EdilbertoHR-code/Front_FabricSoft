@@ -343,7 +343,7 @@ export default function S15Founder() {
               <div className="admission-row" key={q.quarter}>
                 <span className="admission-q">{q.quarter}</span>
                 <span className={`admission-status ${q.status}`}>{q.label}</span>
-                <span style={{ color: q.status === 'open' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                <span className="admission-desc" style={{ color: q.status === 'open' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                   {q.description}
                 </span>
                 <span className={`admission-deadline${q.status === 'open' ? ' active' : ''}`}>
