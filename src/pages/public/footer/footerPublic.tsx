@@ -24,7 +24,7 @@ const footerLinks: Record<string, FooterLink[]> = {
     { label: 'Aplicar',           path: '/aplicar' },
   ],
   casos: [
-    { label: 'Casos',                    path: '/#s07' },
+    { label: 'Historial de casos',        path: '/#s07' },
     { label: 'APE Plazas',               path: '/casos/ape-plazas' },
     { label: 'Aplazo',                   path: '/casos/aplazo' },
     { label: 'Referencias',              path: '/#s12' },
@@ -105,6 +105,14 @@ const SocialIcons = {
   ),
 };
 
+const titleTranslations: Record<string, string> = {
+  sitio: 'Sitio',
+  casos: 'Portafolio',
+  herramientas: 'Herramientas',
+  engagement: 'Admisión',
+  recursos: 'Recursos',
+};
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -152,20 +160,23 @@ export default function Footer() {
             </div>
           </div>
 
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div className="min-w-0 flex flex-col mt-12 md:mt-0" key={title}>
-              <h3 className="text-fabric-gold font-mono text-sm md:text-base font-bold tracking-[0.25em] uppercase mb-6" style={{ color: 'var(--accent)' }}>
-                {title}
-              </h3>
-              <ul className="space-y-4">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <FooterNavItem link={link} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {Object.entries(footerLinks).map(([key, links]) => {
+            const displayTitle = titleTranslations[key] || key;
+            return (
+              <div className="min-w-0 flex flex-col mt-12 md:mt-0" key={key}>
+                <h3 className="text-fabric-gold font-mono text-sm md:text-base font-bold tracking-[0.25em] uppercase mb-6" style={{ color: 'var(--accent)' }}>
+                  {displayTitle}
+                </h3>
+                <ul className="space-y-4">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <FooterNavItem link={link} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
 
         <div className="pt-8 border-t border-[#2A2A2A] flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-[#F5F5F5]/70">
