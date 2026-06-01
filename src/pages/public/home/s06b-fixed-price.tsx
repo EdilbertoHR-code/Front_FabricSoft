@@ -34,7 +34,7 @@ export default function S06bFixedPrice() {
       <div
         className={`
           relative z-10 w-full max-w-[1120px] px-6
-          transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]
+          transition-[transform,opacity] duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity]
           ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-14 scale-[0.98]'}
         `}
       >
@@ -45,8 +45,7 @@ export default function S06bFixedPrice() {
             overflow-hidden
             rounded-[2rem]
             border border-[#2A2A2A]
-            bg-[#111111]/72
-            backdrop-blur-2xl
+            bg-[#111111]
             shadow-[0_40px_120px_rgba(0,0,0,0.55)]
           "
         >
