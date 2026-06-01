@@ -153,8 +153,8 @@ export default function Footer() {
           </div>
 
           {Object.entries(footerLinks).map(([title, links]) => (
-            <div className="min-w-0 flex flex-col" key={title}>
-              <h3 className="text-[#C9A96E] text-[10px] font-bold tracking-[0.2em] uppercase mb-8">
+            <div className="min-w-0 flex flex-col mt-12 md:mt-0" key={title}>
+              <h3 className="text-[#C9A96E] text-xs font-bold tracking-[0.25em] uppercase mb-6">
                 {title}
               </h3>
               <ul className="space-y-4">
