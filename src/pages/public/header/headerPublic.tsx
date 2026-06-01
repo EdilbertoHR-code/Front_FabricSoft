@@ -114,12 +114,28 @@ export default function Header() {
             `}
             style={{ transitionDelay: '60ms' }}
           >
-            {/* LOGO ESCRITORIO: CSS puro, sin imagen */}
-            <div className="flex flex-col leading-none select-none">
-              <span className="font-serif text-[22px] md:text-[26px] tracking-[0.04em] text-[#F5F5F5] group-hover:text-[#C9A96E] transition-colors duration-500">
+            {/* LOGO ESCRITORIO: Brandbook — wordmark + línea dorada + tagline */}
+            <div className="flex flex-col items-center leading-none select-none">
+              <span
+                className="font-serif font-light leading-none"
+                style={{
+                  fontSize: 'clamp(20px, 2vw, 26px)',
+                  letterSpacing: '0.28em',
+                  paddingLeft: '0.28em',
+                  background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 85%, #C9A96E 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 1px 8px rgba(201,169,110,0.15))',
+                }}
+              >
                 FABRIC
               </span>
-              <span className="font-mono text-[7px] tracking-[0.18em] uppercase text-[#C9A96E]/70 mt-[2px]">
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/35 to-transparent my-[3px] md:my-1" />
+              <span
+                className="font-mono uppercase tracking-[0.4em] pl-[0.4em] text-[5px] md:text-[8px] transition-all duration-300"
+                style={{ color: '#5A5650' }}
+              >
                 Oracle Critical Engineering
               </span>
             </div>
@@ -159,12 +175,28 @@ export default function Header() {
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
           
           <div className="flex items-center">
-            {/* LOGO MÓVIL: CSS puro */}
-            <div className="flex flex-col leading-none select-none">
-              <span className="font-serif text-[22px] tracking-[0.04em] text-[#F5F5F5]">
+            {/* LOGO MÓVIL: Brandbook — wordmark + línea dorada + tagline */}
+            <div className="flex flex-col items-center leading-none select-none">
+              <span
+                className="font-serif font-light leading-none"
+                style={{
+                  fontSize: 22,
+                  letterSpacing: '0.28em',
+                  paddingLeft: '0.28em',
+                  background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 85%, #C9A96E 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 1px 8px rgba(201,169,110,0.15))',
+                }}
+              >
                 FABRIC
               </span>
-              <span className="font-mono text-[7px] tracking-[0.18em] uppercase text-[#C9A96E]/70 mt-[2px]">
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/35 to-transparent my-[3px]" />
+              <span
+                className="font-mono uppercase tracking-[0.4em] pl-[0.4em] text-[5px]"
+                style={{ color: '#5A5650' }}
+              >
                 Oracle Critical Engineering
               </span>
             </div>

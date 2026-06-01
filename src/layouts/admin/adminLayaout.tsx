@@ -23,7 +23,6 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
-import logoFabric from '../../assets/logo/logo.webp';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -181,6 +180,7 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {/* Monograma F — Variante F brandbook, CSS puro */}
             <div
               className="fabric-admin-sidebar-logo"
               style={{
@@ -189,17 +189,24 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '1px solid rgba(201,169,110,0.24)',
-                background:
-                  'radial-gradient(circle at 35% 30%, rgba(201,169,110,0.12), rgba(255,255,255,0.025))',
+                border: '1px solid rgba(201,169,110,0.28)',
+                background: 'radial-gradient(circle at 35% 30%, rgba(201,169,110,0.08), transparent)',
                 flexShrink: 0,
+                position: 'relative',
               }}
             >
-              <img
-                src={logoFabric}
-                alt="FABRIC"
-                style={{ width: 34, height: 34, objectFit: 'contain' }}
-              />
+              <div style={{ position: 'absolute', inset: 3, border: '1px solid rgba(201,169,110,0.1)' }} />
+              <span style={{
+                fontFamily: 'var(--serif, "Cormorant Garamond", Georgia, serif)',
+                fontSize: 26,
+                fontWeight: 400,
+                background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                lineHeight: 1,
+                position: 'relative',
+              }}>F</span>
             </div>
 
             <div>
