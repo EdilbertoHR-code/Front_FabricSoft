@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import logoImg from '../../../assets/logo/fabric-logo.webp';
 import LanguageToggle from '../../../components/LanguageToggle';
 import { useI18n } from '../../../i18n/I18nProvider';
 import type { TranslationKey } from '../../../i18n/translations';
@@ -115,15 +114,14 @@ export default function Header() {
             `}
             style={{ transitionDelay: '60ms' }}
           >
-            {/* LOGO ESCRITORIO: Contenedor MÁS GRANDE con overflow-hidden */}
-            <div className="overflow-hidden h-10 md:h-14 w-36 md:w-48 flex items-center justify-center">
-              <img
-                src={logoImg}
-                alt="FABRIC"
-                width={480}
-                height={480}
-                className="h-[100px] md:h-[140px] w-auto max-w-none mix-blend-lighten opacity-90 group-hover:opacity-100 transition-all duration-500 -translate-y-[5px] md:-translate-y-[8px]"
-              />
+            {/* LOGO ESCRITORIO: CSS puro, sin imagen */}
+            <div className="flex flex-col leading-none select-none">
+              <span className="font-serif text-[22px] md:text-[26px] tracking-[0.04em] text-[#F5F5F5] group-hover:text-[#C9A96E] transition-colors duration-500">
+                FABRIC
+              </span>
+              <span className="font-mono text-[7px] tracking-[0.18em] uppercase text-[#C9A96E]/70 mt-[2px]">
+                Oracle Critical Engineering
+              </span>
             </div>
           </Link>
 
@@ -161,15 +159,14 @@ export default function Header() {
         <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
           
           <div className="flex items-center">
-            {/* LOGO MÓVIL: Contenedor MÁS GRANDE con overflow-hidden */}
-            <div className="overflow-hidden h-10 w-36 flex items-center justify-center">
-              <img
-                src={logoImg}
-                alt="FABRIC"
-                width={480}
-                height={480}
-                className="h-[100px] w-auto max-w-none mix-blend-lighten opacity-90 -translate-y-[5px]"
-              />
+            {/* LOGO MÓVIL: CSS puro */}
+            <div className="flex flex-col leading-none select-none">
+              <span className="font-serif text-[22px] tracking-[0.04em] text-[#F5F5F5]">
+                FABRIC
+              </span>
+              <span className="font-mono text-[7px] tracking-[0.18em] uppercase text-[#C9A96E]/70 mt-[2px]">
+                Oracle Critical Engineering
+              </span>
             </div>
           </div>
 

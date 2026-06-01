@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const SITE_URL = 'https://equipo-a-v2.vercel.app';
 const SITE_NAME = 'FABRIC';
-const DEFAULT_IMAGE = `${SITE_URL}/julio_alvarez_og.jpg`;
+const DEFAULT_IMAGE = `${SITE_URL}/fabric-og.png`;
 
 type SeoConfig = {
   title: string;
