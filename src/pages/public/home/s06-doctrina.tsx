@@ -146,7 +146,7 @@ export default function S06Doctrina() {
             COLUMNA IZQUIERDA (Se queda pegada en la pantalla)
             ========================================================= */}
         <div className="lg:w-5/12 lg:sticky lg:top-32 flex flex-col">
-          <div ref={headerRef} className={`transition-all duration-1000 ${headerInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
+          <div ref={headerRef} className={`transition-[transform,opacity] duration-1000 ${headerInView ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"}`}>
 
             <div className="mb-6 inline-flex items-center gap-3 px-4 py-1.5 rounded-sm border border-[#C9A96E]/20 bg-[#C9A96E]/5 backdrop-blur-md">
               <span className="relative flex h-1.5 w-1.5">
@@ -198,7 +198,7 @@ export default function S06Doctrina() {
               <div
                 key={clause.id}
                 data-clause-id={clause.id}
-                className={`relative pl-0 sm:pl-24 transition-all duration-700 ease-out
+                className={`relative pl-0 sm:pl-24 transition-[transform,opacity] duration-700 ease-out will-change-[transform,opacity]
                   ${isInView ? "opacity-100 translate-x-0 scale-100" : "opacity-30 translate-x-12 scale-[0.96]"}`}
               >
                 {/* Número flotante (Timeline node) */}
@@ -209,7 +209,7 @@ export default function S06Doctrina() {
                 </div>
 
                 {/* Tarjeta de Cláusula */}
-                <div className={`p-8 md:p-10 border rounded-xl transition-all duration-500 bg-[#080706]/80 backdrop-blur-sm
+                <div className={`p-8 md:p-10 border rounded-xl transition-[border-color,box-shadow] duration-500 bg-[#080706]/80 backdrop-blur-sm
                   ${isInView ? 'border-[#C9A96E]/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'border-[#1A1A1A] shadow-none'}`}
                 >
                   <div className="flex flex-col gap-6">
