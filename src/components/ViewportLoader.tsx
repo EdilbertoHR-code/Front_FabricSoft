@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 interface ViewportLoaderProps {
   children: React.ReactNode;
   height?: number | string;
+  id?: string;
 }
 
-export default function ViewportLoader({ children, height = 400 }: ViewportLoaderProps) {
+export default function ViewportLoader({ children, height = 400, id }: ViewportLoaderProps) {
   const [isInView, setIsInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -34,6 +35,7 @@ export default function ViewportLoader({ children, height = 400 }: ViewportLoade
 
   return (
     <div
+      id={id}
       ref={ref}
       style={!isInView ? { minHeight: height } : undefined}
       className="w-full"

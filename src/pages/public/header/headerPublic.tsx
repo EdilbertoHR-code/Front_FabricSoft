@@ -9,7 +9,7 @@ const NAV: Array<{ key: TranslationKey; href: string; sectionId: string; page?: 
   { key: 'nav.hero',         href: '/#inicio',       sectionId: 'inicio' },
   { key: 'nav.tco',          href: '/#tco',          sectionId: 'tco' },
   { key: 'nav.fabricAi',     href: '/#fabric-ai',    sectionId: 'fabric-ai' },
-  { key: 'nav.diagnostic',   href: '/#diagnostico',  sectionId: 'diagnostico' },
+  { key: 'nav.diagnostic',   href: '/#rescue-diagnostic', sectionId: 'rescue-diagnostic' },
   { key: 'nav.doctrine',     href: '/#doctrina',     sectionId: 'doctrina' },
   { key: 'nav.cases',        href: '/#s07',          sectionId: 's07' },
   { key: 'nav.industries',   href: '/#s08',          sectionId: 's08' },
