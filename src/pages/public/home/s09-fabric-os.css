@@ -240,6 +240,9 @@
   padding-top: 20px;
   border-top: 1px solid var(--border);
   animation: s09FadeSlide 0.28s ease;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 .os-stack-detail-text {
@@ -910,6 +913,12 @@
       "toggle toggle";
     overflow: hidden;
   }
+  .os-stack-layer--open {
+    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-areas:
+      "num content"
+      "closebar closebar";
+  }
   .os-stack-depth-1,
   .os-stack-depth-2 { display: none !important; }
   .os-stack-num-col { grid-area: num; padding: 24px 0; }
@@ -939,6 +948,12 @@
 
 @media (max-width: 480px) {
   .os-stack-layer { grid-template-columns: 52px minmax(0, 1fr); }
+  .os-stack-layer--open {
+    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-areas:
+      "num content"
+      "closebar closebar";
+  }
   .os-stack-toggle { padding-left: 52px; }
   .fso-filter-btn { padding: 11px 10px; font-size: 8px; }
   .fso-card { padding: 22px 20px 18px; }
