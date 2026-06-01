@@ -111,17 +111,19 @@ export default function S06Doctrina() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const nextVisible = entries
-          .filter((entry) => entry.isIntersecting)
-          .map((entry) => (entry.target as HTMLElement).dataset.clauseId)
-          .filter((id): id is string => Boolean(id));
-
-        if (nextVisible.length === 0) return;
-
-        setVisibleClauses((current) => {
-          const next = new Set(current);
-          nextVisible.forEach((id) => next.add(id));
-          return next;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = (entry.target as HTMLElement).dataset.clauseId;
+            if (id) {
+              setVisibleClauses((current) => {
+                if (current.has(id)) return current;
+                const next = new Set(current);
+                next.add(id);
+                return next;
+              });
+              observer.unobserve(entry.target);
+            }
+          }
         });
       },
       { threshold: 0.3, rootMargin: "80px" },
@@ -209,7 +211,7 @@ export default function S06Doctrina() {
                 </div>
 
                 {/* Tarjeta de Cláusula */}
-                <div className={`p-8 md:p-10 border rounded-xl transition-[border-color,box-shadow] duration-500 bg-[#080706]/80 backdrop-blur-sm
+                <div className={`p-8 md:p-10 border rounded-xl transition-[border-color,box-shadow] duration-500 bg-[#080706]
                   ${isInView ? 'border-[#C9A96E]/40 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'border-[#1A1A1A] shadow-none'}`}
                 >
                   <div className="flex flex-col gap-6">

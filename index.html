@@ -5,18 +5,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Google Fonts: preconnect for speed -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
     <!-- Preload critical Largest Contentful Paint (LCP) Hero Globe image -->
     <link rel="preload" as="image" href="/globe.jpeg" fetchpriority="high" />
 
-    <!-- Premium typefaces: Cormorant Garamond · Inter · JetBrains Mono (Variable Fonts) -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Inter:wght@300..800&family=JetBrains+Mono:wght@400..700&display=swap"
-    />
+    <!-- Preload critical fonts for instant rendering (no flash of unstyled text) -->
+    <link rel="preload" href="/fonts/inter-v20-UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cormorantgaramond-v21-co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta
       name="description"
