@@ -215,7 +215,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
             className="absolute inset-0 rounded-full"
             style={{
               backgroundImage:
-                "url('https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/globe.jpeg')",
+                "url('/globe.jpeg')",
               backgroundSize: "cover",
               backgroundPosition: "left center",
               animation: "earthRotate 40s linear infinite",
