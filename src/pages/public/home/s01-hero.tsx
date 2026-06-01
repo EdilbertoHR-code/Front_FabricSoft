@@ -143,7 +143,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "El riesgo real aparece después del go-live.",
         detailText:
           "Cuando empiezan cierres financieros, reportes ejecutivos, usuarios críticos y operación diaria, se revela si Oracle quedó estable o solo fue entregado.",
-        className: "left-[-3%] top-[2%]",
+        className: "left-[3%] top-[2%]",
       },
       {
         number: "02",
@@ -152,7 +152,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "Una migración Oracle no debe depender de improvisación.",
         detailText:
           "FABRIC estructura migraciones con gobierno técnico, trazabilidad, validación operativa y responsabilidad por fase para reducir incertidumbre ejecutiva.",
-        className: "right-[7%] top-[17%]",
+        className: "right-[17%] top-[17%]",
       },
       {
         number: "03",
@@ -161,7 +161,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         detailTitle: "No basta con entregar. Tiene que operar.",
         detailText:
           "El proyecto se considera sólido cuando el primer ciclo crítico funciona sin reportes paralelos, dependencia manual o incidencias bloqueantes.",
-        className: "left-[-2%] bottom-[33%]",
+        className: "left-[4%] bottom-[33%]",
       },
     ],
     [t],
@@ -170,7 +170,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
   const active = activeLabel !== null ? globeLabels[activeLabel] : null;
 
   return (
-    <div className="fabric-orb-stage relative mx-auto flex min-h-[520px] w-full max-w-[700px] items-center justify-center overflow-visible md:min-h-[600px] lg:min-h-[660px]">
+    <div className="fabric-orb-stage relative mx-auto flex min-h-[520px] w-full max-w-[620px] items-center justify-center overflow-visible md:min-h-[600px] lg:min-h-[660px]">
       {globeStars.map((star, index) => (
         <span
           key={index}
@@ -245,9 +245,9 @@ const PremiumGlobe = memo(function PremiumGlobe() {
             type="button"
             onClick={() => setActiveLabel(index)}
             className={`
-              fabric-orb-label absolute z-30 max-w-[210px] border px-4 py-3 text-left
+              fabric-orb-label absolute z-30 max-w-[190px] border px-4 py-3 text-left
               shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md
-              transition-all duration-300 md:max-w-[220px] xl:max-w-[240px]
+              transition-all duration-300 md:max-w-[205px] xl:max-w-[220px]
               ${label.className}
               ${selected
                 ? "border-[#C9A96E] bg-[#C9A96E]/10 shadow-[0_0_34px_rgba(201,169,110,0.12)]"
@@ -483,7 +483,7 @@ export default function S01Hero() {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-[660px] md:mx-auto lg:ml-auto lg:mr-20 xl:mr-24 2xl:mr-28">
+        <div className="relative z-10 mx-auto w-full max-w-[620px] md:mx-auto lg:ml-auto lg:mr-28 xl:mr-36 2xl:mr-40">
           <PremiumGlobe />
         </div>
       </div>
