@@ -8,18 +8,32 @@ type SectionItem = {
 };
 
 const sections: SectionItem[] = [
-  { id: "inicio",           label: "Hero",                       number: "01" },
-  { id: "tco",              label: "ERP TCO · AI",               number: "02" },
-  { id: "rescue-diagnostic", label: "Rescue Diagnostic",          number: "03" },
-  { id: "doctrina",         label: "Doctrina",                   number: "04" },
-  { id: "s07",              label: "Casos · Industrias",         number: "05" },
-  { id: "rescue-assessment",label: "Rescue Assessment",          number: "06" },
-  { id: "s09",              label: "FABRIC OS · Lifecycle",      number: "07" },
-  { id: "s11",              label: "Office Hours",               number: "08" },
-  { id: "s12",              label: "Referencias",                number: "09" },
-  { id: "s13",              label: "Transparencia · Investigación", number: "10" },
-  { id: "s15",              label: "Founder · Wait List",        number: "11" },
+  { id: "inicio", label: "Hero", number: "01" },
+  { id: "tco", label: "TCO Comparator", number: "02" },
+  { id: "fabric-ai", label: "FABRIC AI", number: "03" },
+  { id: "rescue-diagnostic", label: "Diagnostico", number: "04" },
+  { id: "doctrina", label: "Doctrina", number: "05" },
+  { id: "s07", label: "Casos", number: "06" },
+  { id: "rescue-assessment", label: "Rescue Assessment", number: "07" },
+  { id: "s08", label: "Industrias", number: "08" },
+  { id: "s09", label: "FABRIC OS", number: "09" },
+  { id: "s10", label: "Lifecycle", number: "10" },
+  { id: "s11", label: "Office Hours", number: "11" },
+  { id: "s12", label: "Referencias", number: "12" },
+  { id: "s13", label: "Transparencia", number: "13" },
+  { id: "s14", label: "Investigacion", number: "14" },
+  { id: "s15", label: "Founder Wait List", number: "15" },
 ];
+
+const getHeaderOffset = () => {
+  const header = document.querySelector<HTMLElement>("header[data-no-translate]");
+  return (header?.offsetHeight ?? 0) + 12;
+};
+
+const getVisualSectionInset = (id: string) => {
+  if (id === "inicio") return 0;
+  return Math.min(88, Math.max(48, window.innerHeight * 0.08));
+};
 
 export default function SectionNavigator() {
   const location = useLocation();
@@ -30,7 +44,7 @@ export default function SectionNavigator() {
     let ticking = false;
 
     const updateActiveSection = () => {
-      const scrollPosition = window.scrollY + 180;
+      const scrollPosition = window.scrollY + getHeaderOffset() + 80;
       let nextSection = sections[0].id;
 
       sections.forEach((section) => {
@@ -76,7 +90,7 @@ export default function SectionNavigator() {
     setActiveSection(id);
     navigate({ pathname: "/", hash: `#${id}` }, { replace: false });
 
-    const top = section.getBoundingClientRect().top + window.scrollY - 16;
+    const top = section.getBoundingClientRect().top + window.scrollY - getHeaderOffset() + getVisualSectionInset(id);
     window.scrollTo({ top, behavior: "smooth" });
   };
 

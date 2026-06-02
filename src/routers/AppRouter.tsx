@@ -82,22 +82,34 @@ function ScrollToTop() {
       return;
     }
 
-    const scrollToHash = () => {
+    const viewportHeight = window.innerHeight;
+    let didSmoothScroll = false;
+
+    const scrollToHash = (behavior: ScrollBehavior) => {
       const id = decodeURIComponent(hash.slice(1));
       const target = document.getElementById(id);
       if (!target) return false;
 
-      const headerOffset = 16;
-      const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const header = document.querySelector<HTMLElement>('header[data-no-translate]');
+      const headerOffset = (header?.offsetHeight ?? 0) + 12;
+      const visualInset = id === 'inicio' ? 0 : Math.min(88, Math.max(48, viewportHeight * 0.08));
+      const top = target.getBoundingClientRect().top + window.scrollY - headerOffset + visualInset;
+      const distance = Math.abs(top - window.scrollY);
+
+      if (distance < 4) return true;
+
+      window.scrollTo({ top, behavior });
       return true;
     };
 
-    const timers = [30, 160, 360].map((delay) =>
-      window.setTimeout(scrollToHash, delay),
+    const smoothTimers = [0, 80, 180, 360].map((delay) =>
+      window.setTimeout(() => {
+        if (didSmoothScroll) return;
+        didSmoothScroll = scrollToHash('smooth');
+      }, delay),
     );
 
-    return () => timers.forEach((timer) => window.clearTimeout(timer));
+    return () => smoothTimers.forEach((timer) => window.clearTimeout(timer));
   }, [pathname, hash]);
 
   return null;

@@ -22,16 +22,15 @@ const NAV: Array<{ key: TranslationKey; href: string; sectionId: string; page?: 
   { key: 'nav.apply',        href: '/aplicar',       sectionId: '', page: true },
 ];
 
-const HEADER_SCROLL_OFFSET = 16;
+function scrollCurrentSection(sectionId: string) {
+  const target = document.getElementById(sectionId);
+  if (!target) return;
 
-function scrollToSection(sectionId: string) {
-  window.setTimeout(() => {
-    const target = document.getElementById(sectionId);
-    if (!target) return;
-
-    const top = target.getBoundingClientRect().top + window.scrollY - HEADER_SCROLL_OFFSET;
-    window.scrollTo({ top, behavior: 'smooth' });
-  }, 30);
+  const header = document.querySelector<HTMLElement>('header[data-no-translate]');
+  const headerOffset = (header?.offsetHeight ?? 0) + 12;
+  const visualInset = sectionId === 'inicio' ? 0 : Math.min(88, Math.max(48, window.innerHeight * 0.08));
+  const top = target.getBoundingClientRect().top + window.scrollY - headerOffset + visualInset;
+  window.scrollTo({ top, behavior: 'smooth' });
 }
 
 export default function Header() {
@@ -75,8 +74,14 @@ export default function Header() {
   ) => {
     event.preventDefault();
     setMobileOpen(false);
-    navigate({ pathname: '/', hash: `#${sectionId}` });
-    scrollToSection(sectionId);
+    const targetHash = `#${sectionId}`;
+
+    if (location.pathname === '/' && location.hash === targetHash) {
+      scrollCurrentSection(sectionId);
+      return;
+    }
+
+    navigate({ pathname: '/', hash: targetHash });
   };
 
   const startLink = (
@@ -211,7 +216,7 @@ export default function Header() {
           </button>
         </div>
 
-        <nav className="flex-1 flex flex-col justify-start px-10 py-10 gap-2 overflow-y-auto">
+        <nav className="fabric-mobile-menu-nav flex-1 flex flex-col justify-start px-10 py-10 gap-2 overflow-y-auto overscroll-contain">
           {NAV.map((item, i) => {
             const isActive = item.page
               ? location.pathname === item.href
