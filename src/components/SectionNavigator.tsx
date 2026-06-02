@@ -85,13 +85,18 @@ export default function SectionNavigator() {
   }, [location.hash]);
 
   const scrollToSection = (id: string) => {
-    const section = document.getElementById(id);
-    if (!section) return;
     setActiveSection(id);
-    navigate({ pathname: "/", hash: `#${id}` }, { replace: false });
 
-    const top = section.getBoundingClientRect().top + window.scrollY - getHeaderOffset() + getVisualSectionInset(id);
-    window.scrollTo({ top, behavior: "smooth" });
+    if (location.pathname === "/" && location.hash === `#${id}`) {
+      const section = document.getElementById(id);
+      if (!section) return;
+
+      const top = section.getBoundingClientRect().top + window.scrollY - getHeaderOffset() + getVisualSectionInset(id);
+      window.scrollTo({ top, behavior: "smooth" });
+      return;
+    }
+
+    navigate({ pathname: "/", hash: `#${id}` }, { replace: false });
   };
 
   return (

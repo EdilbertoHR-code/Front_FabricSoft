@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 interface ViewportLoaderProps {
   children: React.ReactNode;
@@ -9,8 +10,17 @@ interface ViewportLoaderProps {
 export default function ViewportLoader({ children, height = 400, id }: ViewportLoaderProps) {
   const [isInView, setIsInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
+    if (location.pathname === "/" && location.hash) {
+      setIsInView(true);
+    }
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    if (isInView) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -31,7 +41,7 @@ export default function ViewportLoader({ children, height = 400, id }: ViewportL
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [isInView]);
 
   return (
     <div

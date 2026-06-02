@@ -84,6 +84,7 @@ function ScrollToTop() {
 
     const viewportHeight = window.innerHeight;
     let didSmoothScroll = false;
+    let stableChecks = 0;
 
     const scrollToHash = (behavior: ScrollBehavior) => {
       const id = decodeURIComponent(hash.slice(1));
@@ -96,20 +97,26 @@ function ScrollToTop() {
       const top = target.getBoundingClientRect().top + window.scrollY - headerOffset + visualInset;
       const distance = Math.abs(top - window.scrollY);
 
-      if (distance < 4) return true;
+      if (distance < 6) {
+        stableChecks += 1;
+        return stableChecks >= 2;
+      }
 
+      stableChecks = 0;
       window.scrollTo({ top, behavior });
-      return true;
+      didSmoothScroll = true;
+      return false;
     };
 
-    const smoothTimers = [0, 80, 180, 360].map((delay) =>
+    const timers = [0, 80, 180, 360, 700, 1100, 1600, 2200].map((delay) =>
       window.setTimeout(() => {
-        if (didSmoothScroll) return;
-        didSmoothScroll = scrollToHash('smooth');
+        if (stableChecks >= 2) return;
+        const behavior: ScrollBehavior = didSmoothScroll ? 'auto' : 'smooth';
+        scrollToHash(behavior);
       }, delay),
     );
 
-    return () => smoothTimers.forEach((timer) => window.clearTimeout(timer));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [pathname, hash]);
 
   return null;
