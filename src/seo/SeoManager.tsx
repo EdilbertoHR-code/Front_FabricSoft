@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const SITE_URL = 'https://equipo-a-v2.vercel.app';
 const SITE_NAME = 'FABRIC';
-const DEFAULT_IMAGE = `${SITE_URL}/fabric-og.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/fabric-og-logo.png`;
 
 type SeoConfig = {
   title: string;
@@ -283,6 +283,26 @@ export default function SeoManager() {
       property: 'og:image',
       content: DEFAULT_IMAGE,
     });
+    upsertMeta('meta[property="og:image:secure_url"]', {
+      property: 'og:image:secure_url',
+      content: DEFAULT_IMAGE,
+    });
+    upsertMeta('meta[property="og:image:type"]', {
+      property: 'og:image:type',
+      content: 'image/png',
+    });
+    upsertMeta('meta[property="og:image:width"]', {
+      property: 'og:image:width',
+      content: '1200',
+    });
+    upsertMeta('meta[property="og:image:height"]', {
+      property: 'og:image:height',
+      content: '630',
+    });
+    upsertMeta('meta[property="og:image:alt"]', {
+      property: 'og:image:alt',
+      content: 'FABRIC Oracle Critical Engineering',
+    });
     upsertMeta('meta[name="twitter:card"]', {
       name: 'twitter:card',
       content: 'summary_large_image',
@@ -298,6 +318,10 @@ export default function SeoManager() {
     upsertMeta('meta[name="twitter:image"]', {
       name: 'twitter:image',
       content: DEFAULT_IMAGE,
+    });
+    upsertMeta('meta[name="twitter:image:alt"]', {
+      name: 'twitter:image:alt',
+      content: 'FABRIC Oracle Critical Engineering',
     });
     upsertLink('canonical', canonicalUrl);
 

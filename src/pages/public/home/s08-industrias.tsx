@@ -58,7 +58,6 @@ export default function S08Industrias() {
   return (
     <section
       ref={ref}
-      id="s08"
       className={`demo-section s08 ${isInView ? 'is-in-view' : ''}`}
     >
       <div className="container">

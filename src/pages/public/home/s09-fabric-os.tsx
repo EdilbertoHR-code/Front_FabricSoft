@@ -136,7 +136,6 @@ export default function S09FabricOS() {
   return (
     <section
       ref={ref}
-      id="s09"
       className={`demo-section s09 ${isInView ? 'is-in-view' : ''}`}
     >
       <div className="container">

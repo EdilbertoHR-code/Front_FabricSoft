@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, Suspense, lazy } from 'react';
 
 import PublicLayout from '../layouts/public/publicLayaout';
@@ -73,12 +73,33 @@ const AdminReadinessScore     = lazy(() => import('../pages/admin/AdminReadiness
 const AdminCloudComparator    = lazy(() => import('../pages/admin/AdminCloudComparator'));
 
 
+const legacyHashAliases: Record<string, string> = {
+  s07: 'casos',
+  s08: 'industrias',
+  s09: 'fabric-os',
+  s10: 'lifecycle',
+  s11: 'office-hours',
+  s12: 'referencias',
+  s13: 'transparencia',
+  s14: 'investigacion',
+  s15: 'founder-wait-list',
+};
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!hash) {
       window.scrollTo(0, 0);
+      return;
+    }
+
+    const requestedId = decodeURIComponent(hash.slice(1));
+    const canonicalId = legacyHashAliases[requestedId] ?? requestedId;
+
+    if (canonicalId !== requestedId) {
+      navigate({ pathname, hash: `#${canonicalId}` }, { replace: true });
       return;
     }
 
@@ -87,7 +108,7 @@ function ScrollToTop() {
     let stableChecks = 0;
 
     const scrollToHash = (behavior: ScrollBehavior) => {
-      const id = decodeURIComponent(hash.slice(1));
+      const id = canonicalId;
       const target = document.getElementById(id);
       if (!target) return false;
 
@@ -117,7 +138,7 @@ function ScrollToTop() {
     );
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [pathname, hash]);
+  }, [pathname, hash, navigate]);
 
   return null;
 }

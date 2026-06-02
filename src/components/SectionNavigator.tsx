@@ -13,17 +13,36 @@ const sections: SectionItem[] = [
   { id: "fabric-ai", label: "FABRIC AI", number: "03" },
   { id: "rescue-diagnostic", label: "Diagnostico", number: "04" },
   { id: "doctrina", label: "Doctrina", number: "05" },
-  { id: "s07", label: "Casos", number: "06" },
+  { id: "casos", label: "Casos", number: "06" },
   { id: "rescue-assessment", label: "Rescue Assessment", number: "07" },
-  { id: "s08", label: "Industrias", number: "08" },
-  { id: "s09", label: "FABRIC OS", number: "09" },
-  { id: "s10", label: "Lifecycle", number: "10" },
-  { id: "s11", label: "Office Hours", number: "11" },
-  { id: "s12", label: "Referencias", number: "12" },
-  { id: "s13", label: "Transparencia", number: "13" },
-  { id: "s14", label: "Investigacion", number: "14" },
-  { id: "s15", label: "Founder Wait List", number: "15" },
+  { id: "industrias", label: "Industrias", number: "08" },
+  { id: "fabric-os", label: "FABRIC OS", number: "09" },
+  { id: "lifecycle", label: "Lifecycle", number: "10" },
+  { id: "office-hours", label: "Office Hours", number: "11" },
+  { id: "referencias", label: "Referencias", number: "12" },
+  { id: "transparencia", label: "Transparencia", number: "13" },
+  { id: "investigacion", label: "Investigacion", number: "14" },
+  { id: "founder-wait-list", label: "Founder Wait List", number: "15" },
 ];
+
+const legacyHashAliases: Record<string, string> = {
+  s07: "casos",
+  s08: "industrias",
+  s09: "fabric-os",
+  s10: "lifecycle",
+  s11: "office-hours",
+  s12: "referencias",
+  s13: "transparencia",
+  s14: "investigacion",
+  s15: "founder-wait-list",
+};
+
+const getCanonicalHashId = () => {
+  const hashId = decodeURIComponent(window.location.hash.replace("#", ""));
+  return legacyHashAliases[hashId] ?? hashId;
+};
+
+const isKnownSection = (id: string) => sections.some((section) => section.id === id);
 
 const getHeaderOffset = () => {
   const header = document.querySelector<HTMLElement>("header[data-no-translate]");
@@ -44,6 +63,13 @@ export default function SectionNavigator() {
     let ticking = false;
 
     const updateActiveSection = () => {
+      const hashId = getCanonicalHashId();
+      if (window.location.pathname === "/" && isKnownSection(hashId)) {
+        setActiveSection(hashId);
+        ticking = false;
+        return;
+      }
+
       const scrollPosition = window.scrollY + getHeaderOffset() + 80;
       let nextSection = sections[0].id;
 
@@ -78,8 +104,8 @@ export default function SectionNavigator() {
   }, []);
 
   useEffect(() => {
-    const hashId = decodeURIComponent(location.hash.replace("#", ""));
-    if (sections.some((section) => section.id === hashId)) {
+    const hashId = legacyHashAliases[decodeURIComponent(location.hash.replace("#", ""))] ?? decodeURIComponent(location.hash.replace("#", ""));
+    if (isKnownSection(hashId)) {
       setActiveSection(hashId);
     }
   }, [location.hash]);

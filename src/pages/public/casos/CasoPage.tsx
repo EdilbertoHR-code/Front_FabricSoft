@@ -141,7 +141,7 @@ export default function CasoPage() {
         {/* Hero */}
         <section className="case-page-hero" style={{ borderBottom: '1px solid var(--border)' }}>
           <div className="container">
-            <Link to="/#s07" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'inline-block', marginBottom: 40 }}>
+            <Link to="/#casos" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'inline-block', marginBottom: 40 }}>
               ← Volver a casos
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>

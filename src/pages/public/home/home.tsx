@@ -72,7 +72,7 @@ export default function Home() {
         </Suspense>
       </ViewportLoader>
       
-      <ViewportLoader id="s07" height={700}>
+      <ViewportLoader id="casos" height={700}>
         <Suspense fallback={<div className="min-h-[700px]" />}>
           <S07Casos />
         </Suspense>
@@ -88,31 +88,31 @@ export default function Home() {
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s08" height={600}>
+      <ViewportLoader id="industrias" height={600}>
         <Suspense fallback={<div className="min-h-[600px]" />}>
           <S08Industrias />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s09" height={800}>
+      <ViewportLoader id="fabric-os" height={800}>
         <Suspense fallback={<div className="min-h-[800px]" />}>
           <S09FabricOS />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s10" height={700}>
+      <ViewportLoader id="lifecycle" height={700}>
         <Suspense fallback={<div className="min-h-[700px]" />}>
           <S10Lifecycle />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s11" height={600}>
+      <ViewportLoader id="office-hours" height={600}>
         <Suspense fallback={<div className="min-h-[600px]" />}>
           <S11OfficeHours />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s12" height={500}>
+      <ViewportLoader id="referencias" height={500}>
         <Suspense fallback={<div className="min-h-[500px]" />}>
           <S12Referencias />
         </Suspense>
@@ -124,19 +124,19 @@ export default function Home() {
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s13" height={600}>
+      <ViewportLoader id="transparencia" height={600}>
         <Suspense fallback={<div className="min-h-[600px]" />}>
           <S13Transparencia />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s14" height={600}>
+      <ViewportLoader id="investigacion" height={600}>
         <Suspense fallback={<div className="min-h-[600px]" />}>
           <S14Investigacion />
         </Suspense>
       </ViewportLoader>
 
-      <ViewportLoader id="s15" height={600}>
+      <ViewportLoader id="founder-wait-list" height={600}>
         <Suspense fallback={<div className="min-h-[600px]" />}>
           <S15Founder />
         </Suspense>
