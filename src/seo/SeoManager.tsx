@@ -253,7 +253,7 @@ export default function SeoManager() {
     });
     upsertMeta('meta[name="theme-color"]', {
       name: 'theme-color',
-      content: '#050505',
+      content: document.documentElement.dataset.theme === 'light' ? '#EDE7DA' : '#050203',
     });
     upsertMeta('meta[property="og:site_name"]', {
       property: 'og:site_name',

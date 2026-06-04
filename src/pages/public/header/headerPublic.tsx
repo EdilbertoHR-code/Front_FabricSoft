@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { Moon, Sun } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 // Traductor desactivado temporalmente por rendimiento.
 // import LanguageToggle from '../../../components/LanguageToggle';
 import { useI18n } from '../../../i18n/I18nProvider';
 import type { TranslationKey } from '../../../i18n/translations';
+import { useTheme } from '../../../theme/ThemeProvider';
 
 const NAV: Array<{ key: TranslationKey; href: string; sectionId: string; page?: boolean }> = [
   { key: 'nav.hero',         href: '/#inicio',       sectionId: 'inicio' },
@@ -31,6 +33,35 @@ function scrollCurrentSection(sectionId: string) {
   const visualInset = sectionId === 'inicio' ? 0 : Math.min(88, Math.max(48, window.innerHeight * 0.08));
   const top = target.getBoundingClientRect().top + window.scrollY - headerOffset + visualInset;
   window.scrollTo({ top, behavior: 'smooth' });
+}
+
+function ThemeToggle({ mobile = false }: { mobile?: boolean }) {
+  const { theme, toggleTheme } = useTheme();
+  const isLight = theme === 'light';
+  const Icon = isLight ? Moon : Sun;
+
+  return (
+    <button
+      type="button"
+      onClick={(event) => toggleTheme({ origin: { x: event.clientX, y: event.clientY } })}
+      aria-label={isLight ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
+      title={isLight ? 'Modo oscuro' : 'Modo claro'}
+      className={`
+        group inline-flex items-center justify-center border font-mono uppercase
+        transition-all duration-200 active:scale-95
+        ${mobile ? 'h-11 w-full gap-3 rounded-full text-[10px] tracking-[0.2em]' : 'h-9 w-9 rounded-full'}
+      `}
+      style={{
+        color: 'var(--accent)',
+        borderColor: 'var(--accent-deep)',
+        background: 'var(--accent-soft)',
+        boxShadow: '0 10px 30px rgba(var(--accent-rgb), 0.08)',
+      }}
+    >
+      <Icon className="h-4 w-4 transition-transform duration-200 group-hover:rotate-12" strokeWidth={1.7} />
+      {mobile ? <span>{isLight ? 'Oscuro' : 'Claro'}</span> : null}
+    </button>
+  );
 }
 
 export default function Header() {
@@ -88,11 +119,12 @@ export default function Header() {
     <Link
       to="/#fabric-ai"
       onClick={(event) => handleSectionNavigation(event, 'fabric-ai')}
-      className="hidden sm:inline-flex items-center gap-2 relative group text-[#C9A96E] font-mono font-semibold text-[10px] tracking-[0.22em] uppercase px-0 py-2 transition-colors duration-300 hover:text-[#F5F5F5] active:scale-[0.98]"
+      className="hidden sm:inline-flex items-center gap-2 relative group font-mono font-semibold text-[10px] tracking-[0.22em] uppercase px-0 py-2 transition-colors duration-300 active:scale-[0.98]"
+      style={{ color: 'var(--accent)' }}
     >
       <span className="relative">
         {t('cta.start')}
-        <span aria-hidden="true" className="absolute left-0 -bottom-1 h-px w-full bg-[#C9A96E] origin-right scale-x-100 transition-transform duration-300 ease-out group-hover:scale-x-0" />
+        <span aria-hidden="true" className="absolute left-0 -bottom-1 h-px w-full origin-right scale-x-100 transition-transform duration-300 ease-out group-hover:scale-x-0" style={{ background: 'var(--accent)' }} />
       </span>
       <span className="transition-transform duration-300 group-hover:translate-x-1">-&gt;</span>
     </Link>
@@ -105,10 +137,15 @@ export default function Header() {
         className={`
           fixed top-0 left-0 right-0 z-50
           flex justify-center px-6 md:px-12
-          transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${scrolled ? 'bg-[#050203]/90 backdrop-blur-xl border-b border-[#2A2A2A] shadow-md py-2' : 'bg-transparent border-b border-transparent py-3'}
+          transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${scrolled ? 'backdrop-blur-xl border-b shadow-md py-2' : 'bg-transparent border-b border-transparent py-3'}
           ${mounted ? 'opacity-100' : 'opacity-0'}
         `}
+        style={scrolled ? {
+          background: 'color-mix(in srgb, var(--bg-base) 90%, transparent)',
+          borderColor: 'var(--border)',
+          boxShadow: 'var(--shadow-float)',
+        } : undefined}
       >
         <div className="relative w-full max-w-[1440px] flex items-center justify-between">
           <Link
@@ -123,24 +160,24 @@ export default function Header() {
             {/* LOGO ESCRITORIO: Brandbook — wordmark + línea dorada + tagline */}
             <div className="flex flex-col items-center leading-none select-none">
               <span
-                className="font-serif font-light leading-none"
+                className="font-serif font-medium leading-none"
                 style={{
-                  fontSize: 'clamp(20px, 2vw, 26px)',
-                  letterSpacing: '0.28em',
-                  paddingLeft: '0.28em',
-                  background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 85%, #C9A96E 100%)',
+                  fontSize: 'clamp(23px, 2.08vw, 30px)',
+                  letterSpacing: '0.23em',
+                  paddingLeft: '0.23em',
+                  background: 'linear-gradient(155deg, #7B572B 0%, #B38745 18%, #D6B466 38%, #F1D88A 50%, #D1AE62 63%, #A97935 82%, #E5C678 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  filter: 'drop-shadow(0 1px 8px rgba(201,169,110,0.15))',
+                  filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))',
                 }}
               >
                 FABRIC
               </span>
-              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/35 to-transparent my-[3px] md:my-1" />
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/55 to-transparent my-[3px] md:my-1" />
               <span
-                className="font-mono uppercase tracking-[0.4em] pl-[0.4em] text-[5px] md:text-[8px] transition-all duration-300"
-                style={{ color: '#5A5650' }}
+                className="font-mono font-semibold uppercase tracking-[0.36em] pl-[0.36em] text-[5.5px] md:text-[8px] transition-all duration-300"
+                style={{ color: 'color-mix(in srgb, var(--text-primary) 56%, var(--accent) 44%)' }}
               >
                 Oracle Critical Engineering
               </span>
@@ -156,6 +193,7 @@ export default function Header() {
             style={{ transitionDelay: '180ms' }}
           >
             {startLink}
+            <ThemeToggle />
             {/* Traductor desactivado temporalmente por rendimiento. */}
             {/* <div className="hidden translate-y-[1px] sm:flex sm:pl-8">
               <LanguageToggle compact />
@@ -185,24 +223,24 @@ export default function Header() {
             {/* LOGO MÓVIL: Brandbook — wordmark + línea dorada + tagline */}
             <div className="flex flex-col items-center leading-none select-none">
               <span
-                className="font-serif font-light leading-none"
+                className="font-serif font-medium leading-none"
                 style={{
-                  fontSize: 22,
-                  letterSpacing: '0.28em',
-                  paddingLeft: '0.28em',
-                  background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 85%, #C9A96E 100%)',
+                  fontSize: 25,
+                  letterSpacing: '0.23em',
+                  paddingLeft: '0.23em',
+                  background: 'linear-gradient(155deg, #7B572B 0%, #B38745 18%, #D6B466 38%, #F1D88A 50%, #D1AE62 63%, #A97935 82%, #E5C678 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  filter: 'drop-shadow(0 1px 8px rgba(201,169,110,0.15))',
+                  filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))',
                 }}
               >
                 FABRIC
               </span>
-              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/35 to-transparent my-[3px]" />
+              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/55 to-transparent my-[3px]" />
               <span
-                className="font-mono uppercase tracking-[0.4em] pl-[0.4em] text-[5px]"
-                style={{ color: '#5A5650' }}
+                className="font-mono font-semibold uppercase tracking-[0.36em] pl-[0.36em] text-[5.5px]"
+                style={{ color: 'color-mix(in srgb, var(--text-primary) 56%, var(--accent) 44%)' }}
               >
                 Oracle Critical Engineering
               </span>
@@ -254,6 +292,9 @@ export default function Header() {
           {/* <div className="mb-6 flex justify-center">
             <LanguageToggle />
           </div> */}
+          <div className="mb-3">
+            <ThemeToggle mobile />
+          </div>
           <Link
             to="/#fabric-ai"
             onClick={(event) => handleSectionNavigation(event, 'fabric-ai')}

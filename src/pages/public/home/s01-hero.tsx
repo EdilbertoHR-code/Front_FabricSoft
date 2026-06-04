@@ -1,6 +1,7 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../../../i18n/I18nProvider";
+import { useTheme } from "../../../theme/ThemeProvider";
 
 type HighlightPhrase = {
   base: string;
@@ -15,6 +16,29 @@ type GlobeLabel = {
   detailText: string;
   className: string;
 };
+
+type GlobeTheme = "dark" | "light";
+type GlobeModules = {
+  am5: typeof import("@amcharts/amcharts5");
+  am5map: typeof import("@amcharts/amcharts5/map");
+  continentsLow: typeof import("@amcharts/amcharts5-geodata/continentsLow");
+};
+
+let globeModulesPromise: Promise<GlobeModules> | null = null;
+
+function loadGlobeModules() {
+  globeModulesPromise ??= Promise.all([
+    import("@amcharts/amcharts5"),
+    import("@amcharts/amcharts5/map"),
+    import("@amcharts/amcharts5-geodata/continentsLow"),
+  ]).then(([am5, am5map, continentsLow]) => ({
+    am5,
+    am5map,
+    continentsLow,
+  }));
+
+  return globeModulesPromise;
+}
 
 const particles = [
   { x: "8%", y: "18%", d: "0s", s: "2px" },
@@ -120,8 +144,124 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
 
 
 
+const globePalette = {
+  dark: {
+    land: 0xc9a96e,
+    stroke: 0x17130d,
+  },
+  light: {
+    land: 0x9b7138,
+    stroke: 0xf7f3ea,
+  },
+} satisfies Record<GlobeTheme, Record<string, number>>;
+
+function applyGlobeTheme(
+  am5: GlobeModules["am5"],
+  polygonSeries: import("@amcharts/amcharts5/map").MapPolygonSeries,
+  theme: GlobeTheme,
+) {
+  const palette = globePalette[theme];
+  const settings = {
+    fill: am5.color(palette.land),
+    fillOpacity: theme === "light" ? 0.84 : 0.9,
+    stroke: am5.color(palette.stroke),
+    strokeOpacity: theme === "light" ? 0.72 : 0.45,
+    strokeWidth: 0.35,
+    interactive: false,
+  };
+
+  polygonSeries.mapPolygons.template.setAll(settings);
+  polygonSeries.mapPolygons.each((polygon) => polygon.setAll(settings));
+}
+
+const AmChartsGlobe = memo(function AmChartsGlobe({ theme }: { theme: GlobeTheme }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const am5Ref = useRef<GlobeModules["am5"] | null>(null);
+  const polygonSeriesRef = useRef<import("@amcharts/amcharts5/map").MapPolygonSeries | null>(null);
+  const themeRef = useRef(theme);
+
+  useLayoutEffect(() => {
+    if (!chartRef.current) return;
+
+    const chartElement = chartRef.current;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    let disposed = false;
+    let chartRoot: { dispose: () => void } | null = null;
+
+    loadGlobeModules().then(({ am5, am5map, continentsLow }) => {
+      if (disposed) return;
+
+      am5Ref.current = am5;
+      const root = am5.Root.new(chartElement);
+      chartRoot = root;
+
+      const chart = root.container.children.push(
+        am5map.MapChart.new(root, {
+          projection: am5map.geoOrthographic(),
+          panX: "none",
+          panY: "none",
+          wheelX: "none",
+          wheelY: "none",
+          pinchZoom: false,
+          rotationX: -28,
+          rotationY: -14,
+          maxZoomLevel: 1,
+          minZoomLevel: 1,
+          paddingBottom: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          paddingTop: 0,
+        }),
+      );
+
+      const polygonSeries = chart.series.push(
+        am5map.MapPolygonSeries.new(root, {
+          geoJSON: continentsLow.default,
+        }),
+      );
+
+      polygonSeriesRef.current = polygonSeries;
+      applyGlobeTheme(am5, polygonSeries, themeRef.current);
+
+      if (!prefersReducedMotion) {
+        chart.animate({
+          key: "rotationX",
+          from: -28,
+          to: 332,
+          duration: 52000,
+          loops: Infinity,
+        });
+      }
+    });
+
+    return () => {
+      disposed = true;
+      am5Ref.current = null;
+      polygonSeriesRef.current = null;
+      chartRoot?.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    themeRef.current = theme;
+    if (am5Ref.current && polygonSeriesRef.current) {
+      applyGlobeTheme(am5Ref.current, polygonSeriesRef.current, theme);
+    }
+  }, [theme]);
+
+  return (
+    <div className="fabric-am-globe-sphere absolute inset-0 rounded-full">
+      <div ref={chartRef} className="fabric-am-globe-chart pointer-events-none h-full w-full" />
+      <div className="fabric-am-globe-shade pointer-events-none absolute inset-0 rounded-full" />
+    </div>
+  );
+});
+
 const PremiumGlobe = memo(function PremiumGlobe() {
   const { t } = useI18n();
+  const { theme } = useTheme();
   const [activeLabel, setActiveLabel] = useState<number | null>(null);
 
   const globeStars = useMemo(
@@ -186,17 +326,8 @@ const PremiumGlobe = memo(function PremiumGlobe() {
         />
       ))}
 
-      <div className="pointer-events-none absolute left-1/2 top-[43%] h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,169,110,0.11),transparent_66%)] blur-2xl" />
-
-      <div
-        className="pointer-events-none absolute left-1/2 top-[43%] h-[48%] w-[70%] rounded-full border border-[rgba(201,169,110,0.14)]"
-        style={{ animation: "orbitRotate 46s linear infinite" }}
-      />
-
-      <div
-        className="pointer-events-none absolute left-1/2 top-[43%] h-[68%] w-[48%] rounded-full border border-[rgba(201,169,110,0.08)]"
-        style={{ animation: "orbitRotate 60s linear infinite reverse" }}
-      />
+      <div className="fabric-orb-aura pointer-events-none absolute left-1/2 top-[43%] h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" />
+      <div className="fabric-orb-field pointer-events-none absolute left-1/2 top-[43%] h-[76%] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full" />
 
       <div
         className="relative z-10"
@@ -204,35 +335,10 @@ const PremiumGlobe = memo(function PremiumGlobe() {
       >
         <div
           className="fabric-orb-core relative h-[225px] w-[225px] overflow-hidden rounded-full md:h-[300px] md:w-[300px] lg:h-[365px] lg:w-[365px]"
-          style={{
-            // Solo el resplandor exterior (no se anima, se pinta una vez).
-            boxShadow: "0 0 54px rgba(201,169,110,.16)",
-          }}
         >
-          {/* Textura de la Tierra: solo el fondo se desplaza (blit de imagen barato).
-              Las sombras costosas viven en otra capa, asi no se repintan por frame. */}
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              backgroundImage:
-                "url('/globe.jpeg')",
-              backgroundSize: "cover",
-              backgroundPosition: "left center",
-              animation: "earthRotate 40s linear infinite",
-            }}
-          />
-          {/* Sombreado de esfera (6 sombras inset originales) sobre la textura.
-              Estatico: se pinta una sola vez, ya no en cada frame. */}
-          <div
-            className="pointer-events-none absolute inset-0 rounded-full"
-            style={{
-              boxShadow:
-                "-10px 0 18px rgba(195,244,255,.30) inset, 24px 8px 48px rgba(0,0,0,.92) inset, -32px -6px 50px rgba(195,244,255,.12) inset, 185px 0 74px rgba(0,0,0,.72) inset, 116px 0 58px rgba(0,0,0,.84) inset",
-            }}
-          />
-          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.22),transparent_24%,transparent_100%)]" />
-          <div className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,rgba(0,0,0,.76),transparent_36%,transparent_58%,rgba(0,0,0,.88))]" />
-          <div className="absolute inset-0 rounded-full border border-white/10" />
+          <AmChartsGlobe theme={theme} />
+          <div className="fabric-orb-grade pointer-events-none absolute inset-0 rounded-full" />
+          <div className="fabric-orb-rim pointer-events-none absolute inset-0 rounded-full border" />
         </div>
       </div>
 
@@ -345,14 +451,9 @@ export default function S01Hero() {
           100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        @keyframes earthRotate {
-          0% { background-position: 0 center; }
-          100% { background-position: 520px center; }
-        }
-
         @keyframes globeFloat {
           0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-10px) scale(1.01); }
+          50% { transform: translateY(-7px) scale(1.006); }
         }
 
         @keyframes globeTwinkle {
@@ -360,9 +461,189 @@ export default function S01Hero() {
           50% { opacity: 1; transform: scale(1.18); }
         }
 
-        @keyframes orbitRotate {
-          0% { transform: translate(-50%, -50%) rotate(0deg); }
-          100% { transform: translate(-50%, -50%) rotate(360deg); }
+        .fabric-orb-aura {
+          background:
+            radial-gradient(circle, rgba(var(--accent-rgb), 0.14), transparent 62%),
+            radial-gradient(circle at 42% 38%, rgba(82, 123, 109, 0.14), transparent 44%),
+            radial-gradient(circle at 66% 66%, rgba(255, 255, 255, 0.07), transparent 28%);
+        }
+
+        .fabric-orb-field {
+          background:
+            linear-gradient(rgba(var(--accent-rgb), 0.12), rgba(var(--accent-rgb), 0.12)) 50% 50% / 1px 74% no-repeat,
+            linear-gradient(90deg, rgba(var(--accent-rgb), 0.12), rgba(var(--accent-rgb), 0.12)) 50% 50% / 74% 1px no-repeat,
+            radial-gradient(circle, transparent 57%, rgba(var(--accent-rgb), 0.16) 58%, transparent 59%);
+          opacity: 0.7;
+          mask-image: radial-gradient(circle, black 0 58%, transparent 76%);
+        }
+
+        .fabric-orb-core {
+          background:
+            radial-gradient(circle at 32% 22%, rgba(246, 232, 188, 0.22), transparent 20%),
+            radial-gradient(circle at 63% 62%, rgba(85, 118, 103, 0.24), transparent 35%),
+            linear-gradient(135deg, #111719, #050607 58%, #0d120f);
+          box-shadow:
+            0 0 50px rgba(var(--accent-rgb), 0.14),
+            0 26px 82px rgba(0, 0, 0, 0.5),
+            inset 0 0 0 1px rgba(var(--accent-rgb), 0.24),
+            inset -32px -8px 58px rgba(0, 0, 0, 0.62),
+            inset 18px 8px 38px rgba(255, 255, 255, 0.035);
+          isolation: isolate;
+        }
+
+        .fabric-am-globe-sphere {
+          background:
+            radial-gradient(circle at 31% 24%, rgba(231, 207, 142, 0.24), transparent 17%),
+            radial-gradient(circle at 58% 48%, rgba(58, 104, 101, 0.22), transparent 42%),
+            radial-gradient(circle at center, #0b1718, #050708 72%);
+        }
+
+        .fabric-am-globe-chart {
+          position: relative;
+          z-index: 1;
+        }
+
+        .fabric-am-globe-chart canvas,
+        .fabric-am-globe-chart svg {
+          border-radius: 999px;
+        }
+
+        .fabric-am-globe-shade {
+          z-index: 2;
+          background:
+            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.18), transparent 18%),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 42%, rgba(0, 0, 0, 0.74)),
+            linear-gradient(155deg, transparent 42%, rgba(0, 0, 0, 0.42));
+          box-shadow:
+            inset -20px 0 52px rgba(0, 0, 0, 0.62),
+            inset 18px 0 34px rgba(199, 221, 207, 0.06);
+        }
+
+        .fabric-orb-grade {
+          background:
+            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.18), transparent 18%),
+            radial-gradient(circle at 70% 72%, rgba(var(--accent-rgb), 0.12), transparent 25%);
+          mix-blend-mode: normal;
+        }
+
+        .fabric-orb-rim {
+          border-color: rgba(var(--accent-rgb), 0.28);
+          box-shadow:
+            inset -20px 0 52px rgba(0, 0, 0, 0.7),
+            inset 18px 0 34px rgba(199, 221, 207, 0.08),
+            0 0 0 1px rgba(255, 255, 255, 0.04);
+        }
+
+        .fabric-hero-copy {
+          color: rgba(245, 245, 245, 0.82);
+        }
+
+        .fabric-hero-migrations {
+          color: #8A8A8A;
+        }
+
+        .fabric-hero-stats {
+          background: rgba(8, 7, 6, 0.7);
+          border-color: #2A2A2A;
+        }
+
+        .fabric-hero-stat {
+          border-color: #2A2A2A;
+        }
+
+        .fabric-hero-stat-number {
+          color: #C9A96E;
+        }
+
+        .fabric-hero-stat-label {
+          color: #C2C2C2;
+        }
+
+        html[data-theme="light"] .fabric-orb-aura {
+          background:
+            radial-gradient(circle, rgba(var(--accent-rgb), 0.16), transparent 62%),
+            radial-gradient(circle at 42% 38%, rgba(89, 119, 101, 0.16), transparent 44%),
+            radial-gradient(circle at 66% 66%, rgba(255, 255, 255, 0.72), transparent 30%);
+        }
+
+        html[data-theme="light"] .fabric-orb-field {
+          background:
+            linear-gradient(rgba(var(--accent-rgb), 0.16), rgba(var(--accent-rgb), 0.16)) 50% 50% / 1px 74% no-repeat,
+            linear-gradient(90deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-rgb), 0.16)) 50% 50% / 74% 1px no-repeat,
+            radial-gradient(circle, transparent 57%, rgba(105, 83, 48, 0.16) 58%, transparent 59%);
+          opacity: 0.52;
+        }
+
+        html[data-theme="light"] .fabric-orb-core {
+          background:
+            radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.72), transparent 21%),
+            radial-gradient(circle at 63% 62%, rgba(110, 137, 111, 0.18), transparent 36%),
+            linear-gradient(135deg, #efe5d1, #d5ccba 58%, #f8f4eb);
+          box-shadow:
+            0 18px 70px rgba(150, 105, 35, 0.14),
+            0 4px 18px rgba(88, 72, 48, 0.08),
+            inset 0 0 0 1px rgba(var(--accent-rgb), 0.25),
+            inset -32px -8px 58px rgba(117, 95, 56, 0.18),
+            inset 18px 8px 38px rgba(255, 255, 255, 0.48);
+        }
+
+        html[data-theme="light"] .fabric-am-globe-sphere {
+          background:
+            radial-gradient(circle at 31% 24%, rgba(255, 255, 255, 0.62), transparent 17%),
+            radial-gradient(circle at 58% 48%, rgba(95, 126, 109, 0.16), transparent 42%),
+            radial-gradient(circle at center, #ece4d5, #d4cab7 72%);
+        }
+
+        html[data-theme="light"] .fabric-orb-grade {
+          background:
+            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.62), transparent 18%),
+            radial-gradient(circle at 72% 72%, rgba(var(--accent-rgb), 0.12), transparent 24%);
+        }
+
+        html[data-theme="light"] .fabric-am-globe-shade {
+          background:
+            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.44), transparent 18%),
+            linear-gradient(90deg, rgba(117, 92, 50, 0.2), transparent 44%, rgba(102, 81, 48, 0.26)),
+            linear-gradient(155deg, transparent 42%, rgba(89, 119, 101, 0.12));
+          box-shadow:
+            inset -22px 0 46px rgba(119, 91, 42, 0.16),
+            inset 18px 0 30px rgba(255, 255, 255, 0.28);
+        }
+
+        html[data-theme="light"] .fabric-orb-rim {
+          border-color: rgba(var(--accent-rgb), 0.32);
+          box-shadow:
+            inset -22px 0 46px rgba(119, 91, 42, 0.18),
+            inset 18px 0 30px rgba(255, 255, 255, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.38);
+        }
+
+        html[data-theme="light"] .fabric-hero-copy {
+          color: #3F423B;
+        }
+
+        html[data-theme="light"] .fabric-hero-migrations {
+          color: #5F655C;
+        }
+
+        html[data-theme="light"] .fabric-hero-stats {
+          background: rgba(247, 243, 234, 0.64);
+          border-color: rgba(126, 102, 63, 0.34);
+          box-shadow: 0 18px 46px rgba(88, 72, 48, 0.08);
+        }
+
+        html[data-theme="light"] .fabric-hero-stat {
+          border-color: rgba(126, 102, 63, 0.28);
+        }
+
+        html[data-theme="light"] .fabric-hero-stat-number {
+          color: #9A6425;
+          text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+        }
+
+        html[data-theme="light"] .fabric-hero-stat-label {
+          color: #6F6B62;
+          text-shadow: 0 1px 0 rgba(255, 255, 255, 0.62);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -416,7 +697,7 @@ export default function S01Hero() {
           </h2>
 
           <p
-            className="mt-7 max-w-3xl text-base leading-8 text-[#F5F5F5]/82 md:text-xl"
+            className="fabric-hero-copy mt-7 max-w-3xl text-base leading-8 md:text-xl"
             style={{
               animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .5s both",
             }}
@@ -425,7 +706,7 @@ export default function S01Hero() {
           </p>
 
           <div
-            className="mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border border-[#2A2A2A] bg-[#080706]/70"
+            className="fabric-hero-stats mt-7 grid max-w-3xl grid-cols-3 overflow-hidden border"
             style={{
               animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .56s both",
             }}
@@ -437,14 +718,14 @@ export default function S01Hero() {
             ].map(([number, label], index) => (
               <div
                 key={label}
-                className={`px-4 py-4 ${index !== 2 ? "border-r border-[#2A2A2A]" : ""
+                className={`fabric-hero-stat px-4 py-4 ${index !== 2 ? "border-r" : ""
                   }`}
               >
-                <p className="font-serif text-3xl leading-none text-[#C9A96E] md:text-4xl">
+                <p className="fabric-hero-stat-number font-serif text-3xl leading-none md:text-4xl">
                   {number}
                 </p>
 
-                <p className="mt-2 font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.16em] text-[#C2C2C2] md:text-[11px]">
+                <p className="fabric-hero-stat-label mt-2 font-mono text-[10px] font-black uppercase leading-4 tracking-[0.16em] md:text-[11px]">
                   {label}
                 </p>
               </div>
@@ -452,7 +733,7 @@ export default function S01Hero() {
           </div>
 
           <p
-            className="mt-4 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A8A8A]"
+            className="fabric-hero-migrations mt-4 font-mono text-[11px] font-bold uppercase tracking-[0.18em]"
             style={{
               animation: "titleReveal .9s cubic-bezier(.16,1,.3,1) .6s both",
             }}

@@ -58,6 +58,7 @@ const QUESTIONS = [
   { id: 9,  text: "¿En qué industria opera tu empresa?",                                       options: ["Servicios Financieros", "Inmobiliario", "Logística", "Otro"] },
   { id: 10, text: "¿Cuál es el revenue anual aproximado de tu empresa?",                       options: ["< USD 50M", "USD 50–250M", "USD 250–500M", "> USD 500M"] },
   { id: 11, text: "¿En qué plazo deseas remediar la situación?",                               options: ["Inmediato (< 3 meses)", "Corto (3–6 meses)", "Medio (6–12 meses)", "No definido"] },
+  { id: 12, text: "Que tan transferido quedo el conocimiento al equipo interno?",              options: ["Documentado y transferido", "Transferencia parcial", "Dependencia alta de la consultora", "Sin transferencia real"] },
 ];
 
 function answerScore(questionId: number, answer: string) {
@@ -77,6 +78,7 @@ function getDiagnosticResult(answers: Record<number, string>) {
   const adoption = answers[4];
   const incidents = answers[5];
   const consultant = answers[6];
+  const knowledgeTransfer = answers[12];
 
   const patterns = [
     (reports === "4–7" || reports === "Más de 7") && "Reportes manuales paralelos",
@@ -84,6 +86,7 @@ function getDiagnosticResult(answers: Record<number, string>) {
     (adoption === "50–70%" || adoption === "<50%") && "Baja adopción de usuarios clave",
     (incidents === "4–7" || incidents === "Más de 7") && "Incidencias críticas abiertas",
     (consultant === "Soporte limitado" || consultant === "No responde") && "Riesgo por consultora anterior",
+    (knowledgeTransfer === "Dependencia alta de la consultora" || knowledgeTransfer === "Sin transferencia real") && "Conocimiento no transferido al equipo interno",
   ].filter(Boolean) as string[];
 
   if (total >= 20) {
@@ -191,7 +194,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     
     // Pausa dramática para mostrar la selección en dorado antes de avanzar
     setTimeout(() => {
-      setStep(prev => prev === 11 ? 12 : prev + 1);
+      setStep(prev => prev === QUESTIONS.length ? QUESTIONS.length + 1 : prev + 1);
     }, 650);
   };
 
@@ -256,7 +259,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
       });
 
       setIsProcessing(false);
-      setStep(14); 
+      setStep(QUESTIONS.length + 3); 
     } catch (error: any) {
       setIsProcessing(false);
       setFormError(error.response?.data?.error || "No pudimos guardar el diagnóstico. Inténtalo de nuevo.");
@@ -265,7 +268,11 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   };
 
   const diagnostic = getDiagnosticResult(answers);
-  const progressPercentage = step > 0 && step <= 11 ? (step / 12) * 100 : step === 12 || step === 13 ? 100 : 0;
+  const progressPercentage = step > 0 && step <= QUESTIONS.length
+    ? (step / QUESTIONS.length) * 100
+    : step === QUESTIONS.length + 1 || step === QUESTIONS.length + 2
+      ? 100
+      : 0;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-[fadeIn_0.3s_ease-out]">
@@ -303,7 +310,7 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
         </div>
 
         {/* Barra de Progreso */}
-        {step > 0 && step <= 13 && (
+          {step > 0 && step <= QUESTIONS.length + 2 && (
           <div className="w-full h-[2px] bg-[#1A1A1A]">
             <div 
               className="h-full bg-gradient-to-r from-[#C9A96E]/50 to-[#C9A96E] transition-all duration-700 ease-out"
@@ -349,8 +356,8 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
-          {/* ================= PASOS 1-11: DIAGNOSTICO OPERATIVO ================= */}
-          {step > 0 && step <= 11 && (
+          {/* ================= PASOS 1-12: DIAGNOSTICO OPERATIVO ================= */}
+          {step > 0 && step <= QUESTIONS.length && (
             <div key={`question-${step}`} className="animate-step h-full flex flex-col justify-center">
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F5F5F5]/40 mb-4 flex items-center gap-2">
                 <span className="text-[#C9A96E]">[{String(step).padStart(2, '0')}]</span> de 12
@@ -395,9 +402,9 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
             </div>
           )}
 
-          {/* ================= PASO 12: OUTPUT INMEDIATO ================= */}
-          {step === 12 && (
-            <div key="step-12" className="animate-step">
+          {/* ================= OUTPUT INMEDIATO ================= */}
+          {step === QUESTIONS.length + 1 && (
+            <div key="diagnostic-result" className="animate-step">
               <div className="mb-8">
                 <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
                   Resultado inmediato
@@ -431,19 +438,19 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 </div>
               </div>
 
-              <button onClick={() => setStep(13)} className="btn-primary mt-8 w-full">
+              <button onClick={() => setStep(QUESTIONS.length + 2)} className="btn-primary mt-8 w-full">
                 Solicitar evaluación detallada
                 <ArrowIcon />
               </button>
             </div>
           )}
 
-          {/* ================= PASO 13: FORMULARIO ================= */}
-          {step === 13 && (
-            <div key="step-13" className="animate-step">
+          {/* ================= FORMULARIO ================= */}
+          {step === QUESTIONS.length + 2 && (
+            <div key="contact-form" className="animate-step">
               <div className="mb-8">
                 <span className="inline-flex mb-3 border border-[#C9A96E]/30 bg-[#C9A96E]/10 px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#C9A96E] rounded-sm">
-                  Pregunta 12 de 12
+                  Evaluacion detallada
                 </span>
                 <h3 className="font-serif text-3xl text-[#F5F5F5] md:text-4xl tracking-tight mb-4">
                   Datos de contacto para la evaluación detallada
@@ -517,8 +524,8 @@ function DiagnosticModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
           )}
 
           {/* ================= PASO 14: ÉXITO ================= */}
-          {step === 14 && (
-            <div key="step-14" className="animate-step h-full flex flex-col items-center justify-center text-center">
+          {step === QUESTIONS.length + 3 && (
+            <div key="success" className="animate-step h-full flex flex-col items-center justify-center text-center">
               <div className="mb-8 relative flex h-24 w-24 items-center justify-center rounded-full border border-[#C9A96E] bg-[#C9A96E]/10 text-[#C9A96E] shadow-[0_0_40px_rgba(201,169,110,0.2)]">
                 <div className="absolute inset-0 rounded-full border border-[#C9A96E] animate-[ping_2s_ease-out_infinite] opacity-30" />
                 <CheckIcon className="w-8 h-8" />
