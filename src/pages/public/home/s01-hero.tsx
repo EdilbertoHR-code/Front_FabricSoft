@@ -40,6 +40,68 @@ function loadGlobeModules() {
   return globeModulesPromise;
 }
 
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia(query).matches : false,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const updateMatches = () => setMatches(media.matches);
+
+    updateMatches();
+    media.addEventListener("change", updateMatches);
+    return () => media.removeEventListener("change", updateMatches);
+  }, [query]);
+
+  return matches;
+}
+
+function useDeferredGlobeLoad(enabled: boolean, delayMs = 900) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    if (shouldLoad) return;
+
+    const element = containerRef.current;
+    if (!element) return;
+
+    let timeoutId: number | undefined;
+    let observer: IntersectionObserver | undefined;
+
+    const scheduleLoad = () => {
+      if (timeoutId || shouldLoad) return;
+      timeoutId = window.setTimeout(() => setShouldLoad(true), delayMs);
+    };
+
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return;
+          scheduleLoad();
+          observer?.disconnect();
+        },
+        { rootMargin: "180px" },
+      );
+      observer.observe(element);
+    } else {
+      scheduleLoad();
+    }
+
+    return () => {
+      observer?.disconnect();
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [delayMs, enabled, shouldLoad]);
+
+  return { containerRef, shouldLoad };
+}
+
 const particles = [
   { x: "8%", y: "18%", d: "0s", s: "2px" },
   { x: "18%", y: "72%", d: ".4s", s: "2px" },
@@ -80,6 +142,7 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
 }: {
   phrases: HighlightPhrase[];
 }) {
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(() => {
     const first = phrases[0];
@@ -91,12 +154,18 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
     const first = phrases[0];
     if (!first) return;
 
-    setPhraseIndex(0);
-    setDeleting(false);
-    setCharIndex(first.base.length + first.gold.length);
+    const timer = window.setTimeout(() => {
+      setPhraseIndex(0);
+      setDeleting(false);
+      setCharIndex(first.base.length + first.gold.length);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [phrases]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const phrase = phrases[phraseIndex] ?? phrases[0];
     if (!phrase) return;
 
@@ -108,9 +177,11 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
     }
 
     if (deleting && charIndex === 0) {
-      setDeleting(false);
-      setPhraseIndex((current) => (current + 1) % phrases.length);
-      return;
+      const timer = window.setTimeout(() => {
+        setDeleting(false);
+        setPhraseIndex((current) => (current + 1) % phrases.length);
+      }, 0);
+      return () => window.clearTimeout(timer);
     }
 
     const timer = window.setTimeout(() => {
@@ -118,14 +189,15 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
     }, deleting ? 16 : 28);
 
     return () => window.clearTimeout(timer);
-  }, [charIndex, deleting, phraseIndex, phrases]);
+  }, [charIndex, deleting, isMobile, phraseIndex, phrases]);
 
   const phrase = phrases[phraseIndex] ?? phrases[0];
   if (!phrase) return null;
 
-  const base = phrase.base.slice(0, charIndex);
-  const gold =
-    charIndex > phrase.base.length
+  const base = isMobile ? phrase.base : phrase.base.slice(0, charIndex);
+  const gold = isMobile
+    ? phrase.gold
+    : charIndex > phrase.base.length
       ? phrase.gold.slice(0, charIndex - phrase.base.length)
       : "";
 
@@ -134,7 +206,9 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
       <span className="relative z-10 text-sm font-bold leading-relaxed text-[#F5F5F5] md:text-base">
         {base}
         <span className="text-[#D4AF37]">{gold}</span>
-        <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#D4AF37] align-middle" />
+        {!isMobile && (
+          <span className="ml-1 inline-block h-[1em] w-[2px] animate-pulse bg-[#D4AF37] align-middle" />
+        )}
       </span>
     </div>
   );
@@ -175,12 +249,15 @@ function applyGlobeTheme(
 }
 
 const AmChartsGlobe = memo(function AmChartsGlobe({ theme }: { theme: GlobeTheme }) {
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const { containerRef, shouldLoad } = useDeferredGlobeLoad(true, isMobile ? 420 : 900);
   const chartRef = useRef<HTMLDivElement>(null);
   const am5Ref = useRef<GlobeModules["am5"] | null>(null);
   const polygonSeriesRef = useRef<import("@amcharts/amcharts5/map").MapPolygonSeries | null>(null);
   const themeRef = useRef(theme);
 
   useLayoutEffect(() => {
+    if (!shouldLoad) return;
     if (!chartRef.current) return;
 
     const chartElement = chartRef.current;
@@ -242,7 +319,7 @@ const AmChartsGlobe = memo(function AmChartsGlobe({ theme }: { theme: GlobeTheme
       polygonSeriesRef.current = null;
       chartRoot?.dispose();
     };
-  }, []);
+  }, [shouldLoad]);
 
   useEffect(() => {
     themeRef.current = theme;
@@ -252,8 +329,11 @@ const AmChartsGlobe = memo(function AmChartsGlobe({ theme }: { theme: GlobeTheme
   }, [theme]);
 
   return (
-    <div className="fabric-am-globe-sphere absolute inset-0 rounded-full">
-      <div ref={chartRef} className="fabric-am-globe-chart pointer-events-none h-full w-full" />
+    <div ref={containerRef} className="fabric-am-globe-sphere absolute inset-0 rounded-full">
+      <div className="fabric-am-globe-fallback pointer-events-none absolute inset-0 rounded-full" />
+      {shouldLoad && (
+        <div ref={chartRef} className="fabric-am-globe-chart pointer-events-none h-full w-full" />
+      )}
       <div className="fabric-am-globe-shade pointer-events-none absolute inset-0 rounded-full" />
     </div>
   );
@@ -447,8 +527,8 @@ export default function S01Hero() {
         }
 
         @keyframes titleReveal {
-          0% { opacity: 0; transform: translateY(18px); filter: blur(8px); }
-          100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+          0% { opacity: 0; }
+          100% { opacity: 1; }
         }
 
         @keyframes globeFloat {
@@ -501,6 +581,29 @@ export default function S01Hero() {
         .fabric-am-globe-chart {
           position: relative;
           z-index: 1;
+        }
+
+        .fabric-am-globe-fallback {
+          z-index: 0;
+          background:
+            radial-gradient(ellipse 16% 11% at 45% 23%, rgba(var(--accent-rgb), 0.92), transparent 70%),
+            radial-gradient(ellipse 12% 18% at 55% 34%, rgba(var(--accent-rgb), 0.86), transparent 70%),
+            radial-gradient(ellipse 14% 22% at 50% 54%, rgba(var(--accent-rgb), 0.84), transparent 72%),
+            radial-gradient(ellipse 11% 10% at 38% 41%, rgba(var(--accent-rgb), 0.72), transparent 70%),
+            radial-gradient(ellipse 10% 18% at 63% 56%, rgba(var(--accent-rgb), 0.68), transparent 72%),
+            radial-gradient(ellipse 19% 9% at 47% 72%, rgba(var(--accent-rgb), 0.54), transparent 72%),
+            radial-gradient(ellipse 8% 7% at 30% 52%, rgba(var(--accent-rgb), 0.52), transparent 72%);
+          opacity: 0.96;
+          transform: translateZ(0);
+        }
+
+        .fabric-am-globe-chart {
+          opacity: 0;
+          animation: globeChartIn .42s ease-out forwards;
+        }
+
+        @keyframes globeChartIn {
+          to { opacity: 1; }
         }
 
         .fabric-am-globe-chart canvas,
@@ -594,6 +697,10 @@ export default function S01Hero() {
             radial-gradient(circle at center, #ece4d5, #d4cab7 72%);
         }
 
+        html[data-theme="light"] .fabric-am-globe-fallback {
+          opacity: 0.74;
+        }
+
         html[data-theme="light"] .fabric-orb-grade {
           background:
             radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.62), transparent 18%),
@@ -651,6 +758,28 @@ export default function S01Hero() {
             animation-duration: .001ms !important;
             animation-iteration-count: 1 !important;
             scroll-behavior: auto !important;
+          }
+        }
+
+        @media (max-width: 767px) {
+          .fabric-orb-stage,
+          .fabric-typewriter {
+            content-visibility: auto;
+            contain-intrinsic-size: 520px;
+          }
+
+          .fabric-orb-stage span,
+          .fabric-orb-core,
+          .fabric-orb-aura,
+          .fabric-orb-field {
+            animation: none !important;
+          }
+
+          .fabric-hero-badge,
+          .fabric-hero-stats,
+          .fabric-hero-migrations,
+          .fabric-typewriter {
+            transform: translateZ(0);
           }
         }
       `}</style>

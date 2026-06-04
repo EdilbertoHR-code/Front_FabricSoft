@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../../pages/public/header/headerPublic';
 import Footer from '../../pages/public/footer/footerPublic';
-import InteractionManager from '../../components/InteractionManager';
+import DeferredInteractionManager from '../../components/DeferredInteractionManager';
 
 export default function PublicLayout() {
 
@@ -29,7 +29,7 @@ export default function PublicLayout() {
         </main>
         <Footer />
       </div>
-      <InteractionManager />
+      <DeferredInteractionManager />
     </div>
   );
 }

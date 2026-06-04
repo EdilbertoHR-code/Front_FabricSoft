@@ -4,6 +4,12 @@ import { applyOfficeHoursFomoToMonth, applyOfficeHoursFomoToSlots, type MonthAva
 import { getInteractionTracking } from "../utils/tracking";
 
 type InteractionType = "proof" | "office-hours" | "reference" | "paper" | "waitlist" | "fabric-os" | "benchmark" | "nda-pdf" | null;
+export type InteractionRequest = {
+  type: Exclude<InteractionType, null>;
+  date?: string | null;
+  paperIndex?: number | null;
+  nonce: number;
+};
 
 const powDocs = [
   { icon: "SOW",   title: "SOW Fixed-Price firmado",           meta: "28 pp · ES · Cláusulas doctrinales explícitas · dic 2025", size: "2.4 MB", access: "locked" },
@@ -68,7 +74,11 @@ function formatDayLabel(iso: string): string {
   return d.toLocaleDateString('es-MX', { weekday: 'short', day: '2-digit' }).toUpperCase();
 }
 
-export default function InteractionManager() {
+export default function InteractionManager({
+  initialRequest,
+}: {
+  initialRequest?: InteractionRequest | null;
+}) {
   const [active, setActive] = useState<InteractionType>(null);
   const [selectedDay, setSelectedDay] = useState<string>(() => getWorkDaysUntilEndOfNextMonth()[0]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -112,6 +122,27 @@ export default function InteractionManager() {
   const tracking = (sourceSection: string, interactionType: string) => getInteractionTracking(sourceSection, interactionType);
 
   const MONTHLY_LIMIT = 4;
+
+  const openInteraction = useCallback((request: InteractionRequest) => {
+    let type: InteractionType = request.type;
+    if (!type) return;
+    if (type === "nda-pdf") type = "proof";
+
+    if (type === "office-hours") {
+      setSelectedDay(request.date || days[0]);
+    }
+
+    if (type === "paper" && request.paperIndex !== null && request.paperIndex !== undefined) {
+      setSelectedPaper(request.paperIndex);
+    }
+
+    setActive(type);
+    setSubmitted(false);
+    setSelectedSlot(null);
+    setApiError("");
+    setLoading(false);
+    setPaperDownloadUrl("");
+  }, [days]);
 
   const getMonthKey = (dateISO: string) => dateISO.slice(0, 7);
 
@@ -177,32 +208,27 @@ export default function InteractionManager() {
     const handler = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest("[data-interaction]") as HTMLElement | null;
       if (!target) return;
-      let type = target.getAttribute("data-interaction") as InteractionType;
+      const type = target.getAttribute("data-interaction") as InteractionType;
       if (!type) return;
-      // nda-pdf redirige al modal de proof (mismo flujo de acceso NDA)
-      if (type === "nda-pdf") type = "proof";
       e.preventDefault();
-      if (type === "office-hours") {
-        const clickedDate = target.getAttribute("data-date");
-        setSelectedDay(clickedDate || days[0]);
-      }
-      if (type === "paper") {
-        const paperIdx = target.getAttribute("data-paper-index");
-        if (paperIdx !== null) {
-          const parsedIdx = parseInt(paperIdx, 10);
-          if (!isNaN(parsedIdx)) setSelectedPaper(parsedIdx);
-        }
-      }
-      setActive(type);
-      setSubmitted(false);
-      setSelectedSlot(null);
-      setApiError("");
-      setLoading(false);
-      setPaperDownloadUrl("");
+      const paperIdx = target.getAttribute("data-paper-index");
+      const parsedPaperIndex = paperIdx === null ? null : parseInt(paperIdx, 10);
+      openInteraction({
+        type: type as Exclude<InteractionType, null>,
+        date: target.getAttribute("data-date"),
+        paperIndex: Number.isNaN(parsedPaperIndex) ? null : parsedPaperIndex,
+        nonce: Date.now(),
+      });
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
-  }, [days]);
+  }, [openInteraction]);
+
+  useEffect(() => {
+    if (!initialRequest) return;
+    const timer = window.setTimeout(() => openInteraction(initialRequest), 0);
+    return () => window.clearTimeout(timer);
+  }, [initialRequest, openInteraction]);
 
   useEffect(() => {
     if (active) {

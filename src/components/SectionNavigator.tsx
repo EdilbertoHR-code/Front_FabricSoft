@@ -54,7 +54,24 @@ const getVisualSectionInset = (id: string) => {
   return Math.min(88, Math.max(48, window.innerHeight * 0.08));
 };
 
-export default function SectionNavigator() {
+function useDesktopSectionNavigator() {
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : false,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(media.matches);
+
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  return isDesktop;
+}
+
+function DesktopSectionNavigator() {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("inicio");
@@ -106,7 +123,8 @@ export default function SectionNavigator() {
   useEffect(() => {
     const hashId = legacyHashAliases[decodeURIComponent(location.hash.replace("#", ""))] ?? decodeURIComponent(location.hash.replace("#", ""));
     if (isKnownSection(hashId)) {
-      setActiveSection(hashId);
+      const frame = window.requestAnimationFrame(() => setActiveSection(hashId));
+      return () => window.cancelAnimationFrame(frame);
     }
   }, [location.hash]);
 
@@ -185,4 +203,9 @@ export default function SectionNavigator() {
       </nav>
     </aside>
   );
+}
+
+export default function SectionNavigator() {
+  const isDesktop = useDesktopSectionNavigator();
+  return isDesktop ? <DesktopSectionNavigator /> : null;
 }
