@@ -82,7 +82,7 @@ export default function Header() {
     const onScroll = () => {
       if (!ticking.current) {
         requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 60);
+          setScrolled(window.scrollY > 8);
           ticking.current = false;
         });
         ticking.current = true;
@@ -138,7 +138,7 @@ export default function Header() {
           fixed top-0 left-0 right-0 z-50
           flex justify-center px-6 md:px-12
           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${scrolled ? 'backdrop-blur-xl border-b shadow-md py-2' : 'bg-transparent border-b border-transparent py-3'}
+          ${scrolled ? 'backdrop-blur-xl border-b shadow-md py-1.5' : 'bg-transparent border-b border-transparent py-3'}
           ${mounted ? 'opacity-100' : 'opacity-0'}
         `}
         style={scrolled ? {
@@ -161,7 +161,7 @@ export default function Header() {
             <img 
               src="/Logo_FabricSoft.webp" 
               alt="FABRIC" 
-              className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-[54px] md:h-[64px]' : 'h-[72px] md:h-[86px]'}`}
+              className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-[42px] md:h-[52px]' : 'h-[72px] md:h-[86px]'}`}
               style={{ filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))' }}
             />
           </Link>
