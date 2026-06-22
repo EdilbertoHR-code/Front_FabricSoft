@@ -3,7 +3,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 .s09 {
-  background: #000000 !important;
+  background: var(--bg-base) !important;
   position: relative;
   overflow: hidden;
 }
@@ -68,13 +68,13 @@
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow:
     0 0 0 1px rgba(201,169,110,0.04),
-    0 32px 64px rgba(0,0,0,0.35);
+    0 32px 64px rgba(3,12,26,0.28);
 }
 
 /* Individual layer — collapsed */
 .os-stack-layer {
   position: relative;
-  background: rgba(6, 6, 6, 0.5);
+  background: rgba(7, 25, 47, 0.62);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -159,11 +159,11 @@
 .os-stack-layer:first-child .os-stack-depth-2 { display: block; }
 
 .os-stack-layer:hover {
-  background: rgba(201,169,110,0.012);
+  background: rgba(18, 50, 84, 0.72);
   border-bottom-color: rgba(201,169,110,0.2);
 }
 .os-stack-layer--open {
-  background: rgba(201,169,110,0.025);
+  background: rgba(18, 50, 84, 0.9);
   border-bottom-color: rgba(201,169,110,0.3) !important;
   z-index: 20;
 }
@@ -547,7 +547,7 @@
 }
 
 .fso-card {
-  background: linear-gradient(135deg, rgba(15, 15, 15, 0.6) 0%, rgba(2, 2, 2, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(18, 50, 84, 0.74) 0%, rgba(7, 25, 47, 0.96) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -557,7 +557,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 30px rgba(3, 12, 26, 0.44);
   
   /* Stagger entrance animation */
   opacity: 0;
@@ -605,11 +605,11 @@
 }
 
 .fso-card:hover {
-  background: linear-gradient(135deg, rgba(20, 20, 20, 0.7) 0%, rgba(5, 5, 5, 0.98) 100%);
+  background: linear-gradient(135deg, rgba(22, 60, 99, 0.82) 0%, rgba(10, 33, 60, 0.98) 100%);
   border-color: rgba(201, 169, 110, 0.45);
   transform: translateY(-6px) scale(1.01);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.9),
+    0 20px 40px rgba(3, 12, 26, 0.52),
     0 0 25px rgba(201, 169, 110, 0.08);
 }
 

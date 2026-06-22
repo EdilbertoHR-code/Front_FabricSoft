@@ -40,7 +40,7 @@ function applyTheme(theme: Theme) {
   document.documentElement.style.colorScheme = theme;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'light' ? '#F7F5F0' : '#050203');
+    ?.setAttribute('content', theme === 'light' ? '#F7F5F0' : '#0B1F3A');
 }
 
 function persistTheme(theme: Theme) {

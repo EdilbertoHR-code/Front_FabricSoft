@@ -239,7 +239,7 @@ export default function ChatIa() {
   };
 
   return (
-    <section id="fabric-ai" className="chat-section-bg relative w-full overflow-hidden py-24 border-t border-[#111] md:py-32">
+    <section id="fabric-ai" className="chat-section-bg relative w-full overflow-hidden py-24 border-t border-[rgba(240,207,122,0.16)] md:py-32">
       
       {/* Background Gradients */}
       <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-10" />
@@ -297,19 +297,16 @@ export default function ChatIa() {
               ========================================= */}
           <div className={`relative w-full max-w-[760px] justify-self-center lg:justify-self-end transition-all duration-1000 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             
-            {/* Contenedor principal de la Consola con la animación del borde */}
-            <div className="chat-console relative flex flex-col rounded-sm shadow-[0_24px_80px_rgba(0,0,0,0.66)] group">
+            {/* Contenedor principal de la Consola */}
+            <div className="chat-console relative flex flex-col rounded-sm group">
               
-              {/* === LA LÍNEA ANIMADA DORADA QUE RECORRE EL BORDE === */}
-              <div className="chat-console-border absolute inset-0 z-0 overflow-hidden rounded-sm">
-                <div className="absolute top-1/2 left-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 bg-[conic-gradient(transparent_270deg,#C9A96E_360deg)] animate-[spin_3s_linear_infinite]" />
-              </div>
+              <div className="chat-console-border absolute inset-0 z-0 rounded-sm" />
 
               {/* El interior que enmascara el centro, dejando solo un borde de 1px visible */}
               <div className="chat-console-inner absolute inset-[1px] z-10 flex flex-col rounded-sm transition-shadow duration-500 focus-within:shadow-[inset_0_0_40px_rgba(201,169,110,0.05)]">
                 
                 {/* Cabecera del chat */}
-                <div className="chat-bar flex items-center justify-between border-b px-5 py-4 shrink-0">
+                <div className="chat-bar chat-console-header flex items-center justify-between border-b px-5 py-4 shrink-0">
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-7 w-7 items-center justify-center border border-[#C9A96E]/20 bg-[#C9A96E]/5 text-[#C9A96E] rounded-sm">
                       <SparkIcon />
@@ -397,7 +394,7 @@ export default function ChatIa() {
                 </div>
 
                 {/* Controles Inferiores */}
-                <div className="chat-bar border-t p-4 shrink-0">
+                <div className="chat-bar chat-console-composer border-t p-4 shrink-0">
                   
                   {/* Escenarios predeterminados */}
                   <div className="mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -429,7 +426,7 @@ export default function ChatIa() {
                       type="submit"
                       aria-label="Enviar mensaje"
                       disabled={!inputValue.trim() || isTyping}
-                      className="absolute right-4 text-[#C9A96E] disabled:text-[#333] transition-colors"
+                      className="absolute right-4 text-[#C9A96E] disabled:text-[var(--text-tertiary)] transition-colors"
                     >
                       <ArrowIcon />
                     </button>

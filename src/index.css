@@ -52,14 +52,14 @@
 /* Variables CSS globales */
 :root {
   color-scheme: dark;
-  --bg-base: #050203;
-  --bg-panel: #080706;
-  --bg-elevated: #060606;
-  --bg-deep: #030102;
+  --bg-base: #0B1F3A;
+  --bg-panel: #0E2747;
+  --bg-elevated: #123254;
+  --bg-deep: #07192F;
   
-  --bg-vampiro: #0F0404;
-  --bg-arana: #040200;
-  --bg-obsidiana: #020403;
+  --bg-vampiro: #0E2747;
+  --bg-arana: #07192F;
+  --bg-obsidiana: #123254;
 
   --text-primary: #F5F5F5;
   --text-secondary: #8A8A8A;
@@ -76,8 +76,8 @@
   --border-rgb: 42 42 42;
 
   --danger: #B85450;
-  --shadow-soft: 0 26px 80px rgba(0, 0, 0, 0.34);
-  --shadow-float: 0 18px 48px rgba(0, 0, 0, 0.24);
+  --shadow-soft: 0 26px 80px rgba(3, 12, 26, 0.34);
+  --shadow-float: 0 18px 48px rgba(3, 12, 26, 0.24);
 
   --serif: "Cormorant Garamond", "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -410,6 +410,119 @@ html[data-theme="light"] {
     background-image:
       linear-gradient(to right, rgba(150, 105, 35, 0.045) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(42, 65, 52, 0.04) 1px, transparent 1px);
+  }
+
+  /* Global dark theme background overrides */
+  html[data-theme="dark"] {
+    background: var(--bg-base);
+
+    body,
+    #root,
+    main,
+    section,
+    footer,
+    aside,
+    .pre-dossier-section {
+      background-color: var(--bg-base) !important;
+    }
+
+    .fabric-panel {
+      background-color: var(--bg-panel) !important;
+    }
+
+    .fabric-elevated {
+      background-color: var(--bg-elevated) !important;
+    }
+
+    [class*="bg-[#050203]"],
+    [class*="bg-[#050203]/"],
+    [class*="bg-[#050505]"],
+    [class*="bg-[#050505]/"],
+    [class*="bg-[#0A0A0A]"],
+    [class*="bg-[#0A0A0A]/"],
+    [class*="bg-[#0a0a0a]"],
+    [class*="bg-[#0a0a0a]/"],
+    [class*="bg-[#080706]"],
+    [class*="bg-[#080706]/"],
+    [class*="bg-[#060606]"],
+    [class*="bg-[#060606]/"],
+    [class*="bg-[#0f0404]"],
+    [class*="bg-[#040200]"],
+    [class*="bg-[#020403]"],
+    [class*="bg-[#111]"],
+    [class*="bg-[#111]/"],
+    [class*="bg-[#111111]"],
+    [class*="bg-[#111111]/"],
+    [class*="bg-black"],
+    [class*="bg-zinc-950"] {
+      background-color: var(--bg-base) !important;
+    }
+
+    [class*="bg-[#080706]"],
+    [class*="bg-[#080706]/"],
+    [class*="bg-[#111]"],
+    [class*="bg-[#111]/"],
+    [class*="bg-[#111111]"],
+    [class*="bg-[#111111]/"],
+    [class*="bg-zinc-900"],
+    [class*="bg-zinc-800"] {
+      background-color: var(--bg-panel) !important;
+    }
+
+    [class*="bg-[#060606]"],
+    [class*="bg-[#060606]/"],
+    [class*="bg-[#0A0A0A]"],
+    [class*="bg-[#0A0A0A]/"],
+    [class*="bg-[#0a0a0a]"],
+    [class*="bg-[#0a0a0a]/"] {
+      background-color: var(--bg-elevated) !important;
+    }
+
+    [style*="#050203"],
+    [style*="#050505"],
+    [style*="#000000"],
+    [style*="#080706"],
+    [style*="#090909"],
+    [style*="#0A0A0A"],
+    [style*="#0a0a0a"],
+    [style*="#111111"] {
+      background-color: var(--bg-panel) !important;
+    }
+
+    [class*="from-[#050203]"] {
+      --tw-gradient-from: var(--bg-base) !important;
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent) !important;
+    }
+
+    [class*="to-[#050203]"] {
+      --tw-gradient-to: var(--bg-base) !important;
+    }
+
+    [class*="from-[#111]"] {
+      --tw-gradient-from: var(--bg-panel) !important;
+    }
+
+    [class*="to-[#111]"],
+    [class*="to-[#080706]"],
+    [class*="to-[#050505]"] {
+      --tw-gradient-to: var(--bg-elevated) !important;
+    }
+
+    [class*="bg-[radial-gradient(circle_at_center,transparent_0%,#050203_72%)]"] {
+      background: radial-gradient(circle at center, transparent 0%, var(--bg-base) 72%) !important;
+    }
+
+    [class*="shadow-[0_25px_60px_rgba(0,0,0"],
+    [class*="shadow-[0_24px_70px_rgba(0,0,0"],
+    [class*="shadow-[0_24px_80px_rgba(0,0,0"],
+    [class*="shadow-[0_30px_80px_rgba(0,0,0"],
+    [class*="shadow-[0_40px_120px_rgba(0,0,0"],
+    [class*="shadow-[0_40px_140px_rgba(0,0,0"],
+    [class*="shadow-[0_0_40px_rgba(0,0,0"],
+    [class*="shadow-[0_0_50px_rgba(0,0,0"],
+    [class*="shadow-[0_0_80px_rgba(0,0,0"] {
+      box-shadow: var(--shadow-soft) !important;
+    }
   }
 
   /* Global light theme overrides for all sections and components */

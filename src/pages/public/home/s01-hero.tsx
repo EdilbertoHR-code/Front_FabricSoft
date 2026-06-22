@@ -220,8 +220,8 @@ const TypewriterCarousel = memo(function TypewriterCarousel({
 
 const globePalette = {
   dark: {
-    land: 0xc9a96e,
-    stroke: 0x17130d,
+    land: 0xf0cf7a,
+    stroke: 0x315a82,
   },
   light: {
     land: 0x9b7138,
@@ -432,12 +432,12 @@ const PremiumGlobe = memo(function PremiumGlobe() {
             onClick={() => setActiveLabel(index)}
             className={`
               fabric-orb-label absolute z-30 max-w-[190px] border px-4 py-3 text-left
-              shadow-[0_14px_38px_rgba(0,0,0,0.42)] backdrop-blur-md
+              shadow-[0_14px_38px_rgba(3,12,26,0.32)] backdrop-blur-md
               transition-all duration-300 md:max-w-[205px] xl:max-w-[220px]
               ${label.className}
               ${selected
                 ? "border-[#C9A96E] bg-[#C9A96E]/10 shadow-[0_0_34px_rgba(201,169,110,0.12)]"
-                : "border-[#353535] bg-[#080706]/90 hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[#111111]/95"
+                : "border-[#353535] bg-[rgba(14,39,71,0.9)] hover:-translate-y-0.5 hover:border-[#C9A96E] hover:bg-[rgba(18,50,84,0.95)]"
               }
             `}
           >
@@ -453,7 +453,7 @@ const PremiumGlobe = memo(function PremiumGlobe() {
       })}
 
       {active && (
-        <div className="fabric-orb-caption absolute bottom-[-5%] left-1/2 z-30 w-[370px] -translate-x-1/2 border border-[rgba(201,169,110,0.28)] bg-[#080808]/95 px-6 py-5 text-center shadow-[0_24px_70px_rgba(0,0,0,0.72)] backdrop-blur-md md:w-[500px]">
+        <div className="fabric-orb-caption absolute bottom-[-5%] left-1/2 z-30 w-[370px] -translate-x-1/2 border border-[rgba(201,169,110,0.28)] bg-[rgba(7,25,47,0.95)] px-6 py-5 text-center shadow-[0_24px_70px_rgba(3,12,26,0.44)] backdrop-blur-md md:w-[500px]">
           <button
             type="button"
             onClick={() => setActiveLabel(null)}
@@ -518,7 +518,7 @@ export default function S01Hero() {
     <section
       id="inicio"
       data-no-translate
-      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[#050203] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
+      className="pre-dossier-section p1-dossier-aligned relative flex min-h-[calc(100vh-72px)] w-full items-center overflow-hidden bg-[var(--bg-base)] px-6 pb-16 pt-28 text-[#F5F5F5] md:px-12 md:pt-32 lg:pb-20 lg:pt-28"
     >
       <style>{`
         @keyframes fabricStar {
@@ -543,9 +543,9 @@ export default function S01Hero() {
 
         .fabric-orb-aura {
           background:
-            radial-gradient(circle, rgba(var(--accent-rgb), 0.14), transparent 62%),
-            radial-gradient(circle at 42% 38%, rgba(82, 123, 109, 0.14), transparent 44%),
-            radial-gradient(circle at 66% 66%, rgba(255, 255, 255, 0.07), transparent 28%);
+            radial-gradient(circle, rgba(240, 207, 122, 0.18), transparent 62%),
+            radial-gradient(circle at 42% 38%, rgba(82, 161, 218, 0.2), transparent 46%),
+            radial-gradient(circle at 66% 66%, rgba(255, 255, 255, 0.1), transparent 28%);
         }
 
         .fabric-orb-field {
@@ -559,23 +559,23 @@ export default function S01Hero() {
 
         .fabric-orb-core {
           background:
-            radial-gradient(circle at 32% 22%, rgba(246, 232, 188, 0.22), transparent 20%),
-            radial-gradient(circle at 63% 62%, rgba(85, 118, 103, 0.24), transparent 35%),
-            linear-gradient(135deg, #111719, #050607 58%, #0d120f);
+            radial-gradient(circle at 32% 22%, rgba(219, 239, 255, 0.28), transparent 20%),
+            radial-gradient(circle at 63% 62%, rgba(49, 115, 166, 0.34), transparent 35%),
+            linear-gradient(135deg, #153f67, #082445 58%, #0f3158);
           box-shadow:
-            0 0 50px rgba(var(--accent-rgb), 0.14),
-            0 26px 82px rgba(0, 0, 0, 0.5),
-            inset 0 0 0 1px rgba(var(--accent-rgb), 0.24),
-            inset -32px -8px 58px rgba(0, 0, 0, 0.62),
-            inset 18px 8px 38px rgba(255, 255, 255, 0.035);
+            0 0 58px rgba(82, 161, 218, 0.22),
+            0 26px 82px rgba(3, 12, 26, 0.42),
+            inset 0 0 0 1px rgba(240, 207, 122, 0.3),
+            inset -32px -8px 58px rgba(3, 12, 26, 0.54),
+            inset 18px 8px 38px rgba(255, 255, 255, 0.08);
           isolation: isolate;
         }
 
         .fabric-am-globe-sphere {
           background:
-            radial-gradient(circle at 31% 24%, rgba(231, 207, 142, 0.24), transparent 17%),
-            radial-gradient(circle at 58% 48%, rgba(58, 104, 101, 0.22), transparent 42%),
-            radial-gradient(circle at center, #0b1718, #050708 72%);
+            radial-gradient(circle at 31% 24%, rgba(226, 243, 255, 0.32), transparent 17%),
+            radial-gradient(circle at 58% 48%, rgba(56, 137, 202, 0.32), transparent 42%),
+            radial-gradient(circle at center, #164a78, #092747 72%);
         }
 
         .fabric-am-globe-chart {
@@ -614,12 +614,12 @@ export default function S01Hero() {
         .fabric-am-globe-shade {
           z-index: 2;
           background:
-            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.18), transparent 18%),
-            linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 42%, rgba(0, 0, 0, 0.74)),
-            linear-gradient(155deg, transparent 42%, rgba(0, 0, 0, 0.42));
+            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.24), transparent 18%),
+            linear-gradient(90deg, rgba(3, 12, 26, 0.28), transparent 42%, rgba(3, 12, 26, 0.58)),
+            linear-gradient(155deg, transparent 42%, rgba(3, 12, 26, 0.34));
           box-shadow:
-            inset -20px 0 52px rgba(0, 0, 0, 0.62),
-            inset 18px 0 34px rgba(199, 221, 207, 0.06);
+            inset -20px 0 52px rgba(3, 12, 26, 0.54),
+            inset 18px 0 34px rgba(219, 239, 255, 0.1);
         }
 
         .fabric-orb-grade {
@@ -630,11 +630,11 @@ export default function S01Hero() {
         }
 
         .fabric-orb-rim {
-          border-color: rgba(var(--accent-rgb), 0.28);
+          border-color: rgba(240, 207, 122, 0.36);
           box-shadow:
-            inset -20px 0 52px rgba(0, 0, 0, 0.7),
-            inset 18px 0 34px rgba(199, 221, 207, 0.08),
-            0 0 0 1px rgba(255, 255, 255, 0.04);
+            inset -20px 0 52px rgba(3, 12, 26, 0.62),
+            inset 18px 0 34px rgba(219, 239, 255, 0.12),
+            0 0 0 1px rgba(255, 255, 255, 0.08);
         }
 
         .fabric-hero-copy {
@@ -646,12 +646,13 @@ export default function S01Hero() {
         }
 
         .fabric-hero-stats {
-          background: rgba(8, 7, 6, 0.7);
-          border-color: #2A2A2A;
+          background: rgba(7, 25, 47, 0.82);
+          border-color: rgba(240, 207, 122, 0.2);
+          box-shadow: 0 18px 52px rgba(3, 12, 26, 0.22);
         }
 
         .fabric-hero-stat {
-          border-color: #2A2A2A;
+          border-color: rgba(240, 207, 122, 0.16);
         }
 
         .fabric-hero-stat-number {
