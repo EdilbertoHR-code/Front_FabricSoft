@@ -157,31 +157,13 @@ export default function Header() {
             `}
             style={{ transitionDelay: '60ms' }}
           >
-            {/* LOGO ESCRITORIO: Brandbook — wordmark + línea dorada + tagline */}
-            <div className="flex flex-col items-center leading-none select-none">
-              <span
-                className="font-serif font-medium leading-none"
-                style={{
-                  fontSize: 'clamp(23px, 2.08vw, 30px)',
-                  letterSpacing: '0.23em',
-                  paddingLeft: '0.23em',
-                  background: 'linear-gradient(155deg, #7B572B 0%, #B38745 18%, #D6B466 38%, #F1D88A 50%, #D1AE62 63%, #A97935 82%, #E5C678 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))',
-                }}
-              >
-                FABRIC
-              </span>
-              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/55 to-transparent my-[3px] md:my-1" />
-              <span
-                className="font-mono font-semibold uppercase tracking-[0.36em] pl-[0.36em] text-[5.5px] md:text-[8px] transition-all duration-300"
-                style={{ color: 'color-mix(in srgb, var(--text-primary) 56%, var(--accent) 44%)' }}
-              >
-                Oracle Critical Engineering
-              </span>
-            </div>
+            {/* LOGO ESCRITORIO: Logo_FabricSoft.webp */}
+            <img 
+              src="/Logo_FabricSoft.webp" 
+              alt="FABRIC" 
+              className={`w-auto object-contain transition-all duration-300 ${scrolled ? 'h-[54px] md:h-[64px]' : 'h-[72px] md:h-[86px]'}`}
+              style={{ filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))' }}
+            />
           </Link>
 
           <div
@@ -217,34 +199,15 @@ export default function Header() {
         className={`fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm lg:hidden transition-opacity duration-500 ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
       />
       <aside className={`fixed right-0 top-0 bottom-0 z-[110] w-full sm:w-[380px] bg-[#050203]/95 backdrop-blur-2xl border-l border-[#2A2A2A] flex flex-col transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:hidden`}>
-        <div className="flex items-center justify-between px-8 py-6 border-b border-[#2A2A2A]/40">
+        <div className="flex items-center justify-between px-8 py-2 border-b border-[#2A2A2A]/40">
           
           <div className="flex items-center">
-            {/* LOGO MÓVIL: Brandbook — wordmark + línea dorada + tagline */}
-            <div className="flex flex-col items-center leading-none select-none">
-              <span
-                className="font-serif font-medium leading-none"
-                style={{
-                  fontSize: 25,
-                  letterSpacing: '0.23em',
-                  paddingLeft: '0.23em',
-                  background: 'linear-gradient(155deg, #7B572B 0%, #B38745 18%, #D6B466 38%, #F1D88A 50%, #D1AE62 63%, #A97935 82%, #E5C678 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 1px 10px rgba(var(--accent-rgb),0.22))',
-                }}
-              >
-                FABRIC
-              </span>
-              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A96E]/55 to-transparent my-[3px]" />
-              <span
-                className="font-mono font-semibold uppercase tracking-[0.36em] pl-[0.36em] text-[5.5px]"
-                style={{ color: 'color-mix(in srgb, var(--text-primary) 56%, var(--accent) 44%)' }}
-              >
-                Oracle Critical Engineering
-              </span>
-            </div>
+            {/* LOGO MÓVIL: Logo_FabricSoft.webp */}
+            <img 
+              src="/Logo_FabricSoft.webp" 
+              alt="FABRIC" 
+              className="h-[50px] w-auto object-contain" 
+            />
           </div>
 
           <button onClick={() => setMobileOpen(false)} aria-label="Cerrar menu" className="text-[#F5F5F5]/40 hover:text-[#C9A96E] p-2 -mr-2 rounded-full transition-all duration-500 hover:rotate-90 active:scale-90">

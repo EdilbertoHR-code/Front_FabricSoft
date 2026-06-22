@@ -180,33 +180,26 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {/* Monograma F — Variante F brandbook, CSS puro */}
+            {/* Logo_FabricSoft.webp replacing monogram F */}
             <div
               className="fabric-admin-sidebar-logo"
               style={{
-                width: 44,
-                height: 44,
+                width: 60,
+                height: 60,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: '1px solid rgba(201,169,110,0.28)',
-                background: 'radial-gradient(circle at 35% 30%, rgba(201,169,110,0.08), transparent)',
+                background: 'rgba(201,169,110,0.02)',
                 flexShrink: 0,
                 position: 'relative',
               }}
             >
-              <div style={{ position: 'absolute', inset: 3, border: '1px solid rgba(201,169,110,0.1)' }} />
-              <span style={{
-                fontFamily: 'var(--serif, "Cormorant Garamond", Georgia, serif)',
-                fontSize: 26,
-                fontWeight: 400,
-                background: 'linear-gradient(160deg, #6B4F2A 0%, #A07845 18%, #C9A96E 35%, #E8C878 48%, #C9A96E 58%, #A07845 72%, #6B4F2A 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1,
-                position: 'relative',
-              }}>F</span>
+              <img 
+                src="/Logo_FabricSoft.webp" 
+                alt="F" 
+                style={{ width: '85%', height: '85%', objectFit: 'contain' }} 
+              />
             </div>
 
             <div>
@@ -736,27 +729,19 @@ export default function AdminLayout({ children }: { children?: ReactNode }) {
           }}
           className="flex lg:hidden"
         >
-          <div>
-            <div
-              style={{
-                fontFamily: 'var(--mono, monospace)',
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.22em',
-                color: '#E8E8E8',
-                textTransform: 'uppercase',
-              }}
-            >
-              FABRIC
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img 
+              src="/Logo_FabricSoft.webp" 
+              alt="FABRIC" 
+              style={{ height: 38, width: 'auto', objectFit: 'contain' }} 
+            />
             <div
               style={{
                 fontFamily: 'var(--mono, monospace)',
                 fontSize: 9,
-                letterSpacing: '0.18em',
-                color: 'rgba(255,255,255,0.28)',
+                letterSpacing: '0.12em',
+                color: 'rgba(255,255,255,0.4)',
                 textTransform: 'uppercase',
-                marginTop: 2,
               }}
             >
               Admin Console

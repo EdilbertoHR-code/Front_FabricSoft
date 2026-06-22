@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const SITE_URL = 'https://equipo-a-v2.vercel.app';
 const SITE_NAME = 'FABRIC';
-const DEFAULT_IMAGE = `${SITE_URL}/fabric-og-logo.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/Logo_FabricSoft.webp`;
 
 type SeoConfig = {
   title: string;
@@ -289,7 +289,7 @@ export default function SeoManager() {
     });
     upsertMeta('meta[property="og:image:type"]', {
       property: 'og:image:type',
-      content: 'image/png',
+      content: 'image/webp',
     });
     upsertMeta('meta[property="og:image:width"]', {
       property: 'og:image:width',
